@@ -12,6 +12,7 @@ import Nora from '@primeng/themes/nora';
 import { FilterMatchMode } from 'primeng/api';
 
 import { routes } from './app.routes';
+import MyPreset from '../customPreset';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -20,9 +21,10 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
     providePrimeNG({
       theme: {
-        preset: Aura,
+        preset: MyPreset,
         options: {
-          prefix: 'p',
+          // prefix: 'p',
+          darkModeSelector: false || 'none',
           inputVariant: 'filled',
           zIndex: {
             modal: 1100,    // dialog, sidebar
