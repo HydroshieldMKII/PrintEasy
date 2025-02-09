@@ -1,1 +1,27 @@
-<p>login works!</p>
+<p-button label="Click me" />
+<p-input pInputText placeholder="Enter text"></p-input>
+<p-datePicker></p-datePicker>
+<p-select [options]="[{label: 'Option 1', value: 1}, {label: 'Option 2', value: 2}]"></p-select>
+<p-checkbox label="Check me"></p-checkbox>
+<p-radioButton name="group1" value="Option1" label="Option 1"></p-radioButton>
+<p-radioButton name="group1" value="Option2" label="Option 2"></p-radioButton>
+<p-slider></p-slider>
+<p-progress-spinner></p-progress-spinner>
+<p-toggleButton onLabel="Yes" offLabel="No"></p-toggleButton>
+<p-rating></p-rating>
+<p-progressBar></p-progressBar>
+<p-fileUpload></p-fileUpload>
+<p-table [value]="[{name: 'John', age: 30}, {name: 'Jane', age: 25}]">
+    <ng-template pTemplate="header">
+        <tr>
+            <th>Name</th>
+            <th>Age</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData>
+        <tr>
+            <td>{{rowData.name}}</td>
+            <td>{{rowData.age}}</td>
+        </tr>
+    </ng-template>
+</p-table>
