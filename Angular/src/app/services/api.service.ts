@@ -18,7 +18,7 @@ export class ApiRequestService {
         );
     }
 
-    postRequest(query: string, params?: { [key: string]: string }, body?: any): Observable<RequestResponseModel> {
+    postRequest(query: string, params?: { [key: string]: any }, body?: any): Observable<RequestResponseModel> {
         return this.http.post<RequestResponseModel>(`${this.baseUrl}/${query}`, body, { params }).pipe(
             map(response => new RequestResponseModel({ status: response.status, errors: response.errors }, response.data))
         );

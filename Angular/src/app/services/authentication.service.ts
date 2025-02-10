@@ -38,25 +38,27 @@ export class AuthService {
 
     logIn(providedCredentials: UserCredentialsModel): Observable<RequestResponseModel> {
         const credentials = {
-            username: providedCredentials.username,
-            password: providedCredentials.password
+            user: {
+                username: providedCredentials.username,
+                password: providedCredentials.password
+            }
         };
 
-        return this.api.postRequest('/users/login', credentials).pipe(
-            map(response => {
-                return response;
-            })
+        return this.api.postRequest('users/login', {}, credentials).pipe(
+            map(response => response)
         );
-
     }
+
 
     signUp(providedCredentials: UserCredentialsModel): Observable<RequestResponseModel> {
         const credentials = {
-            username: providedCredentials.username,
-            password: providedCredentials.password,
-            confirmPassword: providedCredentials.confirmPassword
+            user: {
+                username: providedCredentials.username,
+                password: providedCredentials.password,
+                password_confirmation: providedCredentials.confirmPassword
+            }
         };
-        return this.api.postRequest('/users/signup', credentials).pipe(
+        return this.api.postRequest('users/sign_up', credentials).pipe(
             map(response => {
                 return response;
             })
