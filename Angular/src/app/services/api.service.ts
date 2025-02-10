@@ -38,7 +38,6 @@ export class ApiRequestService {
         );
     }
 
-    // Method to handle HTTP errors and transform the response
     handleHttpError(error: HttpErrorResponse): Observable<RequestResponseModel> {
         let formattedErrors: { [key: string]: string } = {};
 
@@ -56,7 +55,7 @@ export class ApiRequestService {
                 status: error.status || 500,
                 errors: formattedErrors
             },
-            "" // No data for error cases
+            ""
         ));
 
     }

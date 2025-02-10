@@ -30,7 +30,7 @@ import { MessageModule } from 'primeng/message';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  success: boolean | null = null;
+  errors: { [key: string]: string } = {};
   loginForm: FormGroup;
   credentials: UserCredentialsModel | null = null;
 
@@ -51,9 +51,9 @@ export class LoginComponent {
 
       this.auth.logIn(this.credentials).subscribe((response) => {
         if (response.status === 200) {
-          this.success = true;
+          console.log('Login successful');
         } else {
-          this.success = false;
+          this.errors = response.errors;
         }
       });
     }

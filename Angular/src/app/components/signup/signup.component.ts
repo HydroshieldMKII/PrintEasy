@@ -31,7 +31,7 @@ import { DividerModule } from 'primeng/divider';
 })
 export class SignupComponent {
   credentials: UserCredentialsModel | null = null;
-  success: boolean | null = null;
+  errors: { [key: string]: string } = {};
   signupForm: FormGroup;
   private readonly auth = inject(AuthService)
 
@@ -59,9 +59,9 @@ export class SignupComponent {
       this.auth.signUp(this.credentials).subscribe((response) => {
         console.log('Signup response:', response);
         if (response.status === 200) {
-          this.success = true;
+          console.log('Signup successful');
         } else {
-          this.success = false;
+          this.errors = response.errors;
         }
       });
 

@@ -44,7 +44,7 @@ export class AuthService {
             }
         };
 
-        return this.api.postRequest('users/login', {}, credentials).pipe(
+        return this.api.postRequest('users/sign_in', {}, credentials).pipe(
             map(response => {
                 console.log('Login response:', response);
                 return response;
