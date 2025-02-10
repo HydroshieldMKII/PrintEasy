@@ -12,34 +12,31 @@
     text-align: center;
 }
 
-:host ::ng-deep .p-card {
+:host {
     --p-card-background: #f8f9fa;
     --p-card-border-radius: 16px;
     --p-card-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
 }
 
 :host ::ng-deep .p-card-title {
-    --p-card-title-font-size: 2rem;
-    --p-card-title-font-weight: bold;
-}
-
-:host ::ng-deep .p-card-subtitle {
-    --p-card-subtitle-color: #777;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
 }
 
 /* blue button for signin */
 
-:host ::ng-deep .p-button {
-    --p-button-text-color: #fff;
-    --p-button-background-color: #007bff !important;
+.p-button {
+    --p-button-text-color: #AAFF00 !important;
+    --p-button-background-color: #AAFF00 !important;
     --p-button-border-color: #007bff;
     --p-button-hover-background-color: #0056b3;
     --p-button-hover-border-color: #0056b3;
     --p-button-focus-background-color: #0056b3;
     --p-button-focus-border-color: #0056b3;
-    --p-button-active-background-color: #0056b3;
+    --p-button-active-background-color: #AAFF00;
     --p-button-active-border-color: #0056b3;
-    --p-button-disabled-background-color: #007bff;
+    --p-button-disabled-background-color: #AAFF00 !important;
     --p-button-disabled-border-color: #007bff;
     --p-button-disabled-text-color: #fff;
 }
@@ -67,6 +64,7 @@ label {
 .signin-btn {
     width: 100%;
     margin-top: 15px;
+    background-color: #AAFF00 !important;
 }
 
 .error-message {
