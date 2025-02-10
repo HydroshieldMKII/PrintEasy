@@ -45,7 +45,10 @@ export class AuthService {
         };
 
         return this.api.postRequest('users/login', {}, credentials).pipe(
-            map(response => response)
+            map(response => {
+                console.log('Login response:', response);
+                return response;
+            })
         );
     }
 
@@ -58,8 +61,9 @@ export class AuthService {
                 password_confirmation: providedCredentials.confirmPassword
             }
         };
-        return this.api.postRequest('users/sign_up', credentials).pipe(
+        return this.api.postRequest('users/sign_up', {}, credentials).pipe(
             map(response => {
+                console.log('Sign up response:', response);
                 return response;
             })
         );
