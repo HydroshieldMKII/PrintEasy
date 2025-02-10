@@ -28,27 +28,27 @@ import { DividerModule } from 'primeng/divider';
 })
 export class SignupComponent {
   success: boolean | null = null;
-  signinForm: FormGroup;
+  signupForm: FormGroup;
 
   constructor(private fb: FormBuilder) {
-    this.signinForm = this.fb.group({
+    this.signupForm = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required],
       confirmPassword: ['', Validators.required]
-    });
+    }, { validator: this.passwordsMatch });
   }
 
-  onSubmit() {
-    if (this.signinForm.valid) {
-      console.log('Logging in with:', this.signinForm.value);
 
-      if (this.signinForm.value.username === 'admin' && this.signinForm.value.password === 'admin') {
-        console.log('signin successful');
-        this.success = true;
-      } else {
-        console.log('signin failed');
-        this.success = false;
-      }
+  passwordsMatch(form: FormGroup) {
+    const password = form.get('password')?.value;
+    const confirmPassword = form.get('confirmPassword')?.value;
+    return password === confirmPassword ? null : { mismatch: true };
+  }
+
+
+  onSubmit() {
+    if (this.signupForm.valid) {
+      console.log('Signing up with:', this.signupForm.value);
     }
   }
 }

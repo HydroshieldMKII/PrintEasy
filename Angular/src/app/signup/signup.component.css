@@ -1,4 +1,4 @@
-.signin-container {
+.signup-container {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -6,7 +6,7 @@
     background-color: #f4f4f4;
 }
 
-.signin-card {
+.signup-card {
     width: 350px;
     padding: 20px;
     text-align: center;
