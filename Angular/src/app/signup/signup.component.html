@@ -1,1 +1,36 @@
-<p>signup works!</p>
+<div class="signin-container">
+    <p-card class="signin-card shadow">
+        <h2 class="app-title">Signup</h2>
+        <form [formGroup]="signinForm" (ngSubmit)="onSubmit()">
+
+            <div *ngIf="success === false" class="error-message">
+                <p-message severity="error" icon="pi pi-times-circle" styleClass="mb-2">Wrong username or password.
+                    Please try again.</p-message>
+            </div>
+
+            <div class="input-group flex flex-col gap-1">
+                <label for="username">Username</label>
+                <input type="text" pInputText id="username" formControlName="username" class="input-field" />
+                <p-message
+                    *ngIf="signinForm.get('username')?.invalid && (signinForm.get('username')?.dirty || signinForm.get('username')?.touched)"
+                    severity="error" variant="simple" size="small">Username is required</p-message>
+            </div>
+
+            <div class="input-group flex flex-col gap-1">
+                <label for="password">Password</label>
+                <p-password [feedback]="true" [toggleMask]="true" appendTo="body"
+                    [inputStyle]="{'width': '100%'}"></p-password>
+            </div>
+
+            <div class="input-group flex flex-col gap-1">
+                <label for="confirmPassword">Confirm Password</label>
+                <p-password [feedback]="false" [toggleMask]="true" appendTo="body"
+                    [inputStyle]="{'width': '100%'}"></p-password>
+            </div>
+
+            <p-button type="submit" label="Create an account" class="signin-btn"
+                [disabled]="signinForm.invalid"></p-button>
+            <p class="signin-option">Already have an account? <a routerLink="/login" class="clickable">Login</a></p>
+        </form>
+    </p-card>
+</div>

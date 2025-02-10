@@ -1,72 +1,50 @@
 import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
-
-// PrimeNG
-import { CardModule } from 'primeng/card';
-import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { CalendarModule } from 'primeng/calendar';
-import { DropdownModule } from 'primeng/dropdown';
-import { CheckboxModule } from 'primeng/checkbox';
-import { RadioButtonModule } from 'primeng/radiobutton';
-import { SliderModule } from 'primeng/slider';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { ToggleButtonModule } from 'primeng/togglebutton';
-import { RatingModule } from 'primeng/rating';
-import { ProgressBarModule } from 'primeng/progressbar';
-import { FileUploadModule } from 'primeng/fileupload';
-import { TableModule } from 'primeng/table';
-import { DatePicker } from 'primeng/datepicker';
-import { Select } from 'primeng/select';
+import { PasswordModule } from 'primeng/password';
+import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
+import { MessageModule } from 'primeng/message';
 
 @Component({
   selector: 'app-login',
-  standalone: true,
   imports: [
-    HttpClientModule,
     CommonModule,
-    FormsModule,
+    RouterLink,
     ReactiveFormsModule,
-    CardModule,
-    ButtonModule,
     InputTextModule,
-    CalendarModule,
-    DropdownModule,
-    CheckboxModule,
-    RadioButtonModule,
-    SliderModule,
-    ToggleButtonModule,
-    RatingModule,
-    ProgressBarModule,
-    FileUploadModule,
-    TableModule,
-    ProgressSpinnerModule,
-    DatePicker,
-    Select
+    PasswordModule,
+    ButtonModule,
+    CardModule,
+    MessageModule
   ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
+  success: boolean | null = null;
   loginForm: FormGroup;
-  submitted = false;
 
   constructor(private fb: FormBuilder) {
     this.loginForm = this.fb.group({
-      username: ['', [Validators.required, Validators.minLength(3)]],
-      password: ['', [Validators.required, Validators.minLength(6)]]
+      username: ['', Validators.required],
+      password: ['', Validators.required]
     });
   }
 
-  get f() { return this.loginForm.controls; }
-
   onSubmit() {
-    this.submitted = true;
     if (this.loginForm.valid) {
-      console.log("Login successful!", this.loginForm.value);
+      console.log('Logging in with:', this.loginForm.value);
+
+      if (this.loginForm.value.username === 'admin' && this.loginForm.value.password === 'admin') {
+        console.log('Login successful');
+        this.success = true;
+      } else {
+        console.log('Login failed');
+        this.success = false;
+      }
     }
   }
 }
