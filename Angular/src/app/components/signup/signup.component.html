@@ -4,9 +4,11 @@
         <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
 
             <div *ngIf="errors != {}" class="error-message">
-                <p-message *ngFor="let error of errors | keyvalue" severity="error" variant="simple"
-                    size="small">{{error.value}}</p-message>
-
+                <p-message severity="error" variant="simple" size="small" styleClass="p-message-error">
+                    <div *ngFor="let error of errors | keyvalue">
+                        <p><strong>{{error.key}}:</strong> {{error.value}}</p>
+                    </div>
+                </p-message>
             </div>
 
             <div class="input-group flex flex-col gap-1">
