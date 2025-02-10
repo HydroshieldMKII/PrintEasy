@@ -3,6 +3,7 @@
 class Users::RegistrationsController < Devise::RegistrationsController
   # before_action :configure_sign_up_params, only: [:create]
   # before_action :configure_account_update_params, only: [:update]
+  before_action :sign_up_params, only: [:create]
 
   # GET /resource/sign_up
   # def new
@@ -10,8 +11,24 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # end
 
   # POST /resource
-  def create
-    super
+  def create    
+    build_resource(sign_up_params)
+    resource.validates_confirmation_of_password
+    resource.save
+
+    if resource.persisted?
+      if resource.active_for_authentication?
+        sign_up(resource_name, resource)
+        render json: { message: "User signed up", user: current_user }, status: 200
+      else
+        expire_data_after_sign_in!
+        render json: { errors: resource.errors.full_messages }, status: 422
+      end
+    else
+      clean_up_passwords resource
+      set_minimum_password_length
+      render json: { errors: resource.errors.full_messages }, status: 422
+    end
   end
 
   # GET /resource/edit
@@ -38,7 +55,11 @@ class Users::RegistrationsController < Devise::RegistrationsController
   #   super
   # end
 
-  # protected
+  protected
+
+  def sign_up_params
+    params.require(:user).permit(:username, :password, :password_confirmation)
+  end
 
   # If you have extra params to permit, append them to the sanitizer.
   # def configure_sign_up_params
