@@ -1,0 +1,76 @@
+.signup-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f4f4f4;
+}
+
+.signup-card {
+    width: 350px;
+    padding: 20px;
+    text-align: center;
+}
+
+:host {
+    --p-card-background: #f8f9fa;
+    --p-card-border-radius: 16px;
+    --p-card-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+:host ::ng-deep .p-card-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+/* blue button for signin */
+
+.p-button {
+    --p-button-text-color: #AAFF00 !important;
+    --p-button-background-color: #AAFF00 !important;
+    --p-button-border-color: #007bff;
+    --p-button-hover-background-color: #0056b3;
+    --p-button-hover-border-color: #0056b3;
+    --p-button-focus-background-color: #0056b3;
+    --p-button-focus-border-color: #0056b3;
+    --p-button-active-background-color: #AAFF00;
+    --p-button-active-border-color: #0056b3;
+    --p-button-disabled-background-color: #AAFF00 !important;
+    --p-button-disabled-border-color: #007bff;
+    --p-button-disabled-text-color: #fff;
+}
+
+.app-title {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.input-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.input-field {
+    width: 100%;
+}
+
+.signin-btn {
+    width: 100%;
+    margin-top: 15px;
+    background-color: #AAFF00 !important;
+}
+
+.error-message {
+    margin-bottom: 20px;
+}
+
+.clickable {
+    color: #007bff;
+}
