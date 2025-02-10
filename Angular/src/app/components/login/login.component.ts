@@ -1,7 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+
+import { ApiRequestService } from '../../services/api.service';
+
+
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
@@ -27,6 +31,9 @@ export class LoginComponent {
   success: boolean | null = null;
   loginForm: FormGroup;
 
+  private readonly auth = inject(ApiRequestService)
+
+
   constructor(private fb: FormBuilder) {
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
@@ -38,7 +45,7 @@ export class LoginComponent {
     if (this.loginForm.valid) {
       console.log('Logging in with:', this.loginForm.value);
 
-      if (this.loginForm.value.username === 'admin' && this.loginForm.value.password === 'admin') {
+      if (this.auth.postRequest('/login', this.loginForm.value)) {
         console.log('Login successful');
         this.success = true;
       } else {
