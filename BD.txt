@@ -1,0 +1,105 @@
+User
+    Validations
+        [username] : unique, nbChar >= 3 && <= 20, NN
+        [password] : nbChar >= 6 && <= 128, NN
+        [country_id] : NN
+    Prevent Delete -> update deleted_at
+
+Submission
+    Validations
+        [name] : NN, nbChar >= 5 && <= 30
+        [description] : nbChar >= 5 && <= 200
+
+Like
+    Validations
+        [user_id] : Unique(submission_id)
+        [submission_id] : Unique(user_id)
+
+Contest
+    Validations
+        [theme] : NN, nbChar >= 5 && nbChar <= 30
+        [description] : nbChar >= 5 && <= 200
+        [submissionLimit] : NN, >= 1
+        [deleted_at] : deleted_at > created_at
+    Prevent Delete -> update deleted_at
+
+PrinterUser
+    Validations
+        [printer_id] : NN
+        [user_id] : NN
+    
+Printer
+    Validations
+        [model] : NN
+
+Color
+    Validations
+        [color] : NN
+
+Filament
+    Validations
+        [type] : NN
+        [size] : NN, >0
+
+Preset
+    Validations
+        [color_id] : NN
+        [filament_id] : NN
+        [user_id] : NN
+
+PresetRequest
+    Relations
+        [Request] : DELETE CASCADE
+    Validations
+        [request_id] : NN
+        [color_id] : NN
+        [filament_id] : NN
+
+Request
+    Validations
+        [user_id] : NN
+        [name] : NN, nbChar >= 5 && <= 30
+        [budget] : > 0
+        [target_date] : NN, > current_date
+        [comment] : nbChar >= 5 && <= 200
+
+Offer
+    Relations
+        [Request] : DELETE CASCADE
+    Validations
+        [request_id] : NN
+        [printer_id] : NN
+        [price] : NN, >= 0
+        [target_date] : NN, > current_date
+        [color] : NN
+        [type] : NN
+        [size] : NN
+
+Order
+    Validations
+        [offer_id] : NN
+        [printer_id] : NN
+        [client_id] : NN
+
+Review
+    Validations
+        [order_id] : NN
+        [user_id] : NN
+        [title] : NN, nbChar >= 5 && nbChar <= 30
+        [description] : nbChar >= 5 && <= 200
+        [rating] : NN, >= 0 && <= 5
+        [created_at] : NN
+    
+OrderStatus
+    Relations
+        [Order] : DELETE CASCADE
+    Validations
+        [order_id] : NN
+        [status_id] : NN
+        [comment] : nbChar >= 5 && nbChar <= 30
+        [created_at] : NN
+
+Status
+    Validations
+        [name] : NN
+
