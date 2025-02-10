@@ -8,6 +8,5 @@ class User < ApplicationRecord
 
   def validates_confirmation_of_password
     errors.add(:password, "confirmation doesn't match Password") if password != password_confirmation
-    debugger
   end
 end
