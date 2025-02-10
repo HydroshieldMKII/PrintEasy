@@ -36,39 +36,31 @@ export class AuthService {
         localStorage.setItem(this.CURRENT_USER_KEY, JSON.stringify(user));
     }
 
-    logIn(credentials: UserCredentialsModel): Observable<RequestResponseModel | boolean> {
+    logIn(providedCredentials: UserCredentialsModel): Observable<RequestResponseModel> {
+        const credentials = {
+            username: providedCredentials.username,
+            password: providedCredentials.password
+        };
 
         return this.api.postRequest('/users/login', credentials).pipe(
             map(response => {
-                if (response?.status === 200) {
-                    // this.setCurrentUser(new UserModel(credentials.username));
-
-                    return true;
-                } else {
-                    console.log('Login failed. Errors:', response?.errors);
-                    return response;
-                }
+                return response;
             })
         );
 
     }
 
-    signUp(credentials: UserCredentialsModel): Observable<boolean> {
-
-        console.log({ credentials })
-
-        return this.api.postRequest('/users/sign_up', credentials).pipe(
-            map(result => {
-                if (result?.status === 200) {
-                    // this.setCurrentUser(new UserModel(credentials.username));
-
-                    return true;
-                } else {
-                    return false;
-                }
+    signUp(providedCredentials: UserCredentialsModel): Observable<RequestResponseModel> {
+        const credentials = {
+            username: providedCredentials.username,
+            password: providedCredentials.password,
+            confirmPassword: providedCredentials.confirmPassword
+        };
+        return this.api.postRequest('/users/signup', credentials).pipe(
+            map(response => {
+                return response;
             })
         );
-
     }
 
     logOut() {

@@ -3,7 +3,9 @@ import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 
-import { ApiRequestService } from '../../services/api.service';
+import { AuthService } from '../../services/authentication.service';
+import { UserCredentialsModel } from '../../models/user-credentials.model';
+import { RequestResponseModel } from '../../models/request-response.model';
 
 
 import { InputTextModule } from 'primeng/inputtext';
@@ -30,9 +32,9 @@ import { MessageModule } from 'primeng/message';
 export class LoginComponent {
   success: boolean | null = null;
   loginForm: FormGroup;
+  credentials: UserCredentialsModel | null = null;
 
-  private readonly auth = inject(ApiRequestService)
-
+  private readonly auth = inject(AuthService)
 
   constructor(private fb: FormBuilder) {
     this.loginForm = this.fb.group({
@@ -45,13 +47,15 @@ export class LoginComponent {
     if (this.loginForm.valid) {
       console.log('Logging in with:', this.loginForm.value);
 
-      if (this.auth.postRequest('/login', this.loginForm.value)) {
-        console.log('Login successful');
-        this.success = true;
-      } else {
-        console.log('Login failed');
-        this.success = false;
-      }
+      this.credentials = new UserCredentialsModel(this.loginForm.value.username, this.loginForm.value.password);
+
+      this.auth.logIn(this.credentials).subscribe((response) => {
+        if (response.status === 200) {
+          this.success = true;
+        } else {
+          this.success = false;
+        }
+      });
     }
   }
 }

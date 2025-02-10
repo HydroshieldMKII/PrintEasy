@@ -1,7 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { UserCredentialsModel } from '../../models/user-credentials.model';
+import { AuthService } from '../../services/authentication.service';
+
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -27,8 +30,10 @@ import { DividerModule } from 'primeng/divider';
   styleUrls: ['./signup.component.css']
 })
 export class SignupComponent {
+  credentials: UserCredentialsModel | null = null;
   success: boolean | null = null;
   signupForm: FormGroup;
+  private readonly auth = inject(AuthService)
 
   constructor(private fb: FormBuilder) {
     this.signupForm = this.fb.group({
@@ -49,6 +54,16 @@ export class SignupComponent {
   onSubmit() {
     if (this.signupForm.valid) {
       console.log('Signing up with:', this.signupForm.value);
+
+      this.credentials = new UserCredentialsModel(this.signupForm.value.username, this.signupForm.value.password, this.signupForm.value.confirmPassword);
+      this.auth.signUp(this.credentials).subscribe((response) => {
+        if (response.status === 200) {
+          this.success = true;
+        } else {
+          this.success = false;
+        }
+      });
+
     }
   }
 }
