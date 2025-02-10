@@ -33,6 +33,10 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
 
   def sign_up_params
-    params.require(:user).permit(:username, :password, :password_confirmation)
+    begin
+      params.require(:user).permit(:username, :password, :password_confirmation)
+    rescue ActionController::ParameterMissing => e
+      render json: { errors: { user: [e.message] } }, status: :unprocessable_entity
+    end
   end
 end

@@ -13,14 +13,4 @@ class Users::SessionsController < Devise::SessionsController
     sign_out(current_user)
     render json: { errors: {} }, status: 200
   end
-
-  protected
-
-  # def auth_options
-  #   { scope: resource_name, recall: "#{controller_path}#new" }
-  # end
-
-  def sign_in_params
-    params.require(:user).permit(:username, :password)
-  end
 end
