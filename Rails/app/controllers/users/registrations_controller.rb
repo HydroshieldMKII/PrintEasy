@@ -11,24 +11,32 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # end
 
   # POST /resource
-  def create    
+  def create
     build_resource(sign_up_params)
-    resource.validates_confirmation_of_password
-    resource.save
 
-    if resource.persisted?
-      if resource.active_for_authentication?
-        sign_up(resource_name, resource)
-        render json: { message: "User signed up", user: current_user }, status: 200
-      else
-        expire_data_after_sign_in!
-        render json: { errors: resource.errors.full_messages }, status: 422
-      end
+    if resource.valid? && resource.save
+      handle_successful_signup(resource)
     else
-      clean_up_passwords resource
-      set_minimum_password_length
-      render json: { errors: resource.errors.full_messages }, status: 422
+      handle_failed_signup(resource)
     end
+  end
+
+  private
+
+  def handle_successful_signup(resource)
+    if resource.active_for_authentication?
+      sign_up(resource_name, resource)
+      render json: { user: current_user, errors: {} }, status: :ok
+    else
+      expire_data_after_sign_in!
+      render json: { errors: resource.errors.as_json }, status: :unprocessable_entity
+    end
+  end
+
+  def handle_failed_signup(resource)
+    clean_up_passwords resource
+    set_minimum_password_length
+    render json: { errors: resource.errors.as_json }, status: :unprocessable_entity
   end
 
   # GET /resource/edit
