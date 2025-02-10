@@ -33,7 +33,8 @@ export class SignupComponent {
   constructor(private fb: FormBuilder) {
     this.signinForm = this.fb.group({
       username: ['', Validators.required],
-      password: ['', Validators.required]
+      password: ['', Validators.required],
+      confirmPassword: ['', Validators.required]
     });
   }
 
