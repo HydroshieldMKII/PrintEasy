@@ -1,5 +1,5 @@
 class AngularController < ApplicationController
     def index
-        render file: 'public/index.html', layout: false
+        render file: '../../public/browser/index.html', layout: false
     end
 end

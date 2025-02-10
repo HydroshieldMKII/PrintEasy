@@ -10,7 +10,8 @@ Rails.application.routes.draw do
 
   root to: "angular#index"
   namespace :api, constraints: { format: 'json' }  do
-    resources :todos
+    resources :request
+    resources :offer
   end
 
   match '*url', to: "angular#index", via: :get
