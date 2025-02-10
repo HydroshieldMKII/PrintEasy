@@ -4,10 +4,6 @@ Rails.application.routes.draw do
     registrations: 'users/registrations'
   }
 
-  devise_scope :user do
-    post 'users/sign_up', to: 'users/registrations#create'
-  end
-
   root to: "angular#index"
   namespace :api, constraints: { format: 'json' }  do
     resources :request
