@@ -7,9 +7,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   def create
     build_resource(sign_up_params)
 
-    resource.validates_confirmation_of_password
-
-    if resource.errors.empty? && resource.save
+    if resource.save
       handle_successful_signup(resource)
     else
       handle_failed_signup(resource)
