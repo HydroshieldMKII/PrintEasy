@@ -12,12 +12,22 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   # POST /resource
   def create    
-    @user = User.new(sign_up_params)
+    build_resource(sign_up_params)
+    resource.validates_confirmation_of_password
+    resource.save
 
-    if @user.save
-      render json: { message: "User created", user: @user }, status: 200
+    if resource.persisted?
+      if resource.active_for_authentication?
+        sign_up(resource_name, resource)
+        render json: { message: "User signed up", user: current_user }, status: 200
+      else
+        expire_data_after_sign_in!
+        render json: { errors: resource.errors.full_messages }, status: 422
+      end
     else
-      render json: { errors: @user.errors.as_json }, status: 400
+      clean_up_passwords resource
+      set_minimum_password_length
+      render json: { errors: resource.errors.full_messages }, status: 422
     end
   end
 

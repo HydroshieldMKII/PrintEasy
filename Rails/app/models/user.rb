@@ -5,4 +5,9 @@ class User < ApplicationRecord
          :recoverable, :rememberable
 
   validates :username, presence: true, uniqueness: true
+
+  def validates_confirmation_of_password
+    errors.add(:password, "confirmation doesn't match Password") if password != password_confirmation
+    debugger
+  end
 end

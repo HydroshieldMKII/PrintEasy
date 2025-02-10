@@ -8,6 +8,13 @@ Rails.application.routes.draw do
     post 'users/sign_up', to: 'users/registrations#create'
   end
 
+  root to: "angular#index"
+  namespace :api, constraints: { format: 'json' }  do
+    resources :todos
+  end
+
+  match '*url', to: "angular#index", via: :get
+
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

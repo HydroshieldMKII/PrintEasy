@@ -2,7 +2,7 @@
 
 class Users::SessionsController < Devise::SessionsController
   # before_action :configure_sign_in_params, only: [:create]
-  before_action :sign_in_params, only: [:create]
+  # before_action :sign_in_params, only: [:create]
   # before_action :check_session, only: [:create]
 
   # GET /users/sign_in
@@ -12,14 +12,9 @@ class Users::SessionsController < Devise::SessionsController
 
   # POST /users/sign_in
   def create
-    @user = User.find_by(username: sign_in_params[:username])
-
-    if @user && @user.valid_password?(sign_in_params[:password])
-      # sign_in(@user)
-      render json: { message: "User signed in", user: @user }, status: 200
-    else
-      render json: { message: "Invalid username or password" }, status: 400
-    end
+    self.resource = warden.authenticate!(auth_options)
+    sign_in(resource_name, resource)
+    render json: { message: "User signed in", user: current_user }, status: 200
   end
 
   # DELETE /users/sign_out
@@ -29,6 +24,10 @@ class Users::SessionsController < Devise::SessionsController
   end
 
   protected
+
+  def auth_options
+    { scope: resource_name, recall: "#{controller_path}#new" }
+  end
 
   def sign_in_params
     params.require(:user).permit(:username, :password)
