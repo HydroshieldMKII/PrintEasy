@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { Router, RouterLink, ActivatedRoute } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 
@@ -32,7 +32,6 @@ import { ToastModule } from 'primeng/toast';
 export class LoginComponent {
   private readonly auth = inject(AuthService)
   router: Router = inject(Router);
-  route: ActivatedRoute = inject(ActivatedRoute);
   success: boolean = true || null;
   loginForm: FormGroup;
   credentials: UserCredentialsModel | null = null;
@@ -51,7 +50,7 @@ export class LoginComponent {
 
       this.auth.logIn(this.credentials).subscribe((response) => {
         if (response.status === 200) {
-          console.log('Login successful');
+          this.router.navigate(['/']);
         } else {
           this.success = false;
         }

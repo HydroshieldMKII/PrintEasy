@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-home',

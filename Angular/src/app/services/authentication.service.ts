@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { UserModel } from '../models/user.model';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { MessageService } from 'primeng/api';
 
 import { UserCredentialsModel } from '../models/user-credentials.model';
 import { ApiRequestService } from './api.service';
@@ -13,6 +14,7 @@ import { RequestResponseModel } from '../models/request-response.model';
 export class AuthService {
     private readonly CURRENT_USER_KEY = 'printeasy.currentUser';
     private _currentUser: UserModel | null = null;
+    messageService: MessageService = inject(MessageService);
 
     get currentUser(): UserModel | null {
         return this._currentUser;
@@ -49,6 +51,7 @@ export class AuthService {
                 if (response.status === 200) {
                     console.log('Login response:', response);
                     if (!this.isLoggedIn) {
+                        this.messageService.add({ severity: 'success', summary: 'Login success', detail: 'You are logged in!' });
                         this.setCurrentUser(new UserModel((response.data as any)?.['user']?.['username']));
                     }
                 }
@@ -69,6 +72,10 @@ export class AuthService {
         return this.api.postRequest('users/sign_up', {}, credentials).pipe(
             map(response => {
                 console.log('Sign up response:', response);
+                if (response.status === 200) {
+                    this.messageService.add({ severity: 'success', summary: 'Account created', detail: 'You are now ready to use the app!' });
+                    this.setCurrentUser(new UserModel((response.data as any)?.['user']?.['username']));
+                }
                 return response;
             })
         );
