@@ -2,13 +2,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 97dvh;
     background-color: #f4f4f4;
 }
 
 .login-card {
     width: 350px;
-    padding: 20px;
     text-align: center;
 }
 
@@ -26,8 +25,6 @@
 :host ::ng-deep .p-card-subtitle {
     --p-card-subtitle-color: #777;
 }
-
-/* blue button for login */
 
 :host ::ng-deep .p-button {
     --p-button-text-color: #fff;

@@ -3,9 +3,12 @@
         <h2 class="app-title">Sign Up</h2>
         <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
 
-            <div *ngIf="success === false" class="error-message">
-                <p-message severity="error" icon="pi pi-times-circle" styleClass="mb-2">Couldn't create an account.
-                    Please try again.</p-message>
+            <div *ngIf="hasErrors()">
+                <p-message severity="error">
+                    <div *ngFor="let error of errors | keyvalue">
+                        <p>{{error.key}} {{error.value}}</p>
+                    </div>
+                </p-message>
             </div>
 
             <div class="input-group flex flex-col gap-1">

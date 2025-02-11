@@ -1,12 +1,17 @@
-import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+
+import { AuthService } from '../../services/authentication.service';
+import { UserCredentialsModel } from '../../models/user-credentials.model';;
+
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { MessageModule } from 'primeng/message';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-login',
@@ -18,14 +23,18 @@ import { MessageModule } from 'primeng/message';
     PasswordModule,
     ButtonModule,
     CardModule,
-    MessageModule
+    MessageModule,
+    ToastModule
   ],
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  styleUrls: ['./login.component.css'],
 })
 export class LoginComponent {
-  success: boolean | null = null;
+  private readonly auth = inject(AuthService)
+  router: Router = inject(Router);
+  success: boolean = true || null;
   loginForm: FormGroup;
+  credentials: UserCredentialsModel | null = null;
 
   constructor(private fb: FormBuilder) {
     this.loginForm = this.fb.group({
@@ -37,14 +46,15 @@ export class LoginComponent {
   onSubmit() {
     if (this.loginForm.valid) {
       console.log('Logging in with:', this.loginForm.value);
+      this.credentials = new UserCredentialsModel(this.loginForm.value.username, this.loginForm.value.password);
 
-      if (this.loginForm.value.username === 'admin' && this.loginForm.value.password === 'admin') {
-        console.log('Login successful');
-        this.success = true;
-      } else {
-        console.log('Login failed');
-        this.success = false;
-      }
+      this.auth.logIn(this.credentials).subscribe((response) => {
+        if (response.status === 200) {
+          this.router.navigate(['/']);
+        } else {
+          this.success = false;
+        }
+      });
     }
   }
 }
