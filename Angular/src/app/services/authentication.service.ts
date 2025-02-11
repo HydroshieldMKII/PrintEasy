@@ -74,7 +74,7 @@ export class AuthService {
                 password_confirmation: providedCredentials.confirmPassword
             }
         };
-        return this.api.postRequest('users/sign_up', {}, credentials).pipe(
+        return this.api.postRequest('users', {}, credentials).pipe(
             map(response => {
                 console.log('Sign up response:', response);
                 if (response.status === 200) {
