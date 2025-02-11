@@ -35,7 +35,12 @@ export class AuthService {
 
     private setCurrentUser(user: UserModel | null) {
         this._currentUser = user;
-        localStorage.setItem(this.CURRENT_USER_KEY, JSON.stringify(user));
+        if (user === null) {
+            localStorage.removeItem(this.CURRENT_USER_KEY);
+            return;
+        } else {
+            localStorage.setItem(this.CURRENT_USER_KEY, JSON.stringify(user));
+        }
     }
 
     logIn(providedCredentials: UserCredentialsModel): Observable<RequestResponseModel> {

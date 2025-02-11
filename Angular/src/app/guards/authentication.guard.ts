@@ -9,7 +9,7 @@ export class AuthenticationGuard implements CanActivate {
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
         const url: string = state.url;
-        const isLoggedIn = localStorage.getItem('printeasy.currentUser') !== 'null';
+        const isLoggedIn = localStorage.getItem('printeasy.currentUser') !== null;
 
         console.log('URL:', url);
         console.log('Is logged in:', isLoggedIn);
