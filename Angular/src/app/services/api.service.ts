@@ -43,9 +43,13 @@ export class ApiRequestService {
 
         if (error.error?.errors) {
             // Convert error array messages into a single string per field
-            Object.keys(error.error.errors).forEach(key => {
-                formattedErrors[key] = error.error.errors[key].join(", ");
-            });
+            try {
+                Object.keys(error.error.errors).forEach(key => {
+                    formattedErrors[key] = error.error.errors[key].join(", ");
+                });
+            } catch (e) {
+                formattedErrors["general"] = error.message || "An unexpected error occurred.";
+            }
         } else {
             formattedErrors["general"] = error.message || "An unexpected error occurred.";
         }

@@ -6,7 +6,7 @@
             <div *ngIf="hasErrors()">
                 <p-message severity="error">
                     <div *ngFor="let error of errors | keyvalue">
-                        <p><strong>{{error.key}}:</strong> {{error.value}}</p>
+                        <p>{{error.key}} {{error.value}}</p>
                     </div>
                 </p-message>
             </div>

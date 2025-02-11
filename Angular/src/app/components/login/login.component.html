@@ -3,10 +3,10 @@
         <h2 class="app-title">Login</h2>
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
 
-            <div *ngIf="errors != {}" class="error-message">
-                <p-message *ngFor="let error of errors | keyvalue" severity="error" variant="simple"
-                    size="small">{{error.value}}</p-message>
-
+            <div *ngIf="!success">
+                <p-message severity="error">
+                    <p>Wrong username or password entered. Try again.</p>
+                </p-message>
             </div>
 
             <div class="input-group flex flex-col gap-1">
