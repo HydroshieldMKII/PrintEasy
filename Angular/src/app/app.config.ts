@@ -5,6 +5,7 @@ import { provideHttpClient } from "@angular/common/http";
 // PrimeNG imports
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
+import { MessageService } from 'primeng/api';
 
 // Default primeNG themes
 // import Aura from '@primeng/themes/aura';
@@ -43,6 +44,7 @@ export const appConfig: ApplicationConfig = {
           },
         }
       }
-    })
+    }),
+    MessageService,
   ]
 };
