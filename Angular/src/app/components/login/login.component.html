@@ -1,0 +1,33 @@
+<div class="login-container">
+    <p-card class="login-card shadow">
+        <h2 class="app-title">Login</h2>
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+            <div *ngIf="!success" style="margin-bottom: 20px;">
+                <p-message severity="error">
+                    <p>Wrong username or password entered. Try again.</p>
+                </p-message>
+            </div>
+
+            <div class="input-group flex flex-col gap-1">
+                <label for="username">Username</label>
+                <input type="text" pInputText id="username" formControlName="username" class="input-field" />
+                <p-message
+                    *ngIf="loginForm.get('username')?.invalid && (loginForm.get('username')?.dirty || loginForm.get('username')?.touched)"
+                    severity="error" variant="simple" size="small">Username is required</p-message>
+            </div>
+
+            <div class="input-group flex flex-col gap-1">
+                <label for="password">Password</label>
+                <input type="password" pInputText formControlName="password" class="input-field" />
+                <p-message
+                    *ngIf="loginForm.get('password')?.invalid && (loginForm.get('password')?.dirty || loginForm.get('password')?.touched)"
+                    severity="error" variant="simple" size="small">Password is required</p-message>
+            </div>
+
+            <p-button type="submit" severity="info" label="Login" class="login-btn"
+                [disabled]="loginForm.invalid"></p-button>
+            <p class="signin-option">Don't have an account? <a routerLink="/signup" class="clickable">Sign In</a></p>
+        </form>
+    </p-card>
+</div>
