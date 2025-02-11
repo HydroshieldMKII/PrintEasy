@@ -1,4 +1,4 @@
-<div class="card">
+<div *ngIf="isLoggedIn()" class="card">
     <p-menubar [model]="items">
         <ng-template #start>
             <img src="https://fakeimg.pl/600x400" alt="Logo" width="auto" height="35" />
@@ -15,14 +15,14 @@
         </ng-template>
         <ng-template #end>
             <div class="flex items-center gap-2">
+                <span style="margin-right: 10px;">{{ getUsername() }}</span>
                 <p-avatar icon="pi pi-user" class="mr-2" size="normal" shape="circle"
                     [ngStyle]="{'background-color': '#ece9fc', 'color': '#2a1261', 'cursor': 'pointer'}"
                     (click)="menu.toggle($event)" />
-                <p-toast />
                 <p-menu #menu [model]="userMenuItems" [popup]="true"></p-menu>
             </div>
         </ng-template>
     </p-menubar>
 </div>
-
+<p-toast />
 <router-outlet />

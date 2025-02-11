@@ -4,15 +4,14 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 
 import { AuthService } from '../../services/authentication.service';
-import { UserCredentialsModel } from '../../models/user-credentials.model';
-import { RequestResponseModel } from '../../models/request-response.model';
+import { UserCredentialsModel } from '../../models/user-credentials.model';;
 
-import { MessageService } from 'primeng/api';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { MessageModule } from 'primeng/message';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-login',
@@ -24,10 +23,11 @@ import { MessageModule } from 'primeng/message';
     PasswordModule,
     ButtonModule,
     CardModule,
-    MessageModule
+    MessageModule,
+    ToastModule
   ],
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  styleUrls: ['./login.component.css'],
 })
 export class LoginComponent {
   private readonly auth = inject(AuthService)
@@ -36,18 +36,11 @@ export class LoginComponent {
   success: boolean = true || null;
   loginForm: FormGroup;
   credentials: UserCredentialsModel | null = null;
-  messagingService: MessageService;
 
-  constructor(private fb: FormBuilder, messageService: MessageService) {
+  constructor(private fb: FormBuilder) {
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required]
-    });
-    this.messagingService = messageService;
-    this.route.queryParams.subscribe(params => {
-      if (params['logout'] === 'success') {
-        this.messagingService?.add({ severity: 'success', summary: 'Logged out', detail: 'You have been logged out successfully' });
-      }
     });
   }
 
@@ -59,9 +52,6 @@ export class LoginComponent {
       this.auth.logIn(this.credentials).subscribe((response) => {
         if (response.status === 200) {
           console.log('Login successful');
-          //set local storage
-          this.success = true;
-
         } else {
           this.success = false;
         }

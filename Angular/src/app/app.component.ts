@@ -83,7 +83,16 @@ export class AppComponent implements OnInit {
       if (response.status === 200) {
         console.log('Logout successful');
         this.router.navigate(['/login'], { queryParams: { logout: 'success' } });
+        this.messageService.add({ severity: 'success', summary: 'Logout success', detail: 'You are logged out!' });
       }
     });
+  }
+
+  isLoggedIn() {
+    return this.auth.isLoggedIn;
+  }
+
+  getUsername() {
+    return this.auth.currentUser?.username;
   }
 }
