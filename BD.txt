@@ -1,32 +1,49 @@
 User
+    Relations
+        [Country] : Aucune
     Validations
-        [username] : unique, nbChar >= 3 && <= 20, NN
-        [password] : nbChar >= 6 && <= 128, NN
         [country_id] : NN
+        [username] : unique, nbChar >= 5 && nbChar <= 30, NN
+        [password] : nbChar >= 6 && <= 128, NN
+        [is_admin] : verif Boolean
+        [Attachment] : image format
     Prevent Delete -> update deleted_at
 
 Submission
+    Relations
+        [User] : Aucune
+        [Contest] : Aucune
     Validations
         [name] : NN, nbChar >= 5 && <= 30
         [description] : nbChar >= 5 && <= 200
+        [Attachment] : 1 stl & image(optionnel)
 
 Like
+    Relations
+        [Submission] : DELETE CASCADE
+        [User] : Aucune
     Validations
-        [user_id] : Unique(submission_id)
-        [submission_id] : Unique(user_id)
+        [user_id] : NN, Unique(submission_id)
+        [submission_id] : NN, Unique(user_id)
 
 Contest
     Validations
         [theme] : NN, nbChar >= 5 && nbChar <= 30
         [description] : nbChar >= 5 && <= 200
-        [submissionLimit] : NN, >= 1
-        [deleted_at] : deleted_at > created_at
+        [submissionLimit] : NN, >= 1, verif integer
+        [deleted_at] : verif datetime
+        [start_at] : verif datetime
+        [end_at] : end_at > start_at, verif datetime
     Prevent Delete -> update deleted_at
 
 PrinterUser
+    Relations
+        [Printer] : Aucune
+        [User] : Aucune
     Validations
         [printer_id] : NN
         [user_id] : NN
+        [usage_count] : NN, Default = 0, verif integer
     
 Printer
     Validations
@@ -39,7 +56,7 @@ Color
 Filament
     Validations
         [type] : NN
-        [size] : NN, >0
+        [size] : NN, > 0, verif integer
 
 Preset
     Validations
@@ -50,54 +67,70 @@ Preset
 PresetRequest
     Relations
         [Request] : DELETE CASCADE
+        [Color] : Aucune
+        [Filament] : Aucune
     Validations
         [request_id] : NN
         [color_id] : NN
         [filament_id] : NN
 
 Request
+    Relations
+        [User] : Aucune
     Validations
         [user_id] : NN
         [name] : NN, nbChar >= 5 && <= 30
-        [budget] : > 0
-        [target_date] : NN, > current_date
+        [budget] : >= 0, verif number
         [comment] : nbChar >= 5 && <= 200
+        [target_date] : NN, > current_date, verif date
+        [Attachment] : stl format
 
 Offer
     Relations
         [Request] : DELETE CASCADE
+        [Printer] : Aucune
     Validations
         [request_id] : NN
         [printer_id] : NN
-        [price] : NN, >= 0
-        [target_date] : NN, > current_date
+        [price] : NN, >= 0, verif number
+        [target_date] : NN, > current_date, verif date
         [color] : NN
         [type] : NN
         [size] : NN
 
 Order
+    Relations
+        [Offer] : Aucune
+        [User (printer)] : Aucune
+        [User (client)] : Aucune
     Validations
         [offer_id] : NN
         [printer_id] : NN
         [client_id] : NN
 
 Review
+    Relations
+        [Order] : Aucune
+        [User] : Aucune
     Validations
         [order_id] : NN
         [user_id] : NN
         [title] : NN, nbChar >= 5 && nbChar <= 30
         [description] : nbChar >= 5 && <= 200
-        [rating] : NN, >= 0 && <= 5
-        [created_at] : NN
+        [rating] : NN, >= 0 && <= 5, verif integer
+        [created_at] : NN, Default = current_datetime, verif datetime
+        [Attachment] : image
     
 OrderStatus
     Relations
-        [Order] : DELETE CASCADE
+        [Order] : Aucune
+        [Status] : Aucune
     Validations
         [order_id] : NN
         [status_id] : NN
-        [comment] : nbChar >= 5 && nbChar <= 30
-        [created_at] : NN
+        [comment] : nbChar >= 5 && nbChar <= 200
+        [created_at] : NN, Default = current_datetime, verif datetime
+        [Attachment] : image
 
 Status
     Validations
