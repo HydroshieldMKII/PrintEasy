@@ -3,7 +3,7 @@
         <h2 class="app-title">Login</h2>
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
 
-            <div *ngIf="!success">
+            <div *ngIf="!success" style="margin-bottom: 20px;">
                 <p-message severity="error">
                     <p>Wrong username or password entered. Try again.</p>
                 </p-message>
