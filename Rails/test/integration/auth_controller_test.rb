@@ -123,7 +123,7 @@ class AuthControllerTest < ActionDispatch::IntegrationTest
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
-    assert_equal "Invalid login credentials", @parsed_response["errors"]
+    assert_equal ["Invalid login credentials"], @parsed_response["errors"]["connection"]
   end
 
   test "should not sign in -> no username" do
@@ -134,7 +134,7 @@ class AuthControllerTest < ActionDispatch::IntegrationTest
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
-    assert_equal "Invalid login credentials", @parsed_response["errors"]
+    assert_equal ["Invalid login credentials"], @parsed_response["errors"]["connection"]
   end
 
   test "should not sign in -> no password" do
@@ -145,7 +145,7 @@ class AuthControllerTest < ActionDispatch::IntegrationTest
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
-    assert_equal "Invalid login credentials", @parsed_response["errors"]
+    assert_equal ["Invalid login credentials"], @parsed_response["errors"]["connection"]
   end
 
   test "should not sign in -> wrong username" do
@@ -156,7 +156,7 @@ class AuthControllerTest < ActionDispatch::IntegrationTest
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
-    assert_equal "Invalid login credentials", @parsed_response["errors"]
+    assert_equal ["Invalid login credentials"], @parsed_response["errors"]["connection"]
   end
 
   test "should not sign in -> wrong password" do
@@ -167,7 +167,7 @@ class AuthControllerTest < ActionDispatch::IntegrationTest
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
-    assert_equal "Invalid login credentials", @parsed_response["errors"]
+    assert_equal ["Invalid login credentials"], @parsed_response["errors"]["connection"]
   end
 
   # Sign out

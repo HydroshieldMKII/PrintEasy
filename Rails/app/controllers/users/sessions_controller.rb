@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class Users::SessionsController < Devise::SessionsController
-  rescue_from ActiveRecord::RecordNotFound, with: :not_found
-
   # POST /users/sign_in
   def create
     self.resource = warden.authenticate!(auth_options)
