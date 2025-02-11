@@ -72,10 +72,7 @@ export class AppComponent implements OnInit {
   logout() {
     // this.messageService.add({ severity: 'success', summary: 'Logout', detail: 'You logged out successfully!' });
 
-    if (this.auth.isLoggedIn) {
-      console.log('Logging out...');
-    } else {
-      console.log('You are not logged in');
+    if (!this.auth.isLoggedIn) {
       return;
     }
 
