@@ -14,12 +14,12 @@ export class AuthenticationGuard implements CanActivate {
         console.log('URL:', url);
         console.log('Is logged in:', isLoggedIn);
 
-        if ((url.startsWith('/login') || url.startsWith('/signup')) && isLoggedIn) {
+        if ((url === '/login' || url === '/signup') && isLoggedIn) {
             this.router.navigate(['/']);
             return false;
         }
 
-        if (!isLoggedIn && !(url.startsWith('/login') || url.startsWith('/signup'))) {
+        if (!isLoggedIn && !(url === '/login' || url === '/signup')) {
             this.router.navigate(['/login']);
             return false;
         }
