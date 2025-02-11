@@ -3,8 +3,8 @@
         <h2 class="app-title">Sign Up</h2>
         <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
 
-            <div *ngIf="errors != {}" class="error-message">
-                <p-message severity="error" variant="simple" size="small" styleClass="p-message-error">
+            <div *ngIf="hasErrors()">
+                <p-message severity="error">
                     <div *ngFor="let error of errors | keyvalue">
                         <p><strong>{{error.key}}:</strong> {{error.value}}</p>
                     </div>

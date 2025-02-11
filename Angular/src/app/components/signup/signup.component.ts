@@ -31,7 +31,7 @@ import { DividerModule } from 'primeng/divider';
 })
 export class SignupComponent {
   credentials: UserCredentialsModel | null = null;
-  errors: { [key: string]: string } = {};
+  errors: any = {};
   signupForm: FormGroup;
   private readonly auth = inject(AuthService)
 
@@ -66,5 +66,9 @@ export class SignupComponent {
       });
 
     }
+  }
+
+  hasErrors() {
+    return Object.keys(this.errors).length > 0;
   }
 }
