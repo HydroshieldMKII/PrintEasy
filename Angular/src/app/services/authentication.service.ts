@@ -26,7 +26,7 @@ export class AuthService {
         const storedCurrentUser = JSON.parse(localStorage.getItem(this.CURRENT_USER_KEY) ?? 'null');
 
         if (storedCurrentUser) {
-            this._currentUser = new UserModel(storedCurrentUser.email);
+            this._currentUser = new UserModel(storedCurrentUser.username);
         }
     }
 
@@ -46,7 +46,12 @@ export class AuthService {
 
         return this.api.postRequest('users/sign_in', {}, credentials).pipe(
             map(response => {
-                console.log('Login response:', response);
+                if (response.status === 200) {
+                    console.log('Login response:', response);
+                    if (!this.isLoggedIn) {
+                        this.setCurrentUser(new UserModel((response.data as any)?.['user']?.['username']));
+                    }
+                }
                 return response;
             })
         );
@@ -70,7 +75,15 @@ export class AuthService {
     }
 
     logOut() {
-        this.setCurrentUser(null);
+        return this.api.deleteRequest('users/sign_out', {}).pipe(
+            map(response => {
+                console.log('Logout response:', response);
+                if (response.status === 200) {
+                    this.setCurrentUser(null);
+                }
+                return response;
+            })
+        );
     }
 
 }

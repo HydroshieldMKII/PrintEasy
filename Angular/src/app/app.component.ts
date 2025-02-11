@@ -3,6 +3,7 @@ import { Router, RouterOutlet } from '@angular/router';
 import { OnInit } from '@angular/core';
 import { BadgeModule } from 'primeng/badge';
 import { CommonModule } from '@angular/common';
+import { AuthService } from './services/authentication.service';
 
 import { PrimeNG } from 'primeng/config';
 import { Menu } from 'primeng/menu';
@@ -26,6 +27,7 @@ import { AvatarModule } from 'primeng/avatar';
 })
 export class AppComponent implements OnInit {
   router: Router = inject(Router);
+  auth: AuthService = inject(AuthService);
   items: MenuItem[] | undefined;
 
   constructor(
@@ -68,6 +70,20 @@ export class AppComponent implements OnInit {
   }
 
   logout() {
-    this.messageService.add({ severity: 'success', summary: 'Logout', detail: 'You logged out successfully!' });
+    // this.messageService.add({ severity: 'success', summary: 'Logout', detail: 'You logged out successfully!' });
+
+    if (this.auth.isLoggedIn) {
+      console.log('Logging out...');
+    } else {
+      console.log('You are not logged in');
+      return;
+    }
+
+    this.auth.logOut().subscribe((response) => {
+      if (response.status === 200) {
+        console.log('Logout successful');
+        this.router.navigate(['/login'], { queryParams: { logout: 'success' } });
+      }
+    });
   }
 }

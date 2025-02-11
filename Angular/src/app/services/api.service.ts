@@ -19,7 +19,7 @@ export class ApiRequestService {
                     status: response.status,
                     errors: response.body?.errors ?? {}
                 },
-                response.body?.data ?? ""
+                response.body
             )),
             catchError((error: HttpErrorResponse) => this.handleHttpError(error))
         );
@@ -32,7 +32,20 @@ export class ApiRequestService {
                     status: response.status,
                     errors: response.body?.errors ?? {}
                 },
-                response.body?.data ?? ""
+                response.body
+            )),
+            catchError((error: HttpErrorResponse) => this.handleHttpError(error))
+        );
+    }
+
+    deleteRequest(query: string, params?: { [key: string]: string }): Observable<RequestResponseModel> {
+        return this.http.delete<RequestResponseModel>(query, { params, observe: 'response' }).pipe(
+            map(response => new RequestResponseModel(
+                {
+                    status: response.status,
+                    errors: response.body?.errors ?? {}
+                },
+                response.body
             )),
             catchError((error: HttpErrorResponse) => this.handleHttpError(error))
         );
@@ -42,7 +55,6 @@ export class ApiRequestService {
         let formattedErrors: { [key: string]: string } = {};
 
         if (error.error?.errors) {
-            // Convert error array messages into a single string per field
             try {
                 Object.keys(error.error.errors).forEach(key => {
                     formattedErrors[key] = error.error.errors[key].join(", ");
@@ -59,7 +71,7 @@ export class ApiRequestService {
                 status: error.status || 500,
                 errors: formattedErrors
             },
-            ""
+            {}
         ));
 
     }
