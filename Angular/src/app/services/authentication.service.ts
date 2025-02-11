@@ -87,6 +87,7 @@ export class AuthService {
                 console.log('Logout response:', response);
                 if (response.status === 200) {
                     this.setCurrentUser(null);
+                    this.messageService.add({ severity: 'success', summary: 'Logout', detail: 'You logged out successfully!' });
                 }
                 return response;
             })
