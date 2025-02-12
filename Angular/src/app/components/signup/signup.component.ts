@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Router, RouterModule } from '@angular/router';
 import { UserCredentialsModel } from '../../models/user-credentials.model';
 import { AuthService } from '../../services/authentication.service';
@@ -24,7 +25,8 @@ import { DividerModule } from 'primeng/divider';
     ButtonModule,
     CardModule,
     MessageModule,
-    PasswordModule
+    PasswordModule,
+    TranslatePipe
   ],
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.css']
