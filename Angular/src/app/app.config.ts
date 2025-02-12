@@ -1,6 +1,9 @@
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient } from "@angular/common/http";
+import { provideTranslateService, TranslateLoader } from "@ngx-translate/core"
+import { HttpClient } from '@angular/common/http';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
 // PrimeNG imports
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
@@ -17,6 +20,9 @@ import { FilterMatchMode } from 'primeng/api';
 
 import { routes } from './app.routes';
 import MyPreset from '../customPreset';
+
+const httpLoaderFactory: (http: HttpClient) => TranslateHttpLoader = (http: HttpClient) =>
+  new TranslateHttpLoader(http, '/i18n/', '.json');
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -46,5 +52,12 @@ export const appConfig: ApplicationConfig = {
       }
     }),
     MessageService,
+    provideTranslateService({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: httpLoaderFactory,
+        deps: [HttpClient]
+      }
+    })
   ]
 };

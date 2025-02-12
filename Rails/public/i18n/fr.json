@@ -1,0 +1,12 @@
+{
+    "login" : {
+        "title" : "Connexion",
+        "username" : "Nom d'utilisateur",
+        "password" : "Mot de passe",
+        "login" : "Connexion",
+        "not_registered" : "Pas encore inscrit ?",
+        "register" : "Inscription",
+        "username_required" : "Le nom d'utilisateur est requis",
+        "password_required" : "Le mot de passe est requis"
+    }
+}

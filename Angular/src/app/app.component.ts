@@ -5,6 +5,14 @@ import { BadgeModule } from 'primeng/badge';
 import { CommonModule } from '@angular/common';
 import { AuthService } from './services/authentication.service';
 
+import {
+  TranslateService,
+  TranslatePipe,
+  TranslateDirective
+} from "@ngx-translate/core";
+import translationFR from '../../public/i18n/fr.json';
+import translationEn from '../../public/i18n/en.json';
+
 import { PrimeNG } from 'primeng/config';
 import { Menu } from 'primeng/menu';
 import { MenuItem } from 'primeng/api';
@@ -20,7 +28,7 @@ import { AvatarModule } from 'primeng/avatar';
   selector: 'app-root',
   imports: [
     RouterOutlet, Menubar, MenubarModule, ButtonModule,
-    ToastModule, BadgeModule, CommonModule, InputTextModule, Ripple, AvatarModule, Menu
+    ToastModule, BadgeModule, CommonModule, InputTextModule, Ripple, AvatarModule, Menu, TranslatePipe, TranslateDirective
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
@@ -32,8 +40,17 @@ export class AppComponent implements OnInit {
 
   constructor(
     private primeng: PrimeNG,
-    private messageService: MessageService
-  ) { }
+    private messageService: MessageService,
+    private translate: TranslateService
+  ) 
+  {
+    this.translate.addLangs(['en', 'fr']);
+    this.translate.setDefaultLang('fr');
+    this.translate.setTranslation('fr', translationFR);
+    this.translate.setTranslation('en', translationEn);
+
+    this.translate.use('fr');
+  }
 
   ngOnInit() {
     this.primeng.ripple.set(true);

@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
 
 import { AuthService } from '../../services/authentication.service';
 import { UserCredentialsModel } from '../../models/user-credentials.model';;
@@ -24,7 +25,8 @@ import { ToastModule } from 'primeng/toast';
     ButtonModule,
     CardModule,
     MessageModule,
-    ToastModule
+    ToastModule,
+    TranslatePipe
   ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
