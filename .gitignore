@@ -67,3 +67,5 @@ yarn-debug.log*
 /storage/*
 !/storage/.keep
 /public/uploads
+Rails/config/credentials/production.yml.enc
+Rails/config/credentials.yml.enc

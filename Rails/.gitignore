@@ -31,3 +31,8 @@
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
+/vendor/bundle
+
+/config/credentials/prodcution.key
+
+/config/credentials/production.key
