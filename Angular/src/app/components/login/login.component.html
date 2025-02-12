@@ -3,9 +3,11 @@
         <h2 class="app-title">{{ 'login.title' | translate }}</h2>
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
 
-            <div *ngIf="!success" style="margin-bottom: 20px;">
+            <div *ngIf="hasErrors()" class="error-message">
                 <p-message severity="error">
-                    <p>Wrong username or password entered. Try again.</p>
+                    <div *ngFor="let error of errors | keyvalue">
+                        <p>{{error.value}}</p>
+                    </div>
                 </p-message>
             </div>
 
