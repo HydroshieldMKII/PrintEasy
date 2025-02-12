@@ -32,7 +32,7 @@ import { ToastModule } from 'primeng/toast';
 export class LoginComponent {
   private readonly auth = inject(AuthService)
   router: Router = inject(Router);
-  success: boolean = true || null;
+  errors: any = {};
   loginForm: FormGroup;
   credentials: UserCredentialsModel | null = null;
 
@@ -52,9 +52,13 @@ export class LoginComponent {
         if (response.status === 200) {
           this.router.navigate(['/']);
         } else {
-          this.success = false;
+          this.errors = response.errors;
         }
       });
     }
+  }
+
+  hasErrors() {
+    return Object.keys(this.errors).length > 0;
   }
 }
