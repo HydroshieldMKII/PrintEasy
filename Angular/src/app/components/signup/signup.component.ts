@@ -78,8 +78,7 @@ export class SignupComponent {
   onSubmit() {
     if (this.signupForm.valid) {
       // console.log('Signing up with:', this.signupForm.value);
-      const countryId = this.countries.find(country => country.name === this.signupForm.value.country)?.countryId;
-      this.credentials = new UserCredentialsModel(this.signupForm.value.username, this.signupForm.value.password, this.signupForm.value.confirmPassword, countryId);
+      this.credentials = new UserCredentialsModel(this.signupForm.value.username, this.signupForm.value.password, this.signupForm.value.confirmPassword, this.signupForm.value.country.countryId);
 
       this.auth.signUp(this.credentials).subscribe((response) => {
         // console.log('Signup response:', response);
