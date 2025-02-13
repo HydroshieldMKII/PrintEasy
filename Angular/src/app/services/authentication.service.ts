@@ -71,9 +71,11 @@ export class AuthService {
             user: {
                 username: providedCredentials.username,
                 password: providedCredentials.password,
-                password_confirmation: providedCredentials.confirmPassword
+                password_confirmation: providedCredentials.confirmPassword,
+                country_id: providedCredentials.countryId
             }
         };
+        console.log('Credentials:', credentials);
         return this.api.postRequest('users', {}, credentials).pipe(
             map(response => {
                 // console.log('Sign up response:', response);
