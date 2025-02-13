@@ -42,21 +42,21 @@ export class SignupComponent {
   signupForm: FormGroup;
   errors: any = {};
   countries: any[] = [
-    { name: 'United States', code: 'US' },
-    { name: 'Canada', code: 'CA' },
-    { name: 'France', code: 'FR' },
-    { name: 'Germany', code: 'DE' },
-    { name: 'Italy', code: 'IT' },
-    { name: 'Spain', code: 'ES' },
-    { name: 'United Kingdom', code: 'GB' },
-    { name: 'Australia', code: 'AU' },
-    { name: 'Brazil', code: 'BR' },
-    { name: 'China', code: 'CN' },
-    { name: 'India', code: 'IN' },
-    { name: 'Japan', code: 'JP' },
-    { name: 'Mexico', code: 'MX' },
-    { name: 'Russia', code: 'RU' },
-    { name: 'South Africa', code: 'ZA' }
+    { name: 'United States', countryId: 1 },
+    { name: 'Canada', countryId: 2 },
+    { name: 'France', countryId: 3 },
+    { name: 'Germany', countryId: 4 },
+    { name: 'Italy', countryId: 5 },
+    { name: 'Spain', countryId: 6 },
+    { name: 'United Kingdom', countryId: 7 },
+    { name: 'Australia', countryId: 8 },
+    { name: 'Brazil', countryId: 9 },
+    { name: 'China', countryId: 10 },
+    { name: 'India', countryId: 11 },
+    { name: 'Japan', countryId: 12 },
+    { name: 'Mexico', countryId: 13 },
+    { name: 'Russia', countryId: 14 },
+    { name: 'South Africa', countryId: 15 }
   ]
   selectedCountry: string = '';
 
@@ -77,11 +77,11 @@ export class SignupComponent {
 
   onSubmit() {
     if (this.signupForm.valid) {
-      console.log('Signing up with:', this.signupForm.value);
+      // console.log('Signing up with:', this.signupForm.value);
 
       this.credentials = new UserCredentialsModel(this.signupForm.value.username, this.signupForm.value.password, this.signupForm.value.confirmPassword);
       this.auth.signUp(this.credentials).subscribe((response) => {
-        console.log('Signup response:', response);
+        // console.log('Signup response:', response);
         if (response.status === 200) {
           this.router.navigate(['/']);
         } else {

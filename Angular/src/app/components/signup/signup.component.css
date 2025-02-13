@@ -1,3 +1,9 @@
+/* disable scroll on the page */
+
+body {
+    overflow: hidden;
+}
+
 .signup-container {
     display: flex;
     justify-content: center;
@@ -8,7 +14,6 @@
 
 .signup-card {
     width: 400px;
-    padding: 20px;
     text-align: center;
 }
 
