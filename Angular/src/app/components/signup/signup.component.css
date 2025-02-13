@@ -7,9 +7,13 @@
 }
 
 .signup-card {
-    width: 350px;
+    width: 400px;
     padding: 20px;
     text-align: center;
+}
+
+p-select {
+    width: 100%;
 }
 
 :host {

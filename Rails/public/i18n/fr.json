@@ -21,6 +21,9 @@
         "password_required": "Le mot de passe est requis",
         "confirm_password_required": "La confirmation de mot de passe est requise",
         "password_mismatch": "Les mots de passe ne correspondent pas",
-        "password_minlength": "Le mot de passe doit contenir au moins 6 caractères"
+        "password_minlength": "Le mot de passe doit contenir au moins 6 caractères",
+        "select_country": "Sélectionnez un pays",
+        "country": "Pays",
+        "country_required": "Le pays est requis"
     }
 }
