@@ -7,6 +7,7 @@ class User < ApplicationRecord
          
   validates :username, presence: true, uniqueness: true
   validates :password_confirmation, presence: true
+  validates :country_id, presence: true
 
   def email_required?
     false
