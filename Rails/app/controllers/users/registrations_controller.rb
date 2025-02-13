@@ -6,7 +6,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # POST /resource
   def create
     build_resource(sign_up_params)
-
+    
     if resource.save
       handle_successful_signup(resource)
     else
@@ -34,7 +34,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   def sign_up_params
     begin
-      params.require(:user).permit(:username, :password, :password_confirmation)
+      params.require(:user).permit(:username, :password, :password_confirmation, :country_id)
     rescue ActionController::ParameterMissing => e
       render json: { errors: { user: [e.message] } }, status: :unprocessable_entity
     end
