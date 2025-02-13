@@ -41,8 +41,8 @@ export class SignupComponent {
   constructor(private fb: FormBuilder) {
     this.signupForm = this.fb.group({
       username: ['', Validators.required],
-      password: ['', Validators.required],
-      confirmPassword: ['', Validators.required]
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: ['', [Validators.required, Validators.minLength(6)]]
     }, { validator: this.passwordsMatch });
   }
 
@@ -62,7 +62,27 @@ export class SignupComponent {
         if (response.status === 200) {
           this.router.navigate(['/']);
         } else {
-          this.errors = response.errors;
+          console.error('Signup errors:', response.errors);
+          const currentLanguage = localStorage.getItem('language');
+          switch (currentLanguage) {
+            case 'en':
+              if (response.errors['username']) {
+                this.errors = { username: 'Username already taken' };
+              } else if (response.errors['password']) {
+                this.errors = { password: 'Password must be at least 6 characters' };
+              }
+              break;
+            case 'fr':
+              if (response.errors['username']) {
+                this.errors = { username: 'Nom d\'utilisateur déjà pris' };
+              } else if (response.errors['password']) {
+                this.errors = { password: 'Le mot de passe doit contenir au moins 6 caractères' };
+              }
+              break;
+            default:
+              this.errors = { general: 'An unexpected error occured' };
+              break;
+          }
         }
       });
 

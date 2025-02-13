@@ -1,25 +1,26 @@
 {
-    "login" : {
-        "title" : "Connexion",
-        "username" : "Nom d'utilisateur",
-        "password" : "Mot de passe",
-        "login" : "Connexion",
-        "not_registered" : "Pas encore inscrit ?",
-        "register" : "Inscription",
-        "username_required" : "Le nom d'utilisateur est requis",
-        "password_required" : "Le mot de passe est requis"
+    "login": {
+        "title": "Connexion",
+        "username": "Nom d'utilisateur",
+        "password": "Mot de passe",
+        "login": "Connexion",
+        "not_registered": "Pas encore inscrit ?",
+        "register": "Inscription",
+        "username_required": "Le nom d'utilisateur est requis",
+        "password_required": "Le mot de passe est requis"
     },
-    "signup" : {
-        "title" : "Inscription",
-        "username" : "Nom d'utilisateur",
-        "password" : "Mot de passe",
-        "confirm_password" : "Confirmer le mot de passe",
-        "signup" : "Créer un compte",
-        "already_registered" : "Déjà inscrit ?",
-        "login" : "Connexion",
-        "username_required" : "Le nom d'utilisateur est requis",
-        "password_required" : "Le mot de passe est requis",
-        "confirm_password_required" : "La confirmation de mot de passe est requise",
-        "password_mismatch" : "Les mots de passe ne correspondent pas"
+    "signup": {
+        "title": "Inscription",
+        "username": "Nom d'utilisateur",
+        "password": "Mot de passe",
+        "confirm_password": "Confirmer le mot de passe",
+        "signup": "Créer un compte",
+        "already_registered": "Déjà inscrit ?",
+        "login": "Connexion",
+        "username_required": "Le nom d'utilisateur est requis",
+        "password_required": "Le mot de passe est requis",
+        "confirm_password_required": "La confirmation de mot de passe est requise",
+        "password_mismatch": "Les mots de passe ne correspondent pas",
+        "password_minlength": "Le mot de passe doit contenir au moins 6 caractères"
     }
 }

@@ -3,10 +3,10 @@
         <h2 class="app-title">{{ 'signup.title' | translate }}</h2>
         <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
 
-            <div *ngIf="hasErrors()">
+            <div *ngIf="hasErrors()" class="error-message">
                 <p-message severity="error">
                     <div *ngFor="let error of errors | keyvalue">
-                        <p>{{error.key}} {{error.value}}</p>
+                        <p>{{error.value}}</p>
                     </div>
                 </p-message>
             </div>
@@ -16,7 +16,8 @@
                 <input type="text" pInputText id="username" formControlName="username" class="input-field" />
                 <p-message
                     *ngIf="signupForm.get('username')?.invalid && (signupForm.get('username')?.dirty || signupForm.get('username')?.touched)"
-                    severity="error" variant="simple" size="small">{{ 'signup.username_required' | translate }}</p-message>
+                    severity="error" variant="simple" size="small">{{ 'signup.username_required' | translate
+                    }}</p-message>
             </div>
 
             <div class="input-group flex flex-col gap-1">
@@ -26,8 +27,13 @@
                     [inputStyle]="{'width':'100%'}" [toggleMask]="true">
                 </p-password>
                 <p-message
-                    *ngIf="signupForm.get('password')?.invalid && (signupForm.get('password')?.dirty || signupForm.get('password')?.touched)"
-                    severity="error" variant="simple" size="small">{{ 'signup.password_required' | translate }}</p-message>
+                    *ngIf="signupForm.get('password')?.errors?.['required'] && (signupForm.get('password')?.dirty || signupForm.get('password')?.touched)"
+                    severity="error" variant="simple" size="small">{{ 'signup.password_required' | translate
+                    }}</p-message>
+                <p-message
+                    *ngIf="signupForm.get('password')?.errors?.['minlength'] && (signupForm.get('password')?.dirty || signupForm.get('password')?.touched)"
+                    severity="error" variant="simple" size="small">{{ 'signup.password_minlength' | translate
+                    }}</p-message>
             </div>
 
 
@@ -38,17 +44,19 @@
                     [inputStyle]="{'width':'100%'}" [toggleMask]="true">
                 </p-password>
                 <p-message
-                    *ngIf="signupForm.errors?.['mismatch'] && (signupForm.get('confirmPassword')?.dirty || signupForm.get('confirmPassword')?.touched)"
-                    severity="error" variant="simple" size="small">{{ 'signup.password_mismatch' | translate }}</p-message>
-
+                    *ngIf="signupForm.get('confirmPassword')?.errors?.['required'] && (signupForm.get('confirmPassword')?.dirty || signupForm.get('confirmPassword')?.touched)"
+                    severity="error" variant="simple" size="small">{{ 'signup.confirm_password_required' | translate
+                    }}</p-message>
                 <p-message
-                    *ngIf="signupForm.get('confirmPassword')?.invalid && (signupForm.get('confirmPassword')?.dirty || signupForm.get('confirmPassword')?.touched)"
-                    severity="error" variant="simple" size="small">{{ 'signup.confirm_password_required' | translate }}</p-message>
+                    *ngIf="signupForm.errors?.['mismatch'] && signupForm.get('confirmPassword')?.value && (signupForm.get('confirmPassword')?.dirty || signupForm.get('confirmPassword')?.touched)"
+                    severity="error" variant="simple" size="small">{{ 'signup.password_mismatch' | translate
+                    }}</p-message>
             </div>
 
-            <p-button type="submit" [disabled]="signupForm.invalid"
-                severity="success">{{ 'signup.signup' | translate }}</p-button>
-            <p class="signin-option">{{ 'signup.already_registered' | translate }} <a routerLink="/login" class="clickable">{{ 'signup.login' | translate }}</a>
+            <p-button type="submit" [disabled]="signupForm.invalid" severity="success">{{ 'signup.signup' | translate
+                }}</p-button>
+            <p class="signin-option">{{ 'signup.already_registered' | translate }} <a routerLink="/login"
+                    class="clickable">{{ 'signup.login' | translate }}</a>
             </p>
         </form>
     </p-card>

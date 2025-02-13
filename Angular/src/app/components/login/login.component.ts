@@ -51,10 +51,28 @@ export class LoginComponent {
       this.credentials = new UserCredentialsModel(this.loginForm.value.username, this.loginForm.value.password);
 
       this.auth.logIn(this.credentials).subscribe((response) => {
+        console.log('Login response:', response);
         if (response.status === 200) {
           this.router.navigate(['/']);
         } else {
-          this.errors = response.errors;
+          const currentLanguage = localStorage.getItem('language');
+
+          switch (currentLanguage) {
+            case 'en':
+              if (response.errors['connection']) {
+                this.errors = { connection: 'Invalid username or password' };
+              }
+              break;
+            case 'fr':
+              if (response.errors['connection']) {
+                this.errors = { connection: 'Nom d\'utilisateur ou mot de passe invalide' };
+              }
+              break;
+            default:
+              this.errors = { general: 'An unexpected error occured' };
+              break;
+          }
+
         }
       });
     }

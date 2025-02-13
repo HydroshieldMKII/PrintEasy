@@ -42,14 +42,14 @@ export class AppComponent implements OnInit {
     private primeng: PrimeNG,
     private messageService: MessageService,
     private translate: TranslateService
-  ) 
-  {
+  ) {
     this.translate.addLangs(['en', 'fr']);
     this.translate.setDefaultLang('fr');
     this.translate.setTranslation('fr', translationFR);
     this.translate.setTranslation('en', translationEn);
 
     this.translate.use('fr');
+    localStorage.setItem('language', 'fr');
   }
 
   ngOnInit() {
@@ -87,8 +87,6 @@ export class AppComponent implements OnInit {
   }
 
   logout() {
-    // this.messageService.add({ severity: 'success', summary: 'Logout', detail: 'You logged out successfully!' });
-
     if (!this.auth.isLoggedIn) {
       return;
     }
