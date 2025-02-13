@@ -28,7 +28,8 @@ import { AvatarModule } from 'primeng/avatar';
   selector: 'app-root',
   imports: [
     RouterOutlet, Menubar, MenubarModule, ButtonModule,
-    ToastModule, BadgeModule, CommonModule, InputTextModule, Ripple, AvatarModule, Menu, TranslatePipe, TranslateDirective
+    ToastModule, BadgeModule, CommonModule, InputTextModule,
+    Ripple, AvatarModule, Menu, TranslatePipe, TranslateDirective
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
