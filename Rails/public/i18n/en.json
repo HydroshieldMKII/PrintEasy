@@ -21,6 +21,9 @@
         "password_required": "Password is required",
         "confirm_password_required": "Confirm Password is required",
         "password_mismatch": "Passwords do not match",
-        "password_minlength": "Password must be at least 6 characters long"
+        "password_minlength": "Password must be at least 6 characters long",
+        "select_country": "Select a country",
+        "country": "Pays",
+        "country_required": "Country is required"
     }
 }

@@ -53,6 +53,12 @@
                     }}</p-message>
             </div>
 
+            <div class="input-group flex flex-col gap-1" style="width: 100%;">
+                <label for="country">{{ 'signup.country' | translate }}</label>
+                <p-select [options]="countries" formControlName="country" optionLabel="name" [showClear]="false"
+                    placeholder="{{ 'signup.select_country' | translate }}" class="w-full" />
+            </div>
+
             <p-button type="submit" [disabled]="signupForm.invalid" severity="success">{{ 'signup.signup' | translate
                 }}</p-button>
             <p class="signin-option">{{ 'signup.already_registered' | translate }} <a routerLink="/login"

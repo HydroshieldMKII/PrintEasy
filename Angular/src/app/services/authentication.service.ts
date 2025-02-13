@@ -54,7 +54,7 @@ export class AuthService {
         return this.api.postRequest('users/sign_in', {}, credentials).pipe(
             map(response => {
                 if (response.status === 200) {
-                    console.log('Login response:', response);
+                    // console.log('Login response:', response);
                     if (!this.isLoggedIn) {
                         this.messageService.add({ severity: 'success', summary: 'Login success', detail: 'You are logged in!' });
                         this.setCurrentUser(new UserModel((response.data as any)?.['user']?.['username']));
@@ -76,7 +76,7 @@ export class AuthService {
         };
         return this.api.postRequest('users', {}, credentials).pipe(
             map(response => {
-                console.log('Sign up response:', response);
+                // console.log('Sign up response:', response);
                 if (response.status === 200) {
                     this.messageService.add({ severity: 'success', summary: 'Account created', detail: 'You are now ready to use the app!' });
                     this.setCurrentUser(new UserModel((response.data as any)?.['user']?.['username']));
@@ -89,7 +89,7 @@ export class AuthService {
     logOut() {
         return this.api.deleteRequest('users/sign_out', {}).pipe(
             map(response => {
-                console.log('Logout response:', response);
+                // console.log('Logout response:', response);
                 if (response.status === 200) {
                     this.setCurrentUser(null);
                     this.messageService.add({ severity: 'success', summary: 'Logout', detail: 'You logged out successfully!' });

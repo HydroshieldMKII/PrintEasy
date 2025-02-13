@@ -47,11 +47,11 @@ export class LoginComponent {
 
   onSubmit() {
     if (this.loginForm.valid) {
-      console.log('Logging in with:', this.loginForm.value);
+      // console.log('Logging in with:', this.loginForm.value);
       this.credentials = new UserCredentialsModel(this.loginForm.value.username, this.loginForm.value.password);
 
       this.auth.logIn(this.credentials).subscribe((response) => {
-        console.log('Login response:', response);
+        // console.log('Login response:', response);
         if (response.status === 200) {
           this.router.navigate(['/']);
         } else {
