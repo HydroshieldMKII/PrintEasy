@@ -7,13 +7,15 @@
 one: {
   id: 1,
   username: 'James Bond',
-  encrypted_password: <%= Devise::Encryptor.digest(User, 'password') %>
+  encrypted_password: <%= Devise::Encryptor.digest(User, 'password') %>,
+  country_id: 1
 }
 # column: value
 #
 two: {
   id: 2,
   username: 'John Doe',
-  encrypted_password: <%= Devise::Encryptor.digest(User, 'password') %>
+  encrypted_password: <%= Devise::Encryptor.digest(User, 'password') %>,
+  country_id: 2
 }
 # column: value
