@@ -86,19 +86,19 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_14_173559) do
     t.index ["request_id"], name: "index_offers_on_request_id"
   end
 
-  create_table "order_statuses", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+  create_table "order_status", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.bigint "order_id", null: false
     t.bigint "status_id", null: false
     t.string "comment"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["order_id"], name: "index_order_statuses_on_order_id"
-    t.index ["status_id"], name: "index_order_statuses_on_status_id"
+    t.index ["order_id"], name: "index_order_status_on_order_id"
+    t.index ["status_id"], name: "index_order_status_on_status_id"
   end
 
   create_table "orders", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
-    t.bigint "offers_id", null: false
-    t.index ["offers_id"], name: "index_orders_on_offers_id", unique: true
+    t.bigint "offer_id", null: false
+    t.index ["offer_id"], name: "index_orders_on_offer_id", unique: true
   end
 
   create_table "preset_requests", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
@@ -192,9 +192,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_14_173559) do
   add_foreign_key "offers", "filaments"
   add_foreign_key "offers", "printer_users"
   add_foreign_key "offers", "requests"
-  add_foreign_key "order_statuses", "orders"
-  add_foreign_key "order_statuses", "status"
-  add_foreign_key "orders", "offers", column: "offers_id"
+  add_foreign_key "order_status", "orders"
+  add_foreign_key "order_status", "status"
+  add_foreign_key "orders", "offers"
   add_foreign_key "preset_requests", "colors"
   add_foreign_key "preset_requests", "filaments"
   add_foreign_key "preset_requests", "requests"

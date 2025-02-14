@@ -195,7 +195,7 @@ status_cancelled = Status.create!(name: "Cancelled")
 
 OrderStatus.create!(order: order2, status: status_arrived, comment: "Order successfully delivered.")
 orderstatus1 = OrderStatus.create!(order: order1, status: status_accepted, comment: "offer accepted, printing soon.")
-orderstatus1.images.attach(
+orderstatus1.image.attach(
   io: File.open(Rails.root.join("db/seeds/files/ruby.jpg")),
   filename: "ruby.jpg",
   content_type: "image/jpg"
