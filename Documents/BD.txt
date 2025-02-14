@@ -27,13 +27,16 @@ Like
         [submission_id] : NN, Unique(user_id)
 
 Contest
+    Relations
+        Valider qu'il est impossible de supprimer des submission quand le contest est fini ou "supprimer"
     Validations
         [theme] : NN, nbChar >= 5 && nbChar <= 30
         [description] : nbChar >= 5 && <= 200
-        [submissionLimit] : NN, >= 1, verif integer
+        [submissionLimit] : NN, >= 1 && <= 30, verif integer
         [deleted_at] : verif datetime
         [start_at] : verif datetime
-        [end_at] : end_at > start_at, verif datetime
+        [end_at] : end_at > start_at + 1 day, verif datetime
+        [Attachment] 1 image
     Prevent Delete -> update deleted_at
 
 PrinterUser
