@@ -9,5 +9,5 @@ class Request < ApplicationRecord
   validates :comment, length: { in: 5..200 }
   validates :target_date, presence: true, comparison: { greater_than: Date.today }
 
-  has_one_attached :stl_file, format: { with: /\A.*\.stl\z/ }
+  has_one_attached :stl_file
 end

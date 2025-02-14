@@ -8,6 +8,7 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
+puts "🌱 Seeding database..."
 # Create countries
 [
     { name: 'United States', id: 1 },
@@ -26,7 +27,7 @@
     { name: 'Russia', id: 14 },
     { name: 'South Africa', id: 15 }
 ].each do |country|
-    Country.create(id: country[:id], name: country[:name])
+    Country.create!(name: country[:name], )
 end
 
 # Create Users
@@ -41,14 +42,8 @@ admin = User.create!(
 user1 = User.create!(
   username: "aaa",
   password: "aaaaaa",
+  password_confirmation: "aaaaaa",
   country_id: 2,
-  is_admin: false
-)
-
-user2 = User.create!(
-  username: "jane_doe",
-  password: "anotherpass",
-  country_id: 3,
   is_admin: false
 )
 
@@ -57,20 +52,21 @@ printer1 = Printer.create!(model: "Creality Ender 3")
 printer2 = Printer.create!(model: "Prusa i3 MK3S+")
 
 # Assign Printers to Users
-PrinterUser.create!(user: user1, printer: printer1, usage_count: 0)
-PrinterUser.create!(user: user2, printer: printer2, usage_count: 0)
+PrinterUser.create!(user: admin, printer: printer1, acquired_date: Time.now)
+PrinterUser.create!(user: user1, printer: printer2, acquired_date: Time.now - 1.year)
 
 # Create Colors
-color_red = Color.create!(color: "Red")
-color_blue = Color.create!(color: "Blue")
+color_red = Color.create!(name: "Red")
+color_blue = Color.create!(name: "Blue")
 
 # Create Filaments
-filament_pla = Filament.create!(type: "PLA", size: 1.75)
-filament_abs = Filament.create!(type: "ABS", size: 1.75)
+filament_pla = Filament.create!(name: "PLA", size: 1.75)
+filament_abs = Filament.create!(name: "ABS", size: 2.85)
 
 # Create Presets
-preset1 = Preset.create!(color: color_red, filament: filament_pla, user: user1)
-preset2 = Preset.create!(color: color_blue, filament: filament_abs, user: user2)
+preset1 = Preset.create!(color: color_red, filament: filament_pla, user: admin)
+preset2 = Preset.create!(color: color_blue, filament: filament_abs, user: user1)
+preset3 = Preset.create!(color: color_red, filament: filament_abs, user: user1)
 
 # Create Contests
 contest1 = Contest.create!(
@@ -85,24 +81,24 @@ contest1 = Contest.create!(
 submission1 = Submission.create!(
   name: "3D Dragon",
   description: "A detailed dragon model.",
-  user: user1,
+  user: admin,
   contest: contest1
 )
 
 submission2 = Submission.create!(
   name: "Space Shuttle",
   description: "NASA space shuttle model.",
-  user: user2,
+  user: user1,
   contest: contest1
 )
 
 # Likes for Submissions
-Like.create!(user: user1, submission: submission2)
-Like.create!(user: user2, submission: submission1)
+Like.create!(user: admin, submission: submission2)
+Like.create!(user: user1, submission: submission1)
 
 # Create Requests
 request1 = Request.create!(
-  user: user1,
+  user: admin,
   name: "Custom Chess Set",
   budget: 50.0,
   comment: "Need a high-quality chess set with intricate pieces.",
@@ -110,7 +106,7 @@ request1 = Request.create!(
 )
 
 request2 = Request.create!(
-  user: user2,
+  user: user1,
   name: "Prototype Case",
   budget: 100.0,
   comment: "Looking for a durable case prototype.",
@@ -141,13 +137,13 @@ offer2 = Offer.create!(
 )
 
 # Create Orders
-order1 = Order.create!(offer: offer1, printer: user1, client: user2)
-order2 = Order.create!(offer: offer2, printer: user2, client: user1)
+order1 = Order.create!(offer: offer1, printer: user1, client: admin)
+order2 = Order.create!(offer: offer2, printer: admin, client: user1)
 
 # Create Reviews
 Review.create!(
   order: order1,
-  user: user2,
+  user: admin,
   title: "Amazing Print Quality!",
   description: "The chess set was perfect. Clean finish and strong material.",
   rating: 5
@@ -169,3 +165,5 @@ OrderStatus.create!(order: order1, status: status_pending, comment: "Waiting for
 OrderStatus.create!(order: order2, status: status_completed, comment: "Order successfully delivered")
 
 puts "✅ Seeding complete!"
+
+# rails db:drop; rails db:create; rails db:migrate; rails db:seed
