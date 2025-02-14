@@ -153,33 +153,35 @@ offer2 = Offer.create!(
   target_date: Time.now + 14.days
 )
 
-# # Create Orders
-# order1 = Order.create!(offer: offer1, printer: user1, client: admin)
-# order2 = Order.create!(offer: offer2, printer: admin, client: user1)
+# Create Orders
+order1 = Order.create!(offer: offer1)
+order2 = Order.create!(offer: offer2)
 
-# # Create Reviews
-# Review.create!(
-#   order: order1,
-#   user: admin,
-#   title: "Amazing Print Quality!",
-#   description: "The chess set was perfect. Clean finish and strong material.",
-#   rating: 5
-# )
+Review.create!(
+  order: order2,
+  user: user1,
+  title: "Durable and Precise",
+  description: "Prototype case fit perfectly, highly recommend!",
+  rating: 4
+)
 
-# Review.create!(
-#   order: order2,
-#   user: user1,
-#   title: "Durable and Precise",
-#   description: "Prototype case fit perfectly, highly recommend!",
-#   rating: 4
-# )
+# Create Order Statuses
+status_accepted = Status.create!(name: "Accepted")
+status_printing = Status.create!(name: "Printing")
+status_printed = Status.create!(name: "Printed")
+status_shipped = Status.create!(name: "Shipped")
+status_arrived = Status.create!(name: "Arrived")
+status_cancelled = Status.create!(name: "Cancelled")
 
-# # Create Order Statuses
-# status_pending = Status.create!(name: "Pending")
-# status_completed = Status.create!(name: "Completed")
+OrderStatus.create!(order: order2, status: status_arrived, comment: "Order successfully delivered.")
+orderstatus1 = OrderStatus.create!(order: order1, status: status_accepted, comment: "offer accepted, printing soon.")
+orderstatus1.images.attach(
+  io: File.open(Rails.root.join("db/seeds/files/ruby.jpg")),
+  filename: "ruby.jpg",
+  content_type: "image/jpg"
+)
+orderstatus1.save
 
-# OrderStatus.create!(order: order1, status: status_pending, comment: "Waiting for approval")
-# OrderStatus.create!(order: order2, status: status_completed, comment: "Order successfully delivered")
 
 puts "✅ Seeding complete!"
 
