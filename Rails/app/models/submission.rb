@@ -6,7 +6,7 @@ class Submission < ApplicationRecord
 
   validates :name, presence: true, length: { maximum: 30 }
   validates :description, length: { maximum: 200 }
-  validate :files_presence
+  validate :files_presence_and_format
 
   private
 
