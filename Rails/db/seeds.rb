@@ -96,8 +96,10 @@ submission2 = Submission.create!(
 Like.create!(user: admin, submission: submission2)
 Like.create!(user: user1, submission: submission1)
 
+stl_file_path1 = Rails.root.join("db/seeds/files/RUBY13.stl")
+
 # Create Requests
-request1 = Request.create!(
+request1 = Request.create(
   user: admin,
   name: "Custom Chess Set",
   budget: 50.0,
@@ -105,13 +107,28 @@ request1 = Request.create!(
   target_date: Time.now + 10.days
 )
 
-request2 = Request.create!(
+request1.stl_file.attach(
+    io: File.open(stl_file_path1),
+    filename: "RUBY13.stl",
+    content_type: "application/sla"
+  )
+  request1.save
+
+request2 = Request.create(
   user: user1,
   name: "Prototype Case",
   budget: 100.0,
   comment: "Looking for a durable case prototype.",
   target_date: Time.now + 15.days
 )
+
+request2.stl_file.attach(
+    io: File.open(stl_file_path1),
+    filename: "RUBY13.stl",
+    content_type: "application/sla"
+  )
+  request2.save
+
 
 # Create Preset Requests
 PresetRequest.create!(request_id: request1.id, color_id: color_red.id, filament_id: filament_pla.id)
