@@ -10,27 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_02_14_165114) do
-  create_table "colors", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
-    t.string "name", limit: 30, null: false
-  end
-
+ActiveRecord::Schema[7.1].define(version: 2025_02_14_162254) do
   create_table "countries", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "filaments", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
-    t.string "type", limit: 60, null: false
-    t.float "size", null: false
+  create_table "printer_users", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+    t.bigint "printer_id", null: false
+    t.bigint "user_id", null: false
+    t.date "acquired_date", null: false
+    t.index ["printer_id"], name: "index_printer_users_on_printer_id"
+    t.index ["user_id"], name: "index_printer_users_on_user_id"
   end
 
-  create_table "preset_requests", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
-    t.bigint "color_id", null: false
-    t.bigint "filament_id", null: false
-    t.index ["color_id"], name: "index_preset_requests_on_color_id"
-    t.index ["filament_id"], name: "index_preset_requests_on_filament_id"
+  create_table "printers", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+    t.string "model", null: false
   end
 
   create_table "users", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
@@ -42,12 +38,13 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_14_165114) do
     t.datetime "updated_at", null: false
     t.string "username"
     t.bigint "country_id", null: false
+    t.boolean "is_admin", default: false, null: false
     t.index ["country_id"], name: "index_users_on_country_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
-  add_foreign_key "preset_requests", "colors"
-  add_foreign_key "preset_requests", "filaments"
+  add_foreign_key "printer_users", "printers"
+  add_foreign_key "printer_users", "users"
   add_foreign_key "users", "countries"
 end

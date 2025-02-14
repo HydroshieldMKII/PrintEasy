@@ -27,13 +27,16 @@ Like
         [submission_id] : NN, Unique(user_id)
 
 Contest
+    Relations
+        Valider qu'il est impossible de supprimer des submission quand le contest est fini ou "supprimer"
     Validations
         [theme] : NN, nbChar >= 5 && nbChar <= 30
         [description] : nbChar >= 5 && <= 200
-        [submissionLimit] : NN, >= 1, verif integer
+        [submissionLimit] : NN, >= 1 && <= 30, verif integer
         [deleted_at] : verif datetime
         [start_at] : verif datetime
-        [end_at] : end_at > start_at, verif datetime
+        [end_at] : end_at > start_at + 1 day, verif datetime
+        [Attachment] 1 image
     Prevent Delete -> update deleted_at
 
 PrinterUser
@@ -56,7 +59,7 @@ Color
 Filament
     Validations
         [type] : NN
-        [size] : NN, > 0, verif integer
+        [size] : NN, > 0, verifier si float, verifier si 1.75 ou 2.85
 
 Preset
     Validations
@@ -80,7 +83,7 @@ Request
     Validations
         [user_id] : NN
         [name] : NN, nbChar >= 5 && <= 30
-        [budget] : >= 0, verif number
+        [budget] : >= 0 et >= 10000, verif number
         [comment] : nbChar >= 5 && <= 200
         [target_date] : NN, > current_date, verif date
         [Attachment] : stl format

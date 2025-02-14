@@ -9,13 +9,14 @@ class AuthControllerTest < ActionDispatch::IntegrationTest
 
   test "should sign up" do
     assert_difference('User.count', 1) do
-      post user_registration_path, params: { user: { username: "test", password: "password", password_confirmation: "password" } }
+      post user_registration_path, params: { user: { username: "test", password: "password", password_confirmation: "password", country_id: countries(:one).id } }
     end
 
     assert_response :success
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
+    assert_equal countries(:one).id, @parsed_response["user"]["country_id"]
     assert_equal "test", @parsed_response["user"]["username"]
   end
 
@@ -30,6 +31,7 @@ class AuthControllerTest < ActionDispatch::IntegrationTest
       @parsed_response = JSON.parse(response.body)
     end
     assert_equal users(:two).username, @parsed_response["user"]["username"]
+    assert_equal users(:two).country_id, @parsed_response["user"]["country_id"]
 
   end
 
@@ -59,7 +61,7 @@ class AuthControllerTest < ActionDispatch::IntegrationTest
 
   test "should not sign up -> no username" do
     assert_difference('User.count', 0) do
-      post user_registration_path, params: { user: { password: "password", password_confirmation: "password" } }
+      post user_registration_path, params: { user: { password: "password", password_confirmation: "password", country_id: countries(:one).id } }
     end
 
     assert_response :unprocessable_entity
@@ -71,7 +73,7 @@ class AuthControllerTest < ActionDispatch::IntegrationTest
 
   test "should not sign up -> no password" do
     assert_difference('User.count', 0) do
-      post user_registration_path, params: { user: { username: "test", password_confirmation: "password" } }
+      post user_registration_path, params: { user: { username: "test", password_confirmation: "password", country_id: countries(:one).id } }
     end
 
     assert_response :unprocessable_entity
@@ -83,7 +85,7 @@ class AuthControllerTest < ActionDispatch::IntegrationTest
 
   test "should not sign up -> no password confirmation" do
     assert_difference('User.count', 0) do
-      post user_registration_path, params: { user: { username: "test", password: "password" } }
+      post user_registration_path, params: { user: { username: "test", password: "password", country_id: countries(:one).id } }
     end
 
     assert_response :unprocessable_entity
@@ -91,6 +93,42 @@ class AuthControllerTest < ActionDispatch::IntegrationTest
       @parsed_response = JSON.parse(response.body)
     end
     assert_equal ["can't be blank"], @parsed_response["errors"]["password_confirmation"]
+  end
+
+  test "should not sign up -> no country" do
+    assert_difference('User.count', 0) do
+      post user_registration_path, params: { user: { username: "test", password: "password", password_confirmation: "password" } }
+    end
+
+    assert_response :unprocessable_entity
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+    assert_equal ["must exist"], @parsed_response["errors"]["country"]
+  end
+
+  test "should not sign up -> password too short" do
+    assert_difference('User.count', 0) do
+      post user_registration_path, params: { user: { username: "test", password: "pass", password_confirmation: "pass", country_id: countries(:one).id } }
+    end
+
+    assert_response :unprocessable_entity
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+    assert_equal ["is too short (minimum is 6 characters)"], @parsed_response["errors"]["password"]
+  end
+
+  test "should not sign up -> country does not exist" do
+    assert_difference('User.count', 0) do
+      post user_registration_path, params: { user: { username: "test", password: "password", password_confirmation: "password", country_id: 0 } }
+    end
+
+    assert_response :unprocessable_entity
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+    assert_equal ["must exist"], @parsed_response["errors"]["country"]
   end
 
   test "should not sign up -> password and password confirmation do not match" do
