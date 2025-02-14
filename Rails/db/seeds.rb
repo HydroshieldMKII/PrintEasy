@@ -28,3 +28,144 @@
 ].each do |country|
     Country.create(id: country[:id], name: country[:name])
 end
+
+# Create Users
+admin = User.create!(
+  username: "aaadmin",
+  password: "aaaaaa",
+  password_confirmation: "aaaaaa",
+  country_id: 1,
+  is_admin: true
+)
+
+user1 = User.create!(
+  username: "aaa",
+  password: "aaaaaa",
+  country_id: 2,
+  is_admin: false
+)
+
+user2 = User.create!(
+  username: "jane_doe",
+  password: "anotherpass",
+  country_id: 3,
+  is_admin: false
+)
+
+# Create Printers
+printer1 = Printer.create!(model: "Creality Ender 3")
+printer2 = Printer.create!(model: "Prusa i3 MK3S+")
+
+# Assign Printers to Users
+PrinterUser.create!(user: user1, printer: printer1, usage_count: 0)
+PrinterUser.create!(user: user2, printer: printer2, usage_count: 0)
+
+# Create Colors
+color_red = Color.create!(color: "Red")
+color_blue = Color.create!(color: "Blue")
+
+# Create Filaments
+filament_pla = Filament.create!(type: "PLA", size: 1.75)
+filament_abs = Filament.create!(type: "ABS", size: 1.75)
+
+# Create Presets
+preset1 = Preset.create!(color: color_red, filament: filament_pla, user: user1)
+preset2 = Preset.create!(color: color_blue, filament: filament_abs, user: user2)
+
+# Create Contests
+contest1 = Contest.create!(
+  theme: "Best 3D Printed Art",
+  description: "Create and submit your best 3D printed designs.",
+  submission_limit: 5,
+  start_at: Time.now,
+  end_at: Time.now + 30.days
+)
+
+# Create Submissions
+submission1 = Submission.create!(
+  name: "3D Dragon",
+  description: "A detailed dragon model.",
+  user: user1,
+  contest: contest1
+)
+
+submission2 = Submission.create!(
+  name: "Space Shuttle",
+  description: "NASA space shuttle model.",
+  user: user2,
+  contest: contest1
+)
+
+# Likes for Submissions
+Like.create!(user: user1, submission: submission2)
+Like.create!(user: user2, submission: submission1)
+
+# Create Requests
+request1 = Request.create!(
+  user: user1,
+  name: "Custom Chess Set",
+  budget: 50.0,
+  comment: "Need a high-quality chess set with intricate pieces.",
+  target_date: Time.now + 10.days
+)
+
+request2 = Request.create!(
+  user: user2,
+  name: "Prototype Case",
+  budget: 100.0,
+  comment: "Looking for a durable case prototype.",
+  target_date: Time.now + 15.days
+)
+
+# Create Preset Requests
+PresetRequest.create!(request: request1, color: color_red, filament: filament_pla)
+PresetRequest.create!(request: request2, color: color_blue, filament: filament_abs)
+
+# Create Offers
+offer1 = Offer.create!(
+  request: request1,
+  printer_user: PrinterUser.first,
+  color: color_red,
+  filament: filament_pla,
+  price: 45.0,
+  target_date: Time.now + 9.days
+)
+
+offer2 = Offer.create!(
+  request: request2,
+  printer_user: PrinterUser.last,
+  color: color_blue,
+  filament: filament_abs,
+  price: 95.0,
+  target_date: Time.now + 14.days
+)
+
+# Create Orders
+order1 = Order.create!(offer: offer1, printer: user1, client: user2)
+order2 = Order.create!(offer: offer2, printer: user2, client: user1)
+
+# Create Reviews
+Review.create!(
+  order: order1,
+  user: user2,
+  title: "Amazing Print Quality!",
+  description: "The chess set was perfect. Clean finish and strong material.",
+  rating: 5
+)
+
+Review.create!(
+  order: order2,
+  user: user1,
+  title: "Durable and Precise",
+  description: "Prototype case fit perfectly, highly recommend!",
+  rating: 4
+)
+
+# Create Order Statuses
+status_pending = Status.create!(name: "Pending")
+status_completed = Status.create!(name: "Completed")
+
+OrderStatus.create!(order: order1, status: status_pending, comment: "Waiting for approval")
+OrderStatus.create!(order: order2, status: status_completed, comment: "Order successfully delivered")
+
+puts "✅ Seeding complete!"
