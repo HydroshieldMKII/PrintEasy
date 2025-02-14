@@ -1,0 +1,12 @@
+class Review < ApplicationRecord
+  belongs_to :product
+  belongs_to :user
+
+  has_many_attached :images
+
+  validates :title, presence: true, length: { maximum: 30 }
+  validates :rating, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0, less_than_or_equal_to: 5 }
+  validates :description, length: { maximum: 200 }
+  validates :product_id, presence: true, uniqueness: true
+  validates :user_id, presence: true
+end
