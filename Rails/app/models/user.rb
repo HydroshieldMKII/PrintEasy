@@ -1,5 +1,9 @@
 class User < ApplicationRecord
   belongs_to :country
+  has_many :presets, dependent: :destroy
+  has_many :requests, dependent: :destroy
+  has_many :offers, dependent: :destroy
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
