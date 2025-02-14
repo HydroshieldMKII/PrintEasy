@@ -10,11 +10,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_02_14_162254) do
+ActiveRecord::Schema[7.1].define(version: 2025_02_14_165218) do
+  create_table "contests", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+    t.string "theme", limit: 30, null: false
+    t.string "description", limit: 200
+    t.integer "submission_limit", default: 1, null: false
+    t.datetime "deleted_at"
+    t.datetime "start_at"
+    t.datetime "end_at"
+  end
+
   create_table "countries", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "likes", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "submission_id", null: false
+    t.index ["submission_id"], name: "index_likes_on_submission_id"
+    t.index ["user_id", "submission_id"], name: "index_likes_on_user_id_and_submission_id", unique: true
+    t.index ["user_id"], name: "index_likes_on_user_id"
   end
 
   create_table "printer_users", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
@@ -27,6 +44,17 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_14_162254) do
 
   create_table "printers", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.string "model", null: false
+  end
+
+  create_table "submissions", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "contest_id", null: false
+    t.string "name", limit: 30, null: false
+    t.string "description", limit: 200
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["contest_id"], name: "index_submissions_on_contest_id"
+    t.index ["user_id"], name: "index_submissions_on_user_id"
   end
 
   create_table "users", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
@@ -44,7 +72,11 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_14_162254) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  add_foreign_key "likes", "submissions"
+  add_foreign_key "likes", "users"
   add_foreign_key "printer_users", "printers"
   add_foreign_key "printer_users", "users"
+  add_foreign_key "submissions", "contests"
+  add_foreign_key "submissions", "users"
   add_foreign_key "users", "countries"
 end
