@@ -59,7 +59,7 @@ Color
 Filament
     Validations
         [type] : NN
-        [size] : NN, > 0, verif integer
+        [size] : NN, > 0, verifier si float, verifier si 1.75 ou 2.85
 
 Preset
     Validations
@@ -83,7 +83,7 @@ Request
     Validations
         [user_id] : NN
         [name] : NN, nbChar >= 5 && <= 30
-        [budget] : >= 0, verif number
+        [budget] : >= 0 et >= 10000, verif number
         [comment] : nbChar >= 5 && <= 200
         [target_date] : NN, > current_date, verif date
         [Attachment] : stl format
