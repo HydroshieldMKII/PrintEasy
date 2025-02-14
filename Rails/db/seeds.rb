@@ -114,8 +114,8 @@ request2 = Request.create!(
 )
 
 # Create Preset Requests
-PresetRequest.create!(request: request1, color: color_red, filament: filament_pla)
-PresetRequest.create!(request: request2, color: color_blue, filament: filament_abs)
+PresetRequest.create!(request_id: request1.id, color_id: color_red.id, filament_id: filament_pla.id)
+PresetRequest.create!(request_id: request2.id, color_id: color_blue.id, filament_id: filament_abs.id)
 
 # Create Offers
 offer1 = Offer.create!(
@@ -136,33 +136,33 @@ offer2 = Offer.create!(
   target_date: Time.now + 14.days
 )
 
-# Create Orders
-order1 = Order.create!(offer: offer1, printer: user1, client: admin)
-order2 = Order.create!(offer: offer2, printer: admin, client: user1)
+# # Create Orders
+# order1 = Order.create!(offer: offer1, printer: user1, client: admin)
+# order2 = Order.create!(offer: offer2, printer: admin, client: user1)
 
-# Create Reviews
-Review.create!(
-  order: order1,
-  user: admin,
-  title: "Amazing Print Quality!",
-  description: "The chess set was perfect. Clean finish and strong material.",
-  rating: 5
-)
+# # Create Reviews
+# Review.create!(
+#   order: order1,
+#   user: admin,
+#   title: "Amazing Print Quality!",
+#   description: "The chess set was perfect. Clean finish and strong material.",
+#   rating: 5
+# )
 
-Review.create!(
-  order: order2,
-  user: user1,
-  title: "Durable and Precise",
-  description: "Prototype case fit perfectly, highly recommend!",
-  rating: 4
-)
+# Review.create!(
+#   order: order2,
+#   user: user1,
+#   title: "Durable and Precise",
+#   description: "Prototype case fit perfectly, highly recommend!",
+#   rating: 4
+# )
 
-# Create Order Statuses
-status_pending = Status.create!(name: "Pending")
-status_completed = Status.create!(name: "Completed")
+# # Create Order Statuses
+# status_pending = Status.create!(name: "Pending")
+# status_completed = Status.create!(name: "Completed")
 
-OrderStatus.create!(order: order1, status: status_pending, comment: "Waiting for approval")
-OrderStatus.create!(order: order2, status: status_completed, comment: "Order successfully delivered")
+# OrderStatus.create!(order: order1, status: status_pending, comment: "Waiting for approval")
+# OrderStatus.create!(order: order2, status: status_completed, comment: "Order successfully delivered")
 
 puts "✅ Seeding complete!"
 
