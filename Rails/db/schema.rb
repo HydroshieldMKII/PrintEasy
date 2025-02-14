@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_02_14_173555) do
+ActiveRecord::Schema[7.1].define(version: 2025_02_14_173559) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -86,6 +86,21 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_14_173555) do
     t.index ["request_id"], name: "index_offers_on_request_id"
   end
 
+  create_table "order_statuses", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+    t.bigint "order_id", null: false
+    t.bigint "status_id", null: false
+    t.string "comment"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["order_id"], name: "index_order_statuses_on_order_id"
+    t.index ["status_id"], name: "index_order_statuses_on_status_id"
+  end
+
+  create_table "orders", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+    t.bigint "offers_id", null: false
+    t.index ["offers_id"], name: "index_orders_on_offers_id", unique: true
+  end
+
   create_table "preset_requests", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.bigint "request_id", null: false
     t.bigint "color_id", null: false
@@ -127,6 +142,22 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_14_173555) do
     t.index ["user_id"], name: "index_requests_on_user_id"
   end
 
+  create_table "reviews", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "order_id", null: false
+    t.integer "rating", limit: 1, null: false
+    t.string "title", limit: 30, null: false
+    t.string "description", limit: 200
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["order_id"], name: "index_reviews_on_order_id", unique: true
+    t.index ["user_id"], name: "index_reviews_on_user_id"
+  end
+
+  create_table "status", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+    t.string "name", null: false
+  end
+
   create_table "submissions", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "contest_id", null: false
@@ -161,6 +192,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_14_173555) do
   add_foreign_key "offers", "filaments"
   add_foreign_key "offers", "printer_users"
   add_foreign_key "offers", "requests"
+  add_foreign_key "order_statuses", "orders"
+  add_foreign_key "order_statuses", "status"
+  add_foreign_key "orders", "offers", column: "offers_id"
   add_foreign_key "preset_requests", "colors"
   add_foreign_key "preset_requests", "filaments"
   add_foreign_key "preset_requests", "requests"
@@ -170,6 +204,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_14_173555) do
   add_foreign_key "printer_users", "printers"
   add_foreign_key "printer_users", "users"
   add_foreign_key "requests", "users"
+  add_foreign_key "reviews", "orders"
+  add_foreign_key "reviews", "users"
   add_foreign_key "submissions", "contests"
   add_foreign_key "submissions", "users"
   add_foreign_key "users", "countries"
