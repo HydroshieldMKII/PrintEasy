@@ -69,7 +69,7 @@ preset2 = Preset.create!(color: color_blue, filament: filament_abs, user: user1)
 preset3 = Preset.create!(color: color_red, filament: filament_abs, user: user1)
 
 # Create Contests
-contest1 = Contest.create!(
+contest1 = Contest.create(
   theme: "Best 3D Printed Art",
   description: "Create and submit your best 3D printed designs.",
   submission_limit: 5,
@@ -77,20 +77,40 @@ contest1 = Contest.create!(
   end_at: Time.now + 30.days
 )
 
+contest1.image.attach(
+  io: File.open(Rails.root.join("db/seeds/files/DariusSlayJunior.jpg")),
+  filename: "DariusSlayJunior.jpg",
+  content_type: "image/jpg"
+)
+contest1.save
 # Create Submissions
-submission1 = Submission.create!(
+submission1 = Submission.create(
   name: "3D Dragon",
   description: "A detailed dragon model.",
   user: admin,
   contest: contest1
 )
 
-submission2 = Submission.create!(
+submission1.files.attach(
+  io: File.open(Rails.root.join("db/seeds/files/RUBY13.stl")),
+  filename: "RUBY13.stl",
+  content_type: "application/sla"
+)
+submission1.save
+
+submission2 = Submission.create(
   name: "Space Shuttle",
   description: "NASA space shuttle model.",
   user: user1,
   contest: contest1
 )
+
+submission2.files.attach(
+  io: File.open(Rails.root.join("db/seeds/files/RUBY13.stl")),
+  filename: "RUBY13.stl",
+  content_type: "application/sla"
+)
+submission2.save
 
 # Likes for Submissions
 Like.create!(user: admin, submission: submission2)
