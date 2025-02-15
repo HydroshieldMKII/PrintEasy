@@ -4,6 +4,7 @@ import { LoginComponent } from './components/login/login.component';
 import { SignupComponent } from './components/signup/signup.component';
 import { NotfoundComponent } from './components/notfound/notfound.component';
 import { ContestComponent } from './components/contest/contest.component';
+import { UserProfileComponent } from './components/user-profile/user-profile.component';
 
 import { AuthenticationGuard } from './guards/authentication.guard';
 
@@ -31,6 +32,11 @@ export const routes: Routes = [
     component: ContestComponent,
     title: 'Contest',
   },
+  {
+    path: 'profile',
+    component: UserProfileComponent,
+    title: 'Profile',
+  }, 
   {
     path: '**',
     component: NotfoundComponent,
