@@ -72,7 +72,8 @@ export class AppComponent implements OnInit {
       },
       {
         label: 'Contests',
-        icon: 'pi pi-trophy'
+        icon: 'pi pi-trophy',
+        command: () => this.router.navigate(['/contest'])
       },
     ]
   }

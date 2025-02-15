@@ -1,0 +1,40 @@
+<div class="container">
+    <h2>3D DESIGN CONTEST</h2>
+    <p>
+        We regularly organize popular 3D design contests for valuable prizes
+        at <a href="https://printables.com">Printables.com</a>. Take part in
+        the currently running contest, create and upload your model and win.
+    </p>
+
+    <button pButton pRipple icon="pi pi-plus" class="p-button-rounded p-button-success fab-button"></button>
+
+    <div class="search-container">
+        <input type="text" pInputText [(ngModel)]="searchTerm" placeholder="Search by theme" />
+        <button pButton pRipple icon="pi pi-filter" class="p-button-text"></button>
+        <button pButton pRipple icon="pi pi-sort-alt" class="p-button-text"></button>
+    </div>
+
+    <div class="contest-list">
+        <p-card *ngFor="let contest of contests" class="contest-card">
+            <div class="contest-content">
+                <img src="https://placehold.co/600x400" alt="Contest image" class="contest-image" />
+                <div class="contest-details">
+                    <h3 class="contest-theme">{{ contest.theme }}</h3>
+                    <p>{{ contest.description }}</p>
+                    <p><i class="pi pi-users"></i> Submission limit: {{ contest.submission_limit }}</p>
+                    <p><i class="pi pi-calendar"></i> Starts: {{ contest.start_at | date:'MMM d, y h:mm a' }}</p>
+                    <p><i class="pi pi-calendar-times"></i> Ends: {{ contest.end_at | date:'MMM d, y h:mm a' }}</p>
+                </div>
+            </div>
+
+
+            <button pButton label="Contest detail" class="p-button-outlined contest-detail-button"></button>
+
+            <div class="admin-buttons">
+                <button pButton icon="pi pi-pencil" class="p-button-text" (click)="editContest(contest.id)"></button>
+                <button pButton icon="pi pi-trash" class="p-button-text p-button-danger"
+                    (click)="deleteContest(contest.id)"></button>
+            </div>
+        </p-card>
+    </div>
+</div>

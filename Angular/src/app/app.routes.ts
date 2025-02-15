@@ -3,6 +3,7 @@ import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
 import { SignupComponent } from './components/signup/signup.component';
 import { NotfoundComponent } from './components/notfound/notfound.component';
+import { ContestComponent } from './components/contest/contest.component';
 
 import { AuthenticationGuard } from './guards/authentication.guard';
 
@@ -24,6 +25,11 @@ export const routes: Routes = [
     component: SignupComponent,
     title: 'Sign up',
     canActivate: [AuthenticationGuard]
+  },
+  {
+    path: 'contest',
+    component: ContestComponent,
+    title: 'Contest',
   },
   {
     path: '**',

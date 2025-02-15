@@ -1,0 +1,103 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: center;
+    padding: 20px;
+    margin-top: 10px;
+}
+
+h2 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.container p {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+
+.fab-button {
+    position: fixed;
+    top: 70px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.search-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.contest-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    margin-top: 30px;
+}
+
+.contest-card {
+    width: 100%;
+    max-width: 600px;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.contest-content {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.contest-image {
+    width: 120px;
+    height: 120px;
+    margin-right: 20px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.contest-details {
+    flex: 1;
+    text-align: left;
+}
+
+.contest-theme {
+    font-size: 1.7rem;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    margin-left: -100px;
+    margin-bottom: 10px;
+}
+
+.contest-card .p-button-text {
+    margin: 5px;
+}
+
+.p-button-outlined {
+    margin-right: 10px;
+}
+
+.contest-card .p-button {
+    width: 100%;
+    margin: 5px 0;
+}
+
+.contest-detail-button {
+    width: 100%;
+    text-align: left;
+}
+
+.admin-buttons {
+    display: flex;
+    width: 100%;
+}
