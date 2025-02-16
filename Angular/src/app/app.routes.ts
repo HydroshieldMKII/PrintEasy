@@ -3,6 +3,8 @@ import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
 import { SignupComponent } from './components/signup/signup.component';
 import { NotfoundComponent } from './components/notfound/notfound.component';
+import { RequestsComponent } from './components/request/request.component';
+import { RequestFormComponent } from './components/request-form/request-form.component';
 
 import { AuthenticationGuard } from './guards/authentication.guard';
 
@@ -24,6 +26,16 @@ export const routes: Routes = [
     component: SignupComponent,
     title: 'Sign up',
     canActivate: [AuthenticationGuard]
+  },
+  {
+    path: 'request',
+    component: RequestsComponent,
+    title: 'Request',
+  },
+  {
+    path: 'request-form',
+    component: RequestFormComponent,
+    title: 'Request Form',
   },
   {
     path: '**',

@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { map, catchError, tap } from 'rxjs/operators';
-import { RequestResponseModel } from '../models/request-response.model';
+import { ApiResponseModel } from '../models/api-response.model';
 
 @Injectable({
     providedIn: 'root'
@@ -12,9 +12,9 @@ export class ApiRequestService {
 
     constructor(private http: HttpClient) { }
 
-    getRequest(query: string, params?: { [key: string]: string }): Observable<RequestResponseModel> {
-        return this.http.get<RequestResponseModel>(query, { params, observe: 'response' }).pipe(
-            map(response => new RequestResponseModel(
+    getRequest(query: string, params?: { [key: string]: string }): Observable<ApiResponseModel> {
+        return this.http.get<ApiResponseModel>(query, { params, observe: 'response' }).pipe(
+            map(response => new ApiResponseModel(
                 {
                     status: response.status,
                     errors: response.body?.errors ?? {}
@@ -25,9 +25,9 @@ export class ApiRequestService {
         );
     }
 
-    postRequest(query: string, params?: { [key: string]: any }, body?: any): Observable<RequestResponseModel> {
-        return this.http.post<RequestResponseModel>(query, body, { params, observe: 'response' }).pipe(
-            map(response => new RequestResponseModel(
+    postRequest(query: string, params?: { [key: string]: any }, body?: any): Observable<ApiResponseModel> {
+        return this.http.post<ApiResponseModel>(query, body, { params, observe: 'response' }).pipe(
+            map(response => new ApiResponseModel(
                 {
                     status: response.status,
                     errors: response.body?.errors ?? {}
@@ -38,9 +38,9 @@ export class ApiRequestService {
         );
     }
 
-    deleteRequest(query: string, params?: { [key: string]: string }): Observable<RequestResponseModel> {
-        return this.http.delete<RequestResponseModel>(query, { params, observe: 'response' }).pipe(
-            map(response => new RequestResponseModel(
+    deleteRequest(query: string, params?: { [key: string]: string }): Observable<ApiResponseModel> {
+        return this.http.delete<ApiResponseModel>(query, { params, observe: 'response' }).pipe(
+            map(response => new ApiResponseModel(
                 {
                     status: response.status,
                     errors: response.body?.errors ?? {}
@@ -51,7 +51,7 @@ export class ApiRequestService {
         );
     }
 
-    handleHttpError(error: HttpErrorResponse): Observable<RequestResponseModel> {
+    handleHttpError(error: HttpErrorResponse): Observable<ApiResponseModel> {
         let formattedErrors: { [key: string]: string } = {};
 
         if (error.error?.errors) {
@@ -66,7 +66,7 @@ export class ApiRequestService {
             formattedErrors["general"] = error.message || "An unexpected error occurred.";
         }
 
-        return of(new RequestResponseModel(
+        return of(new ApiResponseModel(
             {
                 status: error.status || 500,
                 errors: formattedErrors

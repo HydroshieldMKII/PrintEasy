@@ -1,4 +1,4 @@
-export class RequestResponseModel {
+export class ApiResponseModel {
     readonly status: number
     readonly errors: { [key: string]: string }
     readonly data: any
