@@ -14,7 +14,19 @@ import { MessageService } from 'primeng/api';
 })
 export class RequestService {
     messageService: MessageService = inject(MessageService);
-    constructor(private api: ApiRequestService) { }
+    requests: RequestModel[] = [];
+
+    constructor(private api: ApiRequestService) {
+        // this.api.getRequest('requests').pipe(
+        //     map((response: ApiResponseModel) => {
+        //         if (response.status == 200) {
+        //             this.requests = response.data;
+        //         } else {
+        //             console.error(response.errors);
+        //         }
+        //     })
+        // );
+    }
 
     getAllRequests() {
         return [
@@ -64,5 +76,9 @@ export class RequestService {
                 new PresetModel(5, "Nylon", "Black", 1.75)
             )
         ];
+    }
+
+    getMyRequests() {
+        return this.getAllRequests().filter(r => r.id === 1);
     }
 }

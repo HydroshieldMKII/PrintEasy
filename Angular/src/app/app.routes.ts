@@ -28,7 +28,7 @@ export const routes: Routes = [
     canActivate: [AuthenticationGuard]
   },
   {
-    path: 'request',
+    path: 'requests',
     component: RequestsComponent,
     title: 'Request',
   },

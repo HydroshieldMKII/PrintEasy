@@ -61,11 +61,12 @@ export class AppComponent implements OnInit {
       {
         label: 'Requests',
         icon: 'pi pi-inbox',
-        command: () => this.router.navigate(['/request'])
+        command: () => this.router.navigate(['/requests'])
       },
       {
         label: 'Offer',
-        icon: 'pi pi-tag'
+        icon: 'pi pi-tag',
+        command: () => this.router.navigate(['/offers'])
       },
       {
         label: 'Orders',

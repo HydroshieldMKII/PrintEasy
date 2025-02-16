@@ -113,3 +113,13 @@ h3 {
 .mb-2 {
     margin-bottom: 0.5rem;
 }
+
+.toggle-all {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .toggle-all {
+        display: block;
+    }
+}

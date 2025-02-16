@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { RequestModel } from '../../models/request.model';
 import { RequestService } from '../../services/request.service';
 import { ImportsModule } from '../../../imports';
@@ -15,7 +16,7 @@ export class RequestsComponent implements OnInit {
   myRequests: RequestModel[] = [];
   expandedRows: { [key: number]: boolean } = {};
 
-  constructor(private requestService: RequestService) { }
+  constructor(private requestService: RequestService, private router: Router) { }
 
   ngOnInit(): void {
     this.requests = this.requestService.getAllRequests();
@@ -31,13 +32,29 @@ export class RequestsComponent implements OnInit {
 
   collapseAll(): void {
     this.expandedRows = {};
+
+    const rows = document.querySelectorAll('tr');
+    rows.forEach((row) => {
+      row.style.backgroundColor = '';
+    });
   }
 
   onRowExpand(event: any): void {
     this.expandedRows[event.data.id] = true;
+
+    //make row greyed
+    event.originalEvent.target.parentElement.parentElement.style.backgroundColor = '#f9f9f9';
   }
 
   onRowCollapse(event: any): void {
     delete this.expandedRows[event.data.id];
+
+    //remove greyed row
+    event.originalEvent.target.parentElement.parentElement.style.backgroundColor = '';
+  }
+
+  goToRequest(requestId: number): void {
+    // Navigate to the request details page
+    this.router.navigate(['/request', requestId]);
   }
 }
