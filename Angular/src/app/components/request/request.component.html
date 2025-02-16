@@ -2,7 +2,7 @@
     <!-- Big Title in the Upper Left -->
     <div class="flex justify-between items-center">
         <h1 class="text-4xl font-bold">Requests</h1>
-        <p-button label="Create a request" icon="pi pi-plus" />
+        <p-button label="Create a request" icon="pi pi-plus" routerLink="/requests/new" />
     </div>
 
     <p-toast />
@@ -62,9 +62,9 @@
                             <td>
                                 <div class="flex gap-2">
                                     <p-button icon="pi pi-eye" class="p-button-rounded p-button-text"
-                                        title="See Details" (onClick)="showRequest(request.id)"></p-button>
+                                        title="See Details" routerLink="/requests/view/{{ request.id }}"></p-button>
                                     <p-button icon="pi pi-download" class="p-button-rounded p-button-text"
-                                        title="Download"></p-button>
+                                        title="Download" (onClick)="downloadRequest(request.id)"></p-button>
                                 </div>
                             </td>
                         </tr>
@@ -147,7 +147,8 @@
                 <td>{{ request.printerModel }}</td>
                 <td>
                     <div class="flex gap-2">
-                        <p-button icon="pi pi-pencil" title="Edit" (onClick)="editRequest(request.id)"></p-button>
+                        <p-button icon="pi pi-pencil" title="Edit"
+                            routerLink="/requests/edit/{{request.id}}"></p-button>
                         <p-button icon="pi pi-trash" title="Delete" (onClick)="showDeleteDialog(request)"></p-button>
                     </div>
                 </td>

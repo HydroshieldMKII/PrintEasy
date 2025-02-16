@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { RequestModel } from '../../models/request.model';
 import { RequestService } from '../../services/request.service';
 import { ImportsModule } from '../../../imports';
 
 @Component({
   selector: 'app-request',
-  imports: [ImportsModule],
+  imports: [ImportsModule, RouterLink],
   templateUrl: './request.component.html',
   styleUrls: ['./request.component.css']
 })
@@ -69,12 +69,9 @@ export class RequestsComponent implements OnInit {
     delete this.expandedRowsMyRequests[event.data.id];
   }
 
-  showRequest(requestId: number): void {
-    this.router.navigate(['/request', requestId]);
-  }
-
-  editRequest(requestId: number): void {
-    this.router.navigate(['/request/edit', requestId]);
+  downloadRequest(requestId: number): void {
+    console.log('Download request with ID:', requestId);
+    // this.requestService.downloadRequest(requestId);
   }
 
   showDeleteDialog(request: RequestModel): void {
