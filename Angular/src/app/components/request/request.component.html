@@ -25,16 +25,16 @@
                     <div class="flex gap-2">
                         <span class="p-input-icon-right">
                             <i class="pi pi-search"></i>
-                            <input pInputText type="text" placeholder="Search" />
+                            <input pInputText type="text" placeholder="Search" [(ngModel)]="searchAllRequestQuery" />
                         </span>
                     </div>
                 </div>
 
                 <hr>
 
-                <p-table [value]="requests" dataKey="id" [tableStyle]="{ 'min-width': '60rem' }"
-                    [expandedRowKeys]="expandedRows" (onRowExpand)="onRowExpand($event)"
-                    (onRowCollapse)="onRowCollapse($event)">
+                <p-table *ngIf="filterRequests(requests).length > 0" [value]="filterRequests(requests)" dataKey="id"
+                    [tableStyle]="{ 'min-width': '60rem' }" [expandedRowKeys]="expandedRows"
+                    (onRowExpand)="onRowExpand($event)" (onRowCollapse)="onRowCollapse($event)">
 
                     <ng-template #header>
                         <tr>
@@ -99,6 +99,10 @@
 </tr>
 </ng-template>
 </p-table>
+<div *ngIf="filterRequests(requests).length === 0" class="empty-message">
+    <i class="pi pi-inbox text-6xl text-gray-400"></i>
+    <p class="text-xl font-semibold text-gray-500 mt-2">No requests found</p>
+</div>
 </p-tabpanel>
 
 <!-- Tab: My Requests -->
@@ -111,16 +115,16 @@
         <div class="flex gap-2">
             <span class="p-input-icon-right">
                 <i class="pi pi-search"></i>
-                <input pInputText type="text" placeholder="Search" />
+                <input pInputText type="text" placeholder="Search" [(ngModel)]="searchMyRequestQuery" />
             </span>
         </div>
     </div>
 
     <hr>
 
-    <p-table [value]="myRequests" dataKey="id" [tableStyle]="{ 'min-width': '60rem' }"
-        [expandedRowKeys]="expandedRowsMyRequests" (onRowExpand)="onRowExpandMyRequests($event)"
-        (onRowCollapse)="onRowCollapseMyRequests($event)">
+    <p-table *ngIf="filterRequests(myRequests).length > 0" [value]="filterRequests(myRequests)" dataKey="id"
+        [tableStyle]="{ 'min-width': '60rem' }" [expandedRowKeys]="expandedRowsMyRequests"
+        (onRowExpand)="onRowExpandMyRequests($event)" (onRowCollapse)="onRowCollapseMyRequests($event)">
 
         <ng-template #header>
             <tr>
@@ -150,6 +154,8 @@
                         <p-button icon="pi pi-pencil" title="Edit"
                             routerLink="/requests/edit/{{request.id}}"></p-button>
                         <p-button icon="pi pi-trash" title="Delete" (onClick)="showDeleteDialog(request)"></p-button>
+                        <p-button icon="pi pi-download" class="p-button-rounded p-button-text" title="Download"
+                            (onClick)="downloadRequest(request.id)"></p-button>
                     </div>
                 </td>
             </tr>
@@ -177,6 +183,10 @@
                 <td>{{ preset.diameter }}mm</td>
             </tr>
         </ng-template>
+        <div *ngIf="filterRequests(myRequests).length === 0" class="empty-message">
+            <i class="pi pi-inbox text-6xl text-gray-400"></i>
+            <p class="text-xl font-semibold text-gray-500 mt-2">No requests found</p>
+        </div>
     </p-table>
     </div>
     </div>
@@ -184,6 +194,10 @@
     </tr>
     </ng-template>
     </p-table>
+    <div *ngIf="filterRequests(myRequests).length === 0" class="empty-message">
+        <i class="pi pi-inbox text-6xl text-gray-400"></i>
+        <p class="text-xl font-semibold text-gray-500 mt-2">No requests found</p>
+    </div>
 </p-tabpanel>
 
 </p-tabpanels>

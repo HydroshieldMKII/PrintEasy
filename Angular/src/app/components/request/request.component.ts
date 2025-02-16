@@ -18,15 +18,30 @@ export class RequestsComponent implements OnInit {
   deleteDialogVisible: boolean = false;
   requestToDelete: RequestModel | null = null;
 
-  // Separate expand tracking for both tables
   expandedRows: { [key: number]: boolean } = {};
   expandedRowsMyRequests: { [key: number]: boolean } = {};
+
+  searchAllRequestQuery: string = '';
+  searchMyRequestQuery: string = '';
+
+  filteredAllRequests: RequestModel[] = [];
+  filteredMyRequests: RequestModel[] = [];
+
+  filterRequests(list: RequestModel[]) {
+    return list.filter((request: RequestModel) => {
+      if (list === this.requests) {
+        return request.name.toLowerCase().includes(this.searchAllRequestQuery.toLowerCase());
+      } else {
+        return request.name.toLowerCase().includes(this.searchMyRequestQuery.toLowerCase());
+      }
+    });
+  }
 
   constructor(private requestService: RequestService, private router: Router) { }
 
   ngOnInit(): void {
     this.requests = this.requestService.getAllRequests();
-    this.myRequests = this.requests.filter(r => r.id === 1); // Example: Filter my requests
+    this.myRequests = this.requestService.getMyRequests();
   }
 
   // Expand/collapse for "All Requests"
