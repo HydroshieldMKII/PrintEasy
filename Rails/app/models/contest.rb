@@ -1,6 +1,7 @@
 class Contest < ApplicationRecord
-    before_destroy :set_deleted_at
     before_validation :set_start_at, on: [:create, :update]
+
+    default_scope { where(deleted_at: nil) }
 
     has_many :submissions
 
@@ -13,16 +14,23 @@ class Contest < ApplicationRecord
 
     validate :past?, on: [:create, :update]
 
-    private
-
-    def set_deleted_at
-        self.deleted_at = Time.now.in_time_zone('America/Toronto')
+    def soft_delete
+        update(deleted_at: Time.now)
     end
+
+    def restore
+        update(deleted_at: nil)
+    end
+
+    def deleted?
+        !deleted_at.nil?
+    end
+
+    private
 
     def set_start_at
         if self.start_at.nil?
             self.start_at = Time.now
-            debugger
         end
     end
 
@@ -33,7 +41,6 @@ class Contest < ApplicationRecord
 
         if !self.end_at.nil?
             unless self.end_at > self.start_at + 1.day
-                debugger
                 errors.add(:end_at, "must be at least one day after start_at")
             end
         end
