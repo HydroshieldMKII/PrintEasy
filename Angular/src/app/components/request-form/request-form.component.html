@@ -1,1 +1,74 @@
-<p>request-form works!</p>
+<div class="card p-6">
+    <h2 class="mb-4">
+        {{ isEditMode ? 'Edit Request' : 'Request Details' }}
+    </h2>
+
+    <!-- Grid Layout (Responsive) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Left Section: Request Details -->
+        <div class="flex flex-col gap-4">
+            <div>
+                <label for="name" class="block font-semibold">Name</label>
+                <input id="name" pInputText [(ngModel)]="request.name" class="w-full" [disabled]="!isEditMode" />
+            </div>
+
+            <div>
+                <label for="budget" class="block font-semibold">Budget</label>
+                <input id="budget" pInputText [(ngModel)]="request.budget" class="w-full" [disabled]="!isEditMode" />
+            </div>
+
+            <div>
+                <label for="targetDate" class="block font-semibold">Target Date</label>
+                <input id="targetDate" pInputText [(ngModel)]="request.targetDate" class="w-full"
+                    [disabled]="!isEditMode" />
+            </div>
+
+            <div>
+                <label for="comment" class="block font-semibold">Special Request</label>
+                <textarea id="comment" pInputTextarea [(ngModel)]="request.comment" class="w-full"
+                    [disabled]="!isEditMode"></textarea>
+            </div>
+        </div>
+
+        <!-- Right Section: STL Preview -->
+        <div class="stl-section flex flex-col items-center">
+            <h3 class="text-lg font-semibold mb-2">STL Preview</h3>
+            <div class="stl-placeholder">
+                <p>STL preview here</p>
+            </div>
+
+            <div class="stl-actions flex gap-2 mt-4">
+                <p-button label="Download file" icon="pi pi-download" class="p-button-outlined flex-1"></p-button>
+                <p-fileUpload mode="basic" customUpload (uploadHandler)="uploadFile($event)" accept=".stl"
+                    chooseLabel="Upload file" class="flex-1"></p-fileUpload>
+            </div>
+
+        </div>
+    </div>
+
+    <h3 class="text-lg font-semibold mt-6">3 Presets Recommended</h3>
+    <div class="preset-list">
+        <div *ngFor="let preset of request.presets; let i = index" class="preset-card">
+            <div class="preset-info">
+                <p><strong>Printer:</strong> {{ preset.printer }}</p>
+                <p><strong>Filament Type:</strong> {{ preset.filamentType }}</p>
+                <p><strong>Color:</strong> {{ preset.color }}</p>
+                <p><strong>Print Quality:</strong> {{ preset.printQuality }}</p>
+            </div>
+            <div class="preset-actions">
+                <p-button *ngIf="isEditMode" icon="pi pi-trash" class="p-button-rounded" (click)="removePreset(i)"
+                    severity="danger"></p-button>
+                <p-button *ngIf="!isEditMode" label="Accept this preset" icon="pi pi-check"
+                    class="p-button-success p-button-text"></p-button>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex justify-end mt-6 gap-3 edit-actions">
+        <p-button *ngIf="isEditMode" label="Save changes" icon="pi pi-check" severity="info"
+            (click)="saveChanges()"></p-button>
+        <p-button *ngIf="isEditMode" label="Delete" icon="pi pi-trash" severity="danger"
+            (click)="deleteRequest()"></p-button>
+        <p-button label="Cancel" icon="pi pi-times" severity="secondary" (click)="cancelEdit()"></p-button>
+    </div>
+</div>

@@ -1,26 +1,70 @@
-import { Component } from '@angular/core';
-import { Route, Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ImportsModule } from '../../../imports';
 
 @Component({
   selector: 'app-request-form',
-  imports: [],
+  imports: [ImportsModule],
   templateUrl: './request-form.component.html',
   styleUrl: './request-form.component.css'
 })
-export class RequestFormComponent {
-  constructor(router: Router) {
-    const action = router.url.split('/')[2];
-    const id = router.url.split('/')[3];
+export class RequestFormComponent implements OnInit {
+  isEditMode = false;
+  request: any = {
+    name: '',
+    budget: '',
+    targetDate: '',
+    comment: '',
+    presets: [
+      { printer: 'Bambulab P1P', filamentType: 'PLA', color: 'Red', printQuality: '0.1mm' },
+      { printer: 'Bambulab P1P', filamentType: 'PLA', color: 'Blue', printQuality: '0.1mm' }
+    ]
+  };
 
-    if (id === null && action === 'edit') {
-      // redirect to home
-      router.navigate(['/']);
+  constructor(private router: Router, private route: ActivatedRoute) { }
+
+  ngOnInit(): void {
+    const action = this.route.snapshot.url[0]?.path;
+    const id = this.route.snapshot.params['id'];
+
+    this.isEditMode = action === 'edit';
+
+    if (this.isEditMode && !id) {
+      this.router.navigate(['/requests']);
     }
 
-    if (action === 'edit') {
-      // edit request
-    } else {
-      // create new request
+    this.request = {
+      name: 'Cool print idea',
+      budget: '$51',
+      targetDate: '2021-01-01',
+      comment: 'Yessir miller',
+      presets: [
+        { printer: 'Bambulab P1P', filamentType: 'PLA', color: 'Red', printQuality: '0.1mm' },
+        { printer: 'Bambulab P1P', filamentType: 'PLA', color: 'Blue', printQuality: '0.1mm' }
+      ]
+
     }
+  }
+
+  removePreset(index: number): void {
+    this.request.presets.splice(index, 1);
+  }
+
+  uploadFile(event: any): void {
+    console.log('File uploaded:', event);
+  }
+
+  saveChanges(): void {
+    console.log('Request saved:', this.request);
+    this.router.navigate(['/requests']);
+  }
+
+  deleteRequest(): void {
+    console.log('Request deleted:', this.request);
+    this.router.navigate(['/requests']);
+  }
+
+  cancelEdit(): void {
+    this.router.navigate(['/requests']);
   }
 }
