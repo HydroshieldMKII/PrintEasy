@@ -6,6 +6,7 @@ export class Contest {
     deleteAt?: Date | null;
     startAt: Date | null;
     endAt: Date | null;
+    image_path?: string;
 
     constructor(id: number, theme: string, description: string, submission_limit: number, start_at: Date | null, end_at: Date | null, deleted_at?: Date | null) {
         this.id = id;

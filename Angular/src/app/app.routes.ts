@@ -5,6 +5,7 @@ import { SignupComponent } from './components/signup/signup.component';
 import { NotfoundComponent } from './components/notfound/notfound.component';
 import { ContestComponent } from './components/contest/contest.component';
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
+import { ContestFormComponent } from './components/contest-form/contest-form.component';
 
 import { AuthenticationGuard } from './guards/authentication.guard';
 
@@ -28,9 +29,21 @@ export const routes: Routes = [
     canActivate: [AuthenticationGuard]
   },
   {
-    path: 'contest',
-    component: ContestComponent,
-    title: 'Contest',
+    path: '',
+    children: [
+      {
+        path: 'contest',
+        component: ContestComponent,
+        title: 'Contest',
+        canActivate: [AuthenticationGuard]
+      },
+      {
+        path: 'contest/new',
+        component: ContestFormComponent,
+        title: 'New Contest',
+        canActivate: [AuthenticationGuard]
+      }
+    ]
   },
   {
     path: 'profile',

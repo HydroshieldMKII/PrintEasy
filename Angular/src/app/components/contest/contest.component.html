@@ -6,7 +6,7 @@
         the currently running contest, create and upload your model and win.
     </p>
 
-    <button pButton pRipple icon="pi pi-plus" class="p-button-rounded p-button-success fab-button"></button>
+    <button pButton pRipple icon="pi pi-plus" class="p-button-rounded p-button-success fab-button" (click)="newContest()"></button>
 
     <div class="search-container">
         <input type="text" pInputText [(ngModel)]="searchTerm" placeholder="Search by theme" />

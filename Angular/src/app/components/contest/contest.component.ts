@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Contest } from '../../models/contest';
+import { Router, RouterLink } from '@angular/router';
 
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
@@ -15,6 +16,8 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./contest.component.css']
 })
 export class ContestComponent {
+  route = inject(Router);
+
   contests: Contest[] = [
     new Contest(
       1,
@@ -37,6 +40,11 @@ export class ContestComponent {
   ];
 
   searchTerm: string = '';
+
+  newContest() {
+    console.log('New contest');
+    this.route.navigate(['/contest/new']);
+  }
 
   filterContests(): Contest[] {
     return this.contests.filter(contest =>
