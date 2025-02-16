@@ -18,29 +18,42 @@ export const routes: Routes = [
   {
     path: 'login',
     component: LoginComponent,
-    title: 'Login',
-    canActivate: [AuthenticationGuard]
+    title: 'Login'
   },
   {
     path: 'signup',
     component: SignupComponent,
-    title: 'Sign up',
-    canActivate: [AuthenticationGuard]
+    title: 'Sign up'
   },
   {
     path: 'requests',
-    component: RequestsComponent,
-    title: 'Request',
-  },
-  {
-    path: 'request-form',
-    component: RequestFormComponent,
-    title: 'Request Form',
+    canActivate: [AuthenticationGuard],
+    children: [
+      {
+        path: '',
+        component: RequestsComponent,
+        title: 'Request'
+      },
+      {
+        path: 'view/:id',
+        component: RequestFormComponent,
+        title: 'Request'
+      },
+      {
+        path: 'edit/:id',
+        component: RequestFormComponent,
+        title: 'Request'
+      },
+      {
+        path: 'new',
+        component: RequestFormComponent,
+        title: 'Request'
+      }
+    ]
   },
   {
     path: '**',
     component: NotfoundComponent,
-    title: 'Not found',
-    canActivate: [AuthenticationGuard]
+    title: 'Not found'
   }
 ];

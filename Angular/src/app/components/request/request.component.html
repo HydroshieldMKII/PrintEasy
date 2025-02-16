@@ -62,7 +62,7 @@
                             <td>
                                 <div class="flex gap-2">
                                     <p-button icon="pi pi-eye" class="p-button-rounded p-button-text"
-                                        title="See Details" (onClick)="goToRequest(request.id)"></p-button>
+                                        title="See Details" (onClick)="showRequest(request.id)"></p-button>
                                     <p-button icon="pi pi-download" class="p-button-rounded p-button-text"
                                         title="Download"></p-button>
                                 </div>
@@ -105,8 +105,8 @@
 <p-tabpanel value="my">
     <div class="flex justify-between items-center my-3">
         <div class="flex gap-2 toggle-all">
-            <p-button label="Expand All" icon="pi pi-plus" text (onClick)="expandAll()" />
-            <p-button label="Collapse All" icon="pi pi-minus" text (onClick)="collapseAll()" />
+            <p-button label="Expand All" icon="pi pi-plus" text (onClick)="expandAllMyRequests()" />
+            <p-button label="Collapse All" icon="pi pi-minus" text (onClick)="collapseAllMyRequests()" />
         </div>
         <div class="flex gap-2">
             <span class="p-input-icon-right">
@@ -118,7 +118,10 @@
 
     <hr>
 
-    <p-table [value]="myRequests" dataKey="id" [tableStyle]="{ 'min-width': '60rem' }">
+    <p-table [value]="myRequests" dataKey="id" [tableStyle]="{ 'min-width': '60rem' }"
+        [expandedRowKeys]="expandedRowsMyRequests" (onRowExpand)="onRowExpandMyRequests($event)"
+        (onRowCollapse)="onRowCollapseMyRequests($event)">
+
         <ng-template #header>
             <tr>
                 <th style="width: 5rem"></th>
@@ -131,11 +134,11 @@
             </tr>
         </ng-template>
 
-        <ng-template #body let-request>
+        <ng-template #body let-request let-expanded="expanded">
             <tr>
                 <td>
                     <p-button type="button" pRipple [pRowToggler]="request" [text]="true" [rounded]="true"
-                        [plain]="true" [icon]="'pi pi-chevron-right'" />
+                        [plain]="true" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'" />
                 </td>
                 <td>{{ request.name }}</td>
                 <td>{{ request.budget | currency }}</td>
@@ -144,15 +147,62 @@
                 <td>{{ request.printerModel }}</td>
                 <td>
                     <div class="flex gap-2">
-                        <p-button icon="pi pi-pencil" class="p-button-rounded p-button-text" title="Edit"></p-button>
-                        <p-button icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger"
-                            title="Delete"></p-button>
+                        <p-button icon="pi pi-pencil" title="Edit" (onClick)="editRequest(request.id)"></p-button>
+                        <p-button icon="pi pi-trash" title="Delete" (onClick)="showDeleteDialog(request)"></p-button>
                     </div>
                 </td>
             </tr>
         </ng-template>
+
+        <!-- Expanded Row for Preset Details -->
+        <ng-template #expandedrow let-request>
+            <tr>
+                <td colspan="7" style="background-color: #f5f5f5;">
+                    <div>
+                        <div>
+                            <h3>Preset Details</h3>
+                            <p-table [value]="[request.preset]" dataKey="id">
+                                <ng-template #header>
+            <tr>
+                <th pSortableColumn="filamentType">Filament Type <p-sortIcon field="filamentType" /></th>
+                <th pSortableColumn="color">Color <p-sortIcon field="color" /></th>
+                <th pSortableColumn="diameter">Diameter <p-sortIcon field="diameter" /></th>
+            </tr>
+        </ng-template>
+        <ng-template #body let-preset>
+            <tr>
+                <td>{{ preset.filamentType }}</td>
+                <td>{{ preset.color }}</td>
+                <td>{{ preset.diameter }}mm</td>
+            </tr>
+        </ng-template>
+    </p-table>
+    </div>
+    </div>
+    </td>
+    </tr>
+    </ng-template>
     </p-table>
 </p-tabpanel>
+
 </p-tabpanels>
 </p-tabs>
 </div>
+
+<!-- Delete Confirmation Dialog -->
+<p-dialog [(visible)]="deleteDialogVisible" [modal]="true" [style]="{ width: '25rem' }" dismissableMask=true
+    closable=false blockScroll=true resizable=false draggable=false>
+    <ng-template #header>
+        <div class="inline-flex items-center justify-center gap-2">
+            <i class="pi pi-exclamation-triangle text-red-500 text-2xl"></i>
+            <span class="font-bold">Confirm Delete</span>
+        </div>
+    </ng-template>
+    <span class="text-surface-500 dark:text-surface-400 block mb-4">
+        Are you sure you want to delete the request "{{ requestToDelete?.name }}"? This action cannot be undone.
+    </span>
+    <ng-template #footer>
+        <p-button label="Cancel" [text]="true" severity="secondary" (click)="deleteDialogVisible = false" />
+        <p-button label="Delete" severity="danger" (click)="confirmDelete()" />
+    </ng-template>
+</p-dialog>

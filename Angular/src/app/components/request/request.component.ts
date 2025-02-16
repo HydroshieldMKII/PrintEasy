@@ -11,10 +11,16 @@ import { ImportsModule } from '../../../imports';
   styleUrls: ['./request.component.css']
 })
 export class RequestsComponent implements OnInit {
-  activeTab: string = 'all'; // Controls the active tab
+  activeTab: string = 'all';
   requests: RequestModel[] = [];
   myRequests: RequestModel[] = [];
+
+  deleteDialogVisible: boolean = false;
+  requestToDelete: RequestModel | null = null;
+
+  // Separate expand tracking for both tables
   expandedRows: { [key: number]: boolean } = {};
+  expandedRowsMyRequests: { [key: number]: boolean } = {};
 
   constructor(private requestService: RequestService, private router: Router) { }
 
@@ -23,6 +29,7 @@ export class RequestsComponent implements OnInit {
     this.myRequests = this.requests.filter(r => r.id === 1); // Example: Filter my requests
   }
 
+  // Expand/collapse for "All Requests"
   expandAll(): void {
     this.expandedRows = this.requests.reduce((acc: { [key: number]: boolean }, request: RequestModel) => {
       acc[request.id] = true;
@@ -32,29 +39,54 @@ export class RequestsComponent implements OnInit {
 
   collapseAll(): void {
     this.expandedRows = {};
-
-    const rows = document.querySelectorAll('tr');
-    rows.forEach((row) => {
-      row.style.backgroundColor = '';
-    });
   }
 
   onRowExpand(event: any): void {
     this.expandedRows[event.data.id] = true;
-
-    //make row greyed
-    event.originalEvent.target.parentElement.parentElement.style.backgroundColor = '#f9f9f9';
   }
 
   onRowCollapse(event: any): void {
     delete this.expandedRows[event.data.id];
-
-    //remove greyed row
-    event.originalEvent.target.parentElement.parentElement.style.backgroundColor = '';
   }
 
-  goToRequest(requestId: number): void {
-    // Navigate to the request details page
+  // Expand/collapse for "My Requests"
+  expandAllMyRequests(): void {
+    this.expandedRowsMyRequests = this.myRequests.reduce((acc: { [key: number]: boolean }, request: RequestModel) => {
+      acc[request.id] = true;
+      return acc;
+    }, {});
+  }
+
+  collapseAllMyRequests(): void {
+    this.expandedRowsMyRequests = {};
+  }
+
+  onRowExpandMyRequests(event: any): void {
+    this.expandedRowsMyRequests[event.data.id] = true;
+  }
+
+  onRowCollapseMyRequests(event: any): void {
+    delete this.expandedRowsMyRequests[event.data.id];
+  }
+
+  showRequest(requestId: number): void {
     this.router.navigate(['/request', requestId]);
+  }
+
+  editRequest(requestId: number): void {
+    this.router.navigate(['/request/edit', requestId]);
+  }
+
+  showDeleteDialog(request: RequestModel): void {
+    this.requestToDelete = request;
+    this.deleteDialogVisible = true;
+  }
+
+  confirmDelete(): void {
+    if (this.requestToDelete !== null) {
+      this.requests = this.requests.filter(r => r.id !== this.requestToDelete?.id);
+      this.requestToDelete = null;
+    }
+    this.deleteDialogVisible = false;
   }
 }
