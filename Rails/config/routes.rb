@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   namespace :api, constraints: { format: 'json' }  do
     resources :request
     resources :offer
+    resources :contest
   end
 
   match '*url', to: "angular#index", via: :get
