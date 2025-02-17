@@ -11,6 +11,8 @@ import { DropdownModule } from 'primeng/dropdown';
 })
 export class RequestFormComponent implements OnInit {
   isEditMode = false;
+  isNewMode = false;
+  isViewMode = false;
   id: number | null = null;
 
   request: any = {
@@ -36,22 +38,35 @@ export class RequestFormComponent implements OnInit {
 
     this.id = this.route.snapshot.params['id'];
     this.isEditMode = action === 'edit';
+    this.isNewMode = action === 'new';
+    this.isViewMode = action === 'view';
 
     if (this.isEditMode && !this.id) {
       this.router.navigate(['/requests']);
     }
 
+    if (this.isEditMode || this.isViewMode) {
+      this.request = {
+        name: 'Cool print idea',
+        budget: '$51',
+        targetDate: '2021-01-01',
+        comment: 'Yessir miller',
+        presets: [
+          { printer: 'Bambulab P1P', filamentType: 'PLA', color: 'Red', printQuality: '0.1mm' },
+          { printer: 'Bambulab P1P', filamentType: 'PLA', color: 'Blue', printQuality: '0.2mm' }
+        ]
 
-    this.request = {
-      name: 'Cool print idea',
-      budget: '$51',
-      targetDate: '2021-01-01',
-      comment: 'Yessir miller',
-      presets: [
-        { printer: 'Bambulab P1P', filamentType: 'PLA', color: 'Red', printQuality: '0.1mm' },
-        { printer: 'Bambulab P1P', filamentType: 'PLA', color: 'Blue', printQuality: '0.2mm' }
-      ]
+      };
+    }
 
+    if (this.isNewMode) {
+      this.request = {
+        name: '',
+        budget: '',
+        targetDate: '',
+        comment: '',
+        presets: []
+      };
     }
   }
 
