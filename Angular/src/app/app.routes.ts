@@ -6,6 +6,8 @@ import { NotfoundComponent } from './components/notfound/notfound.component';
 import { ContestComponent } from './components/contest/contest.component';
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
 import { ContestFormComponent } from './components/contest-form/contest-form.component';
+import { RequestsComponent } from './components/request/request.component';
+import { RequestFormComponent } from './components/request-form/request-form.component';
 
 import { AuthenticationGuard } from './guards/authentication.guard';
 
@@ -19,14 +21,38 @@ export const routes: Routes = [
   {
     path: 'login',
     component: LoginComponent,
-    title: 'Login',
-    canActivate: [AuthenticationGuard]
+    title: 'Login'
   },
   {
     path: 'signup',
     component: SignupComponent,
-    title: 'Sign up',
-    canActivate: [AuthenticationGuard]
+    title: 'Sign up'
+  },
+  {
+    path: 'requests',
+    canActivate: [AuthenticationGuard],
+    children: [
+      {
+        path: '',
+        component: RequestsComponent,
+        title: 'Request'
+      },
+      {
+        path: 'view/:id',
+        component: RequestFormComponent,
+        title: 'Request'
+      },
+      {
+        path: 'edit/:id',
+        component: RequestFormComponent,
+        title: 'Request'
+      },
+      {
+        path: 'new',
+        component: RequestFormComponent,
+        title: 'Request'
+      }
+    ]
   },
   {
     path: '',
@@ -53,7 +79,6 @@ export const routes: Routes = [
   {
     path: '**',
     component: NotfoundComponent,
-    title: 'Not found',
-    canActivate: [AuthenticationGuard]
+    title: 'Not found'
   }
 ];

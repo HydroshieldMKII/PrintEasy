@@ -29,7 +29,7 @@ import { AvatarModule } from 'primeng/avatar';
   imports: [
     RouterOutlet, Menubar, MenubarModule, ButtonModule,
     ToastModule, BadgeModule, CommonModule, InputTextModule,
-    Ripple, AvatarModule, Menu, TranslatePipe, TranslateDirective
+    Ripple, AvatarModule, Menu
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
@@ -60,11 +60,13 @@ export class AppComponent implements OnInit {
     this.items = [
       {
         label: 'Requests',
-        icon: 'pi pi-inbox'
+        icon: 'pi pi-inbox',
+        command: () => this.router.navigate(['/requests'])
       },
       {
         label: 'Offer',
-        icon: 'pi pi-tag'
+        icon: 'pi pi-tag',
+        command: () => this.router.navigate(['/offers'])
       },
       {
         label: 'Orders',
@@ -83,6 +85,10 @@ export class AppComponent implements OnInit {
     { label: 'Logout', icon: 'pi pi-sign-out', command: () => this.logout() }
   ];
 
+  navigateToHome() {
+    this.router.navigate(['/']);
+  }
+
   viewProfile() {
     // Navigate to the profile page
     this.router.navigate(['/profile']);
@@ -94,7 +100,7 @@ export class AppComponent implements OnInit {
     }
 
     this.auth.logOut().subscribe((response) => {
-      if (response.status === 200) {
+      if (response.status === 200 || response.status === 401) {
         this.router.navigate(['/login']);
       }
     });

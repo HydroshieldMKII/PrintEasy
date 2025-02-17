@@ -1,0 +1,225 @@
+<div class="card p-4">
+    <!-- Big Title in the Upper Left -->
+    <div class="flex justify-between items-center">
+        <h1 class="text-4xl font-bold">Requests</h1>
+        <p-button label="Create a request" icon="pi pi-plus" routerLink="/requests/new" />
+    </div>
+
+    <p-toast />
+
+    <!-- Tabs for Requests -->
+    <p-tabs [(value)]="activeTab">
+        <p-tablist>
+            <p-tab value="all">All Requests</p-tab>
+            <p-tab value="my">My Requests</p-tab>
+        </p-tablist>
+
+        <p-tabpanels>
+            <!-- Tab: All Requests -->
+            <p-tabpanel value="all">
+                <div class="flex justify-between items-center my-3">
+                    <div class="flex gap-2 toggle-all">
+                        <p-button label="Expand All" icon="pi pi-plus" text (onClick)="expandAll()" />
+                        <p-button label="Collapse All" icon="pi pi-minus" text (onClick)="collapseAll()" />
+                    </div>
+                    <div class="flex gap-2">
+                        <span class="p-input-icon-right">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" placeholder="Search" [(ngModel)]="searchAllRequestQuery" />
+                        </span>
+                    </div>
+                </div>
+
+                <hr>
+
+                <p-table *ngIf="filterRequests(requests).length > 0" [value]="filterRequests(requests)" dataKey="id"
+                    [tableStyle]="{ 'min-width': '60rem' }" [expandedRowKeys]="expandedRows"
+                    (onRowExpand)="onRowExpand($event)" (onRowCollapse)="onRowCollapse($event)">
+
+                    <ng-template #header>
+                        <tr>
+                            <th style="width: 5rem"></th>
+                            <th pSortableColumn="name">Name <p-sortIcon field="name" /></th>
+                            <th pSortableColumn="budget">Budget <p-sortIcon field="budget" /></th>
+                            <th pSortableColumn="targetDate">Target Date <p-sortIcon field="targetDate" /></th>
+                            <th pSortableColumn="country">Country <p-sortIcon field="country" /></th>
+                            <th pSortableColumn="printerModel">Printer Model <p-sortIcon field="printerModel" /></th>
+                            <th style="width: 4rem">Actions</th>
+                        </tr>
+                    </ng-template>
+
+                    <ng-template #body let-request let-expanded="expanded">
+                        <tr>
+                            <td>
+                                <p-button type="button" [pRowToggler]="request" [text]="true" [rounded]="true"
+                                    [plain]="true" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'" />
+                            </td>
+                            <td>{{ request.name }}</td>
+                            <td>{{ request.budget | currency }}</td>
+                            <td>{{ request.targetDate | date }}</td>
+                            <td>{{ request.country }}</td>
+                            <td>{{ request.printerModel }}</td>
+                            <td>
+                                <div class="flex gap-2">
+                                    <p-button icon="pi pi-eye" class="p-button-rounded p-button-text"
+                                        title="See Details" routerLink="/requests/view/{{ request.id }}"></p-button>
+                                    <p-button icon="pi pi-download" class="p-button-rounded p-button-text"
+                                        title="Download" (onClick)="downloadRequest(request.id)"></p-button>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+
+                    <!-- Expanded Row for Preset Details -->
+                    <ng-template #expandedrow let-request>
+                        <tr>
+                            <td colspan="7" style="background-color: #f5f5f5;">
+                                <div>
+                                    <div>
+                                        <h3>Preset Details</h3>
+                                        <p-table [value]="request.presets" dataKey="id">
+                                            <ng-template #header>
+                        <tr>
+                            <th pSortableColumn="filamentType">Filament Type <p-sortIcon field="filamentType" /></th>
+                            <th pSortableColumn="color">Color <p-sortIcon field="color" /></th>
+                            <th pSortableColumn="diameter">Diameter <p-sortIcon field="diameter" /></th>
+                            <th pSortableColumn="printQuality">Print Quality <p-sortIcon field="printQuality" /></th>
+                        </tr>
+                    </ng-template>
+                    <ng-template #body let-preset>
+                        <tr>
+                            <td>{{ preset.filamentType }}</td>
+                            <td>{{ preset.color }}</td>
+                            <td>{{ preset.diameter }}mm</td>
+                            <td>{{preset.printQuality}}mm</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+</div>
+</div>
+</td>
+</tr>
+</ng-template>
+</p-table>
+<div *ngIf="filterRequests(requests).length === 0" class="empty-message">
+    <i class="pi pi-inbox text-6xl text-gray-400"></i>
+    <p class="text-xl font-semibold text-gray-500 mt-2">No requests found</p>
+</div>
+</p-tabpanel>
+
+<!-- Tab: My Requests -->
+<p-tabpanel value="my">
+    <div class="flex justify-between items-center my-3">
+        <div class="flex gap-2 toggle-all">
+            <p-button label="Expand All" icon="pi pi-plus" text (onClick)="expandAllMyRequests()" />
+            <p-button label="Collapse All" icon="pi pi-minus" text (onClick)="collapseAllMyRequests()" />
+        </div>
+        <div class="flex gap-2">
+            <span class="p-input-icon-right">
+                <i class="pi pi-search"></i>
+                <input pInputText type="text" placeholder="Search" [(ngModel)]="searchMyRequestQuery" />
+            </span>
+        </div>
+    </div>
+
+    <hr>
+
+    <p-table *ngIf="filterRequests(myRequests).length > 0" [value]="filterRequests(myRequests)" dataKey="id"
+        [tableStyle]="{ 'min-width': '60rem' }" [expandedRowKeys]="expandedRowsMyRequests"
+        (onRowExpand)="onRowExpandMyRequests($event)" (onRowCollapse)="onRowCollapseMyRequests($event)">
+
+        <ng-template #header>
+            <tr>
+                <th style="width: 5rem"></th>
+                <th pSortableColumn="name">Name <p-sortIcon field="name" /></th>
+                <th pSortableColumn="budget">Budget <p-sortIcon field="budget" /></th>
+                <th pSortableColumn="targetDate">Target Date <p-sortIcon field="targetDate" /></th>
+                <th pSortableColumn="country">Country <p-sortIcon field="country" /></th>
+                <th pSortableColumn="printerModel">Printer Model <p-sortIcon field="printerModel" /></th>
+                <th style="width: 4rem">Actions</th>
+            </tr>
+        </ng-template>
+
+        <ng-template #body let-request let-expanded="expanded">
+            <tr>
+                <td>
+                    <p-button type="button" [pRowToggler]="request" [text]="true" [rounded]="true" [plain]="true"
+                        [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'" />
+                </td>
+                <td>{{ request.name }}</td>
+                <td>{{ request.budget | currency }}</td>
+                <td>{{ request.targetDate | date }}</td>
+                <td>{{ request.country }}</td>
+                <td>{{ request.printerModel }}</td>
+                <td>
+                    <div class="flex gap-2">
+                        <p-button icon="pi pi-pencil" title="Edit"
+                            routerLink="/requests/edit/{{request.id}}"></p-button>
+                        <p-button icon="pi pi-trash" title="Delete" (onClick)="showDeleteDialog(request)"></p-button>
+                        <p-button icon="pi pi-download" class="p-button-rounded p-button-text" title="Download"
+                            (onClick)="downloadRequest(request.id)"></p-button>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+
+        <!-- Expanded Row for Preset Details -->
+        <ng-template #expandedrow let-request>
+            <tr>
+                <td colspan="7" style="background-color: #f5f5f5;">
+                    <div>
+                        <div>
+                            <h3>Preset Details</h3>
+                            <p-table [value]="[request.preset]" dataKey="id">
+                                <ng-template #header>
+            <tr>
+                <th pSortableColumn="filamentType">Filament Type <p-sortIcon field="filamentType" /></th>
+                <th pSortableColumn="color">Color <p-sortIcon field="color" /></th>
+                <th pSortableColumn="diameter">Diameter <p-sortIcon field="diameter" /></th>
+            </tr>
+        </ng-template>
+        <ng-template #body let-preset>
+            <tr>
+                <td>{{ preset.filamentType }}</td>
+                <td>{{ preset.color }}</td>
+                <td>{{ preset.diameter }}mm</td>
+            </tr>
+        </ng-template>
+        <div *ngIf="filterRequests(myRequests).length === 0" class="empty-message">
+            <i class="pi pi-inbox text-6xl text-gray-400"></i>
+            <p class="text-xl font-semibold text-gray-500 mt-2">No requests found</p>
+        </div>
+    </p-table>
+    </div>
+    </div>
+    </td>
+    </tr>
+    </ng-template>
+    </p-table>
+    <div *ngIf="filterRequests(myRequests).length === 0" class="empty-message">
+        <i class="pi pi-inbox text-6xl text-gray-400"></i>
+        <p class="text-xl font-semibold text-gray-500 mt-2">No requests found</p>
+    </div>
+</p-tabpanel>
+
+</p-tabpanels>
+</p-tabs>
+</div>
+
+<!-- Delete Confirmation Dialog -->
+<p-dialog [(visible)]="deleteDialogVisible" [modal]="true" [style]="{ width: '25rem' }" dismissableMask=true
+    closable=false blockScroll=true resizable=false draggable=false>
+    <ng-template #header>
+        <div class="inline-flex items-center justify-center gap-2">
+            <i class="pi pi-exclamation-triangle text-red-500 text-2xl"></i>
+            <span class="font-bold">Confirm Delete</span>
+        </div>
+    </ng-template>
+    <span class="text-surface-500 dark:text-surface-400 block mb-4">
+        Are you sure you want to delete the request "{{ requestToDelete?.name }}"? This action cannot be undone.
+    </span>
+    <ng-template #footer>
+        <p-button label="Cancel" [text]="true" severity="secondary" (click)="deleteDialogVisible = false" />
+        <p-button label="Delete" severity="danger" (click)="confirmDelete()" />
+    </ng-template>
+</p-dialog>

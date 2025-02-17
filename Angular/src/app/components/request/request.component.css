@@ -1,0 +1,167 @@
+.card {
+    background-color: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+html,
+body {
+    height: 97%;
+    margin: 0;
+    padding: 0;
+}
+
+.card {
+    margin: 10px;
+    height: 92vh;
+    /* Full viewport height */
+    display: flex;
+    flex-direction: column;
+}
+
+.p-tabpanels {
+    flex-grow: 1;
+    /* Ensures the tabs stretch */
+    display: flex;
+    flex-direction: column;
+}
+
+.p-tabpanel {
+    flex-grow: 1;
+    /* Allow panel to stretch */
+    display: flex;
+    flex-direction: column;
+}
+
+.p-table {
+    flex-grow: 1;
+    /* Make the table take up available space */
+}
+
+
+h1 {
+    margin: 0;
+}
+
+h3 {
+    margin: 0;
+    margin-bottom: 10px;
+}
+
+.p-4 {
+    padding: 1rem;
+}
+
+.flex {
+    display: flex;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.text-4xl {
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+}
+
+.font-bold {
+    font-weight: 700;
+}
+
+.my-3 {
+    margin-top: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.gap-2 {
+    gap: 0.5rem;
+}
+
+.p-input-icon-right {
+    position: relative;
+}
+
+.p-input-icon-right input {
+    padding-right: 2.5rem;
+}
+
+.p-input-icon-right .pi {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.p-button-success {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.p-button-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.p-button-rounded {
+    border-radius: 50%;
+}
+
+.p-button-text {
+    background: none;
+    border: none;
+    color: inherit;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+}
+
+.p-button-text:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.p-4 {
+    padding: 1rem;
+}
+
+.w-1-3 {
+    width: 33.333333%;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-lg {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+}
+
+.font-semibold {
+    font-weight: 600;
+}
+
+.mb-2 {
+    margin-bottom: 0.5rem;
+}
+
+.toggle-all {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .toggle-all {
+        display: block;
+    }
+}
+
+.empty-message {
+    text-align: center;
+    padding: 3rem;
+    color: #6c757d;
+    font-size: 1.2rem;
+}

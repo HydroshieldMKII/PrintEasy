@@ -6,7 +6,7 @@ import { MessageService } from 'primeng/api';
 
 import { UserCredentialsModel } from '../models/user-credentials.model';
 import { ApiRequestService } from './api.service';
-import { RequestResponseModel } from '../models/request-response.model';
+import { ApiResponseModel } from '../models/api-response.model';
 
 @Injectable({
     providedIn: 'root'
@@ -44,7 +44,7 @@ export class AuthService {
         }
     }
 
-    logIn(providedCredentials: UserCredentialsModel): Observable<RequestResponseModel> {
+    logIn(providedCredentials: UserCredentialsModel): Observable<ApiResponseModel> {
         const credentials = {
             user: {
                 username: providedCredentials.username,
@@ -67,7 +67,7 @@ export class AuthService {
     }
 
 
-    signUp(providedCredentials: UserCredentialsModel): Observable<RequestResponseModel> {
+    signUp(providedCredentials: UserCredentialsModel): Observable<ApiResponseModel> {
         const credentials = {
             user: {
                 username: providedCredentials.username,
