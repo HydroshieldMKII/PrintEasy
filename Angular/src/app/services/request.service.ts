@@ -19,6 +19,18 @@ export class RequestService {
 
     constructor(private api: ApiRequestService) { }
 
+    getPrinters(): Observable<boolean> {
+        return this.api.getRequest('api/printer_user').pipe(
+            map((response: ApiResponseModel) => {
+                if (response.status === 200) {
+                    console.log("Printer user response: ", response.data);
+                    return response.data.length > 0;
+                }
+                return false;
+            })
+        );
+    }
+
     getAllRequests(): Observable<RequestModel[]> {
         return this.fetchRequest('all');
     }
