@@ -24,14 +24,14 @@
             </p-floatlabel>
 
 
-            <div>
-                <label for="targetDate" class="block font-semibold">Target Date</label>
+            <p-floatlabel variant="in">
                 <div class="w-full">
-                    <p-datepicker [(ngModel)]="request.targetDate" [showIcon]="true" inputId="buttondisplay"
-                        [showOnFocus]="false" class="w-full" [disabled]="isViewMode"
+                    <p-datepicker id="targetDate" [(ngModel)]="request.targetDate" [showIcon]="true"
+                        inputId="buttondisplay" [showOnFocus]="false" class="w-full" [disabled]="isViewMode"
                         dateFormat="yy-mm-dd"></p-datepicker>
+                    <label for="targetDate" class="block font-semibold">Target Date</label>
                 </div>
-            </div>
+            </p-floatlabel>
         </div>
 
         <!-- Right Section: STL Preview -->
@@ -108,8 +108,8 @@
     </div>
 
     <div class="flex justify-end mt-6 gap-3 edit-actions" *ngIf="isEditMode">
-        <p-button label="Save" icon="pi pi-save" severity="success" (click)="saveChanges()"></p-button>
-        <p-button label="Delete" icon="pi pi-trash" severity="danger" (click)="deleteRequest()"></p-button>
         <p-button label="Cancel" icon="pi pi-times" severity="secondary" (click)="cancelEdit()"></p-button>
+        <p-button label="Delete" icon="pi pi-trash" severity="danger" (click)="deleteRequest()"></p-button>
+        <p-button label="Save" icon="pi pi-save" severity="success" (click)="saveChanges()"></p-button>
     </div>
 </div>
