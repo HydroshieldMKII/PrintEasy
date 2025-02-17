@@ -213,8 +213,7 @@ end
 
 # Create Orders
 order1 = Order.create!(offer: Offer.first)
-order2 = Order.create!(offer: Offer.second
-)
+order2 = Order.create!(offer: Offer.second)
 
 Review.create!(
   order: order2,
