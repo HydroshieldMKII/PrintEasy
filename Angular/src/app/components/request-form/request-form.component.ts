@@ -11,6 +11,8 @@ import { DropdownModule } from 'primeng/dropdown';
 })
 export class RequestFormComponent implements OnInit {
   isEditMode = false;
+  id: number | null = null;
+
   request: any = {
     name: '',
     budget: '',
@@ -31,11 +33,11 @@ export class RequestFormComponent implements OnInit {
 
   ngOnInit(): void {
     const action = this.route.snapshot.url[0]?.path;
-    const id = this.route.snapshot.params['id'];
 
+    this.id = this.route.snapshot.params['id'];
     this.isEditMode = action === 'edit';
 
-    if (this.isEditMode && !id) {
+    if (this.isEditMode && !this.id) {
       this.router.navigate(['/requests']);
     }
 
@@ -72,7 +74,11 @@ export class RequestFormComponent implements OnInit {
   }
 
   cancelEdit(): void {
-    this.router.navigate(['/requests']);
+    if (this.isEditMode) {
+      this.router.navigate(['/requests/view', this.id]);
+    } else {
+      this.router.navigate(['/requests']);
+    }
   }
 
 
@@ -87,5 +93,9 @@ export class RequestFormComponent implements OnInit {
 
   onRowEditCancel(preset: any, index: number) {
     console.log('Edit Canceled:', preset);
+  }
+
+  makeAnOffer(): void {
+    console.log('Offer made:', this.request);
   }
 }

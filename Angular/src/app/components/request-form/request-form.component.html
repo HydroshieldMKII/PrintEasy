@@ -100,10 +100,9 @@
         </ng-template>
     </p-table>
 
-    <div class="flex justify-end mt-6 gap-3 edit-actions">
-        <p-button *ngIf="isEditMode" label="Save" icon="pi pi-save" severity="info" (click)="saveChanges()"></p-button>
-        <p-button *ngIf="isEditMode" label="Delete" icon="pi pi-trash" severity="danger"
-            (click)="deleteRequest()"></p-button>
+    <div class="flex justify-end mt-6 gap-3 edit-actions" *ngIf="isEditMode">
+        <p-button label="Save" icon="pi pi-save" severity="info" (click)="saveChanges()"></p-button>
+        <p-button label="Delete" icon="pi pi-trash" severity="danger" (click)="deleteRequest()"></p-button>
         <p-button label="Cancel" icon="pi pi-times" severity="secondary" (click)="cancelEdit()"></p-button>
     </div>
 </div>

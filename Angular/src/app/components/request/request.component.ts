@@ -50,18 +50,27 @@ export class RequestsComponent implements OnInit {
       acc[request.id] = true;
       return acc;
     }, {});
+
   }
 
   collapseAll(): void {
     this.expandedRows = {};
+
+    //remove greyed background
+    const rows = document.querySelectorAll('tr');
+    rows.forEach(row => {
+      row.style.backgroundColor = '';
+    });
   }
 
   onRowExpand(event: any): void {
     this.expandedRows[event.data.id] = true;
+    event.originalEvent.target.parentElement.parentElement.style.backgroundColor = 'lightgrey';
   }
 
   onRowCollapse(event: any): void {
     delete this.expandedRows[event.data.id];
+    event.originalEvent.target.parentElement.parentElement.style.backgroundColor = '';
   }
 
   // Expand/collapse for "My Requests"
@@ -74,14 +83,22 @@ export class RequestsComponent implements OnInit {
 
   collapseAllMyRequests(): void {
     this.expandedRowsMyRequests = {};
+    const rows = document.querySelectorAll('tr');
+    rows.forEach(row => {
+      row.style.backgroundColor = '';
+    });
   }
 
   onRowExpandMyRequests(event: any): void {
     this.expandedRowsMyRequests[event.data.id] = true;
+
+    //make row greyed
+    event.originalEvent.target.parentElement.parentElement.style.backgroundColor = 'lightgrey';
   }
 
   onRowCollapseMyRequests(event: any): void {
     delete this.expandedRowsMyRequests[event.data.id];
+    event.originalEvent.target.parentElement.parentElement.style.backgroundColor = '';
   }
 
   downloadRequest(requestId: number): void {
