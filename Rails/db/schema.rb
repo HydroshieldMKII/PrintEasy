@@ -105,8 +105,10 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_14_173559) do
     t.bigint "request_id", null: false
     t.bigint "color_id", null: false
     t.bigint "filament_id", null: false
+    t.bigint "printer_id", null: false
     t.index ["color_id"], name: "index_preset_requests_on_color_id"
     t.index ["filament_id"], name: "index_preset_requests_on_filament_id"
+    t.index ["printer_id"], name: "index_preset_requests_on_printer_id"
     t.index ["request_id"], name: "index_preset_requests_on_request_id"
   end
 
@@ -197,6 +199,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_14_173559) do
   add_foreign_key "orders", "offers"
   add_foreign_key "preset_requests", "colors"
   add_foreign_key "preset_requests", "filaments"
+  add_foreign_key "preset_requests", "printers"
   add_foreign_key "preset_requests", "requests"
   add_foreign_key "presets", "colors"
   add_foreign_key "presets", "filaments"

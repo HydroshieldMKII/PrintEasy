@@ -151,8 +151,8 @@ request2.stl_file.attach(
 
 
 # Create Preset Requests
-PresetRequest.create!(request_id: request1.id, color_id: color_red.id, filament_id: filament_pla.id)
-PresetRequest.create!(request_id: request2.id, color_id: color_blue.id, filament_id: filament_abs.id)
+PresetRequest.create!(request_id: request1.id, color_id: color_red.id, filament_id: filament_pla.id, printer_id: printer1.id)
+PresetRequest.create!(request_id: request2.id, color_id: color_blue.id, filament_id: filament_abs.id, printer_id: printer2.id)
 
 # Create Offers
 offer1 = Offer.create!(

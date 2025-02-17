@@ -40,8 +40,15 @@ export class RequestsComponent implements OnInit {
   constructor(private requestService: RequestService, private router: Router) { }
 
   ngOnInit(): void {
-    this.requests = this.requestService.getAllRequests();
-    this.myRequests = this.requestService.getMyRequests();
+    // this.requests = this.requestService.getAllRequests();
+    // this.myRequests = this.requestService.getMyRequests();
+
+    this.requestService.getAllRequests().subscribe((requests: RequestModel[]) => {
+
+      console.log('Requests:', requests);
+      // this.requests = requests;
+      // this.filteredAllRequests = this.filterRequests(this.requests);
+    });
   }
 
   // Expand/collapse for "All Requests"

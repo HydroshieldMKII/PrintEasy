@@ -11,4 +11,12 @@ class Request < ApplicationRecord
 
   has_many_attached :stl_file
   validates :stl_file, presence: true
+
+  def stl_file_url
+    return unless stl_file.attached?
+
+    stl_file.map do |file|
+      Rails.application.routes.url_helpers.rails_blob_url(file, only_path: true)
+    end
+  end
 end
