@@ -1,10 +1,18 @@
-/* .contest-container {
+.contest-container {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 97dvh;
-    background-color: #f4f4f4;
-} */
+}
+.card {
+    background-color: #fff;
+    width: 80%;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    margin: auto;
+    max-width: 1500px;
+}
 
 .form-card {
     max-width: 650px;
@@ -50,6 +58,8 @@
 
 .button-container {
     gap: 10px;
+    display: flex;
+    justify-content: flex-end;
 }
 
 .p-invalid {
@@ -69,6 +79,10 @@
 
 
 @media (max-width: 768px) {
+    .contest-container {
+        padding: 10px;
+    }
+
     .p-card {
         margin: 1rem;
     }

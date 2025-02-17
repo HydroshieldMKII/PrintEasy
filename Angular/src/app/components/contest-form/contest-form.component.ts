@@ -1,20 +1,11 @@
 import { Component } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 
-import { InputTextModule } from 'primeng/inputtext';
-import { InputNumberModule } from 'primeng/inputnumber';
-import { DatePickerModule } from 'primeng/datepicker';
-import { CalendarModule } from 'primeng/calendar';
-import { FileUploadModule } from 'primeng/fileupload';
-import { ButtonModule } from 'primeng/button';
-import { CardModule } from 'primeng/card';
-import { TextareaModule } from 'primeng/textarea';
-import { FloatLabelModule } from 'primeng/floatlabel';
+import { ImportsModule } from '../../../imports';
 
 @Component({
   selector: 'app-contest-form',
-  imports: [InputTextModule, InputNumberModule, DatePickerModule, FileUploadModule, ButtonModule, ReactiveFormsModule, BrowserModule, CardModule, TextareaModule, CalendarModule, FloatLabelModule],
+  imports: [ReactiveFormsModule, ImportsModule],
   templateUrl: './contest-form.component.html',
   styleUrl: './contest-form.component.css'
 })

@@ -1,10 +1,12 @@
 <div class="contest-container">
-  <p-card header="Créer un contest" class="form-card">
+  <div class="card">
+    <h1> Créer un concours </h1>
+
     <form [formGroup]="contestForm" (ngSubmit)="onSubmit()">
       <div class="p-fluid grid">
         <!-- Thème -->
         <div class="field col-12">
-          <p-floatlabel variant="on">
+          <p-floatlabel variant="in">
             <input id="theme" pInputText formControlName="theme" type="text" />
             <label for="theme" class="p-text-bold">Thème</label>
           </p-floatlabel>
@@ -15,8 +17,9 @@
 
         <!-- Description -->
         <div class="field col-12">
-          <p-floatlabel variant="on">
-            <textarea class="description-textarea" id="description" pTextarea formControlName="description" rows="4"></textarea>
+          <p-floatlabel variant="in">
+            <textarea class="description-textarea" id="description" pTextarea formControlName="description"
+              rows="4"></textarea>
             <label for="description" class="p-text-bold">Description</label>
           </p-floatlabel>
           <small *ngIf="contestForm.get('description')?.invalid && contestForm.get('description')?.touched"
@@ -27,7 +30,7 @@
 
         <!-- Limite -->
         <div class="field col-12 md:col-6">
-          <p-floatlabel variant="on">
+          <p-floatlabel variant="in">
             <input id="limit" pInputText formControlName="limit" type="number" />
             <label for="limit" class="p-text-bold">Limite</label>
           </p-floatlabel>
@@ -38,9 +41,9 @@
 
         <!-- Date de début -->
         <div class="field col-12 md:col-6">
-          <p-floatlabel variant="on">
-            <p-datepicker inputId="startDate" showIcon iconDisplay="input" [showButtonBar]="true"
-              formControlName="startDate" />
+          <p-floatlabel variant="in">
+            <p-datepicker formControlName="startDate" [showIcon]="true" inputId="buttondisplay" [showOnFocus]="false"
+              class="w-full" dateFormat="yy-mm-dd"></p-datepicker>
             <label for="startDate">Date de début</label>
           </p-floatlabel>
           <small *ngIf="contestForm.get('startDate')?.invalid && contestForm.get('startDate')?.touched" class="p-error">
@@ -50,9 +53,9 @@
 
         <!-- Date de fin -->
         <div class="field col-12 md:col-6">
-          <p-floatlabel variant="on">
-            <p-datepicker inputId="endDate" showIcon iconDisplay="input" [showButtonBar]="true"
-              formControlName="endDate" />
+          <p-floatlabel variant="in">
+            <p-datepicker formControlName="endDate" [showIcon]="true" inputId="buttondisplay" [showOnFocus]="false"
+              class="w-full" dateFormat="yy-mm-dd"></p-datepicker>
             <label for="endDate">Date de fin</label>
           </p-floatlabel>
           <small *ngIf="contestForm.get('endDate')?.invalid && contestForm.get('endDate')?.touched" class="p-error">
@@ -62,9 +65,9 @@
 
         <!-- Upload de l'image -->
         <div class="field col-12">
-          <label for="image" class="p-text-bold">Image</label>
+          <!-- <label for="image" class="p-text-bold">Image</label> -->
           <p-fileUpload name="image" accept="image/*" [maxFileSize]="1000000" [auto]="true"
-            (onSelect)="onFileSelect($event)"></p-fileUpload>
+            (onSelect)="onFileSelect($event)" chooseLabel="Upload file" ></p-fileUpload>
           <small *ngIf="contestForm.get('image')?.invalid && contestForm.get('image')?.touched" class="p-error">
             Une image est requise.
           </small>
@@ -73,12 +76,13 @@
         <!-- Boutons -->
         <div class="field col-12">
           <div class="button-container">
-            <button pButton label="Annuler" type="button" (click)="onCancel()" class="p-button-secondary"></button>
-            <button pButton label="Soumettre" type="submit" [disabled]="!contestForm.valid"
-              class="p-button-success p-mr-2"></button>
+            <p-button label="Annuler" type="button" (click)="onCancel()" icon="pi pi-times"
+              severity="secondary"></p-button>
+            <p-button label="Sauvegarder" [disabled]="!contestForm.valid" icon="pi pi-save"
+              severity="success"></p-button>
           </div>
         </div>
       </div>
     </form>
-  </p-card>
+  </div>
 </div>
