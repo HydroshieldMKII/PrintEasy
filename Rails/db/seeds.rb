@@ -48,25 +48,91 @@ user1 = User.create!(
 )
 
 # Create Printers
-printer1 = Printer.create!(model: "Creality Ender 3")
-printer2 = Printer.create!(model: "Prusa i3 MK3S+")
+printers = ["Bambulab", "Anycubic", "Artillery", "Creality", "Elegoo", "Flashforge", "Monoprice", "Prusa", "Qidi", "Sindoh", "Ultimaker", "XYZprinting", "Zortrax"]
+printers.each do |printer|
+  Printer.create!(model: printer)
+end
 
 # Assign Printers to Users
-PrinterUser.create!(user: admin, printer: printer1, acquired_date: Time.now)
-PrinterUser.create!(user: user1, printer: printer2, acquired_date: Time.now - 1.year)
+PrinterUser.create!(user: admin, printer: Printer.first, acquired_date: Time.now)
+PrinterUser.create!(user: user1, printer: Printer.second, acquired_date: Time.now - 1.year)
 
 # Create Colors
-color_red = Color.create!(name: "Red")
-color_blue = Color.create!(name: "Blue")
+colors = ["Red", "Blue", "Green", "Yellow", "Black", "White", "Orange", "Purple", "Pink", "Brown", "Gray"]
+colors.each do |color|
+  Color.create!(name: color)
+end
 
 # Create Filaments
-filament_pla = Filament.create!(name: "PLA")
-filament_abs = Filament.create!(name: "ABS")
+filaments = ["PETG", "TPU", "Nylon", "Wood", "Metal", "Carbon Fiber"]
+filaments.each do |filament|
+  Filament.create!(name: filament)
+end
 
 # Create Presets
-preset1 = Preset.create!(color: color_red, filament: filament_pla, user: admin, print_quality: 0.08)
-preset2 = Preset.create!(color: color_blue, filament: filament_abs, user: user1, print_quality: 0.08)
-preset3 = Preset.create!(color: color_red, filament: filament_abs, user: user1, print_quality: 0.12)
+10.times do |i|
+  color = Color.all.sample
+  filament = Filament.all.sample
+  user = User.all.sample
+  print_quality = [0.08, 0.12, 0.16, 0.2].sample
+
+  preset = Preset.find_or_create_by(color: color, filament: filament, user: user, print_quality: print_quality)
+  unless preset.persisted?
+    preset.save!
+  end
+end
+
+stl_file_path1 = Rails.root.join("db/seeds/files/RUBY13.stl")
+
+5.times do |i|
+  req = Request.create(
+    user: admin,
+    name: "Admin Request #{i + 1}",
+    budget: (i + 1) * 20.0,
+    comment: "This is request number #{i + 1} from admin.",
+    target_date: Time.now + (i + 5).days
+  )
+
+  # Attach STL file to request
+  req.stl_file.attach(
+    io: File.open(stl_file_path1),
+    filename: "RUBY13.stl",
+    content_type: "application/sla"
+  )
+  req.save
+end
+
+10.times do |i|
+  Request.create(
+    user: user1,
+    name: "User Request #{i + 1}",
+    budget: (i + 1) * 15.0,
+    comment: "This is request number #{i + 1} from user.",
+    target_date: Time.now + (i + 10).days
+  )
+
+  # Attach STL file to request
+  request = Request.last
+  request.stl_file.attach(
+    io: File.open(stl_file_path1),
+    filename: "RUBY13.stl",
+    content_type: "application/sla"
+  )
+  request.save
+end
+
+# Create Preset Requests for each Request
+Request.all.each do |request|
+  rand(0..3).times do
+    PresetRequest.create!(
+      request: request,
+      color: Color.all.sample,
+      filament: Filament.all.sample,
+      printer: Printer.all.sample,
+      print_quality: [0.08, 0.12, 0.16, 0.2].sample
+    )
+  end
+end
 
 # Create Contests
 contest1 = Contest.create(
@@ -116,68 +182,29 @@ submission2.save
 Like.create!(user: admin, submission: submission2)
 Like.create!(user: user1, submission: submission1)
 
-stl_file_path1 = Rails.root.join("db/seeds/files/RUBY13.stl")
-
-# Create Requests
-request1 = Request.create(
-  user: admin,
-  name: "Custom Chess Set",
-  budget: 50.0,
-  comment: "Need a high-quality chess set with intricate pieces.",
-  target_date: Time.now + 10.days
-)
-
-request1.stl_file.attach(
-    io: File.open(stl_file_path1),
-    filename: "RUBY13.stl",
-    content_type: "application/sla"
-  )
-  request1.save
-
-request2 = Request.create(
-  user: user1,
-  name: "Prototype Case",
-  budget: 100.0,
-  comment: "Looking for a durable case prototype.",
-  target_date: Time.now + 15.days
-)
-
-request2.stl_file.attach(
-    io: File.open(stl_file_path1),
-    filename: "RUBY13.stl",
-    content_type: "application/sla"
-  )
-  request2.save
-
-
-# Create Preset Requests
-PresetRequest.create!(request_id: request1.id, color_id: color_red.id, filament_id: filament_pla.id, printer_id: printer1.id, print_quality: 0.08)
-PresetRequest.create!(request_id: request2.id, color_id: color_blue.id, filament_id: filament_abs.id, printer_id: printer2.id, print_quality: 0.12)
-
 # Create Offers
-offer1 = Offer.create!(
-  request: request1,
-  printer_user: PrinterUser.first,
-  color: color_red,
-  filament: filament_pla,
-  price: 45.0,
-  target_date: Time.now + 9.days,
-  print_quality: 0.08
-)
+colors = Color.all
+filaments = Filament.all
+printer_users = PrinterUser.all
 
-offer2 = Offer.create!(
-  request: request2,
-  printer_user: PrinterUser.last,
-  color: color_blue,
-  filament: filament_abs,
-  price: 95.0,
-  target_date: Time.now + 14.days,
-  print_quality: 0.12
-)
+Request.all.each do |request|
+  rand(1..5).times do
+    Offer.create!(
+      request: request,
+      printer_user: printer_users.sample,
+      color: colors.sample,
+      filament: filaments.sample,
+      price: rand(20.0..100.0).round(2),
+      target_date: Time.now + rand(5..15).days,
+      print_quality: [0.08, 0.12, 0.16, 0.2].sample
+    )
+  end
+end
 
 # Create Orders
-order1 = Order.create!(offer: offer1)
-order2 = Order.create!(offer: offer2)
+order1 = Order.create!(offer: Offer.first)
+order2 = Order.create!(offer: Offer.second
+)
 
 Review.create!(
   order: order2,

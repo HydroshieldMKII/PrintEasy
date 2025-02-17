@@ -19,88 +19,51 @@ export class RequestsComponent implements OnInit {
   requestToDelete: RequestModel | null = null;
 
   expandedRows: { [key: number]: boolean } = {};
-  expandedRowsMyRequests: { [key: number]: boolean } = {};
+  searchQuery: string = ''; // Add this property
 
-  searchAllRequestQuery: string = '';
-  searchMyRequestQuery: string = '';
+  get filteredRequests(): RequestModel[] {
+    return this.activeTab === 'all'
+      ? this.requests.filter(r =>
+          r.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+        )
+      : this.myRequests.filter(r =>
+          r.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+        );
+  }
 
-  filteredAllRequests: RequestModel[] = [];
-  filteredMyRequests: RequestModel[] = [];
-
-  constructor(private requestService: RequestService, private router: Router) { }
+  constructor(private requestService: RequestService, private router: Router) {}
 
   ngOnInit(): void {
     this.requestService.getAllRequests().subscribe((requests: RequestModel[]) => {
-      console.log('Requests:', requests);
       this.requests = requests;
     });
 
     this.requestService.getMyRequests().subscribe((requests: RequestModel[]) => {
-      console.log('My requests:', requests);
       this.myRequests = requests;
     });
   }
 
-  // Expand/collapse for "All Requests"
   expandAll(): void {
-    this.expandedRows = this.requests.reduce((acc: { [key: number]: boolean }, request: RequestModel) => {
+    this.expandedRows = this.filteredRequests.reduce((acc: { [key: number]: boolean }, request: RequestModel) => {
       acc[request.id] = true;
       return acc;
     }, {});
-
   }
 
   collapseAll(): void {
     this.expandedRows = {};
-
-    //remove greyed background
-    const rows = document.querySelectorAll('td');
-    rows.forEach(row => {
-      row.style.backgroundColor = '';
-    });
   }
 
   onRowExpand(event: any): void {
     this.expandedRows[event.data.id] = true;
-    event.originalEvent.target.parentElement.parentElement.style.backgroundColor = 'lightgrey';
   }
 
   onRowCollapse(event: any): void {
     delete this.expandedRows[event.data.id];
-    event.originalEvent.target.parentElement.parentElement.style.backgroundColor = '';
-  }
-
-  // Expand/collapse for "My Requests"
-  expandAllMyRequests(): void {
-    this.expandedRowsMyRequests = this.myRequests.reduce((acc: { [key: number]: boolean }, request: RequestModel) => {
-      acc[request.id] = true;
-      return acc;
-    }, {});
-  }
-
-  collapseAllMyRequests(): void {
-    this.expandedRowsMyRequests = {};
-    const rows = document.querySelectorAll('td');
-    rows.forEach(row => {
-      row.style.backgroundColor = '';
-    });
-  }
-
-  onRowExpandMyRequests(event: any): void {
-    this.expandedRowsMyRequests[event.data.id] = true;
-
-    //make row greyed
-    event.originalEvent.target.parentElement.parentElement.style.backgroundColor = 'lightgrey';
-  }
-
-  onRowCollapseMyRequests(event: any): void {
-    delete this.expandedRowsMyRequests[event.data.id];
-    event.originalEvent.target.parentElement.parentElement.style.backgroundColor = '';
   }
 
   downloadRequest(requestId: number): void {
     console.log('Download request with ID:', requestId);
-    // this.requestService.downloadRequest(requestId);
   }
 
   showDeleteDialog(request: RequestModel): void {
@@ -116,3 +79,4 @@ export class RequestsComponent implements OnInit {
     this.deleteDialogVisible = false;
   }
 }
+

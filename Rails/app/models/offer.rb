@@ -4,7 +4,7 @@ class Offer < ApplicationRecord
   belongs_to :color
   belongs_to :filament
 
-  validates :print_quality, presence: true, numericality: { greater_than: 0, less_than: 2 }
+  validates :print_quality, presence: true, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 2 }
   validates :request, :printer_user, :color, :filament, presence: true
   validates :request, uniqueness: { scope: %i[printer_user_id color_id filament_id], message: 'This offer already exists' }
   validates :price, presence: true, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 10_000 }
