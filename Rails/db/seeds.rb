@@ -193,7 +193,10 @@ status_shipped = Status.create!(name: "Shipped")
 status_arrived = Status.create!(name: "Arrived")
 status_cancelled = Status.create!(name: "Cancelled")
 
-OrderStatus.create!(order: order2, status: status_arrived, comment: "Order successfully delivered.")
+OrderStatus.create!(order: order2, status: status_accepted, comment: "offer accepted, printing soon.")
+OrderStatus.create!(order: order2, status: status_printing, comment: "Order started printing.")
+OrderStatus.create!(order: order2, status: status_printed, comment: "Order printed.")
+OrderStatus.create!(order: order2, status: status_shipped, comment: "Order shipped.")
 orderstatus1 = OrderStatus.create!(order: order1, status: status_accepted, comment: "offer accepted, printing soon.")
 orderstatus1.image.attach(
   io: File.open(Rails.root.join("db/seeds/files/ruby.jpg")),

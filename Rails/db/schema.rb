@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_02_14_173559) do
+ActiveRecord::Schema[7.1].define(version: 2025_02_17_130040) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -88,12 +88,12 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_14_173559) do
 
   create_table "order_status", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.bigint "order_id", null: false
-    t.bigint "status_id", null: false
+    t.string "status_name", null: false
     t.string "comment"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["order_id"], name: "index_order_status_on_order_id"
-    t.index ["status_id"], name: "index_order_status_on_status_id"
+    t.index ["status_name"], name: "index_order_status_on_status_name"
   end
 
   create_table "orders", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
@@ -154,8 +154,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_14_173559) do
     t.index ["user_id"], name: "index_reviews_on_user_id"
   end
 
-  create_table "status", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
-    t.string "name", null: false
+  create_table "status", primary_key: "name", id: :string, charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
   end
 
   create_table "submissions", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
@@ -193,7 +192,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_14_173559) do
   add_foreign_key "offers", "printer_users"
   add_foreign_key "offers", "requests"
   add_foreign_key "order_status", "orders"
-  add_foreign_key "order_status", "status"
+  add_foreign_key "order_status", "status", column: "status_name", primary_key: "name"
   add_foreign_key "orders", "offers"
   add_foreign_key "preset_requests", "colors"
   add_foreign_key "preset_requests", "filaments"
