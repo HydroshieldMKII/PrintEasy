@@ -1,44 +1,33 @@
 import { Component, inject } from '@angular/core';
-import { Contest } from '../../models/contest';
+import { ContestModel } from '../../models/contest.model';
 import { Router, RouterLink } from '@angular/router';
+import { ContestService } from '../../services/contest.service';
 
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { SpeedDialModule } from 'primeng/speeddial';
 
 @Component({
   selector: 'app-contest',
   standalone: true,
-  imports: [CardModule, ButtonModule, InputTextModule, FormsModule, CommonModule],
+  imports: [CardModule, ButtonModule, InputTextModule, FormsModule, CommonModule, SpeedDialModule],
   templateUrl: './contest.component.html',
   styleUrls: ['./contest.component.css']
 })
 export class ContestComponent {
   route = inject(Router);
+  contestService = inject(ContestService);
+  contests: ContestModel[] = [];
 
-  contests: Contest[] = [
-    new Contest(
-      1,
-      'Animals',
-      "Here, even lions go 3D, but without the mane, it's just a cat!",
-      50,
-      null,
-      new Date('2024-03-01'),
-      new Date('2024-04-01')
-    ),
-    new Contest(
-      2,
-      'Vehicles',
-      'Design your dream car in 3D!',
-      100,
-      null,
-      new Date('2024-03-10'),
-      new Date('2024-04-10')
-    )
-  ];
-
+  constructor() {
+    this.contestService.getContests().subscribe((response) => {
+      console.log('Contests:', response);
+      this.contests = response;
+    });
+  }
   searchTerm: string = '';
 
   newContest() {
@@ -46,7 +35,7 @@ export class ContestComponent {
     this.route.navigate(['/contest/new']);
   }
 
-  filterContests(): Contest[] {
+  filterContests(): ContestModel[] {
     return this.contests.filter(contest =>
       contest.theme.toLowerCase().includes(this.searchTerm.toLowerCase())
     );

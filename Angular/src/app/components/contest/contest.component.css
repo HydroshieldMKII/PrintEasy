@@ -19,13 +19,6 @@ h2 {
     margin-bottom: 20px;
 }
 
-.fab-button {
-    position: fixed;
-    top: 70px;
-    right: 20px;
-    z-index: 1000;
-}
-
 .search-container {
     display: flex;
     justify-content: center;
@@ -100,4 +93,11 @@ h2 {
 .admin-buttons {
     display: flex;
     width: 100%;
+}
+
+@media (max-width: 768px) {
+    p-speeddial {
+        padding: absolute;
+        right: 5%;
+    }
 }

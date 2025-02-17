@@ -1,12 +1,12 @@
 <div class="container">
+    <p-speeddial direction="left" [style]="{ position: 'absolute', top: 1, right: 'calc(1%)' }" [buttonProps]="{ severity: 'success', rounded: true }" (onClick)="newContest()"/>
+
     <h2>3D DESIGN CONTEST</h2>
     <p>
         We regularly organize popular 3D design contests for valuable prizes
         at <a href="https://printables.com">Printables.com</a>. Take part in
         the currently running contest, create and upload your model and win.
     </p>
-
-    <button pButton pRipple icon="pi pi-plus" class="p-button-rounded p-button-success fab-button" (click)="newContest()"></button>
 
     <div class="search-container">
         <input type="text" pInputText [(ngModel)]="searchTerm" placeholder="Search by theme" />
@@ -17,7 +17,7 @@
     <div class="contest-list">
         <p-card *ngFor="let contest of contests" class="contest-card">
             <div class="contest-content">
-                <img src="https://placehold.co/600x400" alt="Contest image" class="contest-image" />
+                <img [src]="contest.image" alt="Contest image" class="contest-image" />
                 <div class="contest-details">
                     <h3 class="contest-theme">{{ contest.theme }}</h3>
                     <p>{{ contest.description }}</p>

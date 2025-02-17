@@ -1,7 +1,7 @@
 class Api::ContestController < ApplicationController
     def index
         @contests = Contest.all
-        render json: {contests: @contests, errors: {}}, status: :ok
+        render json: {contests: @contests.as_json(methods: :image_url), errors: {}}, status: :ok
     end
     
     def create

@@ -79,7 +79,7 @@
             <p-button label="Annuler" type="button" (click)="onCancel()" icon="pi pi-times"
               severity="secondary"></p-button>
             <p-button label="Sauvegarder" [disabled]="!contestForm.valid" icon="pi pi-save"
-              severity="success"></p-button>
+              severity="success" (onClick)="onSubmit()"></p-button>
           </div>
         </div>
       </div>

@@ -26,6 +26,10 @@ class Contest < ApplicationRecord
         !deleted_at.nil?
     end
 
+    def image_url
+        image && Rails.application.routes.url_helpers.rails_blob_path(image, only_path: true)
+    end
+
     private
 
     def set_start_at
