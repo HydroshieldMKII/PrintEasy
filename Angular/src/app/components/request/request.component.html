@@ -43,7 +43,6 @@
                             <th pSortableColumn="budget">Budget <p-sortIcon field="budget" /></th>
                             <th pSortableColumn="targetDate">Target Date <p-sortIcon field="targetDate" /></th>
                             <th pSortableColumn="country">Country <p-sortIcon field="country" /></th>
-                            <th pSortableColumn="printerModel">Printer Model <p-sortIcon field="printerModel" /></th>
                             <th style="width: 4rem">Actions</th>
                         </tr>
                     </ng-template>
@@ -57,8 +56,7 @@
                             <td>{{ request.name }}</td>
                             <td>{{ request.budget | currency }}</td>
                             <td>{{ request.targetDate | date }}</td>
-                            <td>{{ request.country }}</td>
-                            <td>{{ request.printerModel }}</td>
+                            <td>{{ request.user.country }}</td>
                             <td>
                                 <div class="flex gap-2">
                                     <p-button icon="pi pi-arrow-right" class="p-button-rounded p-button-text"
@@ -82,16 +80,16 @@
                         <tr>
                             <th pSortableColumn="filamentType">Filament Type <p-sortIcon field="filamentType" /></th>
                             <th pSortableColumn="color">Color <p-sortIcon field="color" /></th>
-                            <th pSortableColumn="diameter">Diameter <p-sortIcon field="diameter" /></th>
                             <th pSortableColumn="printQuality">Print Quality <p-sortIcon field="printQuality" /></th>
+                            <th pSortableColumn="printerModel">Printer Model <p-sortIcon field="printerModel" /></th>
                         </tr>
                     </ng-template>
                     <ng-template #body let-preset>
                         <tr>
                             <td>{{ preset.filamentType }}</td>
                             <td>{{ preset.color }}</td>
-                            <td>{{ preset.diameter }}mm</td>
                             <td>{{preset.printQuality}}mm</td>
+                            <td>{{ preset.printerModel }}</td>
                         </tr>
                     </ng-template>
                 </p-table>
@@ -149,7 +147,7 @@
                 <td>{{ request.name }}</td>
                 <td>{{ request.budget | currency }}</td>
                 <td>{{ request.targetDate | date }}</td>
-                <td>{{ request.country }}</td>
+                <td>{{ request.user.country }}</td>
                 <td>{{ request.printerModel }}</td>
                 <td>
                     <div class="flex gap-2">
