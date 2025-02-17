@@ -4,7 +4,7 @@ class OrderStatus < ApplicationRecord
 
   has_one_attached :image
 
-  validates :comment, length: { maximum: 200 }
+  validates :comment, length: { maximum: 200, minimum: 5 }
   validates :status_name, presence: true
   validates :order_id, presence: true
   validate :can_transition, on: :create
