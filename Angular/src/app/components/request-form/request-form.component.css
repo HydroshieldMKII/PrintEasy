@@ -70,7 +70,7 @@ textarea {
 /* Responsive preset card */
 .preset-card {
     width: 100%;
-    max-width: 500px;
+    max-width: 300px;
     background: #f5f5f5;
     padding: 1rem;
     border-radius: 0.5rem;
@@ -136,8 +136,8 @@ textarea {
 
 #comment {
     resize: none;
-    height: auto;
-    max-height: 300px;
+    height: 100px;
+    margin-bottom: 20px;
 }
 
 .edit-actions {
@@ -154,4 +154,8 @@ p-calendar {
 
 .p-inputtext {
     width: 100%;
+}
+
+input {
+    margin-bottom: 20px;
 }

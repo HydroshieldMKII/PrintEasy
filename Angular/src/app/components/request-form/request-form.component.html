@@ -43,7 +43,8 @@
             </div>
 
             <div class="stl-actions flex gap-2 mt-4">
-                <p-button label="Download file" icon="pi pi-download" class="p-button-outlined flex-1"></p-button>
+                <p-button *ngIf="!isEditMode" label="Download file" icon="pi pi-download"
+                    class="p-button-outlined flex-1"></p-button>
                 <p-fileUpload *ngIf="isEditMode" mode="basic" customUpload (uploadHandler)="uploadFile($event)"
                     accept=".stl" chooseLabel="Upload file" class="flex-1"></p-fileUpload>
             </div>
@@ -52,41 +53,52 @@
     </div>
 
     <h3 class="text-lg font-semibold mt-6">3 Presets Recommended</h3>
-    <div class="preset-list">
-        <div *ngFor="let preset of request.presets; let i = index" class="preset-card">
-            <div class="preset-info">
-                <p><strong>Printer:</strong>
-                    <span *ngIf="!isEditMode">{{ preset.printer }}</span>
-                    <p-dropdown *ngIf="isEditMode" [(ngModel)]="preset.printer" [options]="printers"
-                        placeholder="Select Printer"></p-dropdown>
-                </p>
 
-                <p><strong>Filament Type:</strong>
-                    <span *ngIf="!isEditMode">{{ preset.filamentType }}</span>
-                    <p-dropdown *ngIf="isEditMode" [(ngModel)]="preset.filamentType" [options]="filamentTypes"
-                        placeholder="Select Filament"></p-dropdown>
-                </p>
+    <p-table [value]="request.presets" dataKey="id" [tableStyle]="{ 'min-width': '50rem' }">
+        <ng-template #header>
+            <tr>
+                <th>Printer</th>
+                <th>Filament Type</th>
+                <th>Color</th>
+                <th>Print Quality</th>
+                <th *ngIf="isEditMode" style="width: 10%">Actions</th>
+            </tr>
+        </ng-template>
 
-                <p><strong>Color:</strong>
-                    <span *ngIf="!isEditMode">{{ preset.color }}</span>
-                    <p-dropdown *ngIf="isEditMode" [(ngModel)]="preset.color" [options]="colors"
-                        placeholder="Select Color"></p-dropdown>
-                </p>
+        <ng-template #body let-preset let-ri="rowIndex">
+            <tr>
+                <!-- Printer -->
+                <td>
+                    <p-dropdown [(ngModel)]="preset.printer" [options]="printers" placeholder="Select Printer"
+                        [disabled]="!isEditMode" appendTo="body"></p-dropdown>
+                </td>
 
-                <p><strong>Print Quality:</strong>
-                    <span *ngIf="!isEditMode">{{ preset.printQuality }}</span>
-                    <p-dropdown *ngIf="isEditMode" [(ngModel)]="preset.printQuality" [options]="printQualities"
-                        placeholder="Select Quality"></p-dropdown>
-                </p>
-            </div>
-            <div class="preset-actions">
-                <p-button *ngIf="isEditMode" icon="pi pi-trash" class="p-button-rounded" (click)="removePreset(i)"
-                    severity="danger"></p-button>
-                <p-button *ngIf="!isEditMode" label="Accept this preset" icon="pi pi-check" class="p-button-text"
-                    severity="success"></p-button>
-            </div>
-        </div>
-    </div>
+                <!-- Filament Type -->
+                <td>
+                    <p-dropdown [(ngModel)]="preset.filamentType" [options]="filamentTypes"
+                        placeholder="Select Filament" [disabled]="!isEditMode" appendTo="body"></p-dropdown>
+                </td>
+
+                <!-- Color -->
+                <td>
+                    <p-dropdown [(ngModel)]="preset.color" [options]="colors" placeholder="Select Color"
+                        [disabled]="!isEditMode" appendTo="body"></p-dropdown>
+                </td>
+
+                <!-- Print Quality -->
+                <td>
+                    <p-dropdown [(ngModel)]="preset.printQuality" [options]="printQualities"
+                        placeholder="Select Quality" [disabled]="!isEditMode" appendTo="body"></p-dropdown>
+                </td>
+
+                <!-- Delete Button -->
+                <td *ngIf="isEditMode">
+                    <button pButton pRipple type="button" icon="pi pi-trash" class="p-button-rounded p-button-danger"
+                        (click)="removePreset(ri)" severity="danger" appendTo="body"></button>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
 
     <div class="flex justify-end mt-6 gap-3 edit-actions">
         <p-button *ngIf="isEditMode" label="Save" icon="pi pi-save" severity="info" (click)="saveChanges()"></p-button>

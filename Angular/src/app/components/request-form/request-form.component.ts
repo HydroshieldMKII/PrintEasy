@@ -74,4 +74,18 @@ export class RequestFormComponent implements OnInit {
   cancelEdit(): void {
     this.router.navigate(['/requests']);
   }
+
+
+  // Row edit functions
+  onRowEditInit(preset: any) {
+    console.log('Edit Init:', preset);
+  }
+
+  onRowEditSave(preset: any) {
+    console.log('Edit Save:', preset);
+  }
+
+  onRowEditCancel(preset: any, index: number) {
+    console.log('Edit Canceled:', preset);
+  }
 }
