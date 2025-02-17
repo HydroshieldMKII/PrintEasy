@@ -1,29 +1,33 @@
 import { PresetModel } from './preset.model';
+import { UserModel } from './user.model';
 
 export class RequestModel {
     id: number;
-    name: string; // "Cool print idea"
-    budget: number; // 5
-    targetDate: Date; // e.g., "2021-01-01"
-    country: string; // "Canada"
-    printerModel: string; // "Creality 3"
+    name: string;
+    budget: number;
+    targetDate: Date;
+    comment: string;
+    stlFileUrls: string[];
     presets: PresetModel[];
+    user: UserModel;
 
     constructor(
         id: number,
         name: string,
         budget: number,
         targetDate: Date,
-        country: string,
-        printerModel: string,
-        presets: PresetModel[]
+        comment: string,
+        stlFileUrls: string[],
+        presets: PresetModel[],
+        user: UserModel
     ) {
         this.id = id;
         this.name = name;
         this.budget = budget;
         this.targetDate = targetDate;
-        this.country = country;
-        this.printerModel = printerModel;
+        this.comment = comment;
+        this.stlFileUrls = stlFileUrls;
         this.presets = presets;
+        this.user = user;
     }
 }

@@ -28,7 +28,7 @@ export class AuthService {
         const storedCurrentUser = JSON.parse(localStorage.getItem(this.CURRENT_USER_KEY) ?? 'null');
 
         if (storedCurrentUser) {
-            this._currentUser = new UserModel(storedCurrentUser.username);
+            this._currentUser = new UserModel(storedCurrentUser.id, storedCurrentUser.username, storedCurrentUser.country);
         }
     }
 
@@ -57,7 +57,8 @@ export class AuthService {
                     // console.log('Login response:', response);
                     if (!this.isLoggedIn) {
                         this.messageService.add({ severity: 'success', summary: 'Login success', detail: 'You are logged in!' });
-                        this.setCurrentUser(new UserModel((response.data as any)?.['user']?.['username']));
+                        const userData = (response.data as any)?.['user'];
+                        this.setCurrentUser(new UserModel(userData?.['id'], userData?.['username'], userData?.['country']));
                     }
                 }
                 return response;
@@ -81,7 +82,8 @@ export class AuthService {
                 // console.log('Sign up response:', response);
                 if (response.status === 200) {
                     this.messageService.add({ severity: 'success', summary: 'Account created', detail: 'You are now ready to use the app!' });
-                    this.setCurrentUser(new UserModel((response.data as any)?.['user']?.['username']));
+                    const userData = (response.data as any)?.['user'];
+                    this.setCurrentUser(new UserModel(userData?.['id'], userData?.['username'], userData?.['country']));
                 }
                 return response;
             })

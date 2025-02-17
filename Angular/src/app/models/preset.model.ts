@@ -1,13 +1,13 @@
 export class PresetModel {
-    id: number;
-    filamentType: string;
-    color: string;
     printQuality: number;
+    color: string;
+    filamentType: string;
+    printerModel: string;
 
-    constructor(id: number, filamentType: string, color: string, printQuality: number) {
-        this.id = id;
-        this.filamentType = filamentType;
-        this.color = color;
+    constructor(printQuality: number, color: string, filamentType: string, printerModel: string) {
         this.printQuality = printQuality;
+        this.color = color;
+        this.filamentType = filamentType;
+        this.printerModel = printerModel;
     }
 }

@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { RequestModel } from '../models/request.model';
 import { PresetModel } from '../models/preset.model';
+import { UserModel } from '../models/user.model';
 
 import { ApiRequestService } from './api.service';
 import { ApiResponseModel } from '../models/api-response.model';
@@ -18,27 +19,36 @@ export class RequestService {
 
     constructor(private api: ApiRequestService) { }
 
-    getAllRequests() {
+    getAllRequests(): Observable<RequestModel[]> {
         return this.api.getRequest('api/request').pipe(
-            map(response => {
+            map((response: ApiResponseModel) => {
+                console.log('Response:', response);
                 if (response.status === 200) {
-                    console.log('Requests data from getall service:', response.data);
-                    this.requests = (response.data as any[]).map(request => {
+                    this.requests = (response.data as any)?.['requests'].map((request: any) => {
+                        const user = new UserModel(
+                            request?.['user']?.['id'],
+                            request?.['user']?.['username'],
+                            request?.['user']?.['country']?.['name']
+                        );
+
+                        const presets = (request?.['preset_requests'] as any[]).map((preset: any) => {
+                            return new PresetModel(
+                                preset?.['print_quality'],
+                                preset?.['color']?.['name'],
+                                preset?.['filament']?.['name'],
+                                preset?.['printer']?.['model']
+                            );
+                        });
+
                         return new RequestModel(
-                            request.id,
-                            request.name,
-                            request.budget,
-                            new Date(request.target_date),
-                            request.comment,
-                            request.stl_file_url,
-                            request.preset_requests.map((preset: any) => {
-                                return new PresetModel(
-                                    preset.id,
-                                    preset.filament.name,
-                                    preset.color.name,
-                                    preset.filament.size
-                                );
-                            })
+                            request?.['id'],
+                            request?.['name'],
+                            request?.['budget'],
+                            new Date(request?.['target_date']),
+                            request?.['comment'],
+                            request?.['stl_file_url'],
+                            presets,
+                            user
                         );
                     });
                 }

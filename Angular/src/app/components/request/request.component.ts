@@ -44,9 +44,8 @@ export class RequestsComponent implements OnInit {
     // this.myRequests = this.requestService.getMyRequests();
 
     this.requestService.getAllRequests().subscribe((requests: RequestModel[]) => {
-
       console.log('Requests:', requests);
-      // this.requests = requests;
+      this.requests = requests;
       // this.filteredAllRequests = this.filterRequests(this.requests);
     });
   }

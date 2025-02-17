@@ -60,13 +60,13 @@ color_red = Color.create!(name: "Red")
 color_blue = Color.create!(name: "Blue")
 
 # Create Filaments
-filament_pla = Filament.create!(name: "PLA", size: 1.75)
-filament_abs = Filament.create!(name: "ABS", size: 2.85)
+filament_pla = Filament.create!(name: "PLA")
+filament_abs = Filament.create!(name: "ABS")
 
 # Create Presets
-preset1 = Preset.create!(color: color_red, filament: filament_pla, user: admin)
-preset2 = Preset.create!(color: color_blue, filament: filament_abs, user: user1)
-preset3 = Preset.create!(color: color_red, filament: filament_abs, user: user1)
+preset1 = Preset.create!(color: color_red, filament: filament_pla, user: admin, print_quality: 0.08)
+preset2 = Preset.create!(color: color_blue, filament: filament_abs, user: user1, print_quality: 0.08)
+preset3 = Preset.create!(color: color_red, filament: filament_abs, user: user1, print_quality: 0.12)
 
 # Create Contests
 contest1 = Contest.create(
@@ -151,8 +151,8 @@ request2.stl_file.attach(
 
 
 # Create Preset Requests
-PresetRequest.create!(request_id: request1.id, color_id: color_red.id, filament_id: filament_pla.id, printer_id: printer1.id)
-PresetRequest.create!(request_id: request2.id, color_id: color_blue.id, filament_id: filament_abs.id, printer_id: printer2.id)
+PresetRequest.create!(request_id: request1.id, color_id: color_red.id, filament_id: filament_pla.id, printer_id: printer1.id, print_quality: 0.08)
+PresetRequest.create!(request_id: request2.id, color_id: color_blue.id, filament_id: filament_abs.id, printer_id: printer2.id, print_quality: 0.12)
 
 # Create Offers
 offer1 = Offer.create!(
@@ -161,7 +161,8 @@ offer1 = Offer.create!(
   color: color_red,
   filament: filament_pla,
   price: 45.0,
-  target_date: Time.now + 9.days
+  target_date: Time.now + 9.days,
+  print_quality: 0.08
 )
 
 offer2 = Offer.create!(
@@ -170,7 +171,8 @@ offer2 = Offer.create!(
   color: color_blue,
   filament: filament_abs,
   price: 95.0,
-  target_date: Time.now + 14.days
+  target_date: Time.now + 14.days,
+  print_quality: 0.12
 )
 
 # Create Orders

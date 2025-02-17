@@ -4,6 +4,7 @@ class PresetRequest < ApplicationRecord
   belongs_to :filament
   belongs_to :printer
 
+  validates :print_quality, presence: true, numericality: { greater_than: 0, less_than: 2 }
   validates :request_id, :color_id, :filament_id, :printer_id, presence: true
   validates :request_id,
             uniqueness: { scope: %i[color_id filament_id], message: 'This preset already exists on this request' }
