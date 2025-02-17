@@ -65,7 +65,9 @@ export class RequestFormComponent implements OnInit {
         budget: '',
         targetDate: '',
         comment: '',
-        presets: []
+        presets: [
+          { printer: '', filamentType: '', color: '', printQuality: '' }
+        ]
       };
     }
   }
@@ -112,5 +114,9 @@ export class RequestFormComponent implements OnInit {
 
   makeAnOffer(): void {
     console.log('Offer made:', this.request);
+  }
+
+  addPreset(): void {
+    this.request.presets.push({ printer: '', filamentType: '', color: '', printQuality: '' });
   }
 }

@@ -38,8 +38,8 @@ export class RequestService {
                 "Canada",
                 "Creality 3",
                 [
-                    new PresetModel(1, "PLA", "Red", 1.75, 0.1),
-                    new PresetModel(6, "PLA", "Blue", 1.75, 0.2)
+                    new PresetModel(1, "PLA", "Red", 0.1),
+                    new PresetModel(6, "PLA", "Blue", 0.2)
                 ]
             ),
             new RequestModel(
@@ -50,8 +50,8 @@ export class RequestService {
                 "USA",
                 "Ender 5",
                 [
-                    new PresetModel(2, "ABS", "Blue", 1.75, 0.1),
-                    new PresetModel(7, "ABS", "Green", 1.75, 0.2)
+                    new PresetModel(2, "ABS", "Blue", 0.1),
+                    new PresetModel(7, "ABS", "Green", 0.2)
                 ]
             ),
             new RequestModel(
@@ -62,8 +62,8 @@ export class RequestService {
                 "UK",
                 "Prusa i3",
                 [
-                    new PresetModel(3, "PETG", "Green", 1.75, 0.1),
-                    new PresetModel(8, "PETG", "Yellow", 1.75, 0.2)
+                    new PresetModel(3, "PETG", "Green", 0.1),
+                    new PresetModel(8, "PETG", "Yellow", 0.2)
                 ]
             ),
             new RequestModel(
@@ -74,8 +74,8 @@ export class RequestService {
                 "Germany",
                 "Anycubic i3",
                 [
-                    new PresetModel(4, "PLA", "Yellow", 1.75, 0.1),
-                    new PresetModel(9, "PLA", "White", 1.75, 0.2)
+                    new PresetModel(4, "PLA", "Yellow", 0.1),
+                    new PresetModel(9, "PLA", "White", 0.2)
                 ]
             ),
             new RequestModel(
@@ -86,8 +86,8 @@ export class RequestService {
                 "Australia",
                 "FlashForge",
                 [
-                    new PresetModel(5, "Nylon", "Black", 1.75, 0.1),
-                    new PresetModel(10, "Nylon", "Gray", 1.75, 0.2)
+                    new PresetModel(5, "Nylon", "Black", 0.1),
+                    new PresetModel(10, "Nylon", "Gray", 0.2)
                 ]
             )
         ];
