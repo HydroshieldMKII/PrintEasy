@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ImportsModule } from '../../../imports';
+import { DropdownModule } from 'primeng/dropdown';
 
 @Component({
   selector: 'app-request-form',
-  imports: [ImportsModule],
+  imports: [ImportsModule, DropdownModule],
   templateUrl: './request-form.component.html',
   styleUrl: './request-form.component.css'
 })
@@ -20,6 +21,11 @@ export class RequestFormComponent implements OnInit {
       { printer: 'Bambulab P1P', filamentType: 'PLA', color: 'Blue', printQuality: '0.1mm' }
     ]
   };
+
+  printers = ['Bambulab P1P', 'Ender 3', 'Prusa MK3S', 'Anycubic i3', 'FlashForge'];
+  filamentTypes = ['PLA', 'ABS', 'PETG', 'Nylon'];
+  colors = ['Red', 'Blue', 'Green', 'Black', 'White'];
+  printQualities = ['0.1mm', '0.2mm', '0.3mm', '0.4mm'];
 
   constructor(private router: Router, private route: ActivatedRoute) { }
 
@@ -42,8 +48,7 @@ export class RequestFormComponent implements OnInit {
         { printer: 'Bambulab P1P', filamentType: 'PLA', color: 'Red', printQuality: '0.1mm' },
         { printer: 'Bambulab P1P', filamentType: 'PLA', color: 'Blue', printQuality: '0.1mm' }
       ]
-
-    }
+    };
   }
 
   removePreset(index: number): void {
