@@ -39,6 +39,7 @@ export class RequestFormComponent implements OnInit {
       this.router.navigate(['/requests']);
     }
 
+
     this.request = {
       name: 'Cool print idea',
       budget: '$51',
@@ -46,9 +47,10 @@ export class RequestFormComponent implements OnInit {
       comment: 'Yessir miller',
       presets: [
         { printer: 'Bambulab P1P', filamentType: 'PLA', color: 'Red', printQuality: '0.1mm' },
-        { printer: 'Bambulab P1P', filamentType: 'PLA', color: 'Blue', printQuality: '0.1mm' }
+        { printer: 'Bambulab P1P', filamentType: 'PLA', color: 'Blue', printQuality: '0.2mm' }
       ]
-    };
+
+    }
   }
 
   removePreset(index: number): void {

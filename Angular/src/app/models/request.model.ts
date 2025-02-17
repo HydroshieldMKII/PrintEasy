@@ -7,7 +7,7 @@ export class RequestModel {
     targetDate: Date; // e.g., "2021-01-01"
     country: string; // "Canada"
     printerModel: string; // "Creality 3"
-    preset: PresetModel;
+    presets: PresetModel[];
 
     constructor(
         id: number,
@@ -16,7 +16,7 @@ export class RequestModel {
         targetDate: Date,
         country: string,
         printerModel: string,
-        preset: PresetModel
+        presets: PresetModel[]
     ) {
         this.id = id;
         this.name = name;
@@ -24,6 +24,6 @@ export class RequestModel {
         this.targetDate = targetDate;
         this.country = country;
         this.printerModel = printerModel;
-        this.preset = preset;
+        this.presets = presets;
     }
 }

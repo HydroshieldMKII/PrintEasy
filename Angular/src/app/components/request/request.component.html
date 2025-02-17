@@ -77,12 +77,13 @@
                                 <div>
                                     <div>
                                         <h3>Preset Details</h3>
-                                        <p-table [value]="[request.preset]" dataKey="id">
+                                        <p-table [value]="request.presets" dataKey="id">
                                             <ng-template #header>
                         <tr>
                             <th pSortableColumn="filamentType">Filament Type <p-sortIcon field="filamentType" /></th>
                             <th pSortableColumn="color">Color <p-sortIcon field="color" /></th>
                             <th pSortableColumn="diameter">Diameter <p-sortIcon field="diameter" /></th>
+                            <th pSortableColumn="printQuality">Print Quality <p-sortIcon field="printQuality" /></th>
                         </tr>
                     </ng-template>
                     <ng-template #body let-preset>
@@ -90,6 +91,7 @@
                             <td>{{ preset.filamentType }}</td>
                             <td>{{ preset.color }}</td>
                             <td>{{ preset.diameter }}mm</td>
+                            <td>{{preset.printQuality}}mm</td>
                         </tr>
                     </ng-template>
                 </p-table>

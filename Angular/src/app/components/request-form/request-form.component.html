@@ -17,16 +17,21 @@
                 <input id="budget" pInputText [(ngModel)]="request.budget" class="w-full" [disabled]="!isEditMode" />
             </div>
 
-            <div>
-                <label for="targetDate" class="block font-semibold">Target Date</label>
-                <input id="targetDate" pInputText [(ngModel)]="request.targetDate" class="w-full"
-                    [disabled]="!isEditMode" />
-            </div>
 
             <div>
                 <label for="comment" class="block font-semibold">Special Request</label>
                 <textarea id="comment" pInputTextarea [(ngModel)]="request.comment" class="w-full"
                     [disabled]="!isEditMode"></textarea>
+            </div>
+
+
+            <div>
+                <label for="targetDate" class="block font-semibold">Target Date</label>
+                <div class="w-full">
+                    <p-datepicker [(ngModel)]="request.targetDate" [showIcon]="true" inputId="buttondisplay"
+                        [showOnFocus]="false" class="w-full" [disabled]="!isEditMode"
+                        dateFormat="yy-mm-dd"></p-datepicker>
+                </div>
             </div>
         </div>
 

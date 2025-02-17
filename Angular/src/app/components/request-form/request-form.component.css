@@ -8,6 +8,10 @@
     margin-top: 30px;
 }
 
+.w-full {
+    width: 100%;
+}
+
 /* Grid Layout */
 .grid {
     display: grid;
@@ -138,4 +142,16 @@ textarea {
 
 .edit-actions {
     margin-top: 20px;
+}
+
+p-calendar {
+    width: 100%;
+}
+
+.p-calendar {
+    width: 100%;
+}
+
+.p-inputtext {
+    width: 100%;
 }
