@@ -57,7 +57,7 @@ export class RequestsComponent implements OnInit {
     this.expandedRows = {};
 
     //remove greyed background
-    const rows = document.querySelectorAll('tr');
+    const rows = document.querySelectorAll('td');
     rows.forEach(row => {
       row.style.backgroundColor = '';
     });
@@ -83,7 +83,7 @@ export class RequestsComponent implements OnInit {
 
   collapseAllMyRequests(): void {
     this.expandedRowsMyRequests = {};
-    const rows = document.querySelectorAll('tr');
+    const rows = document.querySelectorAll('td');
     rows.forEach(row => {
       row.style.backgroundColor = '';
     });

@@ -7,22 +7,21 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Left Section: Request Details -->
         <div class="flex flex-col gap-4">
-            <div>
+            <p-floatlabel variant="in">
                 <label for="name" class="block font-semibold">Name</label>
                 <input id="name" pInputText [(ngModel)]="request.name" class="w-full" [disabled]="!isEditMode" />
-            </div>
+            </p-floatlabel>
 
-            <div>
+            <p-floatlabel variant="in">
                 <label for="budget" class="block font-semibold">Budget</label>
                 <input id="budget" pInputText [(ngModel)]="request.budget" class="w-full" [disabled]="!isEditMode" />
-            </div>
+            </p-floatlabel>
 
-
-            <div>
-                <label for="comment" class="block font-semibold">Special Request</label>
-                <textarea id="comment" pInputTextarea [(ngModel)]="request.comment" class="w-full"
-                    [disabled]="!isEditMode"></textarea>
-            </div>
+            <p-floatlabel variant="in">
+                <textarea pTextarea id="comment" [(ngModel)]="request.comment" rows="5" cols="30" style="resize: none"
+                    class="h-full" [disabled]="!isEditMode"></textarea>
+                <label for="comment">Special comment about the request</label>
+            </p-floatlabel>
 
 
             <div>
@@ -109,7 +108,7 @@
     </div>
 
     <div class="flex justify-end mt-6 gap-3 edit-actions" *ngIf="isEditMode">
-        <p-button label="Save" icon="pi pi-save" severity="info" (click)="saveChanges()"></p-button>
+        <p-button label="Save" icon="pi pi-save" severity="success" (click)="saveChanges()"></p-button>
         <p-button label="Delete" icon="pi pi-trash" severity="danger" (click)="deleteRequest()"></p-button>
         <p-button label="Cancel" icon="pi pi-times" severity="secondary" (click)="cancelEdit()"></p-button>
     </div>
