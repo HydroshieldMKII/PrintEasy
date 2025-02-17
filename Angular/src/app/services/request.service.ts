@@ -20,9 +20,16 @@ export class RequestService {
     constructor(private api: ApiRequestService) { }
 
     getAllRequests(): Observable<RequestModel[]> {
-        return this.api.getRequest('api/request').pipe(
+        return this.fetchRequest('all');
+    }
+
+    getMyRequests(): Observable<RequestModel[]> {
+        return this.fetchRequest('my');
+    }
+
+    fetchRequest(type: string) {
+        return this.api.getRequest('api/request', { "type": type }).pipe(
             map((response: ApiResponseModel) => {
-                console.log('Response:', response);
                 if (response.status === 200) {
                     this.requests = (response.data as any)?.['requests'].map((request: any) => {
                         const user = new UserModel(
@@ -55,9 +62,5 @@ export class RequestService {
                 return this.requests;
             })
         );
-    }
-
-    getMyRequests() {
-        // return this.getAllRequests().filter(r => r.id === 1);
     }
 }

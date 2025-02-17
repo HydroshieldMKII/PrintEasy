@@ -27,26 +27,17 @@ export class RequestsComponent implements OnInit {
   filteredAllRequests: RequestModel[] = [];
   filteredMyRequests: RequestModel[] = [];
 
-  filterRequests(list: RequestModel[]) {
-    return list.filter((request: RequestModel) => {
-      if (list === this.requests) {
-        return request.name.toLowerCase().includes(this.searchAllRequestQuery.toLowerCase());
-      } else {
-        return request.name.toLowerCase().includes(this.searchMyRequestQuery.toLowerCase());
-      }
-    });
-  }
-
   constructor(private requestService: RequestService, private router: Router) { }
 
   ngOnInit(): void {
-    // this.requests = this.requestService.getAllRequests();
-    // this.myRequests = this.requestService.getMyRequests();
-
     this.requestService.getAllRequests().subscribe((requests: RequestModel[]) => {
       console.log('Requests:', requests);
       this.requests = requests;
-      // this.filteredAllRequests = this.filterRequests(this.requests);
+    });
+
+    this.requestService.getMyRequests().subscribe((requests: RequestModel[]) => {
+      console.log('My requests:', requests);
+      this.myRequests = requests;
     });
   }
 
