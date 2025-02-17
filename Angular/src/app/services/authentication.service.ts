@@ -92,10 +92,8 @@ export class AuthService {
         return this.api.deleteRequest('users/sign_out', {}).pipe(
             map(response => {
                 // console.log('Logout response:', response);
-                if (response.status === 200) {
-                    this.setCurrentUser(null);
-                    this.messageService.add({ severity: 'success', summary: 'Logout', detail: 'You logged out successfully!' });
-                }
+                this.setCurrentUser(null);
+                this.messageService.add({ severity: 'success', summary: 'Logout', detail: 'You logged out successfully!' });
                 return response;
             })
         );

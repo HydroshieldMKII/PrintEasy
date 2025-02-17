@@ -54,6 +54,7 @@ export const routes: Routes = [
   {
     path: '**',
     component: NotfoundComponent,
-    title: 'Not found'
+    title: 'Not found',
+    canActivate: [AuthenticationGuard]
   }
 ];
