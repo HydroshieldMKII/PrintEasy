@@ -119,4 +119,9 @@ export class RequestFormComponent implements OnInit {
   addPreset(): void {
     this.request.presets.push({ printer: '', filamentType: '', color: '', printQuality: '' });
   }
+
+  createRequest(): void {
+    console.log('Request created:', this.request);
+    // this.router.navigate(['/requests']);
+  }
 }
