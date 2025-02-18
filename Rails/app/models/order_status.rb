@@ -4,10 +4,11 @@ class OrderStatus < ApplicationRecord
 
   has_one_attached :image
 
-  validates :comment, length: { maximum: 200 }
+  validates :comment, length: { maximum: 200, minimum: 5 }
   validates :status_name, presence: true
   validates :order_id, presence: true
   validate :can_transition, on: :create
+  before_destroy :can_destroy, prepend: true
 
   StateMachines::Machine.ignore_method_conflicts = true
 
@@ -46,13 +47,36 @@ class OrderStatus < ApplicationRecord
     end
   end
 
-  
+  def consumer
+    self.order.offer.request.user
+  end
+
+  def printer
+    self.order.offer.printer_user.user
+  end
+
+  def available_status
+    events = self.class.state_machine.events
+    available = []
+    events.each do |event|
+      from = event.branches[0].state_requirements[0][:from].values
+      to = event.branches[0].state_requirements[0][:to].values
+      if from.include?(self.status_name)
+        available.push(to)
+      end
+    end
+    available.flatten!
+    available.delete('Cancelled')
+    return available
+  end
+
+  class CannotDestroyStatusError < StandardError; end
 
   private
 
   def can_transition()
-    events = self.class.state_machine.events #[:cancel].branches[0].state_requirements[0][:from].values
-    last_state = self.order.order_status.order(created_at: :desc).first#[event].known_states
+    events = self.class.state_machine.events
+    last_state = self.order&.order_status&.order(created_at: :desc)&.first
     if !last_state.nil?
       events.each do |event|
         from = event.branches[0].state_requirements[0][:from].values
@@ -68,4 +92,10 @@ class OrderStatus < ApplicationRecord
     return true
   end
 
+  def can_destroy
+    if ['Accepted', 'Cancelled', 'Arrived', 'Shipped'].include?(self.status_name)
+      raise CannotDestroyStatusError, "Cannot delete the status"
+    end
+    return true
+  end
 end
