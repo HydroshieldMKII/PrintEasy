@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { SelectItem } from 'primeng/api';
 import { Router, RouterLink } from '@angular/router';
 import { RequestModel } from '../../models/request.model';
 import { RequestService } from '../../services/request.service';
@@ -22,24 +23,33 @@ export class RequestsComponent implements OnInit {
   expandedRows: { [key: number]: boolean } = {};
   expandedMyRows: { [key: number]: boolean } = {};
   searchQuery: string = '';
+  currentFilter: string = '';
+  currentSort: string = '';
+  currentSortCategory: string = '';
 
   filterOptions: any[] = [
-    { label: 'Select a filter', value: '' },
-    { label: 'My Requests', value: 'my' }
+    { label: 'Select a filter (Clear)', value: '' },
+    { label: 'Recommended', value: 'owned-printer' },
+    { label: 'In my country', value: 'country' },
   ];
 
   sortOptions: any[] = [
-    { label: 'Newest First', value: '' },
-    { label: 'Oldest First', value: '' }
+    { label: 'Select a filter (Clear)', value: '' },
+    { label: 'Name (Asc)', value: 'name-asc' },
+    { label: 'Name (Desc)', value: 'name-desc' },
+    { label: 'Date (Asc)', value: 'date-asc' },
+    { label: 'Date (Desc)', value: 'date-desc' },
+    { label: 'Budget (Asc)', value: 'budget-asc' },
+    { label: 'Budget (Desc)', value: 'budget-desc' },
+    { label: 'Country (Asc)', value: 'country-asc' },
+    { label: 'Country (Desc)', value: 'country-desc' }
   ];
 
   get currentRequests(): RequestModel[] {
-    if (this.activeTab === 'my') {
-      return this.myRequests || [];
-    }else{
-      return this.requests || [];
-    }
+    console.debug('Current requests:', this.activeTab === 'my' ? this.myRequests : this.requests);
+    return this.activeTab === 'my' ? this.myRequests || [] : this.requests || [];
   }
+  
 
   constructor(private requestService: RequestService, private router: Router) {}
 
@@ -47,14 +57,22 @@ export class RequestsComponent implements OnInit {
     this.requestService.getPrinters().subscribe((isOwningPrinters: boolean) => {
       this.isOwningPrinter = isOwningPrinters;
       if (isOwningPrinters){
-        this.requestService.getAllRequests().subscribe((requests: RequestModel[]) => {
-          this.requests = requests;
-        });
+        this.loadRequests('');
       }
     });
+  
+    this.loadMyRequests({'filter': this.currentFilter, 'sort': this.currentSort});
+  }
 
-    this.requestService.getMyRequests().subscribe((requests: RequestModel[]) => {
-      this.myRequests = requests;
+  loadRequests(params: string): void {
+    this.requestService.getMyRequests().subscribe((myRequests: RequestModel[]) => {
+      this.myRequests = myRequests;
+    });
+  }
+
+  loadMyRequests(params: { filter: string; sort: string }): void {
+    this.requestService.getAllRequests().subscribe((requests: RequestModel[]) => {
+      this.requests = requests;
     });
   }
 
@@ -98,6 +116,26 @@ export class RequestsComponent implements OnInit {
 
   onSearch(): void {
     console.log('Search query:', this.searchQuery);
+    this.router.navigate([], { queryParams: { search: this.searchQuery }, queryParamsHandling: 'merge' });
+  }
+  
+  onFilterChange(event: { value: SelectItem }): void {
+    console.log('Filter changed. New value:', event);
+    this.currentFilter = event.value.value;
+    this.router.navigate([], { queryParams: { filter: this.currentFilter }, queryParamsHandling: 'merge' });
+  }
+
+  onSortChange(event: { value: SelectItem }): void {
+    console.log('Sort changed. New value:', event.value.value);
+    const [category, order] = event.value.value.split('-');
+    this.currentSort = order;
+    this.currentSortCategory = category;
+    this.router.navigate([], { queryParams: { sortCategory: this.currentSortCategory,  sort: this.currentSort}, queryParamsHandling: 'merge' });
+
+    //if params a parms is emprty remove it
+    if (event.value.value === '') {
+      this.router.navigate([], { queryParams: { sortCategory: null,  sort: null}, queryParamsHandling: 'merge' });
+    }
   }
 }
 

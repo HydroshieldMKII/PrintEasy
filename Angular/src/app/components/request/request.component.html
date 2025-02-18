@@ -41,6 +41,7 @@
                 optionLabel="label"
                 styleClass="w-full"
                 variant="filled"
+                (onChange)="onFilterChange($event)"
               />
               <label for="in_label">Filter by</label>
             </p-floatlabel>
@@ -51,6 +52,7 @@
                 optionLabel="label"
                 styleClass="w-full"
                 variant="filled"
+                (onChange)="onSortChange($event)"
               />
               <label for="in_label">Sort by</label>
             </p-floatlabel>

@@ -19,6 +19,10 @@ export class RequestService {
 
     constructor(private api: ApiRequestService) { }
 
+    filter(filterParams: string, orderParams: string): Observable<RequestModel[]> {
+        return this.fetchRequest({ 'filter': filterParams, order: orderParams });
+    }
+
     getPrinters(): Observable<boolean> {
         return this.api.getRequest('api/printer_user').pipe(
             map((response: ApiResponseModel) => {
@@ -32,15 +36,15 @@ export class RequestService {
     }
 
     getAllRequests(): Observable<RequestModel[]> {
-        return this.fetchRequest('all');
+        return this.fetchRequest({'type': 'all'});
     }
 
     getMyRequests(): Observable<RequestModel[]> {
-        return this.fetchRequest('my');
+        return this.fetchRequest({'type': 'my'});
     }
 
-    fetchRequest(type: string) {
-        return this.api.getRequest('api/request', { "type": type }).pipe(
+    fetchRequest(params: any): Observable<RequestModel[]> {
+        return this.api.getRequest('api/request', params).pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
                     this.requests = (response.data as any)?.['requests'].map((request: any) => {
