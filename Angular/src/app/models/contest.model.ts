@@ -31,4 +31,18 @@ export class ContestModel {
             data.deleted_at
         );
     }
+
+    static toApi(data: any): any {
+        return { 
+            contest: 
+            {
+                theme: data.theme,
+                description: data.description,
+                submission_limit: data.submissionLimit,
+                start_at: data.startAt,
+                end_at: data.endAt,
+                image: data.image
+        }
+        };
+    }
 }

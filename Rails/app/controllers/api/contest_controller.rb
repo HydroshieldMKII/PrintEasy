@@ -5,7 +5,9 @@ class Api::ContestController < ApplicationController
     end
     
     def create
+        debugger
         @contest = Contest.new(contest_params)
+        debugger
         if @contest.save
             render json: {contests: @contests, errors: {}}, status: :created
         else

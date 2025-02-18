@@ -27,8 +27,8 @@ export class ContestService {
     );
   }
 
-  createContest(contest: any): Observable<ApiResponseModel> {
-    return this.api.postRequest('api/contest', contest).pipe(
+  createContest(contest: ContestModel): Observable<ApiResponseModel> {
+    return this.api.postRequest('api/contest', {}, ContestModel.toApi(contest)).pipe(
       map(response => {
         if (response.status === 201) {
           this.messageService.add({ severity: 'success', summary: 'Succès', detail: 'Concours créé avec succès' });

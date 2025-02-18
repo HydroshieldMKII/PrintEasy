@@ -36,6 +36,16 @@ export class ContestFormComponent {
     if (this.contestForm.valid) 
       console.log('Données du concours:', this.contestForm.value);
 
+      const contest = new ContestModel(
+        0,
+        this.contestForm.value.theme,
+        this.contestForm.value.description,
+        this.contestForm.value.limit,
+        this.contestForm.value.startDate,
+        this.contestForm.value.endDate,
+        this.contestForm.value.image
+      );
+
       this.contestService.createContest(this.contestForm.value).subscribe(
         response => {
           if (response.status === 201) {
