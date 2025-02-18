@@ -52,7 +52,7 @@ export class RequestsComponent {
     console.debug('Current requests:', this.activeTab === 'my' ? this.myRequests : this.requests);
     return this.activeTab === 'my' ? this.myRequests || [] : this.requests || [];
   }
-  
+
 
   constructor(private requestService: RequestService, private router: Router) {
     const queryParams = this.router.parseUrl(this.router.url).queryParams;
@@ -65,10 +65,10 @@ export class RequestsComponent {
     this.filter('my');
 
     // Select the corresponding select sort and filter
-    this.selectedFilterOption = this.filterOptions.find(option => option.value === this.currentFilter) || null;
+    this.selectedFilterOption = this.filterOptions.find(option => option.value === this.currentFilter) || this.filterOptions[0];
     console.log('Selected filter option:', this.selectedFilterOption);
 
-    this.selectedSortOption = this.sortOptions.find(option => option.value === `${this.currentSortCategory}-${this.currentSort}`) || null;
+    this.selectedSortOption = this.sortOptions.find(option => option.value === `${this.currentSortCategory}-${this.currentSort}`) || this.sortOptions[0];
     console.log('Selected sort option:', this.selectedSortOption);
 
     this.searchQuery = queryParams['search'] || '';
@@ -92,7 +92,7 @@ export class RequestsComponent {
         }
       });
   }
-  
+
 
   expandAll(): void {
     this.expandedRows = this.currentRequests.reduce((acc: { [key: number]: boolean }, request: RequestModel) => {
@@ -135,20 +135,20 @@ export class RequestsComponent {
   onSearch(): void {
     console.log('Search query:', this.searchQuery);
     this.router.navigate([], { queryParams: { search: this.searchQuery || null }, queryParamsHandling: 'merge' });
-  
+
     this.filter('all');
     this.filter('my');
   }
-  
-  
+
+
   onFilterChange(event: { value: SelectItem }): void {
     console.log('Filter changed. New value:', event.value.value);
     this.currentFilter = event.value.value;
     this.router.navigate([], { queryParams: { filter: this.currentFilter || null }, queryParamsHandling: 'merge' });
-  
+
     this.filter('all');
     this.filter('my');
-  }  
+  }
 
   onSortChange(event: { value: SelectItem }): void {
     console.log('Sort changed. New value:', event.value.value);
@@ -156,10 +156,10 @@ export class RequestsComponent {
     this.currentSort = order;
     this.currentSortCategory = category;
     this.router.navigate([], { queryParams: { sortCategory: this.currentSortCategory || null, sort: this.currentSort || null }, queryParamsHandling: 'merge' });
-  
+
     this.filter('all');
     this.filter('my');
   }
-  
+
 }
 
