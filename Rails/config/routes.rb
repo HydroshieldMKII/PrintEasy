@@ -11,6 +11,8 @@ Rails.application.routes.draw do
     resources :request
     resources :offer
     resources :order_status
+    resources :order
+    resources :status
   end
 
   match '*url', to: "angular#index", via: :get
