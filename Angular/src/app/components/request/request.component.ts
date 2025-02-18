@@ -12,21 +12,36 @@ import { ImportsModule } from '../../../imports';
 })
 export class RequestsComponent implements OnInit {
   activeTab: string = 'all';
-  requests: RequestModel[] = [];
-  myRequests: RequestModel[] = [];
+  requests: RequestModel[] | null | undefined = undefined;
+  myRequests: RequestModel[] | null = null;
 
   deleteDialogVisible: boolean = false;
   requestToDelete: RequestModel | null = null;
 
+  isOwningPrinter: boolean | null = null;
   expandedRows: { [key: number]: boolean } = {};
-  searchQuery: string = ''; // Add this property
+  searchQuery: string = '';
+
+  filterOptions: any[] = [
+    { label: 'Select a filter', value: '' },
+    { label: 'My Requests', value: 'my' }
+  ];
+
+  sortOptions: any[] = [
+    { label: 'Newest First', value: '' },
+    { label: 'Oldest First', value: '' }
+  ];
 
   get filteredRequests(): RequestModel[] {
+    if (!this.requests || !this.myRequests) {
+      return [];
+    }
+
     return this.activeTab === 'all'
-      ? this.requests.filter(r =>
+      ? this.requests?.filter(r =>
           r.name.toLowerCase().includes(this.searchQuery.toLowerCase())
         )
-      : this.myRequests.filter(r =>
+      : this.myRequests?.filter(r =>
           r.name.toLowerCase().includes(this.searchQuery.toLowerCase())
         );
   }
@@ -34,8 +49,13 @@ export class RequestsComponent implements OnInit {
   constructor(private requestService: RequestService, private router: Router) {}
 
   ngOnInit(): void {
-    this.requestService.getAllRequests().subscribe((requests: RequestModel[]) => {
-      this.requests = requests;
+    this.requestService.getPrinters().subscribe((isOwningPrinters: boolean) => {
+      this.isOwningPrinter = isOwningPrinters;
+      if (isOwningPrinters){
+        this.requestService.getAllRequests().subscribe((requests: RequestModel[]) => {
+          this.requests = requests;
+        });
+      }
     });
 
     this.requestService.getMyRequests().subscribe((requests: RequestModel[]) => {
@@ -73,8 +93,10 @@ export class RequestsComponent implements OnInit {
 
   confirmDelete(): void {
     if (this.requestToDelete !== null) {
-      this.requests = this.requests.filter(r => r.id !== this.requestToDelete?.id);
-      this.requestToDelete = null;
+      // this.requestService.deleteRequest(this.requestToDelete.id).subscribe(() => {
+      //   this.requests = this.requests?.filter(r => r.id !== this.requestToDelete?.id);
+      //   this.myRequests = this.myRequests?.filter(r => r.id !== this.requestToDelete?.id);
+      // });
     }
     this.deleteDialogVisible = false;
   }

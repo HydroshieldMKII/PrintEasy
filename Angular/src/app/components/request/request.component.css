@@ -165,3 +165,14 @@ h3 {
     color: #6c757d;
     font-size: 1.2rem;
 }
+
+@media (max-width: 768px) {
+    .ssf{
+        display: block;
+    }
+
+    /* each child */
+    .ssf > * {
+        margin-bottom: 1rem;
+    }
+}

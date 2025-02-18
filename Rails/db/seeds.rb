@@ -56,6 +56,7 @@ end
 # Assign Printers to Users
 PrinterUser.create!(user: admin, printer: Printer.first, acquired_date: Time.now)
 PrinterUser.create!(user: user1, printer: Printer.second, acquired_date: Time.now - 1.year)
+PrinterUser.create!(user: user1, printer: Printer.third, acquired_date: Time.now - 2.years)
 
 # Create Colors
 colors = ["Red", "Blue", "Green", "Yellow", "Black", "White", "Orange", "Purple", "Pink", "Brown", "Gray"]
@@ -70,16 +71,21 @@ filaments.each do |filament|
 end
 
 # Create Presets
-10.times do |i|
-  color = Color.all.sample
-  filament = Filament.all.sample
-  user = User.all.sample
-  print_quality = [0.08, 0.12, 0.16, 0.2].sample
+presets = [
+  { color: Color.find_by(name: "Red"), filament: Filament.find_by(name: "PETG"), user: admin, print_quality: 0.08 },
+  { color: Color.find_by(name: "Blue"), filament: Filament.find_by(name: "TPU"), user: user1, print_quality: 0.12 },
+  { color: Color.find_by(name: "Green"), filament: Filament.find_by(name: "Nylon"), user: admin, print_quality: 0.16 },
+  { color: Color.find_by(name: "Yellow"), filament: Filament.find_by(name: "Wood"), user: user1, print_quality: 0.2 },
+  { color: Color.find_by(name: "Black"), filament: Filament.find_by(name: "Metal"), user: admin, print_quality: 0.08 },
+  { color: Color.find_by(name: "White"), filament: Filament.find_by(name: "Carbon Fiber"), user: user1, print_quality: 0.12 },
+  { color: Color.find_by(name: "Orange"), filament: Filament.find_by(name: "PETG"), user: admin, print_quality: 0.16 },
+  { color: Color.find_by(name: "Purple"), filament: Filament.find_by(name: "TPU"), user: user1, print_quality: 0.2 },
+  { color: Color.find_by(name: "Pink"), filament: Filament.find_by(name: "Nylon"), user: admin, print_quality: 0.08 },
+  { color: Color.find_by(name: "Brown"), filament: Filament.find_by(name: "Wood"), user: user1, print_quality: 0.12 }
+]
 
-  preset = Preset.find_or_create_by(color: color, filament: filament, user: user, print_quality: print_quality)
-  unless preset.persisted?
-    preset.save!
-  end
+presets.each do |preset|
+  Preset.create!(preset)
 end
 
 stl_file_path1 = Rails.root.join("db/seeds/files/RUBY13.stl")
@@ -103,7 +109,7 @@ stl_file_path1 = Rails.root.join("db/seeds/files/RUBY13.stl")
 end
 
 10.times do |i|
-  Request.create(
+  req = Request.create(
     user: user1,
     name: "User Request #{i + 1}",
     budget: (i + 1) * 15.0,
@@ -112,24 +118,28 @@ end
   )
 
   # Attach STL file to request
-  request = Request.last
-  request.stl_file.attach(
+  req.stl_file.attach(
     io: File.open(stl_file_path1),
     filename: "RUBY13.stl",
     content_type: "application/sla"
   )
-  request.save
+  req.save
 end
 
 # Create Preset Requests for each Request
 Request.all.each do |request|
-  rand(0..3).times do
+  colors = Color.all
+  filaments = Filament.all
+  printers = Printer.all
+  print_qualities = [0.08, 0.12, 0.16, 0.2]
+
+  rand(0..3).times do |i|
     PresetRequest.create!(
       request: request,
-      color: Color.all.sample,
-      filament: Filament.all.sample,
-      printer: Printer.all.sample,
-      print_quality: [0.08, 0.12, 0.16, 0.2].sample
+      color: colors[i % colors.size],
+      filament: filaments[i % filaments.size],
+      printer: printers[i % printers.size],
+      print_quality: print_qualities[i % print_qualities.size]
     )
   end
 end
@@ -188,15 +198,15 @@ filaments = Filament.all
 printer_users = PrinterUser.all
 
 Request.all.each do |request|
-  rand(1..5).times do
+  rand(1..5).times do |i|
     Offer.create!(
       request: request,
-      printer_user: printer_users.sample,
-      color: colors.sample,
-      filament: filaments.sample,
+      printer_user: printer_users[i % printer_users.size],
+      color: colors[i % colors.size],
+      filament: filaments[i % filaments.size],
       price: rand(20.0..100.0).round(2),
       target_date: Time.now + rand(5..15).days,
-      print_quality: [0.08, 0.12, 0.16, 0.2].sample
+      print_quality: [0.08, 0.12, 0.16, 0.2][i % 4]
     )
   end
 end
