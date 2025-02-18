@@ -51,9 +51,11 @@ export class RequestFormComponent implements OnInit {
       if (this.id !== null) {
         this.requestService.getRequestById(this.id).subscribe((request) => {
           console.log('Request loaded:', request);
-          console.log('TEST')
           this.request = request;
-          console.log('Stl file url: ', this.request.stlFileUrls[0])
+
+          if (this.request === null) {
+            this.router.navigate(['/requests']);
+          }
         });
       }
     }
