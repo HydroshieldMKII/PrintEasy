@@ -20,6 +20,7 @@ export class RequestsComponent implements OnInit {
 
   isOwningPrinter: boolean | null = null;
   expandedRows: { [key: number]: boolean } = {};
+  expandedMyRows: { [key: number]: boolean } = {};
   searchQuery: string = '';
 
   filterOptions: any[] = [
@@ -32,18 +33,12 @@ export class RequestsComponent implements OnInit {
     { label: 'Oldest First', value: '' }
   ];
 
-  get filteredRequests(): RequestModel[] {
-    if (!this.requests || !this.myRequests) {
-      return [];
+  get currentRequests(): RequestModel[] {
+    if (this.activeTab === 'my') {
+      return this.myRequests || [];
+    }else{
+      return this.requests || [];
     }
-
-    return this.activeTab === 'all'
-      ? this.requests?.filter(r =>
-          r.name.toLowerCase().includes(this.searchQuery.toLowerCase())
-        )
-      : this.myRequests?.filter(r =>
-          r.name.toLowerCase().includes(this.searchQuery.toLowerCase())
-        );
   }
 
   constructor(private requestService: RequestService, private router: Router) {}
@@ -64,7 +59,7 @@ export class RequestsComponent implements OnInit {
   }
 
   expandAll(): void {
-    this.expandedRows = this.filteredRequests.reduce((acc: { [key: number]: boolean }, request: RequestModel) => {
+    this.expandedRows = this.currentRequests.reduce((acc: { [key: number]: boolean }, request: RequestModel) => {
       acc[request.id] = true;
       return acc;
     }, {});
@@ -99,6 +94,10 @@ export class RequestsComponent implements OnInit {
       // });
     }
     this.deleteDialogVisible = false;
+  }
+
+  onSearch(): void {
+    console.log('Search query:', this.searchQuery);
   }
 }
 

@@ -54,23 +54,34 @@
               />
               <label for="in_label">Sort by</label>
             </p-floatlabel>
-            <span class="p-input-icon-right">
-              <i class="pi pi-search"></i>
-              <input
-                pInputText
-                type="text"
-                placeholder="Search"
-                [(ngModel)]="searchQuery"
-              />
-            </span>
+            <form (ngSubmit)="onSearch()">
+              <span class="p-input-icon-right">
+                <i class="pi pi-search" style="margin-right: 5px"></i>
+                <input
+                  pInputText
+                  type="text"
+                  placeholder="Search"
+                  [(ngModel)]="searchQuery"
+                  name="searchQuery"
+                  style="margin-bottom: 10px; margin-right: 10px"
+                />
+              </span>
+              <button
+                pButton
+                type="submit"
+                icon="pi pi-search"
+                label="Search"
+                class="search-btn"
+              ></button>
+            </form>
           </div>
         </div>
 
         <hr />
 
         <p-table
-          *ngIf="filteredRequests.length > 0"
-          [value]="filteredRequests"
+          *ngIf="currentRequests.length > 0"
+          [value]="currentRequests"
           dataKey="id"
           [tableStyle]="{ 'min-width': '60rem' }"
           [expandedRowKeys]="expandedRows"
@@ -204,8 +215,8 @@
 
         <div
           *ngIf="
-            (isOwningPrinter && filteredRequests.length === 0) ||
-            (activeTab == 'my' && filteredRequests.length === 0)
+            (isOwningPrinter && currentRequests.length === 0) ||
+            (activeTab == 'my' && currentRequests.length === 0)
           "
           class="empty-message"
         >
