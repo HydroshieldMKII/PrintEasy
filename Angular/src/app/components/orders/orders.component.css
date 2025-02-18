@@ -199,10 +199,68 @@ p-fieldset {
     --p-fieldset-content-padding: 0px;
 }
 
-.status-header {
-    width: 100%;
+.global-status-header-container {
     display: flex;
-    justify-content: space-between;
+    flex-direction: row;
     align-items: center;
-    margin-left: 4px;
+    gap: 5px;
+    margin-left: 1px;
+}
+
+.status-header-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    position: relative;
+}
+
+.status-header-circle-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.status-content-container-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.status-content-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 700px;
+    min-height: 40px;
+    gap: 8px;
+    background: #fafafa;
+    border: 1px solid #2c2c2c;
+    color: #000000;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.status-content-container p {
+    margin: 0px;
+}
+
+.status-content-date {
+    font-size: 0.8rem;
+    color: #707070;
+}
+
+.status-content-image {
+    max-height: 200px;
+    height: auto;
+}
+
+
+:host ::ng-deep .separator-color .p-stepper-separator { 
+    background-color: #007ad9 !important;
+    color: #007ad9 !important;
+    background: #007ad9 !important;
+    --p-stepper-separator-background-color: #007ad9 !important;
+    --p-stepper-separator-active-background-color: #007ad9 !important;
 }
