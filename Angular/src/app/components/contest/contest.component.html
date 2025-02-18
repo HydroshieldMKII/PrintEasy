@@ -15,7 +15,7 @@
     </div>
 
     <div class="contest-list">
-        <p-card *ngFor="let contest of contests" class="contest-card">
+        <div *ngFor="let contest of contests" class="card">
             <div class="contest-content">
                 <img [src]="contest.image" alt="Contest image" class="contest-image" />
                 <div class="contest-details">
@@ -35,6 +35,6 @@
                 <button pButton icon="pi pi-trash" class="p-button-text p-button-danger"
                     (click)="deleteContest(contest.id)"></button>
             </div>
-        </p-card>
+        </div>
     </div>
 </div>

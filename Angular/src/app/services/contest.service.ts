@@ -27,8 +27,20 @@ export class ContestService {
     );
   }
 
-  createContest(contest: ContestModel): Observable<ApiResponseModel> {
-    return this.api.postRequest('api/contest', {}, ContestModel.toApi(contest)).pipe(
+  getContest(id: number): Observable<ContestModel | null> {
+    return this.api.getRequest(`api/contest/${id}`).pipe(
+      map(response => {
+        if (response.status === 200) {
+          return ContestModel.fromApi(response.data.contest);
+        } else {
+          return null;
+        }
+      })
+    );
+  }
+
+  createContest(contest: FormData): Observable<ApiResponseModel> {
+    return this.api.postRequest('api/contest', {}, contest).pipe(
       map(response => {
         if (response.status === 201) {
           this.messageService.add({ severity: 'success', summary: 'Succès', detail: 'Concours créé avec succès' });

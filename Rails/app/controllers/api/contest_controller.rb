@@ -3,7 +3,17 @@ class Api::ContestController < ApplicationController
         @contests = Contest.all
         render json: {contests: @contests.as_json(methods: :image_url), errors: {}}, status: :ok
     end
-    
+
+    def show
+        @contest = Contest.find(params[:id])
+
+        if @contest
+            render json: {contest: @contest.as_json(methods: :image_url), errors: {}}, status: :ok
+        else
+            render json: {errors: "Contest not found"}, status: :not_found
+        end
+    end
+
     def create
         debugger
         @contest = Contest.new(contest_params)

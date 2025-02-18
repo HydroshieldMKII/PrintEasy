@@ -8,6 +8,17 @@
     margin-top: 10px;
 }
 
+.card {
+    background-color: #fff;
+    width: 80%;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    margin: auto;
+    max-width: 1500px;
+    height: 500px;
+}
+
 h2 {
     font-size: 2rem;
     font-weight: bold;
@@ -28,7 +39,7 @@ h2 {
 
 .contest-list {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     gap: 20px;
     width: 100%;
@@ -72,7 +83,7 @@ h2 {
     margin-bottom: 10px;
 }
 
-.contest-card .p-button-text {
+.card .p-button-text {
     margin: 5px;
 }
 
@@ -80,7 +91,7 @@ h2 {
     margin-right: 10px;
 }
 
-.contest-card .p-button {
+.card .p-button {
     width: 100%;
     margin: 5px 0;
 }
@@ -99,5 +110,10 @@ h2 {
     p-speeddial {
         padding: absolute;
         right: 5%;
+    }
+
+    .contest-list {
+        flex-direction: column;
+        align-items: center;
     }
 }

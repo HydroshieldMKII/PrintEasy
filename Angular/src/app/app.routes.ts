@@ -56,18 +56,22 @@ export const routes: Routes = [
   },
   {
     path: '',
+    canActivate: [AuthenticationGuard],
     children: [
       {
         path: 'contest',
         component: ContestComponent,
         title: 'Contest',
-        canActivate: [AuthenticationGuard]
       },
       {
         path: 'contest/new',
         component: ContestFormComponent,
         title: 'New Contest',
-        canActivate: [AuthenticationGuard]
+      },
+      {
+        path: 'contest/:id',
+        component: ContestFormComponent,
+        title: 'Edit Contest',
       }
     ]
   },

@@ -4,11 +4,11 @@ export class ContestModel {
     description: string;
     submissionLimit: number;
     deleteAt?: Date | null;
-    startAt: Date | null;
+    startAt: Date;
     endAt: Date | null;
-    image: string | File;
+    image: string;
 
-    constructor(id: number, theme: string, description: string, submission_limit: number, start_at: Date, end_at: Date | null, image: string | File, deleted_at?: Date | null) {
+    constructor(id: number, theme: string, description: string, submission_limit: number, start_at: Date, end_at: Date | null, image: string, deleted_at?: Date | null) {
         this.id = id;
         this.theme = theme;
         this.description = description;
@@ -33,8 +33,8 @@ export class ContestModel {
     }
 
     static toApi(data: any): any {
-        return { 
-            contest: 
+        return {
+            contest:
             {
                 theme: data.theme,
                 description: data.description,
@@ -42,7 +42,7 @@ export class ContestModel {
                 start_at: data.startAt,
                 end_at: data.endAt,
                 image: data.image
-        }
+            }
         };
     }
 }

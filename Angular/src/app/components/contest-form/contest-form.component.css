@@ -4,6 +4,7 @@
     align-items: center;
     height: 97dvh;
 }
+
 .card {
     background-color: #fff;
     width: 80%;
@@ -44,12 +45,46 @@
 
 .p-inputtext,
 .p-textarea,
-.p-calendar {
+.p-datepicker,
+.p-inputnumber {
     width: 100%;
 }
 
 .p-button {
     width: 120px;
+}
+
+.container-row {
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+}
+
+.image-preview {
+    width: 30%;
+    max-height: 300px;
+    color: var(--p-inputtext-color);
+    background: var(--p-inputtext-background);
+    padding-block: var(--p-inputtext-padding-y);
+    padding-inline: var(--p-inputtext-padding-x);
+    border: 1px solid var(--p-inputtext-border-color);
+    transition: background var(--p-inputtext-transition-duration), color var(--p-inputtext-transition-duration), border-color var(--p-inputtext-transition-duration), outline-color var(--p-inputtext-transition-duration), box-shadow var(--p-inputtext-transition-duration);
+    appearance: none;
+    border-radius: var(--p-inputtext-border-radius);
+    outline-color: transparent;
+    box-shadow: var(--p-inputtext-shadow);
+}
+
+.image-preview:hover {
+    background: var(--p-inputtext-hover-background);
+    color: var(--p-inputtext-hover-color);
+    border-color: var(--p-inputtext-hover-border-color);
+    box-shadow: var(--p-inputtext-hover-shadow);
+}
+
+.fileUploadContainer {
+    display: flex;
+    justify-content: flex-start;
 }
 
 .p-mr-2 {
@@ -85,5 +120,19 @@
 
     .p-card {
         margin: 1rem;
+    }
+
+    .container-row {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .image-preview {
+        width: 100%;
+    }
+
+    .button-container {
+        margin-top: 1.5rem;
+        justify-content: start;
     }
 }

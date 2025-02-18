@@ -42,7 +42,8 @@ export class ContestComponent {
   }
 
   editContest(id: number) {
-    console.log('Edit contest:', id);
+    console.log("Edit contest", id);
+    this.route.navigate(['/contest', id]);
   }
 
   deleteContest(id: number) {
