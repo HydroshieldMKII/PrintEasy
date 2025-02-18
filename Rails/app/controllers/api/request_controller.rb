@@ -1,4 +1,5 @@
 class Api::RequestController < ApplicationController
+    before_action :authenticate_user!
     before_action :index_params, only: :index
 
     # GET /requests
