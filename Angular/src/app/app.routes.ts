@@ -5,6 +5,7 @@ import { SignupComponent } from './components/signup/signup.component';
 import { NotfoundComponent } from './components/notfound/notfound.component';
 import { RequestsComponent } from './components/request/request.component';
 import { RequestFormComponent } from './components/request-form/request-form.component';
+import { OrdersComponent } from './components/orders/orders.component';
 
 import { AuthenticationGuard } from './guards/authentication.guard';
 
@@ -48,6 +49,17 @@ export const routes: Routes = [
         path: 'new',
         component: RequestFormComponent,
         title: 'Request'
+      }
+    ]
+  },
+  {
+    path: 'orders',
+    canActivate: [AuthenticationGuard],
+    children: [
+      {
+        path: '',
+        component: OrdersComponent,
+        title: 'Order'
       }
     ]
   },

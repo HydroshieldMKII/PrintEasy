@@ -1,0 +1,129 @@
+<div class="card p-6">
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="stl-section flex flex-col items-center">
+            <div class="stl-placeholder">
+              <p>STL preview here</p>
+            </div>
+        </div>
+        <div class="flex flex-col gap-6">
+            <p class="h1c">The name of this order</p>
+            
+            <div class="h-row">
+                <p>Printer Owner :</p>
+                <p-avatar label="A" size="large" shape="circle"></p-avatar>
+                <p>Migouninet</p>
+            </div>
+
+            <div class="h-row">
+                <p>Price :</p>
+                <p>100$</p>
+            </div>
+
+            <div class="h-row">
+                <p>Current Status :</p>
+                <p-tag severity="success" rounded="true">Completed</p-tag>
+            </div>
+
+            <div class="h-row">
+                <p>Target Date :</p>
+                <p>22 Decembre 2024</p>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <p-fieldset legend="Comment">
+                    <p class="m-0">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quam velit, vulputate eu pharetra nec, mattis ac neque. Duis vulputate commodo lectus, ac blandit elit tincidunt id. Sed rhoncus, tortor sed eleifend tristique, tortor mauris molestie elit, et luctus enim lorem sed odio.
+                    </p>
+                </p-fieldset>
+            </div>
+            
+
+            <p-button
+                label="Abort"
+                icon="pi pi-trash"
+                severity="danger">
+            </p-button>
+        </div>
+    </div>
+
+    <p-tabs value="0">
+        <p-tablist>
+            <p-tab value="0">Status</p-tab>
+            <p-tab value="1">Review</p-tab>
+        </p-tablist>
+        <p-tabpanels>
+            <p-tabpanel value="0">
+                <p-stepper [value]="1">
+                    <p-step-panels>
+                        <p-step-item [value]="1">
+                            <p-step>
+                                <ng-template #content>
+                                    <div class="status-header">
+                                        <div style="padding: 5px; background-color: gray;">
+                                            <i class="pi pi-user" style="color: black;"></i>
+                                        </div>
+                                    </div>
+                                </ng-template>
+                            </p-step>
+                            <p-step-panel>
+                                <ng-template #content>
+                                    <div class="flex flex-col h-48">
+                                        <div
+                                            class="border-2 border-dashed border-surface-200 dark:border-surface-700 rounded bg-surface-50 dark:bg-surface-950 flex-auto flex justify-center items-center font-medium"
+                                        >
+                                            Content I
+                                        </div>
+                                    </div>
+                                </ng-template>
+                            </p-step-panel>
+                        </p-step-item>
+                        <p-step-item [value]="1">
+                            <p-step>Printing</p-step>
+                            <p-step-panel>
+                                <ng-template #content>
+                                    <div class="flex flex-col h-48">
+                                        <div
+                                            class="border-2 border-dashed border-surface-200 dark:border-surface-700 rounded bg-surface-50 dark:bg-surface-950 flex-auto flex justify-center items-center font-medium"
+                                        >
+                                            Content I
+                                        </div>
+                                    </div>
+                                </ng-template>
+                            </p-step-panel>
+                        </p-step-item>
+                        <p-step-item [value]="1">
+                            <p-step>Printed</p-step>
+                            <p-step-panel>
+                                <p>stuff here</p>
+                            </p-step-panel>
+                        </p-step-item>
+                        <p-step-item [value]="1">
+                            <p-step>Shipped</p-step>
+                            <p-step-panel>
+                                <p>stuff here</p>
+                            </p-step-panel>
+                        </p-step-item>
+                        <p-step-item [value]="1">
+                            <p-step>Arrived</p-step>
+                            <p-step-panel>
+                                <p>stuff here</p>
+                            </p-step-panel>
+                        </p-step-item>
+                        <p-step-item [value]="1">
+                            <p-step>Cancelled</p-step>
+                            <p-step-panel>
+                                <p>stuff here</p>
+                            </p-step-panel>
+                        </p-step-item>
+                    </p-step-panels>
+                </p-stepper>
+            </p-tabpanel>
+            <p-tabpanel value="1">
+                <p>bonjour</p>
+            </p-tabpanel>
+        </p-tabpanels>
+    </p-tabs>
+    
+
+</div>
