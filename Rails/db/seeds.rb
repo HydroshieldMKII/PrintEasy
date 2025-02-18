@@ -105,6 +105,12 @@ stl_file_path1 = Rails.root.join("db/seeds/files/RUBY13.stl")
     filename: "RUBY13.stl",
     content_type: "application/sla"
   )
+
+  req.stl_file.attach(
+    io: File.open(stl_file_path1),
+    filename: "RUBY13.stl",
+    content_type: "application/sla"
+  )
   req.save
 end
 

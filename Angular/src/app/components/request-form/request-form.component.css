@@ -57,6 +57,7 @@ textarea {
     color: #666;
     border-radius: 10px;
     margin-bottom: 25px;
+    padding: 2px;
 }
 
 /* Preset List Styling */
@@ -156,7 +157,7 @@ p-calendar {
     width: 100%;
 }
 
-p-floatlabel {
+input {
     margin-bottom: 20px;
 }
 

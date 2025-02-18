@@ -10,8 +10,6 @@ class Api::RequestController < ApplicationController
                       Request.where.not(user: current_user)
                     when 'my'
                       Request.where(user: current_user)
-                    else
-                      Request.all
                     end
     
         # Apply search filter
@@ -64,12 +62,45 @@ class Api::RequestController < ApplicationController
           ),
           errors: {}
         }, status: :ok
+    end
+
+
+
+    def show
+        @request = Request.find(params[:id])
+        render json: {
+          request: @request.as_json(
+            except: %i[user_id created_at updated_at],
+            include: {
+              preset_requests: {
+                except: %i[id request_id color_id filament_id printer_id],
+                include: {
+                  color: { except: %i[id] },
+                  filament: { except: %i[id] },
+                  printer: { except: %i[id] }
+                }
+              },
+              user: {
+                only: %i[id username],
+                include: {
+                  country: { only: %i[name] }
+                }
+              }
+            },
+            methods: :stl_file_url
+          ),
+          errors: {}
+        }, status: :ok
       end
 
     private
 
     def index_params
-      params.permit(:type, :search, :filter, :sortCategory, :sort)
+      params.permit(:type, :search, :filter, :sortCategory, :sort).require(:type)
+    end
+
+    def show_params
+      params.permit(:id).require(:id)
     end
 
   end

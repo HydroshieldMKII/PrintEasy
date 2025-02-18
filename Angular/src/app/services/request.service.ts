@@ -29,9 +29,9 @@ export class RequestService {
         if (type) params.type = type;
 
         console.log("Filter params: ", params);
-        return this.fetchRequest(params);
+        return this.fetchRequests(params);
     }
-      
+
 
     getPrinters(): Observable<any> {
         return this.api.getRequest('api/printer_user').pipe(
@@ -45,7 +45,45 @@ export class RequestService {
         );
     }
 
-    fetchRequest(params: any): Observable<RequestModel[]> {
+    getRequestById(id: number): Observable<RequestModel | null> {
+        console.log("fetching info for request ID: ", id);
+        return this.api.getRequest(`api/request/${id}`).pipe(
+            map((response: ApiResponseModel) => {
+                if (response.status === 200) {
+                    console.log("Request response: ", response.data);
+                    const request = response.data?.['request'];
+                    const user = new UserModel(
+                        request?.['user']?.['id'],
+                        request?.['user']?.['username'],
+                        request?.['user']?.['country']?.['name']
+                    );
+
+                    const presets = (request?.['preset_requests'] as any[]).map((preset: any) => {
+                        return new PresetModel(
+                            preset?.['print_quality'],
+                            preset?.['color']?.['name'],
+                            preset?.['filament']?.['name'],
+                            preset?.['printer']?.['model']
+                        );
+                    });
+
+                    return new RequestModel(
+                        request?.['id'],
+                        request?.['name'],
+                        request?.['budget'],
+                        new Date(request?.['target_date']),
+                        request?.['comment'],
+                        request?.['stl_file_url'],
+                        presets,
+                        user
+                    );
+                }
+                return null;
+            })
+        );
+    }
+
+    fetchRequests(params: any): Observable<RequestModel[]> {
         return this.api.getRequest('api/request', params).pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {

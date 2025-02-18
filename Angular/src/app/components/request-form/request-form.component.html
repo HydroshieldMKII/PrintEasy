@@ -65,7 +65,7 @@
     <!-- Right Section: STL Preview -->
     <div class="stl-section flex flex-col items-center">
       <div class="stl-placeholder">
-        <p>STL preview here</p>
+        <stl-model-viewer [stlModels]="[request.stlFileUrls[0]]"></stl-model-viewer>
       </div>
 
       <div class="stl-actions flex gap-2 mt-4">
@@ -76,7 +76,7 @@
           class="p-button-outlined flex-1"
         ></p-button>
         <p-fileUpload
-          *ngIf="isEditMode"
+          *ngIf="isEditMode || isNewMode"
           mode="basic"
           customUpload
           (uploadHandler)="uploadFile($event)"

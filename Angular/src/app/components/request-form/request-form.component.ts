@@ -2,10 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ImportsModule } from '../../../imports';
 import { DropdownModule } from 'primeng/dropdown';
+import { RequestService } from '../../services/request.service';
+import { StlModelViewerModule } from 'angular-stl-model-viewer';
 
 @Component({
   selector: 'app-request-form',
-  imports: [ImportsModule, DropdownModule],
+  imports: [ImportsModule, DropdownModule, StlModelViewerModule],
   templateUrl: './request-form.component.html',
   styleUrl: './request-form.component.css'
 })
@@ -31,7 +33,7 @@ export class RequestFormComponent implements OnInit {
   colors = ['Red', 'Blue', 'Green', 'Black', 'White'];
   printQualities = ['0.1mm', '0.2mm', '0.3mm', '0.4mm'];
 
-  constructor(private router: Router, private route: ActivatedRoute) { }
+  constructor(private router: Router, private route: ActivatedRoute, private requestService: RequestService) { }
 
   ngOnInit(): void {
     const action = this.route.snapshot.url[0]?.path;
@@ -46,17 +48,14 @@ export class RequestFormComponent implements OnInit {
     }
 
     if (this.isEditMode || this.isViewMode) {
-      this.request = {
-        name: 'Cool print idea',
-        budget: '$51',
-        targetDate: '2021-01-01',
-        comment: 'Yessir miller',
-        presets: [
-          { printer: 'Bambulab P1P', filamentType: 'PLA', color: 'Red', printQuality: '0.1mm' },
-          { printer: 'Bambulab P1P', filamentType: 'PLA', color: 'Blue', printQuality: '0.2mm' }
-        ]
-
-      };
+      if (this.id !== null) {
+        this.requestService.getRequestById(this.id).subscribe((request) => {
+          console.log('Request loaded:', request);
+          console.log('TEST')
+          this.request = request;
+          console.log('Stl file url: ', this.request.stlFileUrls[0])
+        });
+      }
     }
 
     if (this.isNewMode) {
