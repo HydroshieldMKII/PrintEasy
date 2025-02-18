@@ -19,8 +19,9 @@ export class RequestService {
 
     constructor(private api: ApiRequestService) { }
 
-    filter(filterParams: string, orderParams: string): Observable<RequestModel[]> {
-        return this.fetchRequest({ 'filter': filterParams, order: orderParams });
+    filter(filterParams: string, orderParams: string, searchParams: string, type: String): Observable<RequestModel[]> {
+        console.log("Filtering requests with params: ", filterParams, orderParams, searchParams);
+        return this.fetchRequest({ 'filter': filterParams, 'order': orderParams, 'search': searchParams, 'type': type });
     }
 
     getPrinters(): Observable<boolean> {
@@ -33,14 +34,6 @@ export class RequestService {
                 return false;
             })
         );
-    }
-
-    getAllRequests(): Observable<RequestModel[]> {
-        return this.fetchRequest({'type': 'all'});
-    }
-
-    getMyRequests(): Observable<RequestModel[]> {
-        return this.fetchRequest({'type': 'my'});
     }
 
     fetchRequest(params: any): Observable<RequestModel[]> {
