@@ -214,6 +214,7 @@ end
 # Create Orders
 order1 = Order.create!(offer: Offer.first)
 order2 = Order.create!(offer: Offer.second)
+order3 = Order.create!(offer: Offer.third)
 
 Review.create!(
   order: order2,
@@ -231,6 +232,7 @@ status_shipped = Status.create!(name: "Shipped")
 status_arrived = Status.create!(name: "Arrived")
 status_cancelled = Status.create!(name: "Cancelled")
 
+OrderStatus.create!(order: order3, status: status_accepted, comment: "offer accepted, printing soon.")
 OrderStatus.create!(order: order2, status: status_accepted, comment: "offer accepted, printing soon.")
 OrderStatus.create!(order: order2, status: status_printing, comment: "Order started printing.")
 OrderStatus.create!(order: order2, status: status_printed, comment: "Order printed.")
