@@ -38,6 +38,7 @@
               <p-select
                 inputId="in_label"
                 [options]="filterOptions"
+                ((ngModel))="selectedFilterOption"
                 optionLabel="label"
                 styleClass="w-full"
                 variant="filled"
@@ -49,6 +50,7 @@
               <p-select
                 inputId="in_label"
                 [options]="sortOptions"
+                ((ngModel))="selectedSortOption"
                 optionLabel="label"
                 styleClass="w-full"
                 variant="filled"

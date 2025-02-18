@@ -27,10 +27,13 @@ export class RequestsComponent {
   currentSort: string = '';
   currentSortCategory: string = '';
 
+  selectedSortOption: SelectItem | null = null;
+  selectedFilterOption: SelectItem | null = null;
+
   filterOptions: SelectItem[] = [
     { label: 'Select a filter (Clear)', value: '' },
-    { label: 'Recommended', value: 'owned-printer' },
-    { label: 'In my country', value: 'country' },
+    { label: 'My printers', value: 'owned-printer' },
+    { label: 'My country', value: 'country' },
   ];
 
   sortOptions: SelectItem[] = [
@@ -61,20 +64,12 @@ export class RequestsComponent {
     this.filter('all');
     this.filter('my');
 
-    //update the filter and sort options
-    this.filterOptions = this.filterOptions.map((option: SelectItem) => {
-      if (option.value === this.currentFilter) {
-        option.label += ' (Active)';
-      }
-      return option;
-    });
+    // Select the corresponding select sort and filter
+    this.selectedFilterOption = this.filterOptions.find(option => option.value === this.currentFilter) || null;
+    console.log('Selected filter option:', this.selectedFilterOption);
 
-    this.sortOptions = this.sortOptions.map((option: SelectItem) => {
-      if (option.value === `${this.currentSortCategory}-${this.currentSort}`) {
-        option.label += ' (Active)';
-      }
-      return option;
-    });
+    this.selectedSortOption = this.sortOptions.find(option => option.value === `${this.currentSortCategory}-${this.currentSort}`) || null;
+    console.log('Selected sort option:', this.selectedSortOption);
 
     this.searchQuery = queryParams['search'] || '';
 

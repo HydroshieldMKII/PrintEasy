@@ -22,7 +22,7 @@ class Api::RequestController < ApplicationController
         # Apply filtering
         case params[:filter]
         when 'owned-printer'
-          @requests = @requests.joins(:preset_requests).where(preset_requests: { printer_id: current_user.owned_printer_ids })
+          @requests = @requests.joins(:preset_requests).where(preset_requests: { printer_id: current_user.printer_users.pluck(:printer_id) })
         when 'country'
           @requests = @requests.joins(:user).where(users: { country_id: current_user.country_id })
         end

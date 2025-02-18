@@ -3,6 +3,7 @@ class User < ApplicationRecord
   has_many :presets, dependent: :destroy
   has_many :requests, dependent: :destroy
   has_many :offers, dependent: :destroy
+  has_many :printer_users, dependent: :destroy
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
