@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { SelectItem } from 'primeng/api';
 import { Router, RouterLink } from '@angular/router';
 import { RequestModel } from '../../models/request.model';
@@ -11,7 +11,7 @@ import { ImportsModule } from '../../../imports';
   templateUrl: './request.component.html',
   styleUrls: ['./request.component.css']
 })
-export class RequestsComponent implements OnInit {
+export class RequestsComponent {
   activeTab: string = 'all';
   requests: RequestModel[] | null | undefined = undefined;
   myRequests: RequestModel[] | null = null;
@@ -27,13 +27,13 @@ export class RequestsComponent implements OnInit {
   currentSort: string = '';
   currentSortCategory: string = '';
 
-  filterOptions: any[] = [
+  filterOptions: SelectItem[] = [
     { label: 'Select a filter (Clear)', value: '' },
     { label: 'Recommended', value: 'owned-printer' },
     { label: 'In my country', value: 'country' },
   ];
 
-  sortOptions: any[] = [
+  sortOptions: SelectItem[] = [
     { label: 'Select a filter (Clear)', value: '' },
     { label: 'Name (Asc)', value: 'name-asc' },
     { label: 'Name (Desc)', value: 'name-desc' },
@@ -52,40 +52,52 @@ export class RequestsComponent implements OnInit {
   
 
   constructor(private requestService: RequestService, private router: Router) {
-    this.router.events.subscribe(() => {
-      const queryParams = this.router.parseUrl(this.router.url).queryParams;
-      this.currentFilter = queryParams['filter'] || '';
-      this.currentSort = queryParams['sort'] || '';
-      this.currentSortCategory = queryParams['sortCategory'] || '';
-      this.searchQuery = queryParams['search'] || '';
+    const queryParams = this.router.parseUrl(this.router.url).queryParams;
+    this.currentFilter = queryParams['filter'] || '';
+    this.currentSort = queryParams['sort'] || '';
+    this.currentSortCategory = queryParams['sortCategory'] || '';
+    this.searchQuery = queryParams['search'] || '';
 
-      this.filter('all');
-      this.filter('my');
-    });
-  }
-
-  ngOnInit(): void {
-    this.requestService.getPrinters().subscribe((isOwningPrinters: boolean) => {
-      this.isOwningPrinter = isOwningPrinters;
-      if (isOwningPrinters){
-        this.filter('all');
-      }
-    });
-  
+    this.filter('all');
     this.filter('my');
+
+    //update the filter and sort options
+    this.filterOptions = this.filterOptions.map((option: SelectItem) => {
+      if (option.value === this.currentFilter) {
+        option.label += ' (Active)';
+      }
+      return option;
+    });
+
+    this.sortOptions = this.sortOptions.map((option: SelectItem) => {
+      if (option.value === `${this.currentSortCategory}-${this.currentSort}`) {
+        option.label += ' (Active)';
+      }
+      return option;
+    });
+
+    this.searchQuery = queryParams['search'] || '';
+
+    this.requestService.getPrinters().subscribe((printers: any) => {
+      this.isOwningPrinter = printers?.length > 0;
+    });
   }
+
 
   filter(type: string): void {
-    this.requestService.filter(this.currentSortCategory, this.currentSort, this.searchQuery, type).subscribe((requests: RequestModel[]) => {
-      if (type === 'all') {
-        this.requests = requests;
-      } else if (type === 'my') {
-        this.myRequests = requests;
-      }else{
-        console.error('Invalid filter type:', type);
-      }
-    });
+    this.requestService
+      .filter(this.currentFilter, this.currentSortCategory, this.currentSort, this.searchQuery, type)
+      .subscribe((requests: RequestModel[]) => {
+        if (type === 'all') {
+          this.requests = requests;
+        } else if (type === 'my') {
+          this.myRequests = requests;
+        } else {
+          console.error('Invalid filter type:', type);
+        }
+      });
   }
+  
 
   expandAll(): void {
     this.expandedRows = this.currentRequests.reduce((acc: { [key: number]: boolean }, request: RequestModel) => {
@@ -127,32 +139,32 @@ export class RequestsComponent implements OnInit {
 
   onSearch(): void {
     console.log('Search query:', this.searchQuery);
-    this.router.navigate([], { queryParams: { search: this.searchQuery }, queryParamsHandling: 'merge' });
+    this.router.navigate([], { queryParams: { search: this.searchQuery || null }, queryParamsHandling: 'merge' });
+  
+    this.filter('all');
+    this.filter('my');
   }
+  
   
   onFilterChange(event: { value: SelectItem }): void {
     console.log('Filter changed. New value:', event.value.value);
     this.currentFilter = event.value.value;
-    this.router.navigate([], { queryParams: { filter: this.currentFilter }, queryParamsHandling: 'merge' });
-
+    this.router.navigate([], { queryParams: { filter: this.currentFilter || null }, queryParamsHandling: 'merge' });
+  
     this.filter('all');
     this.filter('my');
-  }
+  }  
 
   onSortChange(event: { value: SelectItem }): void {
     console.log('Sort changed. New value:', event.value.value);
     const [category, order] = event.value.value.split('-');
     this.currentSort = order;
     this.currentSortCategory = category;
-    this.router.navigate([], { queryParams: { sortCategory: this.currentSortCategory,  sort: this.currentSort}, queryParamsHandling: 'merge' });
-
-    //if params a parms is emprty remove it
-    if (event.value.value === '') {
-      this.router.navigate([], { queryParams: { sortCategory: null,  sort: null}, queryParamsHandling: 'merge' });
-    }
-
+    this.router.navigate([], { queryParams: { sortCategory: this.currentSortCategory || null, sort: this.currentSort || null }, queryParamsHandling: 'merge' });
+  
     this.filter('all');
     this.filter('my');
   }
+  
 }
 

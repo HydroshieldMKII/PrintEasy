@@ -19,17 +19,26 @@ export class RequestService {
 
     constructor(private api: ApiRequestService) { }
 
-    filter(filterParams: string, orderParams: string, searchParams: string, type: String): Observable<RequestModel[]> {
-        console.log("Filtering requests with params: ", filterParams, orderParams, searchParams);
-        return this.fetchRequest({ 'filter': filterParams, 'order': orderParams, 'search': searchParams, 'type': type });
-    }
+    filter(filterParams: string, sortCategory: string, orderParams: string, searchParams: string, type: string): Observable<RequestModel[]> {
+        const params: any = {};
 
-    getPrinters(): Observable<boolean> {
+        if (filterParams) params.filter = filterParams;
+        if (sortCategory) params.sortCategory = sortCategory;
+        if (orderParams) params.sort = orderParams;
+        if (searchParams) params.search = searchParams;
+        if (type) params.type = type;
+
+        console.log("Filter params: ", params);
+        return this.fetchRequest(params);
+    }
+      
+
+    getPrinters(): Observable<any> {
         return this.api.getRequest('api/printer_user').pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
                     console.log("Printer user response: ", response.data);
-                    return response.data.length > 0;
+                    return response.data;
                 }
                 return false;
             })

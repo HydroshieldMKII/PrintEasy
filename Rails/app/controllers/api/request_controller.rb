@@ -3,43 +3,72 @@ class Api::RequestController < ApplicationController
 
     # GET /requests
     def index
-        if params[:type] == 'all'
-            @requests = Request.where.not(user: current_user)
-        elsif params[:type] == 'my'
-            @requests = Request.where(user: current_user)
-        else
-            @requests = Request.all
+        # debugger
+        @requests = case params[:type]
+                    when 'all'
+                      Request.where.not(user: current_user)
+                    when 'my'
+                      Request.where(user: current_user)
+                    else
+                      Request.all
+                    end
+    
+        # Apply search filter
+        if params[:search].present?
+          search_term = "%#{params[:search]}%"
+          @requests = @requests.where("name LIKE ?", search_term)
         end
-
+    
+        # Apply filtering
+        case params[:filter]
+        when 'owned-printer'
+          @requests = @requests.joins(:preset_requests).where(preset_requests: { printer_id: current_user.owned_printer_ids })
+        when 'country'
+          @requests = @requests.joins(:user).where(users: { country_id: current_user.country_id })
+        end
+    
+        # Apply sorting
+        if params[:sortCategory].present? && params[:sort].present?
+          sort_column = case params[:sortCategory]
+                        when 'name' then 'name'
+                        when 'date' then 'target_date'
+                        when 'budget' then 'budget'
+                        when 'country' then 'users.country_id'
+                        else 'created_at' # default
+                        end
+          sort_direction = params[:sort] == 'asc' ? 'ASC' : 'DESC'
+          @requests = @requests.joins(:user).order("#{sort_column} #{sort_direction}")
+        end
+    
         render json: {
-            requests: @requests.as_json(
+          requests: @requests.as_json(
             except: %i[user_id created_at updated_at],
             include: {
-                preset_requests: {
+              preset_requests: {
                 except: %i[id request_id color_id filament_id printer_id],
                 include: {
-                    color: { except: %i[id] },
-                    filament: { except: %i[id] },
-                    printer: { except: %i[id] }
+                  color: { except: %i[id] },
+                  filament: { except: %i[id] },
+                  printer: { except: %i[id] }
                 }
-                },
-                user: { 
+              },
+              user: { 
                 only: %i[id username],
                 include: {
-                    country: { only: %i[name] }
+                  country: { only: %i[name] }
                 }
-                }
+              }
             },
             methods: :stl_file_url
-            ),
-            errors: {}
+          ),
+          errors: {}
         }, status: :ok
-    end
+      end
 
     private
 
     def index_params
-      params.permit(:type)
+      params.permit(:type, :search, :filter, :sortCategory, :sort)
     end
 
   end
