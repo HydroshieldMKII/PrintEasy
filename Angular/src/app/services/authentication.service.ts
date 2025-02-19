@@ -97,7 +97,7 @@ export class AuthService {
                 this.setCurrentUser(null);
                 this.messageService.add({ severity: 'success', summary: 'Logout', detail: 'You logged out successfully!' });
                 return response;
-            })
+            }),
         );
     }
 

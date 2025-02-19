@@ -52,6 +52,7 @@ export class RequestService {
                 if (response.status === 200) {
                     console.log("Request response: ", response.data);
                     const request = response.data?.['request'];
+                    console.log("Request: ", request);
                     const user = new UserModel(
                         request?.['user']?.['id'],
                         request?.['user']?.['username'],
@@ -87,7 +88,8 @@ export class RequestService {
         return this.api.getRequest('api/request', params).pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
-                    this.requests = (response.data as any)?.['requests'].map((request: any) => {
+                    console.log("Requests response: ", response.data);
+                    this.requests = (response.data as any)?.['request'].map((request: any) => {
                         const user = new UserModel(
                             request?.['user']?.['id'],
                             request?.['user']?.['username'],

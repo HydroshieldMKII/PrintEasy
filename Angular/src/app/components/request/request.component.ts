@@ -85,8 +85,10 @@ export class RequestsComponent {
       .subscribe((requests: RequestModel[]) => {
         if (type === 'all') {
           this.requests = requests;
+          console.log('Requests:', this.requests);
         } else if (type === 'my') {
           this.myRequests = requests;
+          console.log('My requests:', this.myRequests);
         } else {
           console.error('Invalid filter type:', type);
         }

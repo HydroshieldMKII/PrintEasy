@@ -46,7 +46,6 @@ class Api::RequestController < ApplicationController
 
   private
 
-  # Fetches and processes requests with eager loading
   def fetch_requests
     requests = case params[:type]
                when 'all'
@@ -64,7 +63,6 @@ class Api::RequestController < ApplicationController
     requests
   end
 
-  # Extracted rendering logic to avoid duplication
   def render_request(resource, status: :ok)
     render json: {
       request: resource.as_json(
@@ -91,19 +89,17 @@ class Api::RequestController < ApplicationController
     }, status: status
   end
 
-  # Filters requests based on parameters
   def filter_requests(requests)
     case params[:filter]
     when 'owned-printer' 
-      requests.joins(:preset_requests).where(preset_requests: { printer_id: current_user.printer_users.pluck(:printer_id) }) #https://apidock.com/rails/ActiveRecord/Calculations/pluck
+      requests.joins(:preset_requests).where(preset_requests: { printer_id: current_user.printer_users.pluck(:printer_id) }).distinct #https://apidock.com/rails/ActiveRecord/Calculations/pluck
     when 'country'
-      requests.joins(:user).where(users: { country_id: current_user.country_id })
+      requests.joins(:user).where(users: { country_id: current_user.country_id }).distinct
     else
       requests
     end
   end
 
-  # Sorts requests based on parameters
   def sort_requests(requests)
     return requests unless params[:sortCategory].present? && params[:sort].present?
 
@@ -115,10 +111,9 @@ class Api::RequestController < ApplicationController
                   else 'created_at'
                   end
     sort_direction = params[:sort] == 'asc' ? 'ASC' : 'DESC'
-    requests.joins(:user).order("#{sort_column} #{sort_direction}")
+    requests.order("#{sort_column} #{sort_direction}")
   end
 
-  # Strong params for different actions
   def index_params
     params.permit(:type, :search, :filter, :sortCategory, :sort).require(:type)
   end
@@ -128,6 +123,6 @@ class Api::RequestController < ApplicationController
   end
 
   def create_params
-    params.require(:request).permit(:name, :description, :target_date, :budget, :stl_file, preset_requests_attributes: %i[color_id filament_id printer_id])
+    params.permit(:name, :description, :target_date, :budget, :stl_file, preset_requests_attributes: %i[color_id filament_id printer_id]).require(:request)
   end
 end
