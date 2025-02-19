@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, Validators, AbstractControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ImportsModule } from '../../../imports';
 import { DropdownModule } from 'primeng/dropdown';
@@ -12,6 +12,7 @@ import { StlModelViewerModule } from 'angular-stl-model-viewer';
 import { FilamentModel } from '../../models/filament.model';
 import { FormGroup } from '@angular/forms';
 import { FileSelectEvent, FileUploadEvent } from 'primeng/fileupload';
+import { RequestModel } from '../../models/request.model';
 
 @Component({
   selector: 'app-request-form',
@@ -25,6 +26,7 @@ export class RequestFormComponent implements OnInit {
   isViewMode = false;
   id: number | null = null;
   uploadedFile: any = null;
+  uploadedFileBlob: any = null;
 
   request: any = {
     name: '',
@@ -43,11 +45,19 @@ export class RequestFormComponent implements OnInit {
     private requestService: RequestService, private presetService: PresetService, private fb: FormBuilder) {
     //init form empty
     this.form = this.fb.group({
-      name: new FormControl('', Validators.required),
-      budget: new FormControl('', Validators.required),
-      targetDate: new FormControl('', Validators.required),
+      name: new FormControl('', [Validators.required, Validators.minLength(3)]),
+      budget: new FormControl('', [Validators.required, Validators.min(0), Validators.max(10000)]),
+      targetDate: new FormControl('', [Validators.required, this.dateValidator]),
       comment: new FormControl('')
     });
+  }
+
+  dateValidator(control: AbstractControl) {
+    const date = new Date(control.value);
+    if (date < new Date()) {
+      return { dateError: true };
+    }
+    return null;
   }
 
   ngOnInit(): void {
@@ -71,7 +81,6 @@ export class RequestFormComponent implements OnInit {
     });
 
     this.presetService.getAllColors().subscribe((colors) => {
-      console.log('Colors:', colors);
       this.colors = colors.map((color: ColorModel) => ({ label: color.name, value: color.name })); // Convert to string
     });
 
@@ -80,11 +89,6 @@ export class RequestFormComponent implements OnInit {
       if (this.id !== null) {
         this.requestService.getRequestById(this.id).subscribe((request) => {
           this.request = request;
-          console.log('Request viewing is now:', this.request);
-          console.log('Request presets:', this.request.presets);
-          console.log("Printer:", this.request.presets[0].printerModel);
-          console.log("Filament:", this.request.presets[0].filamentType);
-          console.log("Color:", this.request.presets[0].color);
 
           this.form = this.fb.group({
             name: [{ value: this.request.name, disabled: this.isViewMode }, Validators.required],
@@ -118,10 +122,12 @@ export class RequestFormComponent implements OnInit {
   onFileUpload(event: FileSelectEvent): void {
     console.log('File uploaded:', event);
     const file = event.files[0];
+    this.uploadedFile = file;
+
     const reader = new FileReader();
     reader.onloadend = () => {
-      this.uploadedFile = reader.result;
-      console.log('File:', this.uploadedFile);
+      this.uploadedFileBlob = reader.result;
+      console.log('File:', this.uploadedFileBlob);
     };
     reader.readAsArrayBuffer(file);
   }
@@ -137,13 +143,12 @@ export class RequestFormComponent implements OnInit {
   }
 
   cancelEdit(): void {
-    if (this.isEditMode) {
-      this.router.navigate(['/requests/view', this.id]);
-    } else {
-      this.router.navigate(['/requests']);
-    }
+    this.router.navigate(['/requests/view', this.id]);
   }
 
+  cancelNew(): void {
+    this.router.navigate(['/requests']);
+  }
 
   // Row edit functions
   onRowEditInit(preset: any) {
@@ -166,18 +171,39 @@ export class RequestFormComponent implements OnInit {
     this.request.presets.push({ printer: '', filamentType: '', color: '', printQuality: '0.12' });
   }
 
-  createRequest(): void {
-    console.log('Request created:', this.request);
+  createRequest() {
+    if (this.form.valid) {
+      console.log('Données du concours:', this.form.value);
 
-    // this.router.navigate(['/requests']);
+      const contestFormData = new FormData();
+
+      contestFormData.append('request[name]', this.form.value.name);
+      contestFormData.append('request[budget]', this.form.value.budget);
+      contestFormData.append('request[target_date]', this.form.value.targetDate);
+      contestFormData.append('request[comment]', this.form.value.comment);
+
+
+      if (this.uploadedFile) {
+        contestFormData.append('request[stl_file]', this.uploadedFile);
+      }
+
+      // const obs = this.isEditMode
+      //   ? this.requestService.updateRequest(this.id, contestFormData)
+      //   : this.requestService.createRequest(contestFormData);
+
+      const obs = this.requestService.createRequest(contestFormData);
+
+      obs.subscribe(response => {
+        if ((this.isEditMode && response.status === 200) || (!this.isNewMode && response.status === 201)) {
+          this.router.navigate(['/requests']);
+        }
+      });
+    }
   }
 
   downloadFile(downloadUrl: string): void {
     console.log('Download file:', downloadUrl);
     window.open(downloadUrl, '_blank');
   }
-
-  onSubmit(): void {
-    console.log('Form submitted:', this.form.value);
-  }
 }
+

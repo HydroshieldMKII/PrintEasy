@@ -121,4 +121,18 @@ export class RequestService {
             })
         );
     }
+
+    createRequest(request: FormData): Observable<ApiResponseModel> {
+        console.log("Creating request: ", request);
+        return this.api.postRequest('api/request', {}, request).pipe(
+            map((response: ApiResponseModel) => {
+                if (response.status === 201) {
+                    this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Request created successfully' });
+                } else {
+                    this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Request creation failed' });
+                }
+                return response;
+            })
+        );
+    }
 }
