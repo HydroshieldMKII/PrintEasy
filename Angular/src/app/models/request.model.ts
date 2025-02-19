@@ -7,7 +7,7 @@ export class RequestModel {
     budget: number;
     targetDate: Date;
     comment: string;
-    stlFileUrls: string[];
+    stlFileUrl: string;
     presets: PresetModel[];
     user: UserModel;
 
@@ -17,7 +17,7 @@ export class RequestModel {
         budget: number,
         targetDate: Date,
         comment: string,
-        stlFileUrls: string[],
+        stlFileUrl: string,
         presets: PresetModel[],
         user: UserModel
     ) {
@@ -26,7 +26,7 @@ export class RequestModel {
         this.budget = budget;
         this.targetDate = targetDate;
         this.comment = comment;
-        this.stlFileUrls = stlFileUrls;
+        this.stlFileUrl = stlFileUrl;
         this.presets = presets;
         this.user = user;
     }

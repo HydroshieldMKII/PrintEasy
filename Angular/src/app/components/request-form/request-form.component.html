@@ -126,40 +126,46 @@
         <!-- Printer -->
         <td>
           <p-dropdown
-            [(ngModel)]="preset.printer"
-            [options]="printers"
-            placeholder="Select Printer"
-            [disabled]="isViewMode"
-            appendTo="body"
-          ></p-dropdown>
+          [(ngModel)]="preset.printerModel"
+          [options]="printers"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Select Printer"
+          [disabled]="isViewMode"
+          appendTo="body"
+        ></p-dropdown>
         </td>
 
         <!-- Filament Type -->
         <td>
           <p-dropdown
-            [(ngModel)]="preset.filamentType"
-            [options]="filamentTypes"
-            placeholder="Select Filament"
-            [disabled]="isViewMode"
-            appendTo="body"
-          ></p-dropdown>
+          [(ngModel)]="preset.filamentType"
+          [options]="filamentTypes"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Select Filament"
+          [disabled]="isViewMode"
+          appendTo="body"
+        ></p-dropdown>
         </td>
 
         <!-- Color -->
         <td>
           <p-dropdown
-            [(ngModel)]="preset.color"
-            [options]="colors"
-            placeholder="Select Color"
-            [disabled]="isViewMode"
-            appendTo="body"
-          ></p-dropdown>
+          [(ngModel)]="preset.color"
+          [options]="colors"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Select Color"
+          [disabled]="isViewMode"
+          appendTo="body"
+        ></p-dropdown>
         </td>
 
         <!-- Print Quality -->
         <td>
           <p-inputnumber 
-            [showButtons]="true" 
+            [showButtons]="isEditMode || isNewMode" 
             buttonLayout="horizontal" 
             spinnerMode="vertical" 
             inputId="vertical" 
@@ -167,7 +173,8 @@
             [(ngModel)]="preset.printQuality" 
             [step]="0.04" 
             [min]="0.01" 
-            [max]="2">
+            [max]="2"
+            [disabled]="isViewMode">
             <ng-template #incrementbuttonicon>
               <span class="pi pi-plus"></span>
             </ng-template>

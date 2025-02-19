@@ -26,10 +26,16 @@ export class RequestFormComponent implements OnInit {
   id: number | null = null;
   uploadedFile: any = null;
 
-  request: any = null;
+  request: any = {
+    name: '',
+    budget: '',
+    targetDate: '',
+    comment: '',
+    presets: []
+  }
   printers: { label: string, value: string }[] = [];
-  filamentTypes: { label: string, value: number }[] = [];
-  colors: { label: string, value: number }[] = [];
+  filamentTypes: { label: string, value: string }[] = [];
+  colors: { label: string, value: string }[] = [];
 
   form: FormGroup = new FormGroup({
     name: new FormControl('', Validators.required),
@@ -54,11 +60,29 @@ export class RequestFormComponent implements OnInit {
       this.router.navigate(['/requests']);
     }
 
+    this.presetService.getAllPrinters().subscribe((printers) => {
+      this.printers = printers.map((printer: PrinterModel) => ({ label: printer.model, value: printer.model })); // Ensure value is a string
+    });
+
+    this.presetService.getAllFilaments().subscribe((filamentTypes) => {
+      this.filamentTypes = filamentTypes.map((filament: FilamentModel) => ({ label: filament.name, value: filament.name })); // Convert to string
+    });
+
+    this.presetService.getAllColors().subscribe((colors) => {
+      console.log('Colors:', colors);
+      this.colors = colors.map((color: ColorModel) => ({ label: color.name, value: color.name })); // Convert to string
+    });
+
+
     if (this.isEditMode || this.isViewMode) {
       if (this.id !== null) {
         this.requestService.getRequestById(this.id).subscribe((request) => {
-          console.log('Request loaded:', request);
           this.request = request;
+          console.log('Request viewing is now:', this.request);
+          console.log('Request presets:', this.request.presets);
+          console.log("Printer:", this.request.presets[0].printerModel);
+          console.log("Filament:", this.request.presets[0].filamentType);
+          console.log("Color:", this.request.presets[0].color);
 
           if (this.request === null) {
             this.router.navigate(['/requests']);
@@ -68,19 +92,6 @@ export class RequestFormComponent implements OnInit {
     }
 
     if (this.isNewMode) {
-      this.presetService.getAllPrinters().subscribe((printers) => {
-        this.printers = printers.map((printer: PrinterModel) => ({ label: printer.model, value: printer.id }));
-      });
-
-      this.presetService.getAllFilaments().subscribe((filamentTypes) => {
-        this.filamentTypes = filamentTypes.map((filament: FilamentModel) => ({ label: filament.name, value: filament.id }));
-      });
-
-      this.presetService.getAllColors().subscribe((colors) => {
-        console.log('Colors:', colors);
-        this.colors = colors.map((color: ColorModel) => ({ label: color.name, value: color.id }));
-      });
-
       this.request = {
         name: '',
         budget: '',
@@ -143,7 +154,7 @@ export class RequestFormComponent implements OnInit {
   }
 
   addPreset(): void {
-    this.request.presets.push({ printer: '', filamentType: '', color: '', printQuality: '1' });
+    this.request.presets.push({ printer: '', filamentType: '', color: '', printQuality: '0.12' });
   }
 
   createRequest(): void {
