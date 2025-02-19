@@ -27,9 +27,8 @@
           <!-- Date de début -->
           <div class="field col-12 md:col-6">
             <p-floatlabel variant="in">
-              <p-datepicker [hourFormat]="'24'" [showTime]="true" size="large" formControlName="startDate"
-                [showIcon]="true" inputId="buttondisplay" [showOnFocus]="false" dateFormat="yy-mm-dd"
-                [class]="startDatePicker"></p-datepicker>
+              <p-datepicker [hourFormat]="'24'" [showTime]="true" size="large" formControlName="startDate" [showIcon]="true" inputId="buttondisplay"
+                [showOnFocus]="false" dateFormat="yy-mm-dd" [class]="startDatePicker"></p-datepicker>
               <label for="startDate">Date de début</label>
             </p-floatlabel>
             <p-message severity="error" variant="simple" size="small">
@@ -41,11 +40,25 @@
           <!-- Date de fin -->
           <div class="field col-12 md:col-6">
             <p-floatlabel variant="in">
-              <p-datepicker [hourFormat]="'24'" [showTime]="true" size="large" formControlName="endDate"
-                [showIcon]="true" inputId="buttondisplay" [showOnFocus]="false" class="w-full"
-                dateFormat="yy-mm-dd"></p-datepicker>
+              <p-datepicker [hourFormat]="'24'" [showTime]="true" size="large" formControlName="endDate" [showIcon]="true" inputId="buttondisplay"
+                [showOnFocus]="false" class="w-full" dateFormat="yy-mm-dd"></p-datepicker>
               <label for="endDate">Date de fin</label>
             </p-floatlabel>
+          </div>
+
+          <div class="field col-12">
+            <div class="field col-12">
+              <img [src]="imageUrl" alt="" class="image-preview" />
+            </div>
+            
+            <!-- Upload de l'image -->
+            <div class="">
+              <div class="fileUploadContainer">
+                <!-- <label for="image" class="p-text-bold">Image</label> -->
+                <p-fileUpload mode="basic" name="image" accept="image/*" [maxFileSize]="1000000"
+                  (onSelect)="onFileSelect($event)" chooseLabel="Upload file"></p-fileUpload>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -57,24 +70,6 @@
             <label for="description" class="p-text-bold">Description</label>
           </p-floatlabel>
           <p-message severity="error" variant="simple" size="small">La description est trop longue</p-message>
-        </div>
-
-        <div>
-          <div class="field col-12">
-            <div [class]="noImagePreview">
-              <img [src]="imageUrl" alt="" class="image-preview"
-                [style.visibility]="noImagePreview ? 'hidden' : 'visible'" />
-            </div>
-          </div>
-
-          <!-- Upload de l'image -->
-          <div class="">
-            <div class="fileUploadContainer">
-              <!-- <label for="image" class="p-text-bold">Image</label> -->
-              <p-fileUpload mode="basic" name="image" accept="image/*" [maxFileSize]="1000000"
-                (onSelect)="onFileSelect($event)" chooseLabel="Upload file"></p-fileUpload>
-            </div>
-          </div>
         </div>
 
         <!-- Boutons -->
