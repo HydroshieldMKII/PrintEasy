@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ImportsModule } from '../../../imports';
 import { DropdownModule } from 'primeng/dropdown';
@@ -9,6 +10,8 @@ import { PresetModel } from '../../models/preset.model';
 import { PresetService } from '../../services/preset.service';
 import { StlModelViewerModule } from 'angular-stl-model-viewer';
 import { FilamentModel } from '../../models/filament.model';
+import { FormGroup } from '@angular/forms';
+import { FileSelectEvent, FileUploadEvent } from 'primeng/fileupload';
 
 @Component({
   selector: 'app-request-form',
@@ -21,11 +24,20 @@ export class RequestFormComponent implements OnInit {
   isNewMode = false;
   isViewMode = false;
   id: number | null = null;
+  uploadedFile: any = null;
 
   request: any = null;
   printers: { label: string, value: string }[] = [];
   filamentTypes: { label: string, value: number }[] = [];
   colors: { label: string, value: number }[] = [];
+
+  form: FormGroup = new FormGroup({
+    name: new FormControl('', Validators.required),
+    budget: new FormControl('', Validators.required),
+    targetDate: new FormControl('', Validators.required),
+    comment: new FormControl('', Validators.required),
+    presets: new FormControl('', Validators.required)
+  });
 
   constructor(private router: Router, private route: ActivatedRoute,
     private requestService: RequestService, private presetService: PresetService) { }
@@ -83,8 +95,15 @@ export class RequestFormComponent implements OnInit {
     this.request.presets.splice(index, 1);
   }
 
-  uploadFile(event: any): void {
+  onFileUpload(event: FileSelectEvent): void {
     console.log('File uploaded:', event);
+    const file = event.files[0];
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      this.uploadedFile = reader.result;
+      console.log('File:', this.uploadedFile);
+    };
+    reader.readAsArrayBuffer(file);
   }
 
   saveChanges(): void {
@@ -129,6 +148,7 @@ export class RequestFormComponent implements OnInit {
 
   createRequest(): void {
     console.log('Request created:', this.request);
+
     // this.router.navigate(['/requests']);
   }
 }

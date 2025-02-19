@@ -5,7 +5,7 @@
     padding: 2rem;
     margin: auto;
     max-width: 1500px;
-    margin-top: 30px;
+    margin-top: 10px;
 }
 
 .w-full {
@@ -143,18 +143,6 @@ textarea {
 
 .edit-actions {
     margin-top: 20px;
-}
-
-p-calendar {
-    width: 100%;
-}
-
-.p-calendar {
-    width: 100%;
-}
-
-.p-inputtext {
-    width: 100%;
 }
 
 input {

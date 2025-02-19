@@ -65,12 +65,13 @@
     <!-- Right Section: STL Preview -->
     <div class="stl-section flex flex-col items-center">
       <div class="stl-placeholder">
-        <stl-model-viewer *ngIf="request.stlFileUrl" [stlModels]="[request.stlFileUrl]"></stl-model-viewer>
+        <stl-model-viewer *ngIf="(isEditMode || isViewMode) && request.stlFileUrl" [stlModels]="[request.stlFileUrl]"></stl-model-viewer>
+        <stl-model-viewer *ngIf="isNewMode && uploadedFile" [stlModelFiles]="[uploadedFile]"></stl-model-viewer>
       </div>
 
       <div class="stl-actions flex gap-2 mt-4">
         <p-button
-          *ngIf="!isEditMode"
+          *ngIf="isViewMode"
           label="Download file"
           icon="pi pi-download"
           class="p-button-outlined flex-1"
@@ -78,8 +79,11 @@
         <p-fileUpload
           *ngIf="isEditMode || isNewMode"
           mode="basic"
-          customUpload
-          (uploadHandler)="uploadFile($event)"
+          maxFileSize="10000000"
+          invalidFileSizeMessageDetail="File size is too large. Max 10MB"
+          invalidFileTypeMessageDetail="File type is not supported. Please upload a .stl file"
+          customUpload="false"
+          (onSelect)="onFileUpload($event)"
           accept=".stl"
           chooseLabel="Upload file"
           class="flex-1"
