@@ -7,32 +7,43 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <!-- Left Section: Request Details -->
       <div class="flex flex-col">
-        <p-floatlabel variant="in" floatLabel="always">
-          <!-- Removed [(ngModel)] from the input -->
-          <input
-            id="name"
-            pInputText
-            formControlName="name"
-            class="w-full"
-          />
-          <label for="name">Name</label>
-        </p-floatlabel>
-        <p-message
-        *ngIf="form.get('name')?.invalid && (form.get('name')?.dirty || form.get('name')?.touched)"
-        severity="error"
-        variant="simple"
-        size="small"
-      >Name is required</p-message>
+        <div class="form-field">
+          <p-floatlabel variant="in" floatLabel="always">
+            <!-- Removed [(ngModel)] from the input -->
+            <input
+              id="name"
+              pInputText
+              formControlName="name"
+              class="w-full"
+            />
+            <label for="name">Name</label>
+          </p-floatlabel>
+          <p-message
+          *ngIf="form.get('name')?.invalid && (form.get('name')?.dirty || form.get('name')?.touched)"
+          severity="error"
+          variant="simple"
+          size="small"
+        >Name is required</p-message>
+        </div>
 
-        <p-floatlabel variant="in">
-          <label for="budget" class="block font-semibold">Budget</label>
-          <input
-            id="budget"
-            pInputText
-            formControlName="budget"
-            class="w-full"
-          />
-        </p-floatlabel>
+        <div class="form-field">
+          <p-floatlabel variant="in">
+            <label for="budget" class="block font-semibold">Budget</label>
+            <input
+              id="budget"
+              pInputText
+              formControlName="budget"
+              class="w-full"
+            />
+          </p-floatlabel>
+
+          <p-message
+            *ngIf="form.get('budget')?.invalid && (form.get('budget')?.dirty || form.get('budget')?.touched)"
+            severity="error"
+            variant="simple"
+            size="small"
+          >Budget is required</p-message>
+        </div>
 
         <p-floatlabel variant="in">
           <textarea

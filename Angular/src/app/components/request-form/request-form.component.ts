@@ -46,15 +46,7 @@ export class RequestFormComponent implements OnInit {
       name: new FormControl('', Validators.required),
       budget: new FormControl('', Validators.required),
       targetDate: new FormControl('', Validators.required),
-      comment: new FormControl(''),
-      presets: this.fb.array([
-        this.fb.group({
-          printer: new FormControl('', Validators.required),
-          filamentType: new FormControl('', Validators.required),
-          color: new FormControl('', Validators.required),
-          printQuality: new FormControl('0.12', Validators.required)
-        })
-      ])
+      comment: new FormControl('')
     });
   }
 
@@ -98,14 +90,7 @@ export class RequestFormComponent implements OnInit {
             name: [{ value: this.request.name, disabled: this.isViewMode }, Validators.required],
             budget: [{ value: this.request.budget, disabled: this.isViewMode }, Validators.required],
             targetDate: [{ value: this.request.targetDate, disabled: this.isViewMode }, Validators.required],
-            comment: [{ value: this.request.comment, disabled: this.isViewMode }],
-            presets: this.fb.array(this.request.presets.map((preset: PresetModel) => this.fb.group({
-              printer: [{ value: preset.printerModel, disabled: this.isViewMode }, Validators.required],
-              filamentType: [{ value: preset.filamentType, disabled: this.isViewMode }, Validators.required],
-              color: [{ value: preset.color, disabled: this.isViewMode }, Validators.required],
-              printQuality: [{ value: preset.printQuality, disabled: this.isViewMode }, Validators.required]
-            }))
-            )
+            comment: [{ value: this.request.comment, disabled: this.isViewMode }]
           });
 
           if (this.request === null) {
