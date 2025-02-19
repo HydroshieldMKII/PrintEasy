@@ -3,18 +3,18 @@ import { OfferModel } from "./offer.model";
 
 export class OrderModel {
     id: number;
-    orderStatus: OrderStatusModel[];
+    order_status: OrderStatusModel[];
     offer: OfferModel;
     available_status: string[];
 
     constructor(
         id: number,
-        orderStatus: OrderStatusModel[],
+        order_status: OrderStatusModel[],
         offer: OfferModel,
         available_status: string[]
     ) {
         this.id = id;
-        this.orderStatus = orderStatus;
+        this.order_status = order_status;
         this.offer = offer;
         this.available_status = available_status;
     }

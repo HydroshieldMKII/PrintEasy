@@ -1,12 +1,12 @@
 import { RequestModel } from "./request.model";
-import { PrinterModel } from "./printer.model";
+import { PrinterUserModel } from "./printer-user.model";
 import { ColorModel } from "./color.model";
 import { FilamentModel } from "./filament.model";
 
 export class OfferModel {
     id: number;
     request: RequestModel;
-    printer: PrinterModel;
+    printer_user: PrinterUserModel;
     color: ColorModel;
     filament: FilamentModel;
     price: number;
@@ -16,7 +16,7 @@ export class OfferModel {
     constructor(
         id: number,
         request: RequestModel,
-        printer: PrinterModel,
+        printer_user: PrinterUserModel,
         color: ColorModel,
         filament: FilamentModel,
         price: number,
@@ -25,7 +25,7 @@ export class OfferModel {
     ) {
         this.id = id;
         this.request = request;
-        this.printer = printer;
+        this.printer_user = printer_user;
         this.color = color;
         this.filament = filament;
         this.price = price;
