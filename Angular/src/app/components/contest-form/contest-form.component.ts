@@ -19,9 +19,12 @@ export class ContestFormComponent {
 
   contestForm: FormGroup;
   isEdit: boolean = false;
-  imagePreview: boolean = false;
   startDatePicker = "";
   imageUrl: string = '';
+  noImagePreview: string = "image-preview-container";
+  currentStartDate: Date = new Date();
+  currentEndDate: Date | null = null;
+  
 
   constructor(private fb: FormBuilder, private route: ActivatedRoute) {
     this.contestForm = this.fb.group({
@@ -43,6 +46,12 @@ export class ContestFormComponent {
       if (this.isEdit) {
         this.contestService.getContest(id).subscribe(contest => {
           if (contest) {
+            this.imageUrl = contest.image;
+            this.noImagePreview = "";
+            this.currentStartDate = new Date(contest.startAt);
+            console.log('start_at:', this.currentStartDate);
+            this.currentEndDate = contest.endAt ? new Date(contest.endAt) : null;
+
             this.contestForm.patchValue({
               theme: contest.theme,
               description: contest.description,
@@ -50,7 +59,7 @@ export class ContestFormComponent {
               startDate: new Date(contest.startAt),
               endDate: contest.endAt ? new Date(contest.endAt) : null
             });
-            this.imageUrl = contest.image;
+            
           }
         });
       }
@@ -72,6 +81,15 @@ export class ContestFormComponent {
     if (!startDate || !endDate) {
       return null;
     }
+    
+    if (startDate.getTime() === this.currentStartDate.getTime() && endDate.getTime() === this.currentEndDate?.getTime()) {
+      return null;
+    }
+
+    if (startDate && new Date() > new Date(startDate)) {
+      this.startDatePicker = "ng-invalid ng-dirty";
+      return { dateError: 'La date de début doit être avant la date actuelle' };
+    }
 
     if (startDate.getTime() > endDate.getTime()) {
       this.startDatePicker = "ng-invalid ng-dirty";
@@ -82,12 +100,7 @@ export class ContestFormComponent {
       this.startDatePicker = "ng-invalid ng-dirty";
       return { dateError: 'Il doit y avoir 24h de différence' };
     } 
-    
-    if (startDate && endDate && new Date() > new Date(startDate)) {
-      this.startDatePicker = "ng-invalid ng-dirty";
-      return { dateError: 'La date de début doit être avant la date actuelle' };
-    }
-    
+
     this.startDatePicker = "";
     return null;
   }
@@ -96,7 +109,7 @@ export class ContestFormComponent {
     const file = event.files[0];
     this.imageUrl = file["objectURL"].changingThisBreaksApplicationSecurity;
     this.contestForm.patchValue({ image: file });
-    console.log('Image:', file);
+    this.noImagePreview = "";
   }
 
   onSubmit() {

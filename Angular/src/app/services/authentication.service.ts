@@ -28,7 +28,7 @@ export class AuthService {
         const storedCurrentUser = JSON.parse(localStorage.getItem(this.CURRENT_USER_KEY) ?? 'null');
 
         if (storedCurrentUser) {
-            this._currentUser = new UserModel(storedCurrentUser.id, storedCurrentUser.username, storedCurrentUser.country, storedCurrentUser.created_at);
+            this._currentUser = new UserModel(storedCurrentUser.id, storedCurrentUser.username, storedCurrentUser.country, storedCurrentUser.created_at, storedCurrentUser.is_admin);
         }
     }
 
@@ -57,8 +57,9 @@ export class AuthService {
                 if (response.status === 200) {
                     // console.log('Login response:', response);
                     if (!this.isLoggedIn) {
+                        this.messageService.add({ severity: 'success', summary: 'Welcome', detail: 'You are now logged in!' });
                         const userData = (response.data as any)?.['user'];
-                        this.setCurrentUser(new UserModel(userData?.['id'], userData?.['username'], userData?.['country'], userData?.['created_at']));
+                        this.setCurrentUser(new UserModel(userData?.['id'], userData?.['username'], userData?.['country'], userData?.['created_at'], userData?.['is_admin']));
                     }
                 }
                 return response;
@@ -83,7 +84,7 @@ export class AuthService {
                 if (response.status === 200) {
                     this.messageService.add({ severity: 'success', summary: 'Account created', detail: 'You are now ready to use the app!' });
                     const userData = (response.data as any)?.['user'];
-                    this.setCurrentUser(new UserModel(userData?.['id'], userData?.['username'], userData?.['country'], userData?.['created_at']));
+                    this.setCurrentUser(new UserModel(userData?.['id'], userData?.['username'], userData?.['country'], userData?.['created_at'], userData?.['is_admin']));
                 }
                 return response;
             })

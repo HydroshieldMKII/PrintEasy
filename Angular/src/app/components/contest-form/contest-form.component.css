@@ -1,8 +1,5 @@
 .contest-container {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 97dvh;
 }
 
 .card {
@@ -13,6 +10,25 @@
     padding: 2rem;
     margin: auto;
     max-width: 1500px;
+    margin-top: 30px;
+}
+
+.image-preview-container {
+    width: 100%;
+    max-width: 300px;
+    /* Limits size on larger screens */
+    height: 300px;
+    background: #f0f0f0;
+    border: 2px dashed #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 1rem;
+    color: #666;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    padding: 2px;
 }
 
 .form-card {
@@ -61,7 +77,8 @@
 }
 
 .image-preview {
-    width: 30%;
+    width: 100%;
+    max-width: 300px;
     max-height: 300px;
     color: var(--p-inputtext-color);
     background: var(--p-inputtext-background);

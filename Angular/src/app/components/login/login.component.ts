@@ -72,7 +72,6 @@ export class LoginComponent {
               this.errors = { general: 'An unexpected error occured' };
               break;
           }
-
         }
       });
     }
