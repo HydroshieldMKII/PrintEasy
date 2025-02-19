@@ -189,6 +189,12 @@ input {
     gap: 10px;
 }
 
+.v-row {
+    display: flex; 
+    flex-direction: column;
+    gap: 10px;
+}
+
 p-tag {
     --p-tag-padding: 7px;
     --p-tag-gap: 0.5rem;
