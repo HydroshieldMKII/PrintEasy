@@ -26,9 +26,9 @@ export class AuthService {
 
     constructor(private api: ApiRequestService) {
         const storedCurrentUser = JSON.parse(localStorage.getItem(this.CURRENT_USER_KEY) ?? 'null');
-
+        console.log('Stored current user:', storedCurrentUser);
         if (storedCurrentUser) {
-            this._currentUser = new UserModel(storedCurrentUser.id, storedCurrentUser.username, storedCurrentUser.country, storedCurrentUser.created_at, storedCurrentUser.is_admin);
+            this._currentUser = new UserModel(storedCurrentUser.id, storedCurrentUser.username, storedCurrentUser.country, storedCurrentUser.createdAt, storedCurrentUser.isAdmin);
         }
     }
 

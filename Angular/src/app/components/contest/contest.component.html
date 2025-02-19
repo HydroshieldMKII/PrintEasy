@@ -32,7 +32,7 @@
 
 
             <button pButton label="Contest detail" class="p-button-outlined contest-detail-button"></button>
-
+            
             @if (authService.currentUser?.isAdmin) {
             <div class="admin-buttons">
                 <button pButton icon="pi pi-pencil" class="p-button-text" (click)="editContest(contest.id)"></button>
