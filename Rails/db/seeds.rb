@@ -46,6 +46,11 @@ user1 = User.create!(
   country_id: 2,
   is_admin: false
 )
+user1.profile_picture.attach(
+  io: File.open(Rails.root.join("db/seeds/files/ruby.jpg")),
+  filename: "ruby.jpg",
+  content_type: "image/jpg"
+)
 
 # Create Printers
 printers = ["Bambulab", "Anycubic", "Artillery", "Creality", "Elegoo", "Flashforge", "Monoprice", "Prusa", "Qidi", "Sindoh", "Ultimaker", "XYZprinting", "Zortrax"]
@@ -54,7 +59,7 @@ printers.each do |printer|
 end
 
 # Assign Printers to Users
-PrinterUser.create!(user: admin, printer: Printer.first, acquired_date: Time.now)
+PrinterUser.create!(user: user1, printer: Printer.first, acquired_date: Time.now)
 PrinterUser.create!(user: user1, printer: Printer.second, acquired_date: Time.now - 1.year)
 PrinterUser.create!(user: user1, printer: Printer.third, acquired_date: Time.now - 2.years)
 
@@ -271,6 +276,7 @@ OrderStatus.create!(order: order2, status: status_printing, comment: "Order star
 OrderStatus.create!(order: order2, status: status_printed, comment: "Order printed.")
 OrderStatus.create!(order: order2, status: status_shipped, comment: "Order shipped.")
 orderstatus1 = OrderStatus.create!(order: order1, status: status_accepted, comment: "offer accepted, printing soon.")
+OrderStatus.create!(order: order1, status: status_printing, comment: "Order started printing.")
 orderstatus1.image.attach(
   io: File.open(Rails.root.join("db/seeds/files/ruby.jpg")),
   filename: "ruby.jpg",
