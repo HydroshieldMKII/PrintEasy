@@ -38,8 +38,23 @@ class Contest < ApplicationRecord
         end
     end
 
+    def start_at_has_changed?
+        if !self.start_at_was.nil?
+            self.start_at_was.change(sec: 0) != self.start_at.change(sec: 0)
+        end
+    end
+
+    def end_at_has_changed?
+        if !self.end_at.nil? && !self.end_at_was.nil?
+            self.end_at_was.change(sec: 0) != self.end_at.change(sec: 0)
+        end
+    end
+
     def past?
-        return if deleted_at_changed?
+        debugger
+        return if deleted_at_changed? || (!start_at_has_changed? && !end_at_has_changed?)
+
+        debugger
 
         if self.start_at < Time.now.change(sec: 0)
             errors.add(:start_at, "must be in the future")

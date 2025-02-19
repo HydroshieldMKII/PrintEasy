@@ -9,12 +9,12 @@
 }
 
 .contest-list {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    /* 3 cartes par ligne */
+    display: flex;
     gap: 20px;
     width: 100%;
     margin-top: 30px;
+    flex-wrap: wrap;
+    justify-content: space-around;
 }
 
 .card {
@@ -22,11 +22,9 @@
     border-radius: 0.5rem;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     padding: 1.5rem;
-    /* Réduction de l'espace intérieur */
-    max-width: 95%;
-    /* Légèrement plus petite */
+    min-width: 300px;
+    width: 600px;
     height: auto;
-    /* Ajustement dynamique */
     display: flex;
     flex-direction: column;
 }
@@ -35,6 +33,23 @@ h2 {
     font-size: 2rem;
     font-weight: bold;
     margin-bottom: 15px;
+}
+
+.contest-details p {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+}
+
+.contest-details p span {
+    font-size: 1.2rem;
+    color: #003064;
+}
+
+.contest-details i {
+    font-size: 1.2rem;
+    color: #007BFF;
 }
 
 .container p {
@@ -143,6 +158,7 @@ h2 {
         align-items: center;
         text-align: center;
     }
+
 
     .contest-image {
         margin-right: 0;

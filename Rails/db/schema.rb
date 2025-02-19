@@ -48,7 +48,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_17_183201) do
     t.string "description", limit: 200
     t.integer "submission_limit", default: 1, null: false
     t.datetime "deleted_at"
-    t.datetime "start_at", default: -> { "current_timestamp(6)" }
+    t.datetime "start_at", null: false
     t.datetime "end_at"
   end
 

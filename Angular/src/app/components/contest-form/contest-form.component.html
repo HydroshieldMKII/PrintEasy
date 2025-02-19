@@ -45,6 +45,21 @@
               <label for="endDate">Date de fin</label>
             </p-floatlabel>
           </div>
+
+          <div class="field col-12">
+            <div class="field col-12">
+              <img [src]="imageUrl" alt="" class="image-preview" />
+            </div>
+            
+            <!-- Upload de l'image -->
+            <div class="">
+              <div class="fileUploadContainer">
+                <!-- <label for="image" class="p-text-bold">Image</label> -->
+                <p-fileUpload mode="basic" name="image" accept="image/*" [maxFileSize]="1000000"
+                  (onSelect)="onFileSelect($event)" chooseLabel="Upload file"></p-fileUpload>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Description -->
@@ -55,19 +70,6 @@
             <label for="description" class="p-text-bold">Description</label>
           </p-floatlabel>
           <p-message severity="error" variant="simple" size="small">La description est trop longue</p-message>
-        </div>
-
-        <div class="field col-12">
-          <img [src]="imageUrl" alt="" class="image-preview" />
-        </div>
-
-        <!-- Upload de l'image -->
-        <div class="">
-          <div class="fileUploadContainer">
-            <!-- <label for="image" class="p-text-bold">Image</label> -->
-            <p-fileUpload mode="basic" name="image" accept="image/*" [maxFileSize]="1000000"
-              (onSelect)="onFileSelect($event)" chooseLabel="Upload file"></p-fileUpload>
-          </div>
         </div>
 
         <!-- Boutons -->

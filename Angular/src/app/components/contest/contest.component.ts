@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { ContestModel } from '../../models/contest.model';
 import { Router, RouterLink } from '@angular/router';
 import { ContestService } from '../../services/contest.service';
+import { AuthService } from '../../services/authentication.service';
 
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
@@ -20,6 +21,7 @@ import { SpeedDialModule } from 'primeng/speeddial';
 export class ContestComponent {
   route = inject(Router);
   contestService = inject(ContestService);
+  authService = inject(AuthService);
   contests: ContestModel[] = [];
 
   constructor() {
