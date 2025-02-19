@@ -28,13 +28,14 @@ export class AuthService {
         const storedCurrentUser = JSON.parse(localStorage.getItem(this.CURRENT_USER_KEY) ?? 'null');
 
         if (storedCurrentUser) {
-            this._currentUser = new UserModel(storedCurrentUser.id, storedCurrentUser.username, storedCurrentUser.country);
+            this._currentUser = new UserModel(storedCurrentUser.id, storedCurrentUser.username, storedCurrentUser.country, storedCurrentUser.created_at);
         }
     }
 
 
     private setCurrentUser(user: UserModel | null) {
         this._currentUser = user;
+        console.log('Current user:', user);
         if (user === null) {
             localStorage.removeItem(this.CURRENT_USER_KEY);
             return;
@@ -56,9 +57,8 @@ export class AuthService {
                 if (response.status === 200) {
                     // console.log('Login response:', response);
                     if (!this.isLoggedIn) {
-                        this.messageService.add({ severity: 'success', summary: 'Login success', detail: 'You are logged in!' });
                         const userData = (response.data as any)?.['user'];
-                        this.setCurrentUser(new UserModel(userData?.['id'], userData?.['username'], userData?.['country']));
+                        this.setCurrentUser(new UserModel(userData?.['id'], userData?.['username'], userData?.['country'], userData?.['created_at']));
                     }
                 }
                 return response;
@@ -83,7 +83,7 @@ export class AuthService {
                 if (response.status === 200) {
                     this.messageService.add({ severity: 'success', summary: 'Account created', detail: 'You are now ready to use the app!' });
                     const userData = (response.data as any)?.['user'];
-                    this.setCurrentUser(new UserModel(userData?.['id'], userData?.['username'], userData?.['country']));
+                    this.setCurrentUser(new UserModel(userData?.['id'], userData?.['username'], userData?.['country'], userData?.['created_at']));
                 }
                 return response;
             })

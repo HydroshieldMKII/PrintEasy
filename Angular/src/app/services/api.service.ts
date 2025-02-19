@@ -49,6 +49,32 @@ export class ApiRequestService {
         );
     }
 
+    putRequest(query: string, params?: { [key: string]: any }, body?: any): Observable<ApiResponseModel> {
+        return this.http.put<ApiResponseModel>(query, body, { params, observe: 'response' }).pipe(
+            map(response => new ApiResponseModel(
+                {
+                    status: response.status,
+                    errors: response.body?.errors ?? {}
+                },
+                response.body
+            )),
+            catchError((error: HttpErrorResponse) => this.handleHttpError(error))
+        );
+    }
+
+    patchRequest(query: string, params?: { [key: string]: any }, body?: any): Observable<ApiResponseModel> {
+        return this.http.patch<ApiResponseModel>(query, body, { params, observe: 'response' }).pipe(
+            map(response => new ApiResponseModel(
+                {
+                    status: response.status,
+                    errors: response.body?.errors ?? {}
+                },
+                response.body
+            )),
+            catchError((error: HttpErrorResponse) => this.handleHttpError(error))
+        );
+    }
+
     deleteRequest(query: string, params?: { [key: string]: string }): Observable<ApiResponseModel> {
         return this.http.delete<ApiResponseModel>(query, { params, observe: 'response' }).pipe(
             map(response => new ApiResponseModel(

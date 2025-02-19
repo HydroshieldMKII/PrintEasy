@@ -1037,6 +1037,12 @@
   font-size: 15.5px;
   font-weight: 600;
 }
+form p-message[severity=error] {
+  display: none;
+}
+form p-floatlabel:has(.ng-dirty.ng-invalid) ~ p-message {
+  display: block;
+}
 
 /* angular:styles/global:styles */
 /*# sourceMappingURL=styles.css.map */

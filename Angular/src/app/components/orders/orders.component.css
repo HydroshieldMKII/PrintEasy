@@ -1,0 +1,272 @@
+.card {
+    background-color: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    margin: auto;
+    max-width: 1500px;
+    margin-top: 30px;
+}
+
+.w-full {
+    width: 100%;
+}
+
+/* Grid Layout */
+.grid {
+    display: grid;
+}
+
+.grid-cols-1 {
+    grid-template-columns: 1fr;
+}
+
+.md\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.gap-6 {
+    gap: 1.5rem;
+}
+
+/* Ensure input fields take full width */
+input,
+textarea {
+    width: 100%;
+}
+
+/* STL Preview Placeholder */
+.stl-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stl-placeholder {
+    width: 100%;
+    max-width: 500px;
+    /* Limits size on larger screens */
+    height: 500px;
+    background: #f0f0f0;
+    border: 2px dashed #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 1rem;
+    color: #666;
+    border-radius: 10px;
+    margin-bottom: 25px;
+}
+
+/* Preset List Styling */
+.preset-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+/* Responsive preset card */
+.preset-card {
+    width: 100%;
+    max-width: 300px;
+    background: #f5f5f5;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Preset Info */
+.preset-info {
+    flex: 1;
+}
+
+/* Preset Buttons */
+.preset-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+/* Buttons alignment */
+.flex.justify-end {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stl-placeholder {
+        width: 100%;
+        height: 250px;
+    }
+
+    .flex-col {
+        flex-direction: column;
+    }
+
+    .preset-card {
+        width: 100%;
+    }
+}
+
+.stl-actions {
+    display: flex;
+    justify-content: center;
+    /* Center horizontally */
+    align-items: center;
+    /* Align vertically */
+    gap: 0.5rem;
+    /* Adds space between buttons */
+}
+
+@media (max-width: 768px) {
+    .stl-actions {
+        flex-direction: column;
+        /* Stack vertically on small screens */
+    }
+}
+
+#comment {
+    resize: none;
+    height: 100px;
+    margin-bottom: 20px;
+}
+
+.edit-actions {
+    margin-top: 20px;
+}
+
+p-calendar {
+    width: 100%;
+}
+
+.p-calendar {
+    width: 100%;
+}
+
+.p-inputtext {
+    width: 100%;
+}
+
+input {
+    margin-bottom: 20px;
+}
+
+.p-button-label {
+    text-decoration: underline;
+}
+
+.h1c {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.h2c {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.h3c {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.h-row {
+    display: flex; 
+    flex-direction: row;
+    align-items: baseline;
+    gap: 10px;
+}
+
+.v-row {
+    display: flex; 
+    flex-direction: column;
+    gap: 10px;
+}
+
+p-tag {
+    --p-tag-padding: 7px;
+    --p-tag-gap: 0.5rem;
+    height: 50%;
+}
+
+p-fieldset {
+    --p-fieldset-content-padding: 0px;
+}
+
+.global-status-header-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+    margin-left: 1px;
+}
+
+.status-header-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    position: relative;
+}
+
+.status-header-circle-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.status-content-container-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.status-content-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 700px;
+    min-height: 40px;
+    gap: 8px;
+    background: #fafafa;
+    border: 1px solid #2c2c2c;
+    color: #000000;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.status-content-container p {
+    margin: 0px;
+}
+
+.status-content-date {
+    font-size: 0.8rem;
+    color: #707070;
+}
+
+.status-content-image {
+    max-height: 200px;
+    height: auto;
+}
+
+
+:host ::ng-deep .separator-color .p-stepper-separator { 
+    background-color: #007ad9 !important;
+    color: #007ad9 !important;
+    background: #007ad9 !important;
+    --p-stepper-separator-background-color: #007ad9 !important;
+    --p-stepper-separator-active-background-color: #007ad9 !important;
+}

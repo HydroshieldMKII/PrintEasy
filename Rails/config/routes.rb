@@ -10,6 +10,10 @@ Rails.application.routes.draw do
     resources :printer
     resources :request
     resources :offer
+    resources :order_status
+    resources :order
+    resources :status
+    resources :contest, except: [:new, :edit]
     resources :color
     resources :filament
   end

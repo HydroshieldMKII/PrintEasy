@@ -70,11 +70,13 @@ export class AppComponent implements OnInit {
       },
       {
         label: 'Orders',
-        icon: 'pi pi-shopping-cart'
+        icon: 'pi pi-shopping-cart',
+        command: () => this.router.navigate(['/orders'])
       },
       {
         label: 'Contests',
-        icon: 'pi pi-trophy'
+        icon: 'pi pi-trophy',
+        command: () => this.router.navigate(['/contest'])
       },
     ]
   }

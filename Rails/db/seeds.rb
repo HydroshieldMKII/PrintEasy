@@ -165,6 +165,39 @@ contest1.image.attach(
   content_type: "image/jpg"
 )
 contest1.save
+
+contest2 = Contest.create(
+  theme: "Best 3D Printed Toy",
+  description: "Create and submit your best 3D printed toys.",
+  submission_limit: 5,
+  deleted_at: Time.now,
+  start_at: Time.now,
+  end_at: Time.now + 30.days
+)
+
+contest2.image.attach(
+  io: File.open(Rails.root.join("db/seeds/files/DariusSlayJunior.jpg")),
+  filename: "DariusSlayJunior.jpg",
+  content_type: "image/jpg"
+)
+contest2.save
+
+5.times do |i|
+  contest = Contest.create(
+    theme: "Contest #{i + 3}",
+    description: "Description for contest #{i + 3}.",
+    submission_limit: 5,
+    start_at: Time.now,
+    end_at: Time.now + 30.days
+  )
+
+  contest.image.attach(
+    io: File.open(Rails.root.join("db/seeds/files/DariusSlayJunior.jpg")),
+    filename: "DariusSlayJunior.jpg",
+    content_type: "image/jpg"
+  )
+  contest.save
+end
 # Create Submissions
 submission1 = Submission.create(
   name: "3D Dragon",
@@ -219,8 +252,8 @@ end
 
 # Create Orders
 order1 = Order.create!(offer: Offer.first)
-order2 = Order.create!(offer: Offer.second
-)
+order2 = Order.create!(offer: Offer.second)
+order3 = Order.create!(offer: Offer.third)
 
 Review.create!(
   order: order2,
@@ -238,6 +271,7 @@ status_shipped = Status.create!(name: "Shipped")
 status_arrived = Status.create!(name: "Arrived")
 status_cancelled = Status.create!(name: "Cancelled")
 
+OrderStatus.create!(order: order3, status: status_accepted, comment: "offer accepted, printing soon.")
 OrderStatus.create!(order: order2, status: status_accepted, comment: "offer accepted, printing soon.")
 OrderStatus.create!(order: order2, status: status_printing, comment: "Order started printing.")
 OrderStatus.create!(order: order2, status: status_printed, comment: "Order printed.")
