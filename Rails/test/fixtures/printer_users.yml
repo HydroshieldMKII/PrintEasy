@@ -1,11 +1,11 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  printer: one
-  user: one
-  possession_date: 2025-02-14
+  printer: 1
+  user: 1
+  acquired_date: 2025-02-14
 
 two:
-  printer: two
-  user: two
-  possession_date: 2025-02-14
+  printer: 2
+  user: 2
+  acquired_date: 2025-02-14
