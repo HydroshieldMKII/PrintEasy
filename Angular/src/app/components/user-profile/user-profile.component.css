@@ -1,0 +1,69 @@
+.profile-container {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.profile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.profile-avatar {
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+    /* Espacement supplémentaire entre l'avatar et les informations */
+}
+
+.profile-info {
+    margin-left: 15px;
+}
+
+.profile-info h2 {
+    margin: 0;
+    font-size: 2rem;
+    /* Taille plus grande pour le nom */
+}
+
+.profile-info p {
+    margin: 0;
+    color: gray;
+    font-size: 1rem;
+    /* Taille plus petite pour la localisation */
+}
+
+.profile-rating {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-left: 20px;
+    /* Un petit espacement avec la partie gauche */
+}
+
+.reviews {
+    font-size: 1.1rem;
+    /* Augmenter la taille du texte pour les avis */
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+    margin-top: 5px;
+}
+
+.profile-details {
+    text-align: left;
+    padding: 15px 0;
+    font-size: 1rem;
+    /* Légèrement plus grand pour plus de lisibilité */
+    color: gray;
+    margin-bottom: 30px;
+    /* Plus d'espace sous les détails */
+}
+
+.profile-tabs {
+    margin-top: 20px;
+}

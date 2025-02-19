@@ -13,6 +13,7 @@ Rails.application.routes.draw do
     resources :order_status
     resources :order
     resources :status
+    resources :contest, except: [:new, :edit]
   end
 
   match '*url', to: "angular#index", via: :get

@@ -1,0 +1,85 @@
+<div class="contest-container">
+  <div class="card">
+    <h1> Créer un concours </h1>
+
+    <form [formGroup]="contestForm" (ngSubmit)="onSubmit()">
+      <div class="p-fluid grid">
+        <div class="container-row">
+          <!-- Thème -->
+          <div class="field col-12">
+            <p-floatlabel variant="in">
+              <input id="theme" pInputText formControlName="theme" type="text" />
+              <label for="theme" class="p-text-bold">Thème</label>
+            </p-floatlabel>
+            <p-message severity="error" variant="simple" size="small">Le theme est requis</p-message>
+          </div>
+
+          <!-- Limite -->
+          <div class="field col-12 md:col-6">
+            <p-floatlabel variant="in">
+              <p-inputnumber id="limit" formControlName="limit" [min]="1" [max]="30"
+                [showButtons]="true"></p-inputnumber>
+              <label for="limit" class="p-text-bold">Limite</label>
+            </p-floatlabel>
+            <p-message severity="error" variant="simple" size="small">La limite est requise</p-message>
+          </div>
+
+          <!-- Date de début -->
+          <div class="field col-12 md:col-6">
+            <p-floatlabel variant="in">
+              <p-datepicker [hourFormat]="'24'" [showTime]="true" size="large" formControlName="startDate" [showIcon]="true" inputId="buttondisplay"
+                [showOnFocus]="false" dateFormat="yy-mm-dd" [class]="startDatePicker"></p-datepicker>
+              <label for="startDate">Date de début</label>
+            </p-floatlabel>
+            <p-message severity="error" variant="simple" size="small">
+              {{ contestForm.errors?.['dateError'] ? contestForm.errors?.['dateError'] : 'La date de début est requise'
+              }}
+            </p-message>
+          </div>
+
+          <!-- Date de fin -->
+          <div class="field col-12 md:col-6">
+            <p-floatlabel variant="in">
+              <p-datepicker [hourFormat]="'24'" [showTime]="true" size="large" formControlName="endDate" [showIcon]="true" inputId="buttondisplay"
+                [showOnFocus]="false" class="w-full" dateFormat="yy-mm-dd"></p-datepicker>
+              <label for="endDate">Date de fin</label>
+            </p-floatlabel>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="field col-12">
+          <p-floatlabel variant="in">
+            <textarea class="description-textarea" id="description" pTextarea formControlName="description"
+              rows="4"></textarea>
+            <label for="description" class="p-text-bold">Description</label>
+          </p-floatlabel>
+          <p-message severity="error" variant="simple" size="small">La description est trop longue</p-message>
+        </div>
+
+        <div class="field col-12">
+          <img [src]="imageUrl" alt="" class="image-preview" />
+        </div>
+
+        <!-- Upload de l'image -->
+        <div class="">
+          <div class="fileUploadContainer">
+            <!-- <label for="image" class="p-text-bold">Image</label> -->
+            <p-fileUpload mode="basic" name="image" accept="image/*" [maxFileSize]="1000000"
+              (onSelect)="onFileSelect($event)" chooseLabel="Upload file"></p-fileUpload>
+          </div>
+        </div>
+
+        <!-- Boutons -->
+        <div class="">
+          <div class="button-container">
+            <p-button label="Annuler" type="button" (click)="onCancel()" icon="pi pi-times"
+              severity="secondary"></p-button>
+            <p-button label="Sauvegarder" [disabled]="!contestForm.valid" icon="pi pi-save" severity="success"
+              (onClick)="onSubmit()"></p-button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

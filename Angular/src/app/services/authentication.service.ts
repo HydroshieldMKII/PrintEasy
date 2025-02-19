@@ -35,6 +35,7 @@ export class AuthService {
 
     private setCurrentUser(user: UserModel | null) {
         this._currentUser = user;
+        console.log('Current user:', user);
         if (user === null) {
             localStorage.removeItem(this.CURRENT_USER_KEY);
             return;
@@ -57,8 +58,7 @@ export class AuthService {
                     // console.log('Login response:', response);
                     if (!this.isLoggedIn) {
                         this.messageService.add({ severity: 'success', summary: 'Login success', detail: 'You are logged in!' });
-                        const userData = (response.data as any)?.['user'];
-                        this.setCurrentUser(new UserModel(userData?.['id'], userData?.['username'], userData?.['country']));
+                        this.setCurrentUser(new UserModel((response.data as any)?.['user']?.['username']));
                     }
                 }
                 return response;
@@ -82,8 +82,7 @@ export class AuthService {
                 // console.log('Sign up response:', response);
                 if (response.status === 200) {
                     this.messageService.add({ severity: 'success', summary: 'Account created', detail: 'You are now ready to use the app!' });
-                    const userData = (response.data as any)?.['user'];
-                    this.setCurrentUser(new UserModel(userData?.['id'], userData?.['username'], userData?.['country']));
+                    this.setCurrentUser(new UserModel((response.data as any)?.['user']?.['username']));
                 }
                 return response;
             })
