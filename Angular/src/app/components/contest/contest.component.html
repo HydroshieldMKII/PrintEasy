@@ -20,7 +20,7 @@
                 <img [src]="contest.image" alt="Contest image" class="contest-image" />
                 <div class="contest-details">
                     <h3 class="contest-theme">{{ contest.theme }}</h3>
-                    <p>{{ contest.description }}</p>
+                    <p class="contest-description">{{ contest.description }}</p>
                     <p><i class="pi pi-users"></i> Submission limit: {{ contest.submissionLimit }}</p>
                     <p><i class="pi pi-calendar"></i> Starts: {{ contest.startAt | date:'MMM d, y h:mm a' }}</p>
                     <p><i class="pi pi-calendar-times"></i> Ends: {{ contest.endAt | date:'MMM d, y h:mm a' }}</p>

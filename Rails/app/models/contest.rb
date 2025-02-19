@@ -39,12 +39,14 @@ class Contest < ApplicationRecord
     end
 
     def past?
+        return if deleted_at_changed?
+
         if self.start_at < Time.now.change(sec: 0)
             errors.add(:start_at, "must be in the future")
         end
 
         if !self.end_at.nil?
-            unless self.end_at > self.start_at + 1.day
+            if self.end_at < self.start_at + 1.day
                 errors.add(:end_at, "must be at least one day after start_at")
             end
         end

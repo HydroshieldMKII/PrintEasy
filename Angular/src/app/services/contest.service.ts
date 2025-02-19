@@ -49,4 +49,27 @@ export class ContestService {
       })
     );
   }
+
+  updateContest(id: number, contest: FormData): Observable<ApiResponseModel> {
+    return this.api.patchRequest(`api/contest/${id}`, {}, contest).pipe(
+      map(response => {
+        if (response.status === 200) {
+          this.messageService.add({ severity: 'success', summary: 'Succès', detail: 'Concours modifié avec succès' });
+        }
+        return response;
+      })
+    );
+  }
+
+  deleteContest(id: number): Observable<ApiResponseModel> {
+    return this.api.deleteRequest(`api/contest/${id}`).pipe(
+      map(response => {
+        if (response.status === 200) {
+          this.messageService.add({ severity: 'success', summary: 'Succès',
+            detail: 'Concours supprimé avec succès' });
+          }
+        return response;
+      })
+    );
+  }
 }

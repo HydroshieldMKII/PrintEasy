@@ -47,6 +47,12 @@ export class ContestComponent {
   }
 
   deleteContest(id: number) {
-    this.contests = this.contests.filter(contest => contest.id !== id);
+    console.log("Delete contest", id);
+    this.contestService.deleteContest(id).subscribe((response) => {
+      console.log('Delete contest:', response);
+      if (response.status === 200) {
+        this.contests = this.contests.filter(contest => contest.id !== id);
+      }
+    });
   }
 }

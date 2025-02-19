@@ -27,7 +27,7 @@
           <!-- Date de début -->
           <div class="field col-12 md:col-6">
             <p-floatlabel variant="in">
-              <p-datepicker size="large" formControlName="startDate" [showIcon]="true" inputId="buttondisplay"
+              <p-datepicker [hourFormat]="'24'" [showTime]="true" size="large" formControlName="startDate" [showIcon]="true" inputId="buttondisplay"
                 [showOnFocus]="false" dateFormat="yy-mm-dd" [class]="startDatePicker"></p-datepicker>
               <label for="startDate">Date de début</label>
             </p-floatlabel>
@@ -40,7 +40,7 @@
           <!-- Date de fin -->
           <div class="field col-12 md:col-6">
             <p-floatlabel variant="in">
-              <p-datepicker size="large" formControlName="endDate" [showIcon]="true" inputId="buttondisplay"
+              <p-datepicker [hourFormat]="'24'" [showTime]="true" size="large" formControlName="endDate" [showIcon]="true" inputId="buttondisplay"
                 [showOnFocus]="false" class="w-full" dateFormat="yy-mm-dd"></p-datepicker>
               <label for="endDate">Date de fin</label>
             </p-floatlabel>

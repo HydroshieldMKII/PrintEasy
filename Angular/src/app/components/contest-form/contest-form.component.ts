@@ -16,13 +16,13 @@ import { ContestService } from '../../services/contest.service';
 export class ContestFormComponent {
   contestService: ContestService = inject(ContestService);
   router: Router = inject(Router);
-  
+
   contestForm: FormGroup;
   isEdit: boolean = false;
   imagePreview: boolean = false;
   startDatePicker = "";
   imageUrl: string = '';
-  
+
   constructor(private fb: FormBuilder, private route: ActivatedRoute) {
     this.contestForm = this.fb.group({
       theme: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]],
@@ -32,7 +32,7 @@ export class ContestFormComponent {
       endDate: [""],
       image: [null, this.imageValidator.bind(this)] // ??
     }, { validators: this.dateValidator.bind(this) }
-  );
+    );
 
     this.route.params.subscribe(params => {
       const id = params['id'];
@@ -48,8 +48,7 @@ export class ContestFormComponent {
               description: contest.description,
               limit: contest.submissionLimit,
               startDate: new Date(contest.startAt),
-              endDate: contest.endAt ? new Date(contest.endAt) : null,
-              image: contest.image
+              endDate: contest.endAt ? new Date(contest.endAt) : null
             });
             this.imageUrl = contest.image;
           }
@@ -65,15 +64,30 @@ export class ContestFormComponent {
     }
     return null;
   }
-  
+
   dateValidator(group: AbstractControl): ValidationErrors | null {
     const startDate = group.get('startDate')?.value;
     const endDate = group.get('endDate')?.value;
 
-    if (startDate && endDate && (new Date(startDate).getTime() + 24 * 60 * 60 * 1000) > new Date(endDate).getTime()) {
+    if (!startDate || !endDate) {
+      return null;
+    }
+
+    if (startDate.getTime() > endDate.getTime()) {
       this.startDatePicker = "ng-invalid ng-dirty";
       return { dateError: 'La date de début doit être avant la date de fin' };
     }
+
+    if (startDate.getTime() + 24 * 60 * 60 * 1000 > endDate.getTime()) {
+      this.startDatePicker = "ng-invalid ng-dirty";
+      return { dateError: 'Il doit y avoir 24h de différence' };
+    } 
+    
+    if (startDate && endDate && new Date() > new Date(startDate)) {
+      this.startDatePicker = "ng-invalid ng-dirty";
+      return { dateError: 'La date de début doit être avant la date actuelle' };
+    }
+    
     this.startDatePicker = "";
     return null;
   }
@@ -81,8 +95,8 @@ export class ContestFormComponent {
   onFileSelect(event: any) {
     const file = event.files[0];
     this.imageUrl = file["objectURL"].changingThisBreaksApplicationSecurity;
-    console.log('Image:', file["objectURL"].changingThisBreaksApplicationSecurity);
     this.contestForm.patchValue({ image: file });
+    console.log('Image:', file);
   }
 
   onSubmit() {
@@ -96,15 +110,20 @@ export class ContestFormComponent {
       contestFormData.append('contest[submission_limit]', this.contestForm.value.limit);
       contestFormData.append('contest[start_at]', this.contestForm.value.startDate);
       contestFormData.append('contest[end_at]', this.contestForm.value.endDate);
-      contestFormData.append('contest[image]', this.contestForm.value.image);
 
-      this.contestService.createContest(contestFormData).subscribe(
-        response => {
-          if (response.status === 201) {
-            this.contestForm.reset();
-          }
+      if (this.contestForm.value.image) {
+        contestFormData.append('contest[image]', this.contestForm.value.image);
+      }
+
+      const contestObservable = this.isEdit
+        ? this.contestService.updateContest(this.route.snapshot.params['id'], contestFormData)
+        : this.contestService.createContest(contestFormData);
+
+      contestObservable.subscribe(response => {
+        if ((this.isEdit && response.status === 200) || (!this.isEdit && response.status === 201)) {
+          this.router.navigate(['/contest']);
         }
-      );
+      });
     }
   }
 
