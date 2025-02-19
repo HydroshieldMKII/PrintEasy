@@ -112,8 +112,8 @@
         <th>Printer</th>
         <th>Filament Type</th>
         <th>Color</th>
-        <th>Print Quality</th>
-        <th *ngIf="isEditMode" style="width: 10%">Actions</th>
+        <th>Print Quality (mm)</th>
+        <th *ngIf="isEditMode || isNewMode" style="width: 10%">Actions</th>
       </tr>
     </ng-template>
 
@@ -154,17 +154,27 @@
 
         <!-- Print Quality -->
         <td>
-          <p-dropdown
-            [(ngModel)]="preset.printQuality"
-            [options]="printQualities"
-            placeholder="Select Quality"
-            [disabled]="isViewMode"
-            appendTo="body"
-          ></p-dropdown>
+          <p-inputnumber 
+            [showButtons]="true" 
+            buttonLayout="horizontal" 
+            spinnerMode="vertical" 
+            inputId="vertical" 
+            [inputStyle]="{ width: '4rem' }" 
+            [(ngModel)]="preset.printQuality" 
+            [step]="0.04" 
+            [min]="0.01" 
+            [max]="2">
+            <ng-template #incrementbuttonicon>
+              <span class="pi pi-plus"></span>
+            </ng-template>
+            <ng-template #decrementbuttonicon>
+              <span class="pi pi-minus"></span>
+            </ng-template>
+          </p-inputnumber>
         </td>
 
         <!-- Delete Button -->
-        <td *ngIf="isEditMode">
+        <td *ngIf="isEditMode || isNewMode">
           <button
             pButton
             pRipple

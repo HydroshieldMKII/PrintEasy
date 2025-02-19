@@ -3,7 +3,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ImportsModule } from '../../../imports';
 import { DropdownModule } from 'primeng/dropdown';
 import { RequestService } from '../../services/request.service';
+import { ColorModel } from '../../models/color.model';
+import { PrinterModel } from '../../models/printer.model';
+import { PresetModel } from '../../models/preset.model';
+import { PresetService } from '../../services/preset.service';
 import { StlModelViewerModule } from 'angular-stl-model-viewer';
+import { FilamentModel } from '../../models/filament.model';
 
 @Component({
   selector: 'app-request-form',
@@ -17,23 +22,13 @@ export class RequestFormComponent implements OnInit {
   isViewMode = false;
   id: number | null = null;
 
-  request: any = {
-    name: '',
-    budget: '',
-    targetDate: '',
-    comment: '',
-    presets: [
-      { printer: 'Bambulab P1P', filamentType: 'PLA', color: 'Red', printQuality: '0.1mm' },
-      { printer: 'Bambulab P1P', filamentType: 'PLA', color: 'Blue', printQuality: '0.1mm' }
-    ]
-  };
+  request: any = null;
+  printers: { label: string, value: string }[] = [];
+  filamentTypes: { label: string, value: number }[] = [];
+  colors: { label: string, value: number }[] = [];
 
-  printers = ['Bambulab P1P', 'Ender 3', 'Prusa MK3S', 'Anycubic i3', 'FlashForge'];
-  filamentTypes = ['PLA', 'ABS', 'PETG', 'Nylon'];
-  colors = ['Red', 'Blue', 'Green', 'Black', 'White'];
-  printQualities = ['0.1mm', '0.2mm', '0.3mm', '0.4mm'];
-
-  constructor(private router: Router, private route: ActivatedRoute, private requestService: RequestService) { }
+  constructor(private router: Router, private route: ActivatedRoute,
+    private requestService: RequestService, private presetService: PresetService) { }
 
   ngOnInit(): void {
     const action = this.route.snapshot.url[0]?.path;
@@ -61,14 +56,25 @@ export class RequestFormComponent implements OnInit {
     }
 
     if (this.isNewMode) {
+      this.presetService.getAllPrinters().subscribe((printers) => {
+        this.printers = printers.map((printer: PrinterModel) => ({ label: printer.model, value: printer.id }));
+      });
+
+      this.presetService.getAllFilaments().subscribe((filamentTypes) => {
+        this.filamentTypes = filamentTypes.map((filament: FilamentModel) => ({ label: filament.name, value: filament.id }));
+      });
+
+      this.presetService.getAllColors().subscribe((colors) => {
+        console.log('Colors:', colors);
+        this.colors = colors.map((color: ColorModel) => ({ label: color.name, value: color.id }));
+      });
+
       this.request = {
         name: '',
         budget: '',
         targetDate: '',
         comment: '',
-        presets: [
-          { printer: '', filamentType: '', color: '', printQuality: '' }
-        ]
+        presets: []
       };
     }
   }
@@ -118,7 +124,7 @@ export class RequestFormComponent implements OnInit {
   }
 
   addPreset(): void {
-    this.request.presets.push({ printer: '', filamentType: '', color: '', printQuality: '' });
+    this.request.presets.push({ printer: '', filamentType: '', color: '', printQuality: '1' });
   }
 
   createRequest(): void {

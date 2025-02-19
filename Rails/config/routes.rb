@@ -10,6 +10,8 @@ Rails.application.routes.draw do
     resources :printer
     resources :request
     resources :offer
+    resources :color
+    resources :filament
   end
 
   match '*url', to: "angular#index", via: :get

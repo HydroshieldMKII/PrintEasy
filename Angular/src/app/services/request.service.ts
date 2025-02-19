@@ -33,7 +33,7 @@ export class RequestService {
     }
 
 
-    getPrinters(): Observable<any> {
+    getPrintersUser(): Observable<any> {
         return this.api.getRequest('api/printer_user').pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {

@@ -73,7 +73,7 @@ export class RequestsComponent {
 
     this.searchQuery = queryParams['search'] || '';
 
-    this.requestService.getPrinters().subscribe((printers: any) => {
+    this.requestService.getPrintersUser().subscribe((printers: any) => {
       this.isOwningPrinter = printers?.length > 0;
     });
   }
