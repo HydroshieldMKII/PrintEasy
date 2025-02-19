@@ -28,6 +28,8 @@ export class RequestFormComponent implements OnInit {
   id: number | null = null;
   uploadedFile: any = null;
   uploadedFileBlob: any = null;
+  deleteDialogVisible: boolean = false;
+  requestToDelete: RequestModel | null = null;
 
   request: any = {
     name: '',
@@ -142,7 +144,11 @@ export class RequestFormComponent implements OnInit {
 
   deleteRequest(): void {
     console.log('Request deleted:', this.request);
-    this.router.navigate(['/requests']);
+    this.requestService.deleteRequest(this.request.id).subscribe((response) => {
+      if (response.status === 200) {
+        this.router.navigate(['/requests']);
+      }
+    });
   }
 
   cancelEdit(): void {
@@ -241,10 +247,24 @@ export class RequestFormComponent implements OnInit {
       }
     }
   }
+
   downloadFile(downloadUrl: string): void {
     console.log('Download file:', downloadUrl);
     window.open(downloadUrl, '_blank');
+  }
 
+  showDeleteDialog(request: RequestModel): void {
+    this.requestToDelete = request;
+    this.deleteDialogVisible = true;
+  }
+
+  confirmDelete(): void {
+    if (this.requestToDelete !== null) {
+      this.requestService.deleteRequest(this.requestToDelete.id).subscribe(() => {
+        this.router.navigate(['/requests']);
+      });
+    }
+    this.deleteDialogVisible = false;
   }
 }
 

@@ -135,4 +135,17 @@ export class RequestService {
             })
         );
     }
+
+    deleteRequest(id: number): Observable<ApiResponseModel> {
+        return this.api.deleteRequest(`api/request/${id}`).pipe(
+            map((response: ApiResponseModel) => {
+                if (response.status === 200) {
+                    this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Request deleted successfully' });
+                } else {
+                    this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Request deletion failed' });
+                }
+                return response;
+            })
+        );
+    }
 }

@@ -34,7 +34,7 @@ class Api::RequestController < ApplicationController
     @request = Request.includes(:user, preset_requests: %i[color filament printer]).find(params[:id])
     
     if @request.user != current_user
-      render json: { request: {}, errors: { request: ['You are not allowed to update this request'] } }, status: :unauthorized
+      render json: { request: {}, errors: { request: ['You are not allowed to update this request'] } }, status: :forbidden
       return
     end
 
@@ -43,6 +43,19 @@ class Api::RequestController < ApplicationController
     else
       render json: { request: {}, errors: @request.errors }, status: :unprocessable_entity
     end
+  end
+
+  # DELETE /requests/:id
+  def destroy
+    @request = Request.find(params[:id])
+
+    if @request.user != current_user
+      render json: { request: {}, errors: { request: ['You are not allowed to delete this request'] } }, status: :forbidden
+      return
+    end
+
+    @request.destroy
+    render json: { request: @request, errors: {} }
   end
 
   private

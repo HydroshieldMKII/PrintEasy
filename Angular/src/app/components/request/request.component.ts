@@ -13,7 +13,7 @@ import { ImportsModule } from '../../../imports';
 })
 export class RequestsComponent {
   activeTab: string = 'all';
-  requests: RequestModel[] | null | undefined = undefined;
+  requests: RequestModel[] | null = null;
   myRequests: RequestModel[] | null = null;
 
   deleteDialogVisible: boolean = false;
@@ -127,10 +127,10 @@ export class RequestsComponent {
 
   confirmDelete(): void {
     if (this.requestToDelete !== null) {
-      // this.requestService.deleteRequest(this.requestToDelete.id).subscribe(() => {
-      //   this.requests = this.requests?.filter(r => r.id !== this.requestToDelete?.id);
-      //   this.myRequests = this.myRequests?.filter(r => r.id !== this.requestToDelete?.id);
-      // });
+      this.requestService.deleteRequest(this.requestToDelete.id).subscribe(() => {
+        this.requests = (this.requests || []).filter(r => r.id !== this.requestToDelete?.id);
+        this.myRequests = (this.myRequests || []).filter(r => r.id !== this.requestToDelete?.id);
+      });
     }
     this.deleteDialogVisible = false;
   }

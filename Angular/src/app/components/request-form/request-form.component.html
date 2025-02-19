@@ -254,7 +254,7 @@
       label="Delete"
       icon="pi pi-trash"
       severity="danger"
-      (click)="deleteRequest()"
+      (click)="showDeleteDialog(request)"
     ></p-button>
     <p-button
       label="Save"
@@ -280,3 +280,35 @@
     ></p-button>
   </div>
 </div>
+
+<!-- Delete Confirmation Dialog -->
+<p-dialog
+  [(visible)]="deleteDialogVisible"
+  [modal]="true"
+  [style]="{ width: '25rem' }"
+  dismissableMask="true"
+  closable="false"
+  blockScroll="true"
+  resizable="false"
+  draggable="false"
+>
+  <ng-template #header>
+    <div class="inline-flex items-center justify-center gap-2">
+      <i class="pi pi-exclamation-triangle text-red-500 text-2xl"></i>
+      <span class="font-bold">Confirm Delete</span>
+    </div>
+  </ng-template>
+  <span class="text-surface-500 dark:text-surface-400 block mb-4">
+    Are you sure you want to delete the request "{{ requestToDelete?.name }}"?
+    This action cannot be undone.
+  </span>
+  <ng-template #footer>
+    <p-button
+      label="Cancel"
+      [text]="true"
+      severity="secondary"
+      (click)="deleteDialogVisible = false"
+    />
+    <p-button label="Delete" severity="danger" (click)="confirmDelete()" />
+  </ng-template>
+</p-dialog>
