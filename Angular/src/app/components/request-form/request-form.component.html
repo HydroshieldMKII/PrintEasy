@@ -3,206 +3,210 @@
     {{ isEditMode ? "Edit Request" : "Request Details" }}
   </h1>
 
-  <!-- Grid Layout (Responsive) -->
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <!-- Left Section: Request Details -->
-    <div class="flex flex-col">
-      <p-floatlabel variant="in" floatLabel="always">
-        <input
-          id="name"
-          pInputText
-          [(ngModel)]="request.name"
-          class="w-full"
-          [disabled]="isViewMode"
-        />
-        <label for="name">Name</label>
-      </p-floatlabel>
-
-      <p-floatlabel variant="in">
-        <label for="budget" class="block font-semibold">Budget</label>
-        <input
-          id="budget"
-          pInputText
-          [(ngModel)]="request.budget"
-          class="w-full"
-          [disabled]="isViewMode"
-        />
-      </p-floatlabel>
-
-      <p-floatlabel variant="in">
-        <textarea
-          pTextarea
-          id="comment"
-          [(ngModel)]="request.comment"
-          rows="5"
-          cols="30"
-          style="resize: none"
-          class="h-full"
-          [disabled]="isViewMode"
-        ></textarea>
-        <label for="comment">Special comment about the request</label>
-      </p-floatlabel>
-
-      <p-floatlabel variant="in">
-        <div class="w-full">
-          <p-datepicker
-            id="targetDate"
-            [(ngModel)]="request.targetDate"
-            [showIcon]="true"
-            inputId="buttondisplay"
-            [showOnFocus]="false"
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Left Section: Request Details -->
+      <div class="flex flex-col">
+        <p-floatlabel variant="in" floatLabel="always">
+          <!-- Removed [(ngModel)] from the input -->
+          <input
+            id="name"
+            pInputText
+            formControlName="name"
             class="w-full"
-            [disabled]="isViewMode"
-            dateFormat="yy-mm-dd"
-          ></p-datepicker>
-          <label for="targetDate" class="block font-semibold"
-            >Target Date</label
-          >
+          />
+          <label for="name">Name</label>
+        </p-floatlabel>
+        <p-message
+        *ngIf="form.get('name')?.invalid && (form.get('name')?.dirty || form.get('name')?.touched)"
+        severity="error"
+        variant="simple"
+        size="small"
+      >Name is required</p-message>
+
+        <p-floatlabel variant="in">
+          <label for="budget" class="block font-semibold">Budget</label>
+          <input
+            id="budget"
+            pInputText
+            formControlName="budget"
+            class="w-full"
+          />
+        </p-floatlabel>
+
+        <p-floatlabel variant="in">
+          <textarea
+            pTextarea
+            id="comment"
+            formControlName="comment"
+            rows="5"
+            cols="30"
+            style="resize: none"
+            class="h-full"
+          ></textarea>
+          <label for="comment">Special comment about the request</label>
+        </p-floatlabel>
+
+        <p-floatlabel variant="in">
+          <div class="w-full">
+            <p-datepicker
+              id="targetDate"
+              formControlName="targetDate"
+              [showIcon]="true"
+              inputId="buttondisplay"
+              [showOnFocus]="false"
+              class="w-full"
+              dateFormat="yy-mm-dd"
+            ></p-datepicker>
+            <label for="targetDate" class="block font-semibold">Target Date</label>
+          </div>
+        </p-floatlabel>
+      </div>
+
+      <!-- Right Section: STL Preview -->
+      <div class="stl-section flex flex-col items-center">
+        <div class="stl-placeholder">
+          <stl-model-viewer *ngIf="(isEditMode || isViewMode) && request.stlFileUrl" [stlModels]="[request.stlFileUrl]"></stl-model-viewer>
+          <stl-model-viewer *ngIf="isNewMode && uploadedFile" [stlModelFiles]="[uploadedFile]"></stl-model-viewer>
         </div>
-      </p-floatlabel>
+
+        <div class="stl-actions flex gap-2 mt-4">
+          <p-button
+            *ngIf="isViewMode"
+            label="Download file"
+            icon="pi pi-download"
+            class="p-button-outlined flex-1"
+            (onClick)="downloadFile(request.stlFileUrl)"
+          ></p-button>
+          <p-fileUpload
+            *ngIf="isEditMode || isNewMode"
+            mode="basic"
+            maxFileSize="10000000"
+            invalidFileSizeMessageDetail="File size is too large. Max 10MB"
+            invalidFileTypeMessageDetail="File type is not supported. Please upload a .stl file"
+            customUpload="false"
+            (onSelect)="onFileUpload($event)"
+            accept=".stl"
+            chooseLabel="Upload file"
+            class="flex-1"
+          ></p-fileUpload>
+        </div>
+      </div>
     </div>
 
-    <!-- Right Section: STL Preview -->
-    <div class="stl-section flex flex-col items-center">
-      <div class="stl-placeholder">
-        <stl-model-viewer *ngIf="(isEditMode || isViewMode) && request.stlFileUrl" [stlModels]="[request.stlFileUrl]"></stl-model-viewer>
-        <stl-model-viewer *ngIf="isNewMode && uploadedFile" [stlModelFiles]="[uploadedFile]"></stl-model-viewer>
-      </div>
-
-      <div class="stl-actions flex gap-2 mt-4">
+    <!-- Presets Section -->
+    <div style="display: flex" class="justify-between items-center mt-6">
+      <h3 class="text-lg font-semibold self-center" style="margin-right: 10px">
+        {{ request.presets.length }} Presets Recommended
         <p-button
-          *ngIf="isViewMode"
-          label="Download file"
-          icon="pi pi-download"
-          class="p-button-outlined flex-1"
-        ></p-button>
-        <p-fileUpload
+          id="add-preset"
           *ngIf="isEditMode || isNewMode"
-          mode="basic"
-          maxFileSize="10000000"
-          invalidFileSizeMessageDetail="File size is too large. Max 10MB"
-          invalidFileTypeMessageDetail="File type is not supported. Please upload a .stl file"
-          customUpload="false"
-          (onSelect)="onFileUpload($event)"
-          accept=".stl"
-          chooseLabel="Upload file"
-          class="flex-1"
-        ></p-fileUpload>
-      </div>
+          label="Add Preset"
+          [link]="true"
+          icon="pi pi-plus"
+          (click)="addPreset()"
+        ></p-button>
+      </h3>
     </div>
-  </div>
 
-  <div style="display: flex" class="justify-between items-center mt-6">
-    <h3 class="text-lg font-semibold self-center" style="margin-right: 10px">
-      {{ request.presets.length }} Presets Recommended
-      <p-button
-        id="add-preset"
-        *ngIf="isEditMode || isNewMode"
-        label="Add Preset"
-        [link]="true"
-        icon="pi pi-plus"
-        (click)="addPreset()"
-      ></p-button>
-    </h3>
-  </div>
+    <!-- Reactive FormArray for Presets -->
+    <div formArrayName="presets">
+      <p-table
+        [value]="request.presets"
+        dataKey="id"
+        [tableStyle]="{ 'min-width': '50rem' }"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Printer</th>
+            <th>Filament Type</th>
+            <th>Color</th>
+            <th>Print Quality (mm)</th>
+            <th *ngIf="isEditMode || isNewMode" style="width: 10%">Actions</th>
+          </tr>
+        </ng-template>
 
-  <p-table
-    [value]="request.presets"
-    dataKey="id"
-    [tableStyle]="{ 'min-width': '50rem' }"
-  >
-    <ng-template #header>
-      <tr>
-        <th>Printer</th>
-        <th>Filament Type</th>
-        <th>Color</th>
-        <th>Print Quality (mm)</th>
-        <th *ngIf="isEditMode || isNewMode" style="width: 10%">Actions</th>
-      </tr>
-    </ng-template>
+        <ng-template pTemplate="body" let-presetCtrl let-ri="rowIndex">
+          <!-- Each presetCtrl is a FormGroup so use formGroupName -->
+          <tr [formGroupName]="ri">
+            <!-- Printer -->
+            <td>
+              <p-dropdown
+                formControlName="printer"
+                [options]="printers"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Select Printer"
+                appendTo="body"
+              ></p-dropdown>
+            </td>
 
-    <ng-template #body let-preset let-ri="rowIndex">
-      <tr>
-        <!-- Printer -->
-        <td>
-          <p-dropdown
-          [(ngModel)]="preset.printerModel"
-          [options]="printers"
-          optionLabel="label"
-          optionValue="value"
-          placeholder="Select Printer"
-          [disabled]="isViewMode"
-          appendTo="body"
-        ></p-dropdown>
-        </td>
+            <!-- Filament Type -->
+            <td>
+              <p-dropdown
+                formControlName="filamentType"
+                [options]="filamentTypes"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Select Filament"
+                appendTo="body"
+              ></p-dropdown>
+            </td>
 
-        <!-- Filament Type -->
-        <td>
-          <p-dropdown
-          [(ngModel)]="preset.filamentType"
-          [options]="filamentTypes"
-          optionLabel="label"
-          optionValue="value"
-          placeholder="Select Filament"
-          [disabled]="isViewMode"
-          appendTo="body"
-        ></p-dropdown>
-        </td>
+            <!-- Color -->
+            <td>
+              <p-dropdown
+                formControlName="color"
+                [options]="colors"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Select Color"
+                appendTo="body"
+              ></p-dropdown>
+            </td>
 
-        <!-- Color -->
-        <td>
-          <p-dropdown
-          [(ngModel)]="preset.color"
-          [options]="colors"
-          optionLabel="label"
-          optionValue="value"
-          placeholder="Select Color"
-          [disabled]="isViewMode"
-          appendTo="body"
-        ></p-dropdown>
-        </td>
+            <!-- Print Quality -->
+            <td>
+              <p-inputnumber
+                formControlName="printQuality"
+                [showButtons]="isEditMode || isNewMode"
+                buttonLayout="horizontal"
+                spinnerMode="vertical"
+                [inputStyle]="{ width: '4rem' }"
+                [step]="0.04"
+                [min]="0.01"
+                [max]="2"
+              >
+                <ng-template pTemplate="incrementbuttonicon">
+                  <span class="pi pi-plus"></span>
+                </ng-template>
+                <ng-template pTemplate="decrementbuttonicon">
+                  <span class="pi pi-minus"></span>
+                </ng-template>
+              </p-inputnumber>
+            </td>
 
-        <!-- Print Quality -->
-        <td>
-          <p-inputnumber 
-            [showButtons]="isEditMode || isNewMode" 
-            buttonLayout="horizontal" 
-            spinnerMode="vertical" 
-            inputId="vertical" 
-            [inputStyle]="{ width: '4rem' }" 
-            [(ngModel)]="preset.printQuality" 
-            [step]="0.04" 
-            [min]="0.01" 
-            [max]="2"
-            [disabled]="isViewMode">
-            <ng-template #incrementbuttonicon>
-              <span class="pi pi-plus"></span>
-            </ng-template>
-            <ng-template #decrementbuttonicon>
-              <span class="pi pi-minus"></span>
-            </ng-template>
-          </p-inputnumber>
-        </td>
+            <!-- Delete Button -->
+            <td *ngIf="isEditMode || isNewMode">
+              <button
+                pButton
+                pRipple
+                type="button"
+                icon="pi pi-trash"
+                class="p-button-rounded p-button-danger"
+                (click)="removePreset(ri)"
+                severity="danger"
+                appendTo="body"
+              ></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </form>
 
-        <!-- Delete Button -->
-        <td *ngIf="isEditMode || isNewMode">
-          <button
-            pButton
-            pRipple
-            type="button"
-            icon="pi pi-trash"
-            class="p-button-rounded p-button-danger"
-            (click)="removePreset(ri)"
-            severity="danger"
-            appendTo="body"
-          ></button>
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
-
+  <!-- Other Buttons for view, edit, new modes ... -->
   <div class="flex justify-end mt-6 gap-3 edit-actions" *ngIf="isViewMode">
-    <!-- make an offer button -->
     <div class="flex justify-end">
       <button
         pButton

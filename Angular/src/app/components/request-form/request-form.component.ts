@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ImportsModule } from '../../../imports';
 import { DropdownModule } from 'primeng/dropdown';
@@ -37,16 +37,26 @@ export class RequestFormComponent implements OnInit {
   filamentTypes: { label: string, value: string }[] = [];
   colors: { label: string, value: string }[] = [];
 
-  form: FormGroup = new FormGroup({
-    name: new FormControl('', Validators.required),
-    budget: new FormControl('', Validators.required),
-    targetDate: new FormControl('', Validators.required),
-    comment: new FormControl('', Validators.required),
-    presets: new FormControl('', Validators.required)
-  });
+  form!: FormGroup;
 
   constructor(private router: Router, private route: ActivatedRoute,
-    private requestService: RequestService, private presetService: PresetService) { }
+    private requestService: RequestService, private presetService: PresetService, private fb: FormBuilder) {
+    //init form empty
+    this.form = this.fb.group({
+      name: new FormControl('', Validators.required),
+      budget: new FormControl('', Validators.required),
+      targetDate: new FormControl('', Validators.required),
+      comment: new FormControl(''),
+      presets: this.fb.array([
+        this.fb.group({
+          printer: new FormControl('', Validators.required),
+          filamentType: new FormControl('', Validators.required),
+          color: new FormControl('', Validators.required),
+          printQuality: new FormControl('0.12', Validators.required)
+        })
+      ])
+    });
+  }
 
   ngOnInit(): void {
     const action = this.route.snapshot.url[0]?.path;
@@ -83,6 +93,20 @@ export class RequestFormComponent implements OnInit {
           console.log("Printer:", this.request.presets[0].printerModel);
           console.log("Filament:", this.request.presets[0].filamentType);
           console.log("Color:", this.request.presets[0].color);
+
+          this.form = this.fb.group({
+            name: [{ value: this.request.name, disabled: this.isViewMode }, Validators.required],
+            budget: [{ value: this.request.budget, disabled: this.isViewMode }, Validators.required],
+            targetDate: [{ value: this.request.targetDate, disabled: this.isViewMode }, Validators.required],
+            comment: [{ value: this.request.comment, disabled: this.isViewMode }],
+            presets: this.fb.array(this.request.presets.map((preset: PresetModel) => this.fb.group({
+              printer: [{ value: preset.printerModel, disabled: this.isViewMode }, Validators.required],
+              filamentType: [{ value: preset.filamentType, disabled: this.isViewMode }, Validators.required],
+              color: [{ value: preset.color, disabled: this.isViewMode }, Validators.required],
+              printQuality: [{ value: preset.printQuality, disabled: this.isViewMode }, Validators.required]
+            }))
+            )
+          });
 
           if (this.request === null) {
             this.router.navigate(['/requests']);
@@ -161,5 +185,14 @@ export class RequestFormComponent implements OnInit {
     console.log('Request created:', this.request);
 
     // this.router.navigate(['/requests']);
+  }
+
+  downloadFile(downloadUrl: string): void {
+    console.log('Download file:', downloadUrl);
+    window.open(downloadUrl, '_blank');
+  }
+
+  onSubmit(): void {
+    console.log('Form submitted:', this.form.value);
   }
 }

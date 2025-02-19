@@ -115,8 +115,9 @@ export class RequestsComponent {
     delete this.expandedRows[event.data.id];
   }
 
-  downloadRequest(requestId: number): void {
-    console.log('Download request with ID:', requestId);
+  downloadRequest(downloadUrl: string): void {
+    console.log('Download request:', downloadUrl);
+    window.open(downloadUrl, '_blank');
   }
 
   showDeleteDialog(request: RequestModel): void {
