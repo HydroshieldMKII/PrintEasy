@@ -13,6 +13,7 @@ import { FilamentModel } from '../../models/filament.model';
 import { FormGroup } from '@angular/forms';
 import { FileSelectEvent, FileUploadEvent } from 'primeng/fileupload';
 import { RequestModel } from '../../models/request.model';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-request-form',
@@ -35,14 +36,14 @@ export class RequestFormComponent implements OnInit {
     comment: '',
     presets: []
   }
-  printers: { label: string, value: string }[] = [];
-  filamentTypes: { label: string, value: string }[] = [];
-  colors: { label: string, value: string }[] = [];
+  printers: { label: string, value: string, id: number }[] = [];
+  filamentTypes: { label: string, value: string, id: number }[] = [];
+  colors: { label: string, value: string, id: number }[] = [];
 
   form!: FormGroup;
 
   constructor(private router: Router, private route: ActivatedRoute,
-    private requestService: RequestService, private presetService: PresetService, private fb: FormBuilder) {
+    private requestService: RequestService, private presetService: PresetService, private fb: FormBuilder, private messageService: MessageService) {
     //init form empty
     this.form = this.fb.group({
       name: new FormControl('', [Validators.required, Validators.minLength(3)]),
@@ -73,22 +74,27 @@ export class RequestFormComponent implements OnInit {
     }
 
     this.presetService.getAllPrinters().subscribe((printers) => {
-      this.printers = printers.map((printer: PrinterModel) => ({ label: printer.model, value: printer.model })); // Ensure value is a string
+      this.printers = printers.map((printer: PrinterModel) => ({ label: printer.model, value: printer.model, id: printer.id }));
     });
 
     this.presetService.getAllFilaments().subscribe((filamentTypes) => {
-      this.filamentTypes = filamentTypes.map((filament: FilamentModel) => ({ label: filament.name, value: filament.name })); // Convert to string
+      this.filamentTypes = filamentTypes.map((filament: FilamentModel) => ({ label: filament.name, value: filament.name, id: filament.id }));
     });
 
     this.presetService.getAllColors().subscribe((colors) => {
-      this.colors = colors.map((color: ColorModel) => ({ label: color.name, value: color.name })); // Convert to string
+      this.colors = colors.map((color: ColorModel) => ({ label: color.name, value: color.name, id: color.id }));
     });
+
 
 
     if (this.isEditMode || this.isViewMode) {
       if (this.id !== null) {
         this.requestService.getRequestById(this.id).subscribe((request) => {
           this.request = request;
+
+          if (this.request === null) {
+            this.router.navigate(['/requests']);
+          }
 
           this.form = this.fb.group({
             name: [{ value: this.request.name, disabled: this.isViewMode }, Validators.required],
@@ -97,9 +103,6 @@ export class RequestFormComponent implements OnInit {
             comment: [{ value: this.request.comment, disabled: this.isViewMode }]
           });
 
-          if (this.request === null) {
-            this.router.navigate(['/requests']);
-          }
         });
       }
     }
@@ -150,19 +153,6 @@ export class RequestFormComponent implements OnInit {
     this.router.navigate(['/requests']);
   }
 
-  // Row edit functions
-  onRowEditInit(preset: any) {
-    console.log('Edit Init:', preset);
-  }
-
-  onRowEditSave(preset: any) {
-    console.log('Edit Save:', preset);
-  }
-
-  onRowEditCancel(preset: any, index: number) {
-    console.log('Edit Canceled:', preset);
-  }
-
   makeAnOffer(): void {
     console.log('Offer made:', this.request);
   }
@@ -173,7 +163,7 @@ export class RequestFormComponent implements OnInit {
 
   createRequest() {
     if (this.form.valid) {
-      console.log('Données du concours:', this.form.value);
+      console.log('Request form:', this.form.value);
 
       const contestFormData = new FormData();
 
@@ -182,28 +172,79 @@ export class RequestFormComponent implements OnInit {
       contestFormData.append('request[target_date]', this.form.value.targetDate);
       contestFormData.append('request[comment]', this.form.value.comment);
 
-
       if (this.uploadedFile) {
         contestFormData.append('request[stl_file]', this.uploadedFile);
       }
 
-      // const obs = this.isEditMode
-      //   ? this.requestService.updateRequest(this.id, contestFormData)
-      //   : this.requestService.createRequest(contestFormData);
+      if (this.request.presets.length > 0) {
+        this.request.presets.forEach((preset: any, index: number) => {
+          // Find the corresponding objects in your dropdown arrays
+          const printer = this.printers.find((p: any) => p.label === preset.printer);
+          const filament = this.filamentTypes.find((f: any) => f.label === preset.filamentType);
+          const color = this.colors.find((c: any) => c.label === preset.color);
+          console.log('Printer:', printer, 'Filament:', filament, 'Color:', color);
 
-      const obs = this.requestService.createRequest(contestFormData);
+          // Ensure that each selection is found before appending
+          if (this.request.presets.length > 0) {
+            this.request.presets.forEach((preset: any, index: number) => {
+              // Assuming preset.printer, preset.filamentType, and preset.color now contain the id values,
+              // we find the full object from our dropdown arrays by comparing the id (value).
+              const printer = this.printers.find((p: any) => p.value == preset.printerModel);
+              const filament = this.filamentTypes.find((f: any) => f.value == preset.filamentType);
+              const color = this.colors.find((c: any) => c.value == preset.color);
+              console.debug('Printer:', printer, 'Filament:', filament, 'Color:', color);
 
-      obs.subscribe(response => {
-        if ((this.isEditMode && response.status === 200) || (!this.isNewMode && response.status === 201)) {
-          this.router.navigate(['/requests']);
+              // Ensure that each selection is found before appending
+              if (printer && filament && color && preset.printQuality) {
+                contestFormData.append(
+                  `request[preset_requests_attributes][${index}][printer_id]`,
+                  printer.id.toString()
+                );
+                contestFormData.append(
+                  `request[preset_requests_attributes][${index}][filament_id]`,
+                  filament.id.toString()
+                );
+                contestFormData.append(
+                  `request[preset_requests_attributes][${index}][color_id]`,
+                  color.id.toString()
+                );
+                contestFormData.append(
+                  `request[preset_requests_attributes][${index}][print_quality]`,
+                  preset.printQuality
+                );
+              } else {
+                console.error('Missing matching printer, filament, or color for preset:', preset);
+              }
+            });
+          }
+
+          // Log the form data entries to verify contents (browsers may not show FormData when logged directly)
+          for (const [key, value] of contestFormData.entries()) {
+            console.log(`${key}: ${value}`);
+          }
+
+          const obs = this.requestService.createRequest(contestFormData);
+
+          obs.subscribe(response => {
+            if ((this.isEditMode && response.status === 200)) {
+              this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Request updated successfully' });
+              this.router.navigate(['/requests/view', this.id]);
+            } else if (response.status === 201) {
+              this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Request created successfully' });
+              this.router.navigate(['/requests']);
+            } else {
+              this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Request creation failed' });
+            }
+          });
         }
-      });
+        );
+      }
     }
   }
-
   downloadFile(downloadUrl: string): void {
     console.log('Download file:', downloadUrl);
     window.open(downloadUrl, '_blank');
+
   }
 }
 

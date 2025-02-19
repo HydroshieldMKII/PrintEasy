@@ -18,14 +18,13 @@ class Api::RequestController < ApplicationController
 
   # POST /requests
   def create
-    # debugger
+    debugger
     @request = Request.new(create_params)
     @request.user = current_user
 
     if @request.save
       render_request(@request, status: :created)
     else
-      debugger
       render json: { request: {}, errors: @request.errors }, status: :unprocessable_entity
     end
   end
@@ -125,7 +124,6 @@ class Api::RequestController < ApplicationController
   end
 
   def create_params
-    # debugger
-    params.require(:request).permit(:name, :comment, :target_date, :budget, :stl_file, preset_requests_attributes: %i[color_id filament_id printer_id])
+    params.require(:request).permit(:name, :comment, :target_date, :budget, :stl_file, preset_requests_attributes: %i[color_id filament_id printer_id print_quality])
   end
 end
