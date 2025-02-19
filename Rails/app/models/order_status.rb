@@ -4,11 +4,15 @@ class OrderStatus < ApplicationRecord
 
   has_one_attached :image
 
-  validates :comment, length: { maximum: 200, minimum: 5 }
+  validates :comment, length: { maximum: 200 }
+  validates :comment, length: { minimum: 5 }, if: -> { comment.present? }
   validates :status_name, presence: true
   validates :order_id, presence: true
   validate :can_transition, on: :create
   before_destroy :can_destroy, prepend: true
+  before_destroy :is_frozen?, prepend: true
+  before_update :is_frozen?, prepend: true
+
 
   StateMachines::Machine.ignore_method_conflicts = true
 
@@ -66,11 +70,16 @@ class OrderStatus < ApplicationRecord
       end
     end
     available.flatten!
-    available.delete('Cancelled')
+    # available.delete('Cancelled')
     return available
   end
 
+  def image_url
+    Rails.application.routes.url_helpers.rails_blob_url(self.image, only_path: true) if self.image.attached?
+  end
+
   class CannotDestroyStatusError < StandardError; end
+  class OrderStatusFrozenError < StandardError; end
 
   private
 
@@ -95,6 +104,14 @@ class OrderStatus < ApplicationRecord
   def can_destroy
     if ['Accepted', 'Cancelled', 'Arrived', 'Shipped'].include?(self.status_name)
       raise CannotDestroyStatusError, "Cannot delete the status"
+    end
+    return true
+  end
+
+  def is_frozen?
+    last_state = self.order&.order_status&.order(created_at: :desc)&.first
+    if ['Cancelled', 'Arrived', 'Shipped'].include?(last_state.status_name)
+      raise OrderStatusFrozenError, "Cannot change status of a frozen order"
     end
     return true
   end
