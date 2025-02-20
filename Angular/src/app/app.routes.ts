@@ -8,7 +8,7 @@ import { UserProfileComponent } from './components/user-profile/user-profile.com
 import { ContestFormComponent } from './components/contest-form/contest-form.component';
 import { RequestsComponent } from './components/request/request.component';
 import { RequestFormComponent } from './components/request-form/request-form.component';
-import { OrdersComponent } from './components/orders/orders.component';
+import { OrderComponent } from './components/order/order.component';
 
 import { AuthenticationGuard } from './guards/authentication.guard';
 
@@ -86,8 +86,8 @@ export const routes: Routes = [
     canActivate: [AuthenticationGuard],
     children: [
       {
-        path: '',
-        component: OrdersComponent,
+        path: 'view/:id',
+        component: OrderComponent,
         title: 'Order'
       }
     ]

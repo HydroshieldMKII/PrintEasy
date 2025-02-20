@@ -1,17 +1,17 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  theme: MyString
+contest_one:
+  theme: Contest1
   description: MyString
   submission_limit: 1
-  deleted_at: 2025-02-14 11:41:16
-  start_at: 2025-02-14 11:41:16
-  end_at: 2025-02-14 11:41:16
+  deleted_at: null
+  start_at: <%= 1.day.from_now %>
+  end_at: <%= 2.days.from_now %>
 
-two:
-  theme: MyString
+contest_two:
+  theme: Contest2
   description: MyString
   submission_limit: 1
-  deleted_at: 2025-02-14 11:41:16
-  start_at: 2025-02-14 11:41:16
-  end_at: 2025-02-14 11:41:16
+  deleted_at: null
+  start_at: <%= 1.day.from_now %>
+  end_at: <%= 2.days.from_now %>

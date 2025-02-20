@@ -1,0 +1,315 @@
+<div class="card">
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="stl-section flex flex-col items-center">
+            <div class="stl-placeholder">
+              <p>STL preview here</p>
+            </div>
+        </div>
+        <div class="flex-col gap-6">
+            <p class="h1c">{{order?.offer?.request?.name}}</p>
+            
+            <div class="h-row">
+                <p>Printer Owner :</p>
+                <p-avatar label="" size="large" shape="circle" image="{{order?.offer?.printer_user?.user?.profile_picture_url}}"></p-avatar>
+                <p class="h3c">{{order?.offer?.printer_user?.user?.username}}</p>
+            </div>
+
+            <div class="h-row">
+                <p>Price :</p>
+                <p class="h3c">{{order?.offer?.price}}$</p>
+            </div>
+
+            <div class="h-row">
+                <p>Current Status :</p>
+                <span [ngStyle]="{'color': 'rgb(34, 34, 34)', 'background-color': statusColorRef[currentStatus?.status_name || 0], 'border-radius': '10px', 'height': '30px', 'padding': '7px', 'display': 'flex', 'flex-direction': 'row', 'align-items': 'center'}">
+                    <p>{{currentStatus?.status_name}}</p>
+                </span>
+            </div>
+
+            <div class="h-row">
+                <p>Target Date :</p>
+                <p class="h3c">{{order?.offer?.target_date | date:'fullDate'}}</p>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <p-fieldset legend="Comment">
+                    <p class="m-0">
+                        {{order?.offer?.request?.comment}}
+                    </p>
+                </p-fieldset>
+            </div>
+            
+
+            <p-button
+                label="Abort"
+                icon="pi pi-trash"
+                severity="danger"
+                [disabled]="!canCancel"
+                (click)="Cancel()">
+            </p-button>
+        </div>
+    </div>
+
+    <p-dialog header="{{isEdit ? 'Edit Order Status' : 'New Order Status'}}" [modal]="true" [(visible)]="formVisible" [style]="{ width: '35rem', margin: '10px' }">
+        <form [formGroup]="orderStatusForm" (ngSubmit)="onSubmit()">
+            <div class="popup-form-container">
+                <p-floatlabel variant="in">
+                    <textarea
+                        pTextarea
+                        id="comment"
+                        formControlName="comment"
+                        rows="5"
+                        cols="30"
+                        style="resize: none"
+                        ></textarea>
+                    <label for="comment">Special comment about the status update</label>
+                </p-floatlabel>
+                <p-dropdown 
+                    formControlName="status_name" 
+                    [options]="order?.available_status"
+                    placeholder="{{isEdit ? orderStatusForm.value.status_name : 'Select a status'}}"
+                    appendTo="body"
+                    [style]="{width: '100%'}"
+                    [disabled]="isEdit">
+                </p-dropdown>
+                <img src="{{image_url}}" alt="" class="image-preview" />
+                <div *ngIf="image_url == ''" class="image-placeholder">
+                    <p>Image</p>
+                </div>
+                <div>
+                    <p-fileUpload
+                        mode="basic"
+                        name="image"
+                        accept="image/*"
+                        chooseLabel="Upload Image"
+                        (onSelect)="onFileSelect($event)">
+                    </p-fileUpload>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1rem;">
+                <p-button label="Cancel" icon="pi pi-times" severity="secondary" (click)="formVisible = false" severity="secondary"></p-button>
+                <p-button label="Save" icon="pi pi-save" [disabled]="orderStatusForm.invalid" (click)="onSubmit()" severity="success"></p-button>
+            </div>
+        </form>
+    </p-dialog>
+
+    <p-tabs value="0">
+        <p-tablist>
+            <p-tab value="0">Status</p-tab>
+            <p-tab value="1" disabled="true">Review</p-tab>
+        </p-tablist>
+        <p-tabpanels>
+            <p-tabpanel value="0">
+
+                <p-speeddial *ngIf="!consumer && canCancel" direction="left" [style]="{ position: 'absolute', top: 1, right: 'calc(1%)' }" [buttonProps]="{ severity: 'success', rounded: true }" (onClick)="ShowOrderStatusForm()"/>
+
+                <p-stepper [value]="1">
+
+                    <p-step-item [value]="1" [ngStyle]="{'opacity': AcceptedStatus.length === 0 ? 0.5 : 1}">
+                        <p-step>
+                            <ng-template #content>
+                                <div class="global-status-header-container">
+                                    <div class="status-header-circle" [ngStyle]="{'background-color': statusColorRef['Accepted']}" >
+                                        <i class="pi pi-play status-header-circle-icon"></i>
+                                    </div>
+                                    <p>Accepted</p>
+                                </div>
+                            </ng-template>
+                        </p-step>
+                        <p-step-panel>
+                            <ng-template #content>
+                                <div class="status-content-container-container">
+                                    <div *ngFor="let status of AcceptedStatus" class="status-content-container">
+                                        <div class="status-content-header" [ngStyle]="{'margin-bottom': consumer ? '0px' : '-20px'}">
+                                            <div class="status-content-date-container">
+                                                <p class="status-content-date">{{status.updated_at | date:'medium'}}</p>
+                                            </div>
+                                            <div class="three-dot-container" *ngIf="!consumer">
+                                                <p-button [rounded]="true" [text]="true" icon="pi pi-ellipsis-v" (click)="menu.toggle($event); setSelectedOrderStatus(status.id)" />
+                                                <p-tieredmenu #menu [model]="editMenuItems" [popup]="true"></p-tieredmenu>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="status-content-image" *ngIf="status.image_url">
+                                            <img class="status-content-image" [src]="status.image_url" alt="">
+                                        </div>
+                                        <p>{{status.comment}}</p>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </p-step-panel>
+                    </p-step-item>
+
+                    <p-step-item [value]="1" [ngStyle]="{'opacity': PrintingStatus.length === 0 ? 0.5 : 1}">
+                        <p-step>
+                            <ng-template #content>
+                                <div class="global-status-header-container">
+                                    <div class="status-header-circle" [ngStyle]="{'background-color': statusColorRef['Printing']}">  <!-- put color here -->
+                                        <i class="pi pi-print status-header-circle-icon"></i>
+                                    </div>
+                                    <p>Printing</p>
+                                </div>
+                            </ng-template>
+                        </p-step>
+                        <p-step-panel>
+                            <ng-template #content>
+                                <div class="status-content-container-container">
+                                    <div *ngFor="let status of PrintingStatus" class="status-content-container">
+                                        <div class="status-content-header" [ngStyle]="{'margin-bottom': consumer ? '0px' : '-20px'}">
+                                            <div class="status-content-date-container">
+                                                <p class="status-content-date">{{status.updated_at | date:'medium'}}</p>
+                                            </div>
+                                            <div class="three-dot-container" *ngIf="!consumer">
+                                                <p-button [rounded]="true" [text]="true" icon="pi pi-ellipsis-v" (click)="menu.toggle($event); setSelectedOrderStatus(status.id)" />
+                                                <p-tieredmenu #menu [model]="editMenuItems" [popup]="true"></p-tieredmenu>
+                                            </div>
+                                        </div>
+
+                                        <div class="status-content-image" *ngIf="status.image_url">
+                                            <img class="status-content-image" [src]="status.image_url" alt="">
+                                        </div>
+                                        <p>{{status.comment}}</p>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </p-step-panel>
+                    </p-step-item>
+
+                    <p-step-item [value]="1" [ngStyle]="{'opacity': PrintedStatus.length === 0 ? 0.5 : 1}">
+                        <p-step>
+                            <ng-template #content>
+                                <div class="global-status-header-container">
+                                    <div class="status-header-circle" [ngStyle]="{'background-color': statusColorRef['Printed']}">  <!-- put color here -->
+                                        <i class="pi pi-check-circle status-header-circle-icon"></i>
+                                    </div>
+                                    <p>Printed</p>
+                                </div>
+                            </ng-template>
+                        </p-step>
+                        <p-step-panel>
+                            <ng-template #content>
+                                <div class="status-content-container-container">
+                                    <div *ngFor="let status of PrintedStatus" class="status-content-container">
+                                        <div class="status-content-header" [ngStyle]="{'margin-bottom': consumer ? '0px' : '-20px'}">
+                                            <div class="status-content-date-container">
+                                                <p class="status-content-date">{{status.updated_at | date:'medium'}}</p>
+                                            </div>
+                                            <div class="three-dot-container" *ngIf="!consumer">
+                                                <p-button [rounded]="true" [text]="true" icon="pi pi-ellipsis-v" (click)="menu.toggle($event); setSelectedOrderStatus(status.id)" />
+                                                <p-tieredmenu #menu [model]="editMenuItems" [popup]="true"></p-tieredmenu>
+                                            </div>
+                                        </div>
+                                        <div class="status-content-image" *ngIf="status.image_url">
+                                            <img class="status-content-image" [src]="status.image_url" alt="">
+                                        </div>
+                                        <p>{{status.comment}}</p>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </p-step-panel>
+                    </p-step-item>
+
+                    <p-step-item [value]="1" [ngStyle]="{'opacity': ShippedStatus.length === 0 ? 0.5 : 1}">
+                        <p-step >
+                            <ng-template #content>
+                                <div class="global-status-header-container">
+                                    <div class="status-header-circle" [ngStyle]="{'background-color': statusColorRef['Shipped']}">  <!-- put color here -->
+                                        <i class="pi pi-send status-header-circle-icon"></i>
+                                    </div>
+                                    <p>Shipped</p>
+                                </div>
+                            </ng-template>
+                        </p-step>
+                        <p-step-panel>
+                            <ng-template #content>
+                                <div class="status-content-container-container">
+                                    <div *ngFor="let status of ShippedStatus" class="status-content-container">
+                                        <div class="status-content-header" [ngStyle]="{'margin-bottom': consumer ? '0px' : '-20px'}">
+                                            <div class="status-content-date-container">
+                                                <p class="status-content-date">{{status.updated_at | date:'medium'}}</p>
+                                            </div>
+                                            <div class="three-dot-container" *ngIf="!consumer">
+                                                <p-button [rounded]="true" [text]="true" icon="pi pi-ellipsis-v" (click)="menu.toggle($event); setSelectedOrderStatus(status.id)" />
+                                                <p-tieredmenu #menu [model]="editMenuItems" [popup]="true"></p-tieredmenu>
+                                            </div>
+                                        </div>
+                                        <div class="status-content-image" *ngIf="status.image_url">
+                                            <img class="status-content-image" [src]="status.image_url" alt="">
+                                        </div>
+                                        <p>{{status.comment}}</p>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </p-step-panel>
+                    </p-step-item>
+
+                    <p-step-item [value]="1" [ngStyle]="{'opacity': ArrivedStatus.length === 0 && !canArrive ? 0.5 : 1}">
+                        <p-step >
+                            <ng-template #content>
+                                <div class="global-status-header-container">
+                                    <div class="status-header-circle" [ngStyle]="{'background-color': statusColorRef['Arrived']}">  <!-- put color here -->
+                                        <i class="pi pi-home status-header-circle-icon"></i>
+                                    </div>
+                                    <p>Arrived</p>
+                                </div>
+                            </ng-template>
+                        </p-step>
+                        <p-step-panel>
+                            <ng-template #content>
+                                <div class="status-content-container-container">
+                                    <div *ngFor="let status of ArrivedStatus" class="status-content-container">
+                                        <p class="status-content-date">{{status.updated_at | date:'medium'}}</p>
+                                        <div class="status-content-image" *ngIf="status.image_url">
+                                            <img class="status-content-image" [src]="status.image_url" alt="">
+                                        </div>
+                                        <p>{{status.comment}}</p>
+                                    </div>
+                                    <p-button 
+                                        *ngIf="ArrivedStatus.length === 0 && CancelledStatus.length === 0 && consumer"
+                                        label="Confirm Arrival"
+                                        icon="pi pi-check"
+                                        [disabled]="!canArrive"
+                                        (click)="Arrive()">
+                                    </p-button>
+                                </div>
+                            </ng-template>
+                        </p-step-panel>
+                    </p-step-item>
+
+                    <p-step-item [value]="1" [ngStyle]="{'opacity': CancelledStatus.length === 0 ? 0.5 : 1}">
+                        <p-step>
+                            <ng-template #content>
+                                <div class="global-status-header-container">
+                                    <div class="status-header-circle" [ngStyle]="{'background-color': statusColorRef['Cancelled']}">  <!-- put color here -->
+                                        <i class="pi pi-ban status-header-circle-icon"></i>
+                                    </div>
+                                    <p>Cancelled</p>
+                                </div>
+                            </ng-template>
+                        </p-step>
+                        <p-step-panel>
+                            <ng-template #content>
+                                <div class="status-content-container-container">
+                                    <div *ngFor="let status of CancelledStatus" class="status-content-container">
+                                        <p class="status-content-date">{{status.updated_at | date:'medium'}}</p>
+                                        <div class="status-content-image" *ngIf="status.image_url">
+                                            <img class="status-content-image" [src]="status.image_url" alt="">
+                                        </div>
+                                        <p>{{status.comment}}</p>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </p-step-panel>
+                    </p-step-item>
+
+                </p-stepper>
+            </p-tabpanel>
+            <p-tabpanel value="1">
+                <p>bonjour</p>
+            </p-tabpanel>
+        </p-tabpanels>
+    </p-tabs>
+    
+
+</div>
