@@ -29,6 +29,7 @@ export class RequestFormComponent implements OnInit {
   uploadedFileBlob: any = null;
   deleteDialogVisible: boolean = false;
   requestToDelete: RequestModel | null = null;
+  presetToDelete: any[] = [];
 
   request: any = {
     name: '',
@@ -121,13 +122,15 @@ export class RequestFormComponent implements OnInit {
 
   removePreset(index: number): void {
     const preset = this.request.presets[index];
+
     if (!preset.id) {
       this.request.presets.splice(index, 1);
       return;
     }
 
     preset._destroy = true;
-    this.request.presets = this.request.presets.filter((p: any) => !p._destroy);
+    this.request.presets.splice(index, 1);
+    this.presetToDelete.push(preset);
   }
 
   onFileUpload(event: FileSelectEvent): void {
@@ -146,12 +149,13 @@ export class RequestFormComponent implements OnInit {
   saveChanges(): void {
     console.log('Request saved:', this.request);
 
-    //bind new form values to request object
+    // 1. Bind updated form values to the request object
     this.request.name = this.form.value.name;
     this.request.budget = this.form.value.budget;
     this.request.targetDate = this.form.value.targetDate;
     this.request.comment = this.form.value.comment;
 
+    // 2. Build the FormData payload
     const contestFormData = new FormData();
     contestFormData.append('request[name]', this.request.name);
     contestFormData.append('request[budget]', this.request.budget);
@@ -163,35 +167,41 @@ export class RequestFormComponent implements OnInit {
     }
 
     let hasError = false;
+    // We'll use a single counter for nested preset requests (both remaining and those to delete)
+    let presetIndex = 0;
 
-    if (this.request.presets.length > 0) {
-      this.request.presets.forEach((preset: any, index: number) => {
+    // 3a. Process the remaining (non-deleted) presets in the request
+    if (this.request.presets && this.request.presets.length > 0) {
+      this.request.presets.forEach((preset: any) => {
         const printer = this.printers.find((p: any) => p.label === preset.printerModel);
         const filament = this.filamentTypes.find((f: any) => f.label === preset.filamentType);
         const color = this.colors.find((c: any) => c.label === preset.color);
 
         if (printer && filament && color && preset.printQuality) {
+          // If preset exists (editing an existing record), add its id
+          if (preset.id) {
+            contestFormData.append(
+              `request[preset_requests_attributes][${presetIndex}][id]`,
+              preset.id.toString()
+            );
+          }
           contestFormData.append(
-            `request[preset_requests_attributes][${index}][id]`,
-            preset.id.toString()
-          );
-
-          contestFormData.append(
-            `request[preset_requests_attributes][${index}][printer_id]`,
+            `request[preset_requests_attributes][${presetIndex}][printer_id]`,
             printer.id.toString()
           );
           contestFormData.append(
-            `request[preset_requests_attributes][${index}][filament_id]`,
+            `request[preset_requests_attributes][${presetIndex}][filament_id]`,
             filament.id.toString()
           );
           contestFormData.append(
-            `request[preset_requests_attributes][${index}][color_id]`,
+            `request[preset_requests_attributes][${presetIndex}][color_id]`,
             color.id.toString()
           );
           contestFormData.append(
-            `request[preset_requests_attributes][${index}][print_quality]`,
+            `request[preset_requests_attributes][${presetIndex}][print_quality]`,
             preset.printQuality
           );
+          presetIndex++;
         } else {
           hasError = true;
           console.error('Invalid preset:', printer, filament, color, preset.printQuality);
@@ -199,21 +209,43 @@ export class RequestFormComponent implements OnInit {
       });
     }
 
+    // 3b. Process presets marked for deletion (stored in presetToDelete)
+    if (this.presetToDelete && this.presetToDelete.length > 0) {
+      this.presetToDelete.forEach((preset: any) => {
+        // Only process if the preset has an id (i.e. it exists on the server)
+        if (preset.id) {
+          contestFormData.append(
+            `request[preset_requests_attributes][${presetIndex}][id]`,
+            preset.id.toString()
+          );
+          contestFormData.append(
+            `request[preset_requests_attributes][${presetIndex}][_destroy]`,
+            '1'
+          );
+          presetIndex++;
+        }
+      });
+    }
+
     if (hasError) {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid preset information. Please clear or complete your recommended preset before saving.' });
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Invalid preset information. Please fix or remove invalid presets before saving.'
+      });
       return;
     }
 
+    // Debug: Log all entries of the FormData
     for (const [key, value] of contestFormData.entries()) {
       console.log(`${key}: ${value}`);
     }
 
+    // 4. Submit the update request
     const obs = this.requestService.updateRequest(this.request.id, contestFormData);
     obs.subscribe(response => {
       if (this.isEditMode && response.status === 200) {
         this.router.navigate(['/requests/view', this.request.id]);
-      } else {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Request update failed' });
       }
     });
   }
@@ -351,5 +383,4 @@ export class RequestFormComponent implements OnInit {
     const colorValid = !!this.colors.find((c: any) => c.label === preset.color);
     return printerValid && filamentValid && colorValid && preset.printQuality;
   }
-
 }
