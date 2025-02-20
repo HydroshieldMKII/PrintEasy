@@ -324,10 +324,10 @@ class Api::RequestsControllerTest < ActionDispatch::IntegrationTest
     assert_equal @user_request.user.country.name, json_response['request']['user']['country']['name']
   end
 
-  test "Data should not be updated if invalid" do
+  test "Data should not be updated if date is invalid" do
     assert_no_difference('Request.count') do
       patch api_request_url(@user_request), params: {
-        request: { budget: -10, target_date: "1970-01-01" }
+        request: {name:"", budget: -10, target_date: "1970-01-01" }
       }, as: :json
     end
     assert_response :unprocessable_entity
@@ -343,12 +343,32 @@ class Api::RequestsControllerTest < ActionDispatch::IntegrationTest
       JSON.parse(response.body)
     end
 
-    assert_equal json_response['errors']['name'], ["must be filled"]
     assert_equal json_response['errors']['target_date'], ["must be greater than today"]
   end
 
+  test "should not allow user to update request with invalid data" do
+    assert_no_difference('Request.count') do
+      patch api_request_url(@user_request), params: {
+        request: { name: "" }
+      }, as: :json
+    end
+
+    assert_response :unprocessable_entity
+
+    json_response = assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+
+    p json_response
+    assert_equal "can't be blank", json_response['errors']['name'][0]
+    assert_equal "is too short (minimum is 3 characters)", json_response['errors']['name'][1]
+    # assert_equal
+  end
+
+
 
   test "should not allow user to update another user's request" do
+    sign_out @user
     sign_in @other_user
 
     patch api_request_url(@user_request), params: {
@@ -373,6 +393,14 @@ class Api::RequestsControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_response :success
+
+    json_response = assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+
+    p json_response
+    assert_equal @user_request.id, json_response['request']['id']
+    assert_empty json_response['errors']
   end
 
   test "should not allow user to delete another user's request" do

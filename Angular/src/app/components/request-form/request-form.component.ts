@@ -30,6 +30,7 @@ export class RequestFormComponent implements OnInit {
   deleteDialogVisible: boolean = false;
   requestToDelete: RequestModel | null = null;
   presetToDelete: any[] = [];
+  todayDate = new Date().toISOString().substring(0, 10);
 
   request: any = {
     name: '',

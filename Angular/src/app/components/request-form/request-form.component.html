@@ -46,6 +46,20 @@
             variant="simple"
             size="small"
           >Budget is required</p-message>
+          <p-message
+            *ngIf="form.get('budget')?.errors?.['min'] && (form.get('budget')?.dirty || form.get('budget')?.touched)"
+            severity="error"
+            variant="simple"
+            size="small"
+          >Budget must be at least 0</p-message>
+          <p-message
+            *ngIf="form.get('budget')?.errors?.['max'] && (form.get('budget')?.dirty || form.get('budget')?.touched)"
+            severity="error"
+            variant="simple"
+            size="small"
+          >Budget must be at most 10000</p-message>
+
+
         </div>
 
         <p-floatlabel variant="in">
@@ -76,6 +90,18 @@
               <label for="targetDate" class="block font-semibold">Target Date</label>
             </div>
           </p-floatlabel>
+          <p-message
+            *ngIf="form.get('targetDate')?.invalid && (form.get('targetDate')?.dirty || form.get('targetDate')?.touched)"
+            severity="error"
+            variant="simple"
+            size="small"
+          >Target Date is required</p-message>
+          <p-message
+            *ngIf="form.get('targetDate')?.errors?.['dateError'] && (form.get('targetDate')?.dirty || form.get('targetDate')?.touched)"
+            severity="error"
+            variant="simple"
+            size="small"
+          >Target Date should be later than today</p-message>
         </div>
 
         <p-message
