@@ -9,6 +9,7 @@ class Api::RequestController < ApplicationController
   # GET /requests
   def index
     @requests = fetch_requests
+    
     render_request(@requests)
   end
 
@@ -109,7 +110,7 @@ class Api::RequestController < ApplicationController
         },
         methods: :stl_file_url
       ),
-      errors: {}
+      errors: resource.respond_to?(:errors) ? resource.errors : {}
     }, status: status
   end
 
@@ -156,7 +157,7 @@ class Api::RequestController < ApplicationController
 
   def stl_file_extension?
     if params[:request][:stl_file].present?
-      extension = File.extname(params[:request][:stl_file].tempfile.path)
+      extension = File.extname(params[:request][:stl_file].path)
       unless extension == '.stl'
         render json: { request: {}, errors: { stl_file: ['must have .stl extension'] } }, status: :unprocessable_entity
       end

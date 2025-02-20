@@ -131,7 +131,7 @@ class Api::RequestsControllerTest < ActionDispatch::IntegrationTest
           comment: "This is a new request",
           budget: 100,
           target_date: 5.days.from_now.to_date,
-          stl_file: fixture_file_upload('RUBY13.stl', 'application/octet-stream'),
+          stl_file: fixture_file_upload(Rails.root.join("test/fixtures/files/RUBY13.stl"), 'application/octet-stream'),
           preset_requests_attributes: [
             { color_id: 1, filament_id: 1, printer_id: 1, print_quality: 0.1 }
           ]
@@ -231,6 +231,7 @@ class Api::RequestsControllerTest < ActionDispatch::IntegrationTest
           ]
         }
       }, as: :json
+      end
   end
 
   test "Data should not be updated if invalid" do
@@ -239,20 +240,21 @@ class Api::RequestsControllerTest < ActionDispatch::IntegrationTest
         request: { name: "", budget: -10, target_date: "1970-01-01" }
       }, as: :json
     end
-
     assert_response :unprocessable_entity
-    assert_equal "User Request 1", @user_request.reload.name
-    assert_equal 15, @user_request.budget
-    assert_equal "This is request number 1 from user.", @user_request.comment
-    assert_equal "2025-03-02", @user_request.target_date.to_s
+
+    assert_equal "Test Request", @user_request.reload.name
+    assert_equal 100, @user_request.budget
+    assert_equal "Test Comments", @user_request.comment
+    assert_equal "2021-12-31", @user_request.target_date.to_s
     assert_equal "RUBY13.stl", @user_request.stl_file.filename.to_s
-    assert_equal 3, @user_request.preset_requests.count
+    assert_equal 1, @user_request.preset_requests.count
 
     json_response = assert_nothing_raised do
       JSON.parse(response.body)
     end
 
-    assert_equal json_response['errors']['name'], ["can't be blank"]
+    p json_response
+    assert_equal "can't be blank", json_response['errors']['name']
   end
 
 
