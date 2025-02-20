@@ -7,3 +7,8 @@ second_image_attachment:
   name: image
   record: contest_two (Contest)
   blob: first_image_blob
+
+third_image_attachment:
+  name: image
+  record: order_status_one (Order_status)
+  blob: first_image_blob
