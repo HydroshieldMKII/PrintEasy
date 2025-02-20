@@ -1,6 +1,4 @@
-class Api::PrinterUserController < ApplicationController
-    before_action :authenticate_user!
-
+class Api::PrinterUserController < AuthenticatedController
     def index
         @printer_users = PrinterUser.where(user_id: current_user.id)
         render json: @printer_users.as_json({
@@ -11,6 +9,5 @@ class Api::PrinterUserController < ApplicationController
             }
         }
     })
-
     end
 end

@@ -218,7 +218,82 @@ contest4.image.attach(
 
 contest4.save
 
-5.times do |i|
+contest5 = Contest.create(
+  theme: "Best 3D Printed Fashion",
+  submission_limit: 5,
+  start_at: Time.now,
+  end_at: Time.now + 30.days
+)
+
+contest5.image.attach(
+  io: File.open(Rails.root.join("db/seeds/files/DariusSlayJunior.jpg")),
+  filename: "DariusSlayJunior.jpg",
+  content_type: "image/jpg"
+)
+
+contest5.save
+
+contest6 = Contest.create(
+  theme: "Best 3D Printed Gadgets",
+  submission_limit: 5,
+  start_at: Time.now,
+  deleted_at: Time.now
+)
+
+contest6.image.attach(
+  io: File.open(Rails.root.join("db/seeds/files/DariusSlayJunior.jpg")),
+  filename: "DariusSlayJunior.jpg",
+  content_type: "image/jpg"
+)
+
+contest6.save
+
+contest7 = Contest.create(
+  theme: "Best 3D Printed Tools",
+  submission_limit: 5,
+  start_at: Time.now,
+)
+
+contest7.image.attach(
+  io: File.open(Rails.root.join("db/seeds/files/DariusSlayJunior.jpg")),
+  filename: "DariusSlayJunior.jpg",
+  content_type: "image/jpg"
+)
+
+contest7.save
+
+contest8 = Contest.create(
+  theme: "Best 3D Printed Medical Devices",
+  submission_limit: 5,
+  start_at: Time.now,
+  end_at: Time.now + 30.days
+)
+
+contest8.image.attach(
+  io: File.open(Rails.root.join("db/seeds/files/DariusSlayJunior.jpg")),
+  filename: "DariusSlayJunior.jpg",
+  content_type: "image/jpg"
+)
+
+contest8.save
+
+contest9 = Contest.create(
+  theme: "Best 3D Printed Automotive Parts",
+  submission_limit: 5,
+  start_at: Time.now,
+  deleted_at: Time.now,
+  end_at: Time.now + 30.days
+)
+
+contest9.image.attach(
+  io: File.open(Rails.root.join("db/seeds/files/DariusSlayJunior.jpg")),
+  filename: "DariusSlayJunior.jpg",
+  content_type: "image/jpg"
+)
+
+contest9.save
+
+50.times do |i|
   contest = Contest.create(
     theme: "Contest #{i + 3}",
     description: "Description for contest #{i + 3}.",
@@ -286,10 +361,30 @@ Request.all.each do |request|
   end
 end
 
+
+
+#Request without offers
+req_no_offer = Request.create(
+  user: user1,
+  name: "Request without offers",
+  budget: 100.0,
+  comment: "This request has no offers.",
+  target_date: Time.now + 10.days
+)
+
+req_no_offer.stl_file.attach(
+  io: File.open(stl_file_path1),
+  filename: "RUBY13.stl",
+  content_type: "application/sla"
+)
+req_no_offer.save
+
+
 # Create Orders
 order1 = Order.create!(offer: Offer.first)
 order2 = Order.create!(offer: Offer.second)
 order3 = Order.create!(offer: Offer.third)
+order4 = Order.create!(offer: Offer.last)
 
 Review.create!(
   order: order2,
@@ -307,6 +402,7 @@ status_shipped = Status.create!(name: "Shipped")
 status_arrived = Status.create!(name: "Arrived")
 status_cancelled = Status.create!(name: "Cancelled")
 
+OrderStatus.create!(order: order4, status: status_accepted, comment: "offer accepted, printing soon.")
 OrderStatus.create!(order: order3, status: status_accepted, comment: "offer accepted, printing soon.")
 OrderStatus.create!(order: order2, status: status_accepted, comment: "offer accepted, printing soon.")
 OrderStatus.create!(order: order2, status: status_printing, comment: "Order started printing.")

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_02_17_183201) do
+ActiveRecord::Schema[7.1].define(version: 2025_02_21_001028) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -77,7 +77,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_17_183201) do
     t.date "target_date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "print_quality"
+    t.float "print_quality"
     t.index ["color_id"], name: "index_offers_on_color_id"
     t.index ["filament_id"], name: "index_offers_on_filament_id"
     t.index ["printer_user_id"], name: "index_offers_on_printer_user_id"
@@ -104,10 +104,11 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_17_183201) do
     t.bigint "color_id", null: false
     t.bigint "filament_id", null: false
     t.bigint "printer_id", null: false
-    t.string "print_quality"
+    t.float "print_quality"
     t.index ["color_id"], name: "index_preset_requests_on_color_id"
     t.index ["filament_id"], name: "index_preset_requests_on_filament_id"
     t.index ["printer_id"], name: "index_preset_requests_on_printer_id"
+    t.index ["request_id", "color_id", "filament_id", "printer_id", "print_quality"], name: "index_preset_requests_uniqueness", unique: true
     t.index ["request_id"], name: "index_preset_requests_on_request_id"
   end
 
@@ -115,7 +116,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_17_183201) do
     t.bigint "color_id", null: false
     t.bigint "filament_id", null: false
     t.bigint "user_id", null: false
-    t.string "print_quality"
+    t.float "print_quality"
     t.index ["color_id"], name: "index_presets_on_color_id"
     t.index ["filament_id"], name: "index_presets_on_filament_id"
     t.index ["user_id"], name: "index_presets_on_user_id"

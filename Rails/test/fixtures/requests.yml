@@ -4,9 +4,9 @@
 # model remove the "{}" from the fixture names and add the columns immediately
 # below each fixture, per the syntax in the comments below
 #
-one: {
+request_one: {
   id: 1,
-  user_id: 1 ,
+  user_id: 1,
   name: "Test Request",
   budget: 100,
   comment: "Test Comments",
@@ -14,9 +14,10 @@ one: {
   created_at: "2021-01-01",
   updated_at: "2021-01-01"
 }
+
 # column: value
 #
-two: {
+request_two: {
   id: 2,
   user_id: 2,
   name: "Test Request 2",
@@ -27,3 +28,13 @@ two: {
   updated_at: "2021-01-02"
 }
 # column: value
+request_three: {
+  id: 3,
+  user_id: 1,
+  name: "Test Request 3",
+  budget: 150,
+  comment: "Test Comments 3",
+  target_date: "2021-12-31",
+  created_at: "2021-01-03",
+  updated_at: "2021-01-03"
+}

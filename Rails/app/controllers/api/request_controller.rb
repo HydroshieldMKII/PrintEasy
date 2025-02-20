@@ -1,5 +1,5 @@
-class Api::RequestController < ApplicationController
-  before_action :authenticate_user!
+class Api::RequestController < AuthenticatedController
+  rescue_from ActiveRecord::RecordNotUnique, with: :handle_record_not_unique
   before_action :index_params, only: :index
   before_action :show_params, only: :show
   before_action :create_params, only: :create
@@ -9,6 +9,7 @@ class Api::RequestController < ApplicationController
   # GET /requests
   def index
     @requests = fetch_requests
+    
     render_request(@requests)
   end
 
@@ -34,19 +35,28 @@ class Api::RequestController < ApplicationController
   # PATCH/PUT /requests/:id
   def update
     @request = Request.includes(:user, preset_requests: %i[color filament printer]).find(params[:id])
-
-    if update_params[:target_date].to_date.strftime("%a, %d %b %Y") != @request.target_date && update_params[:target_date].to_date < Date.today
-      # debugger
-      render json: { request: {}, errors: { target_date: ['must be greater than today'] } }, status: :unprocessable_entity
-      return
-    end
+    valid = true
     
     if @request.user != current_user
       render json: { request: {}, errors: { request: ['You are not allowed to update this request'] } }, status: :forbidden
       return
     end
 
-    if @request.update(update_params)
+    if update_params[:target_date].present? && update_params[:target_date].to_date.strftime("%a, %d %b %Y") != @request.target_date && update_params[:target_date].to_date < Date.today
+      # debugger
+      valid = false
+      @request.errors.add(:target_date, 'must be greater than today')
+    end
+
+    #Check if the request has any offers accepted
+    if @request.has_offer_accepted?
+      valid = false
+      @request.errors.add(:base, 'Cannot update request with accepted offers')
+    end
+
+    update_params.delete(:preset_requests_attributes) if @request.has_offer_made?
+
+    if valid && @request.update(update_params)
       render_request(@request)
     else
       # debugger
@@ -63,6 +73,11 @@ class Api::RequestController < ApplicationController
       return
     end
 
+    if @request.has_offer_accepted?
+      render json: { request: {}, errors: { request: ['Cannot delete request with accepted offers'] } }, status: :unprocessable_entity
+      return
+    end
+
     @request.destroy
     render json: { request: @request, errors: {} }
   end
@@ -70,19 +85,27 @@ class Api::RequestController < ApplicationController
   private
 
   def fetch_requests
-    requests = case params[:type]
-               when 'all'
-                 Request.includes(:user, preset_requests: %i[color filament printer]).where.not(user: current_user)
-               when 'my'
-                 Request.includes(:user, preset_requests: %i[color filament printer]).where(user: current_user)
-               else
-                 Request.none
-               end
-
+    case params[:type]
+    when 'all'
+      # Exclude requests that have any accepted offers.
+      accepted_request_ids = Request.joins(offers: { order: :order_status })
+                                    .where(order_status: { status_name: 'Accepted' })
+                                    .select(:id)
+  
+      requests = Request.includes(:user, preset_requests: %i[color filament printer])
+                        .where.not(user: current_user)
+                        .where.not(id: accepted_request_ids)
+    when 'my'
+      requests = Request.includes(:user, preset_requests: %i[color filament printer])
+                        .where(user: current_user)
+    else
+      return []
+    end
+  
     requests = requests.where("name LIKE ?", "%#{params[:search]}%") if params[:search].present?
     requests = filter_requests(requests)
     requests = sort_requests(requests)
-
+  
     requests
   end
 
@@ -106,9 +129,9 @@ class Api::RequestController < ApplicationController
             }
           }
         },
-        methods: :stl_file_url
+        methods: %i[stl_file_url has_offer_made? has_offer_accepted?]
       ),
-      errors: {}
+      errors: resource.respond_to?(:errors) ? resource.errors : {}
     }, status: status
   end
 
@@ -155,10 +178,15 @@ class Api::RequestController < ApplicationController
 
   def stl_file_extension?
     if params[:request][:stl_file].present?
-      extension = File.extname(params[:request][:stl_file].tempfile.path)
+      extension = File.extname(params[:request][:stl_file]&.path)
       unless extension == '.stl'
         render json: { request: {}, errors: { stl_file: ['must have .stl extension'] } }, status: :unprocessable_entity
       end
     end
+  end
+
+  def handle_record_not_unique(exception)
+    render json: { request: {}, errors: { preset_requests: ['Duplicate preset exists in the request'] } },
+           status: :unprocessable_entity
   end
 end

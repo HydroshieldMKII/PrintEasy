@@ -50,6 +50,9 @@ export class RequestsComponent {
 
   get currentRequests(): RequestModel[] {
     console.debug('Current requests:', this.activeTab === 'my' ? this.myRequests : this.requests);
+    console.debug('Active tab:', this.activeTab);
+    console.debug('My requests:', this.myRequests);
+    console.debug('Requests:', this.requests);
     return this.activeTab === 'my' ? this.myRequests || [] : this.requests || [];
   }
 
