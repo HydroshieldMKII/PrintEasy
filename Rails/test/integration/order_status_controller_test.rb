@@ -262,7 +262,7 @@ class OrderStatusControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should not update -> not owner" do
-    sign_in users(:three)
+    sign_in users(:one)
     assert_difference('OrderStatus.count', 0) do
       patch api_order_status_path(1), params: { status_name: 'Printing', comment: "Order Status one" }, as: :json
     end
@@ -288,10 +288,172 @@ class OrderStatusControllerTest < ActionDispatch::IntegrationTest
   end
 
   
+  test "can update while Accepted" do
+    sign_in users(:two)
+    assert_difference('OrderStatus.count', 0) do
+      patch api_order_status_path(1), params: { comment: "this is changed" }, as: :json
+    end
 
-  #TODO: test "should update" do
-  #
-  #TODO: test "should destroy" do
+    assert_response :ok
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+    createdOS =  @parsed_response["order_status"]
+    assert_equal 1, createdOS["order_id"]
+    assert_equal "this is changed", createdOS["comment"]
+    assert_equal "Accepted", createdOS["status_name"]
+    assert_empty @parsed_response["errors"]
+  end
+
+  test "can update while Printing" do
+    sign_in users(:two)
+    assert_difference('OrderStatus.count', 0) do
+      patch api_order_status_path(3), params: { comment: "this is changed" }, as: :json
+    end
+
+    assert_response :ok
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+    createdOS =  @parsed_response["order_status"]
+    assert_equal 2, createdOS["order_id"]
+    assert_equal "this is changed", createdOS["comment"]
+    assert_equal "Printing", createdOS["status_name"]
+    assert_empty @parsed_response["errors"]
+  end
+
+  test "can update while Printed" do
+    sign_in users(:two)
+    assert_difference('OrderStatus.count', 0) do
+      patch api_order_status_path(6), params: { comment: "this is changed" }, as: :json
+    end
+
+    assert_response :ok
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+    createdOS =  @parsed_response["order_status"]
+    assert_equal 3, createdOS["order_id"]
+    assert_equal "this is changed", createdOS["comment"]
+    assert_equal "Printed", createdOS["status_name"]
+    assert_empty @parsed_response["errors"]
+  end
+
+  test "can't update while Shipped" do
+    sign_in users(:two)
+    assert_difference('OrderStatus.count', 0) do
+      patch api_order_status_path(10), params: { comment: "this is changed" }, as: :json
+    end
+
+    assert_response :bad_request
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+    assert_equal ["Cannot change status of a frozen order"], @parsed_response["errors"]["order_status"]
+  end
+
+  test "can't update while Arrived" do
+    sign_in users(:two)
+    assert_difference('OrderStatus.count', 0) do
+      patch api_order_status_path(15), params: { comment: "this is changed" }, as: :json
+    end
+
+    assert_response :bad_request
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+    assert_equal ["Cannot change status of a frozen order"], @parsed_response["errors"]["order_status"]
+  end
+
+  test "can't update while Cancelled" do
+    sign_in users(:two)
+    assert_difference('OrderStatus.count', 0) do
+      patch api_order_status_path(17), params: { comment: "this is changed" }, as: :json
+    end
+
+    assert_response :bad_request
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+    assert_equal ["Cannot change status of a frozen order"], @parsed_response["errors"]["order_status"]
+  end
+
+  # DESTROY
+  
+  test "should not destroy -> not signed in" do
+    assert_difference('OrderStatus.count', 0) do
+      delete api_order_status_path(1), as: :json
+    end
+
+    assert_response :unauthorized
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+    assert_equal ["You are not authorized to delete this order status"], @parsed_response["errors"]["order_status"]
+  end
+
+  test "should not destroy -> not found" do
+    sign_in users(:two)
+
+    assert_difference('OrderStatus.count', 0) do
+      delete api_order_status_path(999), as: :json
+    end
+
+    assert_response :not_found
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+    assert_equal ["Order status not found"], @parsed_response["errors"]["order_status"]
+  end
+
+  test "should not destroy -> not owner" do
+    sign_in users(:one)
+    assert_difference('OrderStatus.count', 0) do
+      delete api_order_status_path(1), as: :json
+    end
+
+    assert_response :unauthorized
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+    assert_equal ["You are not authorized to delete this order status"], @parsed_response["errors"]["order_status"]
+  end
+
+  
+  test "destroy while Accepted" do
+    shouldNotDestroyOrderStatus(users(:two), 1)
+  end
+
+  test "destroy while Printing" do
+    shouldNotDestroyOrderStatus(users(:two), 2)
+    shouldDestroyOrderStatus(users(:two), order_status(:three))
+  end
+
+  test "destroy while Printed" do
+    shouldNotDestroyOrderStatus(users(:two), 4)
+    shouldDestroyOrderStatus(users(:two), order_status(:five))
+    shouldDestroyOrderStatus(users(:two), order_status(:six))
+  end
+
+  test "destroy while Shipped" do
+    shouldNotDestroyOrderStatus(users(:two), 7)
+    shouldNotDestroyOrderStatus(users(:two), 8)
+    shouldNotDestroyOrderStatus(users(:two), 9)
+    shouldNotDestroyOrderStatus(users(:two), 10)
+  end
+
+  test "destroy while Arrived" do
+    shouldNotDestroyOrderStatus(users(:two), 11)
+    shouldNotDestroyOrderStatus(users(:two), 12)
+    shouldNotDestroyOrderStatus(users(:two), 13)
+    shouldNotDestroyOrderStatus(users(:two), 14)
+    shouldNotDestroyOrderStatus(users(:two), 15)
+  end
+
+  test "destroy while Cancelled" do
+    shouldNotDestroyOrderStatus(users(:two), 16)
+    shouldNotDestroyOrderStatus(users(:two), 17)
+  end
 
   private
 
@@ -330,5 +492,37 @@ class OrderStatusControllerTest < ActionDispatch::IntegrationTest
     if !@parsed_response["errors"]["status_name"].nil?
       assert_equal ["Invalid transition from #{from} to #{to}"], @parsed_response["errors"]["status_name"]
     end
+  end
+
+  def shouldDestroyOrderStatus(as, order_status)
+    sign_in as
+
+    assert_difference('OrderStatus.count', -1) do
+      delete api_order_status_path(order_status.id), as: :json
+    end
+
+    assert_response :ok
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+    assert_equal order_status.id, @parsed_response["order_status"]["id"]
+    assert_equal order_status.order_id, @parsed_response["order_status"]["order_id"]
+    assert_equal order_status.status_name, @parsed_response["order_status"]["status_name"]
+    assert_equal order_status.comment, @parsed_response["order_status"]["comment"]
+    assert_empty @parsed_response["errors"]
+  end
+
+  def shouldNotDestroyOrderStatus(as, order_status_id)
+    sign_in as
+
+    assert_difference('OrderStatus.count', 0) do
+      delete api_order_status_path(order_status_id), as: :json
+    end
+
+    assert_response :bad_request
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+    assert_includes ["Cannot delete the status", "Cannot change status of a frozen order"], @parsed_response["errors"]["order_status"][0]
   end
 end

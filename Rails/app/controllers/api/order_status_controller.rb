@@ -31,7 +31,7 @@ class Api::OrderStatusController < ApplicationController
         end
 
     rescue OrderStatus::OrderStatusFrozenError => e
-        render json: { errors: e.as_json }, status: :bad_request
+        render json: { errors: { order_status: [e.to_s]}.as_json }, status: :bad_request
     end
 
     def create
@@ -87,9 +87,9 @@ class Api::OrderStatusController < ApplicationController
             render json: { errors: {order_status: ['You are not authorized to delete this order status']} }, status: :unauthorized
         end
     rescue OrderStatus::CannotDestroyStatusError => e
-        render json: { errors: e.as_json }, status: :bad_request
+        render json: { errors: { order_status: [e.to_s]}.as_json }, status: :bad_request
     rescue OrderStatus::OrderStatusFrozenError => e
-        render json: { errors: e.as_json }, status: :bad_request
+        render json: { errors: { order_status: [e.to_s]}.as_json }, status: :bad_request
     end
 
     private
