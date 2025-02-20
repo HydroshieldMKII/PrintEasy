@@ -8,7 +8,7 @@ class Request < ApplicationRecord
   validates :name, presence: true, length: { in: 3..30 }
   validates :budget, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 10_000 }
   validates :comment, length: { maximum: 200 }
-  validates :target_date, presence: true, comparison: { greater_than: Date.today }
+  validates :target_date, presence: true, comparison: { greater_than: Date.today }, on: :create
 
   has_one_attached :stl_file
   validates :stl_file, presence: true

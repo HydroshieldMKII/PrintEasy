@@ -33,6 +33,12 @@ class Api::RequestController < ApplicationController
   # PATCH/PUT /requests/:id
   def update
     @request = Request.includes(:user, preset_requests: %i[color filament printer]).find(params[:id])
+
+    if update_params[:target_date].to_date.strftime("%a, %d %b %Y") != @request.target_date && update_params[:target_date].to_date < Date.today
+      # debugger
+      render json: { request: {}, errors: { target_date: ['must be greater than today'] } }, status: :unprocessable_entity
+      return
+    end
     
     if @request.user != current_user
       render json: { request: {}, errors: { request: ['You are not allowed to update this request'] } }, status: :forbidden
@@ -42,7 +48,7 @@ class Api::RequestController < ApplicationController
     if @request.update(update_params)
       render_request(@request)
     else
-      debugger
+      # debugger
       render json: { request: {}, errors: @request.errors }, status: :unprocessable_entity
     end
   end

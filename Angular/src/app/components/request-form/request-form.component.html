@@ -61,20 +61,29 @@
           <label for="comment">Special comment about the request</label>
         </p-floatlabel>
 
-        <p-floatlabel variant="in">
-          <div class="w-full">
-            <p-datepicker
-              id="targetDate"
-              formControlName="targetDate"
-              [showIcon]="true"
-              inputId="buttondisplay"
-              [showOnFocus]="false"
-              class="w-full"
-              dateFormat="yy-mm-dd"
-            ></p-datepicker>
-            <label for="targetDate" class="block font-semibold">Target Date</label>
-          </div>
-        </p-floatlabel>
+        <div class="form-filed">
+          <p-floatlabel variant="in">
+            <div class="w-full">
+              <p-datepicker
+                id="targetDate"
+                formControlName="targetDate"
+                [showIcon]="true"
+                inputId="buttondisplay"
+                [showOnFocus]="false"
+                class="w-full"
+                dateFormat="yy-mm-dd"
+              ></p-datepicker>
+              <label for="targetDate" class="block font-semibold">Target Date</label>
+            </div>
+          </p-floatlabel>
+        </div>
+
+        <p-message
+          *ngIf="form.get('targetDate')?.invalid && (form.get('targetDate')?.dirty || form.get('targetDate')?.touched)"
+          severity="error"
+          variant="simple"
+          size="small"
+        >Target Date is required</p-message>
       </div>
 
       <!-- Right Section: STL Preview -->

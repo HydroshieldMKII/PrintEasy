@@ -101,7 +101,7 @@ export class RequestFormComponent implements OnInit {
           this.form = this.fb.group({
             name: [{ value: this.request.name, disabled: this.isViewMode }, Validators.required],
             budget: [{ value: this.request.budget, disabled: this.isViewMode }, Validators.required],
-            targetDate: [{ value: this.request.targetDate, disabled: this.isViewMode }, Validators.required],
+            targetDate: [{ value: new Date(this.request.targetDate).toISOString().substring(0, 10), disabled: this.isViewMode }, [Validators.required, this.dateValidator]],
             comment: [{ value: this.request.comment, disabled: this.isViewMode }]
           });
 
@@ -149,13 +149,11 @@ export class RequestFormComponent implements OnInit {
   saveChanges(): void {
     console.log('Request saved:', this.request);
 
-    // 1. Bind updated form values to the request object
     this.request.name = this.form.value.name;
     this.request.budget = this.form.value.budget;
     this.request.targetDate = this.form.value.targetDate;
     this.request.comment = this.form.value.comment;
 
-    // 2. Build the FormData payload
     const contestFormData = new FormData();
     contestFormData.append('request[name]', this.request.name);
     contestFormData.append('request[budget]', this.request.budget);
@@ -167,10 +165,8 @@ export class RequestFormComponent implements OnInit {
     }
 
     let hasError = false;
-    // We'll use a single counter for nested preset requests (both remaining and those to delete)
     let presetIndex = 0;
 
-    // 3a. Process the remaining (non-deleted) presets in the request
     if (this.request.presets && this.request.presets.length > 0) {
       this.request.presets.forEach((preset: any) => {
         const printer = this.printers.find((p: any) => p.label === preset.printerModel);
@@ -209,10 +205,8 @@ export class RequestFormComponent implements OnInit {
       });
     }
 
-    // 3b. Process presets marked for deletion (stored in presetToDelete)
     if (this.presetToDelete && this.presetToDelete.length > 0) {
       this.presetToDelete.forEach((preset: any) => {
-        // Only process if the preset has an id (i.e. it exists on the server)
         if (preset.id) {
           contestFormData.append(
             `request[preset_requests_attributes][${presetIndex}][id]`,
@@ -231,17 +225,16 @@ export class RequestFormComponent implements OnInit {
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
-        detail: 'Invalid preset information. Please fix or remove invalid presets before saving.'
+        detail: 'Invalid preset information. Field all the preset and make sure they are unique.'
       });
       return;
     }
 
-    // Debug: Log all entries of the FormData
+    // Debug
     for (const [key, value] of contestFormData.entries()) {
       console.log(`${key}: ${value}`);
     }
 
-    // 4. Submit the update request
     const obs = this.requestService.updateRequest(this.request.id, contestFormData);
     obs.subscribe(response => {
       console.log('Response:', response);
@@ -384,5 +377,4 @@ export class RequestFormComponent implements OnInit {
     const colorValid = !!this.colors.find((c: any) => c.label === preset.color);
     return printerValid && filamentValid && colorValid && preset.printQuality;
   }
-
 }
