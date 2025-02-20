@@ -254,7 +254,7 @@ class Api::RequestsControllerTest < ActionDispatch::IntegrationTest
     end
 
     p json_response
-    assert_equal "can't be blank", json_response['errors']['name']
+    assert_equal json_response['errors'], "can't be blank"
   end
 
 

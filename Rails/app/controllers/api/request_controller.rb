@@ -1,4 +1,4 @@
-class Api::RequestController < ApplicationController
+class Api::RequestController < AuthenticatedController
   before_action :authenticate_user!
   before_action :index_params, only: :index
   before_action :show_params, only: :show

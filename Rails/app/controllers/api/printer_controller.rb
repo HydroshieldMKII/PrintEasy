@@ -1,6 +1,4 @@
-class Api::PrinterController < ApplicationController
-    before_action :authenticate_user!
-
+class Api::PrinterController < AuthenticatedController
     def index
         @printers = Printer.all
         render json: @printers
