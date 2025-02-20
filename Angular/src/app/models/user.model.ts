@@ -11,6 +11,6 @@ export class UserModel {
         this.country = country;
         this.createdAt = createdAt;
         this.isAdmin = isAdmin;
-        debugger;
+        // debugger;
     }
 }
