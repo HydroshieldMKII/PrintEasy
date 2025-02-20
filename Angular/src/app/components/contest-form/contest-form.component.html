@@ -56,7 +56,7 @@
 
                 <p-floatlabel variant="in">
                   <p-datepicker [hourFormat]="'24'" [showTime]="true" size="large" formControlName="endDate"
-                    [showIcon]="true" inputId="buttondisplay" [showOnFocus]="false" class="w-full"
+                    [showIcon]="true" inputId="buttondisplay" [showOnFocus]="false"
                     dateFormat="yy-mm-dd"></p-datepicker>
                   <label for="endDate">Date de fin</label>
                 </p-floatlabel>
@@ -66,8 +66,10 @@
           </div>
 
           <div>
-            <div class="field col-12">
-              <img [src]="imageUrl" alt="" class="image-preview" />
+            <div [class]="noImagePreview">
+              <div class="field col-12" [class.visibility] = "noImagePreview ? 'hidden' : 'visible'">
+                <img [src]="imageUrl" alt="" class="image-preview" />
+              </div>
             </div>
 
             <!-- Upload de l'image -->

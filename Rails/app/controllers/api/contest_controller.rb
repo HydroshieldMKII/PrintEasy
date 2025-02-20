@@ -22,9 +22,6 @@ class Api::ContestController < ApplicationController
         else
             render json: {errors: @contest.errors.as_json}, status: :unprocessable_entity
         end
-
-        rescue ActionController::ParameterMissing => e
-            render json: {errors: {contest: ["param is missing or the value is empty: contest"]}}, status: :unprocessable_entity
     end
     
     def update
@@ -39,9 +36,6 @@ class Api::ContestController < ApplicationController
         else
             render json: {errors: "Contest not found"}, status: :not_found
         end
-
-        rescue ActionController::ParameterMissing => e
-            render json: {errors: {contest: ["param is missing or the value is empty: contest"]}}, status: :unprocessable_entity
     end
     
     def destroy
