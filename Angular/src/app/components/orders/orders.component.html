@@ -7,21 +7,26 @@
         <p-tabpanels>
             <p-tabpanel value="0">
                 <div style="display: flex; flex-direction: column; gap: 10px;" *ngIf="myOrders != []">
-                    <div *ngFor="let listmyorder of myOrders" style="display: flex; flex-direction: row; gap: 20px">
-                        <p>{{listmyorder.offer.request.name}}</p>
-                        <p>{{listmyorder.offer.printer_user.user.username}}</p>
+                    <div *ngFor="let order of myOrders" style="display: flex; flex-direction: row; gap: 20px">
+                        <p>{{order.offer.request.name}}</p>
+                        <p>{{order.offer.printer_user.user.username}}</p>
+                        <p-button
+                            icon="pi pi-arrow-right"
+                            title="See Details"
+                            routerLink="/orders/view/{{ order.id }}"
+                        ></p-button>
                     </div>
                 </div>
             </p-tabpanel>
             <p-tabpanel value="1">
                 <div style="display: flex; flex-direction: column; gap: 10px;" *ngIf="makeOrders != []">
-                    <div *ngFor="let makelistorder of makeOrders" style="display: flex; flex-direction: row; gap: 20px">
-                        <p>{{makelistorder.offer.request.name}}</p>
-                        <p>{{makelistorder.offer.printer_user.user.username}}</p>
+                    <div *ngFor="let order of makeOrders" style="display: flex; flex-direction: row; gap: 20px">
+                        <p>{{order.offer.request.name}}</p>
+                        <p>{{order.offer.printer_user.user.username}}</p>
                         <p-button
                             icon="pi pi-arrow-right"
                             title="See Details"
-                            routerLink="/orders/view/{{ makelistorder.id }}"
+                            routerLink="/orders/view/{{ order.id }}"
                         ></p-button>
                     </div>
                 </div>
