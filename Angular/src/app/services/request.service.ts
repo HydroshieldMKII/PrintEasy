@@ -148,4 +148,17 @@ export class RequestService {
             })
         );
     }
+
+    updateRequest(id: number, request: FormData): Observable<ApiResponseModel> {
+        return this.api.putRequest(`api/request/${id}`, {}, request).pipe(
+            map((response: ApiResponseModel) => {
+                if (response.status === 200) {
+                    this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Request updated successfully' });
+                } else {
+                    this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Request update failed' });
+                }
+                return response;
+            })
+        );
+    }
 }

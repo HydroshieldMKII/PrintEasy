@@ -3,6 +3,7 @@ class Api::RequestController < ApplicationController
   before_action :index_params, only: :index
   before_action :show_params, only: :show
   before_action :create_params, only: :create
+  before_action :update_params, only: :update
 
   # GET /requests
   def index
@@ -38,9 +39,10 @@ class Api::RequestController < ApplicationController
       return
     end
 
-    if @request.update(request_params)
+    if @request.update(update_params)
       render_request(@request)
     else
+      debugger
       render json: { request: {}, errors: @request.errors }, status: :unprocessable_entity
     end
   end
@@ -138,5 +140,9 @@ class Api::RequestController < ApplicationController
 
   def create_params
     params.require(:request).permit(:name, :comment, :target_date, :budget, :stl_file, preset_requests_attributes: %i[color_id filament_id printer_id print_quality])
+  end
+
+  def update_params
+    params.require(:request).permit(:name, :comment, :target_date, :budget, :stl_file, preset_requests_attributes: %i[id color_id filament_id printer_id print_quality])
   end
 end

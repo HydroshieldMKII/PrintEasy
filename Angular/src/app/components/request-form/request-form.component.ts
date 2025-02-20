@@ -6,7 +6,6 @@ import { DropdownModule } from 'primeng/dropdown';
 import { RequestService } from '../../services/request.service';
 import { ColorModel } from '../../models/color.model';
 import { PrinterModel } from '../../models/printer.model';
-import { PresetModel } from '../../models/preset.model';
 import { PresetService } from '../../services/preset.service';
 import { StlModelViewerModule } from 'angular-stl-model-viewer';
 import { FilamentModel } from '../../models/filament.model';
@@ -139,7 +138,72 @@ export class RequestFormComponent implements OnInit {
 
   saveChanges(): void {
     console.log('Request saved:', this.request);
-    this.router.navigate(['/requests']);
+
+    const contestFormData = new FormData();
+    contestFormData.append('request[name]', this.request.name);
+    contestFormData.append('request[budget]', this.request.budget);
+    contestFormData.append('request[target_date]', this.request.targetDate);
+    contestFormData.append('request[comment]', this.request.comment);
+
+    if (this.uploadedFile) {
+      contestFormData.append('request[stl_file]', this.uploadedFile);
+    }
+
+    let hasError = false;
+
+    if (this.request.presets.length > 0) {
+      this.request.presets.forEach((preset: any, index: number) => {
+        const printer = this.printers.find((p: any) => p.label === preset.printerModel);
+        const filament = this.filamentTypes.find((f: any) => f.label === preset.filamentType);
+        const color = this.colors.find((c: any) => c.label === preset.color);
+
+        if (printer && filament && color && preset.printQuality) {
+          contestFormData.append(
+            `request[preset_requests_attributes][${index}][id]`,
+            preset.id.toString()
+          );
+
+          contestFormData.append(
+            `request[preset_requests_attributes][${index}][printer_id]`,
+            printer.id.toString()
+          );
+          contestFormData.append(
+            `request[preset_requests_attributes][${index}][filament_id]`,
+            filament.id.toString()
+          );
+          contestFormData.append(
+            `request[preset_requests_attributes][${index}][color_id]`,
+            color.id.toString()
+          );
+          contestFormData.append(
+            `request[preset_requests_attributes][${index}][print_quality]`,
+            preset.printQuality
+          );
+        } else {
+          hasError = true;
+          console.error('Invalid preset:', printer, filament, color, preset.printQuality);
+        }
+      });
+    }
+
+    if (hasError) {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid preset information. Please clear or complete your recommended preset before saving.' });
+      return;
+    }
+
+    for (const [key, value] of contestFormData.entries()) {
+      console.log(`${key}: ${value}`);
+    }
+
+    const obs = this.requestService.updateRequest(this.request.id, contestFormData);
+    obs.subscribe(response => {
+      if (this.isEditMode && response.status === 200) {
+        this.router.navigate(['/requests/view', this.request.id]);
+      } else {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Request update failed' });
+      }
+    });
+
   }
 
   deleteRequest(): void {
@@ -164,7 +228,7 @@ export class RequestFormComponent implements OnInit {
   }
 
   addPreset(): void {
-    this.request.presets.push({ printer: '', filamentType: '', color: '', printQuality: '0.12' });
+    this.request.presets.push({ printer: '', filamentType: '', color: '', printQuality: '0.16' });
   }
 
   createRequest() {
@@ -270,7 +334,6 @@ export class RequestFormComponent implements OnInit {
   }
 
   isPresetValid(preset: any): boolean {
-    // Check that a valid printer, filament, and color are selected and that printQuality exists.
     const printerValid = !!this.printers.find((p: any) => p.label === preset.printerModel);
     const filamentValid = !!this.filamentTypes.find((f: any) => f.label === preset.filamentType);
     const colorValid = !!this.colors.find((c: any) => c.label === preset.color);
@@ -278,4 +341,3 @@ export class RequestFormComponent implements OnInit {
   }
 
 }
-
