@@ -119,8 +119,6 @@ class Api::ContestControllerTest < ActionDispatch::IntegrationTest
             get api_contest_url(0)
         end
 
-        p response.body
-
         assert_nothing_raised do
             @parsed_response = JSON.parse(response.body)
         end

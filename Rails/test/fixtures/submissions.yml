@@ -1,13 +1,15 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  user: one
-  contest: one
-  name: MyString
+one: {
+  user: one,
+  contest: one,
+  name: MyString,
   description: MyString
+}
 
-two:
-  user: two
-  contest: two
-  name: MyString
+two: {
+  user: two,
+  contest: two,
+  name: MyString,
   description: MyString
+}

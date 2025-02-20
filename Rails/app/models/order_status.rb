@@ -9,10 +9,10 @@ class OrderStatus < ApplicationRecord
   validates :status_name, presence: true
   validates :order_id, presence: true
   validate :can_transition, on: :create
+  validate :state_valid?
   before_destroy :can_destroy, prepend: true
   before_destroy :is_frozen?, prepend: true
   before_update :is_frozen?, prepend: true
-
 
   StateMachines::Machine.ignore_method_conflicts = true
 
@@ -114,5 +114,12 @@ class OrderStatus < ApplicationRecord
       raise OrderStatusFrozenError, "Cannot change status of a frozen order"
     end
     return true
+  end
+
+  def state_valid?
+    states = self.class.state_machine.states.map(&:name)
+    if !states.include?(self.status_name)
+      errors.add(:status_name, "Invalid status")
+    end
   end
 end

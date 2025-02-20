@@ -1,11 +1,15 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  printer: 1
-  user: 1
+one: {
+  id: 1,
+  printer_id: 1,
+  user_id: 1,
   acquired_date: 2025-02-14
+}
 
-two:
-  printer: 2
-  user: 2
+two: {
+  id: 2,
+  printer_id: 2,
+  user_id: 2,
   acquired_date: 2025-02-14
+}

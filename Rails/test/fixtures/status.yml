@@ -1,0 +1,23 @@
+one: {
+  name: "Accepted"
+}
+
+two: {
+  name: "Printing"
+}
+
+three: {
+  name: "Printed"
+}
+
+four: {
+  name: "Shipped"
+}
+
+five: {
+  name: "Arrived"
+}
+
+six: {
+  name: "Cancelled"
+}
