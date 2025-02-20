@@ -5,7 +5,7 @@ class Api::ContestController < ApplicationController
     end
 
     def show
-        @contest = Contest.find(params[:id])
+        @contest = Contest.find(params[:id]) rescue nil
 
         if @contest
             render json: {contest: @contest.as_json(methods: :image_url), errors: {}}, status: :ok
@@ -18,30 +18,41 @@ class Api::ContestController < ApplicationController
         @contest = Contest.new(contest_params)
         
         if @contest.save
-            render json: {contest: @contest, errors: {}}, status: :created
+            render json: {contest: @contest.as_json(methods: :image_url), errors: {}}, status: :created
         else
             render json: {errors: @contest.errors.as_json}, status: :unprocessable_entity
         end
+
+        rescue ActionController::ParameterMissing => e
+            render json: {errors: {contest: ["param is missing or the value is empty: contest"]}}, status: :unprocessable_entity
     end
     
     def update
         @contest = Contest.find(params[:id]) rescue nil
 
-        if @contest.deleted? || @contest.nil?
+        if !@contest.nil?
+            if @contest.update(contest_params)
+                render json: {contest: @contest.as_json(methods: :image_url), errors: {}}, status: :ok
+            else
+                render json: {errors: @contest.errors.as_json}, status: :unprocessable_entity
+            end
+        else
             render json: {errors: "Contest not found"}, status: :not_found
         end
 
-        if @contest.update(contest_params)
-            render json: {contest: @contest.as_json(methods: :image_url), errors: {}}, status: :ok
-        else
-            render json: {errors: @contest.errors.as_json}, status: :unprocessable_entity
-        end
+        rescue ActionController::ParameterMissing => e
+            render json: {errors: {contest: ["param is missing or the value is empty: contest"]}}, status: :unprocessable_entity
     end
     
     def destroy
-        @contest = Contest.find(params[:id])
-        @contest.soft_delete
-        render json: {contest: @contest, errors: {}}, status: :ok
+        @contest = Contest.find(params[:id]) rescue nil
+
+        if !@contest.nil?
+            @contest.soft_delete
+            render json: {contest: @contest, errors: {}}, status: :ok
+        else
+            render json: {errors: "Contest not found"}, status: :not_found
+        end
     end
     
     private

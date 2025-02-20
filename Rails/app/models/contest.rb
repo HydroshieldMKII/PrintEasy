@@ -1,5 +1,5 @@
 class Contest < ApplicationRecord
-    before_validation :set_start_at, on: [:create, :update]
+    # before_validation :set_start_at, on: [:create, :update]
 
     default_scope { where(deleted_at: nil) }
 
@@ -10,7 +10,8 @@ class Contest < ApplicationRecord
     validates :theme, presence: true, length: { maximum: 30 }
     validates :description, length: { maximum: 200 }
     validates :submission_limit, presence: true, numericality: { only_integer: true, greater_than: 0, less_than: 30 }
-    # validates :image, presence: true
+    validates :start_at, presence: true
+    validates :image, presence: true
 
     validate :past?, on: [:create, :update]
 
@@ -32,29 +33,30 @@ class Contest < ApplicationRecord
 
     private
 
-    def set_start_at
-        if self.start_at.nil?
-            self.start_at = Time.now
-        end
-    end
+    # def set_start_at
+    #     if self.start_at.nil?
+    #         self.start_at = Time.now
+    #     end
+    # end
 
     def start_at_has_changed?
         if !self.start_at_was.nil?
-            self.start_at_was.change(sec: 0) != self.start_at.change(sec: 0)
+            return self.start_at_was.change(sec: 0) != self.start_at.change(sec: 0)
         end
+
+        return false
     end
 
     def end_at_has_changed?
         if !self.end_at.nil? && !self.end_at_was.nil?
-            self.end_at_was.change(sec: 0) != self.end_at.change(sec: 0)
+            return self.end_at_was.change(sec: 0) != self.end_at.change(sec: 0)
         end
+
+        return false
     end
 
     def past?
-        debugger
-        return if deleted_at_changed? || (!start_at_has_changed? && !end_at_has_changed?)
-
-        debugger
+        return if deleted_at_changed? || (start_at_has_changed? && end_at_has_changed?) || start_at.nil?
 
         if self.start_at < Time.now.change(sec: 0)
             errors.add(:start_at, "must be in the future")

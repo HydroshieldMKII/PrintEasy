@@ -1,0 +1,9 @@
+first_image_attachment:
+  name: image
+  record: contest_one (Contest)
+  blob: first_image_blob
+
+second_image_attachment:
+  name: image
+  record: contest_two (Contest)
+  blob: first_image_blob
