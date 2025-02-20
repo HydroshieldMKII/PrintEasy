@@ -1,9 +1,11 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  id: 1
-  model: MyString
+one: {
+  id: 1,
+  model: "Bambulab",
+}
 
-two:
-  id: 2
-  model: MyString
+two: {
+  id: 2,
+  model: "Creality",
+}
