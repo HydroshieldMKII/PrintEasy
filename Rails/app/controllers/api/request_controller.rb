@@ -85,7 +85,7 @@ class Api::RequestController < ApplicationController
         except: %i[user_id created_at updated_at],
         include: {
           preset_requests: {
-            except: %i[id request_id color_id filament_id printer_id],
+            except: %i[request_id color_id filament_id printer_id],
             include: {
               color: { only: %i[id name] },
               filament: { only: %i[id name] },
@@ -143,6 +143,6 @@ class Api::RequestController < ApplicationController
   end
 
   def update_params
-    params.require(:request).permit(:name, :comment, :target_date, :budget, :stl_file, preset_requests_attributes: %i[id color_id filament_id printer_id print_quality])
+    params.require(:request).permit(:name, :comment, :target_date, :budget, :stl_file, preset_requests_attributes: %i[id color_id filament_id printer_id print_quality _destroy])
   end
 end

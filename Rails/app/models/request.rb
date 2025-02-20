@@ -2,7 +2,7 @@ class Request < ApplicationRecord
   belongs_to :user
   has_many :offers, dependent: :destroy
   has_many :preset_requests, dependent: :destroy
-  accepts_nested_attributes_for :preset_requests
+  accepts_nested_attributes_for :preset_requests, allow_destroy: true
 
   validates :user_id, presence: true
   validates :name, presence: true, length: { in: 3..30 }

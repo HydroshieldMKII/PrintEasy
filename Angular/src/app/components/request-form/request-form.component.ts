@@ -120,7 +120,14 @@ export class RequestFormComponent implements OnInit {
   }
 
   removePreset(index: number): void {
-    this.request.presets.splice(index, 1);
+    const preset = this.request.presets[index];
+    if (!preset.id) {
+      this.request.presets.splice(index, 1);
+      return;
+    }
+
+    preset._destroy = true;
+    this.request.presets = this.request.presets.filter((p: any) => !p._destroy);
   }
 
   onFileUpload(event: FileSelectEvent): void {
@@ -138,6 +145,12 @@ export class RequestFormComponent implements OnInit {
 
   saveChanges(): void {
     console.log('Request saved:', this.request);
+
+    //bind new form values to request object
+    this.request.name = this.form.value.name;
+    this.request.budget = this.form.value.budget;
+    this.request.targetDate = this.form.value.targetDate;
+    this.request.comment = this.form.value.comment;
 
     const contestFormData = new FormData();
     contestFormData.append('request[name]', this.request.name);
@@ -203,7 +216,6 @@ export class RequestFormComponent implements OnInit {
         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Request update failed' });
       }
     });
-
   }
 
   deleteRequest(): void {

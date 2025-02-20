@@ -61,6 +61,7 @@ export class RequestService {
 
                     const presets = (request?.['preset_requests'] as any[]).map((preset: any) => {
                         return new PresetModel(
+                            preset?.['id'],
                             preset?.['print_quality'],
                             preset?.['color']?.['name'],
                             preset?.['filament']?.['name'],
@@ -98,6 +99,7 @@ export class RequestService {
 
                         const presets = (request?.['preset_requests'] as any[]).map((preset: any) => {
                             return new PresetModel(
+                                preset?.['id'],
                                 preset?.['print_quality'],
                                 preset?.['color']?.['name'],
                                 preset?.['filament']?.['name'],
