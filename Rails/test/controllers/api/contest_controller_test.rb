@@ -160,7 +160,7 @@ class Api::ContestControllerTest < ActionDispatch::IntegrationTest
         end
 
         assert_response :unprocessable_entity
-        assert_equal ["param is missing or the value is empty: contest"], @parsed_response["errors"]["contest"]
+        assert_equal ["param is missing or the value is empty: contest"], @parsed_response["errors"]["base"]
     end
 
     test "should not create contest -> no theme" do
@@ -227,7 +227,7 @@ class Api::ContestControllerTest < ActionDispatch::IntegrationTest
         end
 
         assert_response :unprocessable_entity
-        assert_equal ["param is missing or the value is empty: contest"], @parsed_response["errors"]["contest"]
+        assert_equal ["param is missing or the value is empty: contest"], @parsed_response["errors"]["base"]
     end
 
     test "should not update contest -> theme empty" do

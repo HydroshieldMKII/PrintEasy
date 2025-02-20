@@ -24,7 +24,6 @@ export class ContestFormComponent {
   noImagePreview: string = "image-preview-container";
   currentStartDate: Date = new Date();
   currentEndDate: Date | null = null;
-  
 
   constructor(private fb: FormBuilder, private route: ActivatedRoute) {
     this.contestForm = this.fb.group({
