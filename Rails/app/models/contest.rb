@@ -40,7 +40,7 @@ class Contest < ApplicationRecord
     # end
 
     def start_at_has_changed?
-        if !self.start_at_was.nil?
+        if !self.start_at_was.nil? && !self.start_at.nil?
             return self.start_at_was.change(sec: 0) != self.start_at.change(sec: 0)
         end
 
