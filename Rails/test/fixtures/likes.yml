@@ -1,9 +1,11 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  user: 1
+one: {
+  user: 1,
   submission: 1
+}
 
-two:
-  user: 2
+two: {
+  user: 2,
   submission: 2
+}

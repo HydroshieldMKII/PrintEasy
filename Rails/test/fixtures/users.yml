@@ -18,4 +18,11 @@ two: {
   encrypted_password: <%= Devise::Encryptor.digest(User, 'password') %>,
   country_id: 2
 }
+
+three: {
+  id: 3,
+  username: 'Jane Doe',
+  encrypted_password: <%= Devise::Encryptor.digest(User, 'password') %>,
+  country_id: 2
+}
 # column: value
