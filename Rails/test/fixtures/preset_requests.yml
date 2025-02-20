@@ -10,7 +10,7 @@ one: {
   color_id: 1,
   filament_id: 1,
   printer_id: 1,
-  print_quality: "High",
+  print_quality: "0.1",
 }
 # column: value
 #
@@ -20,6 +20,6 @@ two: {
   color_id: 2,
   filament_id: 2,
   printer_id: 2,
-  print_quality: "Low",
+  print_quality: "0.2",
 }
 # column: value

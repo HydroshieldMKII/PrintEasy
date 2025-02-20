@@ -1,5 +1,5 @@
 class AddPrintQualityPreset < ActiveRecord::Migration[7.1]
   def change
-    add_column :presets, :print_quality, :string
+    add_column :presets, :print_quality, :float
   end
 end
