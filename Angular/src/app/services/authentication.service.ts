@@ -28,7 +28,7 @@ export class AuthService {
         const storedCurrentUser = JSON.parse(localStorage.getItem(this.CURRENT_USER_KEY) ?? 'null');
         console.log('Stored current user:', storedCurrentUser);
         if (storedCurrentUser) {
-            this._currentUser = new UserModel(storedCurrentUser.id, storedCurrentUser.username, storedCurrentUser.country, storedCurrentUser.createdAt, storedCurrentUser.profile_picture_url, storedCurrentUser.isAdmin);
+            this._currentUser = new UserModel(storedCurrentUser.id, storedCurrentUser.username, storedCurrentUser.country, storedCurrentUser.profile_picture_url, storedCurrentUser.createdAt, storedCurrentUser.isAdmin);
         }
     }
 
