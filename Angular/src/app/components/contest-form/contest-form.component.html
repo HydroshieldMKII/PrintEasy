@@ -17,14 +17,7 @@
               </div>
 
               <!-- Limite -->
-              <div class="field col-12 md:col-6">
-                <p-floatlabel variant="in">
-                  <p-inputnumber id="limit" formControlName="limit" [min]="1" [max]="30"
-                    [showButtons]="true"></p-inputnumber>
-                  <label for="limit" class="p-text-bold">Limite</label>
-                </p-floatlabel>
-                <p-message severity="error" variant="simple" size="small">La limite est requise</p-message>
-              </div>
+
             </div>
 
             <div>
@@ -54,20 +47,31 @@
                   </p-message>
                 </div>
 
-                <p-floatlabel variant="in">
-                  <p-datepicker [hourFormat]="'24'" [showTime]="true" size="large" formControlName="endDate"
-                    [showIcon]="true" inputId="buttondisplay" [showOnFocus]="false"
-                    dateFormat="yy-mm-dd"></p-datepicker>
-                  <label for="endDate">Date de fin</label>
-                </p-floatlabel>
+                <div class="field col-12">
+                  <p-floatlabel variant="in">
+                    <p-datepicker [hourFormat]="'24'" [showTime]="true" size="large" formControlName="endDate"
+                      [showIcon]="true" inputId="buttondisplay" [showOnFocus]="false"
+                      dateFormat="yy-mm-dd"></p-datepicker>
+                    <label for="endDate" class="center-label">Date de fin</label>
+                  </p-floatlabel>
+                </div>
+
+                <div class="">
+                  <p-floatlabel variant="in">
+                    <p-inputnumber id="limit" formControlName="limit" [min]="1" [max]="30"
+                      [showButtons]="true"></p-inputnumber>
+                    <label for="limit" class="p-text-bold">Limite</label>
+                  </p-floatlabel>
+                  <p-message severity="error" variant="simple" size="small">La limite est requise</p-message>
+                </div>
               </div>
 
             </div>
           </div>
 
-          <div>
+          <div class="field col-12">
             <div [class]="noImagePreview">
-              <div class="field col-12" [class.visibility] = "noImagePreview ? 'hidden' : 'visible'">
+              <div *ngIf="imageUrl">
                 <img [src]="imageUrl" alt="" class="image-preview" />
               </div>
             </div>
