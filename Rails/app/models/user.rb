@@ -5,6 +5,8 @@ class User < ApplicationRecord
   has_many :offers, dependent: :destroy
   has_many :printer_users, dependent: :destroy
 
+  has_one_attached :profile_picture
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
@@ -20,5 +22,9 @@ class User < ApplicationRecord
 
   def will_save_change_to_email?
     false
+  end
+
+  def profile_picture_url
+    Rails.application.routes.url_helpers.rails_blob_url(self.profile_picture, only_path: true) if self.profile_picture.attached?
   end
 end
