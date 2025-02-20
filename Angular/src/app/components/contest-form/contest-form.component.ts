@@ -24,7 +24,6 @@ export class ContestFormComponent {
   noImagePreview: string = "image-preview-container";
   currentStartDate: Date = new Date();
   currentEndDate: Date | null = null;
-  
 
   constructor(private fb: FormBuilder, private route: ActivatedRoute) {
     this.contestForm = this.fb.group({
@@ -49,7 +48,6 @@ export class ContestFormComponent {
             this.imageUrl = contest.image;
             this.noImagePreview = "";
             this.currentStartDate = new Date(contest.startAt);
-            console.log('start_at:', this.currentStartDate);
             this.currentEndDate = contest.endAt ? new Date(contest.endAt) : null;
 
             this.contestForm.patchValue({
@@ -59,7 +57,6 @@ export class ContestFormComponent {
               startDate: new Date(contest.startAt),
               endDate: contest.endAt ? new Date(contest.endAt) : null
             });
-            
           }
         });
       }

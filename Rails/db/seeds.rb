@@ -176,8 +176,7 @@ contest2 = Contest.create(
   description: "Create and submit your best 3D printed toys.",
   submission_limit: 5,
   deleted_at: Time.now,
-  start_at: Time.now,
-  end_at: Time.now + 30.days
+  start_at: Time.now
 )
 
 contest2.image.attach(
@@ -186,6 +185,38 @@ contest2.image.attach(
   content_type: "image/jpg"
 )
 contest2.save
+
+contest3 = Contest.create(
+  theme: "Best 3D Printed Jewelry",
+  description: "Create and submit your best 3D printed jewelry.",
+  submission_limit: 5,
+  start_at: Time.now
+)
+
+contest3.image.attach(
+  io: File.open(Rails.root.join("db/seeds/files/DariusSlayJunior.jpg")),
+  filename: "DariusSlayJunior.jpg",
+  content_type: "image/jpg"
+)
+
+contest3.save
+
+contest4 = Contest.create(
+  theme: "Best 3D Printed Home Decor",
+  description: "Create and submit your best 3D printed home decor.",
+  submission_limit: 5,
+  deleted_at: Time.now,
+  start_at: Time.now,
+  end_at: Time.now + 30.days
+)
+
+contest4.image.attach(
+  io: File.open(Rails.root.join("db/seeds/files/DariusSlayJunior.jpg")),
+  filename: "DariusSlayJunior.jpg",
+  content_type: "image/jpg"
+)
+
+contest4.save
 
 5.times do |i|
   contest = Contest.create(
