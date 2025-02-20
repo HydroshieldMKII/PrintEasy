@@ -5,14 +5,13 @@
     padding: 2rem;
     margin: auto;
     max-width: 1500px;
-    margin-top: 30px;
+    margin-top: 50px;
 }
 
 .w-full {
     width: 100%;
 }
 
-/* Grid Layout */
 .grid {
     display: grid;
 }
@@ -29,13 +28,11 @@
     gap: 1.5rem;
 }
 
-/* Ensure input fields take full width */
 input,
 textarea {
     width: 100%;
 }
 
-/* STL Preview Placeholder */
 .stl-section {
     display: flex;
     flex-direction: column;
@@ -45,7 +42,6 @@ textarea {
 .stl-placeholder {
     width: 100%;
     max-width: 300px;
-    /* Limits size on larger screens */
     height: 300px;
     background: #f0f0f0;
     border: 2px dashed #ccc;
@@ -57,9 +53,9 @@ textarea {
     color: #666;
     border-radius: 10px;
     margin-bottom: 25px;
+    padding: 2px;
 }
 
-/* Preset List Styling */
 .preset-list {
     display: flex;
     flex-wrap: wrap;
@@ -67,7 +63,6 @@ textarea {
     margin-top: 1rem;
 }
 
-/* Responsive preset card */
 .preset-card {
     width: 100%;
     max-width: 300px;
@@ -79,25 +74,21 @@ textarea {
     align-items: center;
 }
 
-/* Preset Info */
 .preset-info {
     flex: 1;
 }
 
-/* Preset Buttons */
 .preset-actions {
     display: flex;
     gap: 1rem;
 }
 
-/* Buttons alignment */
 .flex.justify-end {
     display: flex;
     justify-content: flex-end;
     gap: 1rem;
 }
 
-/* Mobile Responsive */
 @media (max-width: 768px) {
     .grid {
         grid-template-columns: 1fr;
@@ -120,17 +111,13 @@ textarea {
 .stl-actions {
     display: flex;
     justify-content: center;
-    /* Center horizontally */
     align-items: center;
-    /* Align vertically */
     gap: 0.5rem;
-    /* Adds space between buttons */
 }
 
 @media (max-width: 768px) {
     .stl-actions {
         flex-direction: column;
-        /* Stack vertically on small screens */
     }
 }
 
@@ -144,22 +131,15 @@ textarea {
     margin-top: 20px;
 }
 
-p-calendar {
-    width: 100%;
-}
-
-.p-calendar {
-    width: 100%;
-}
-
-.p-inputtext {
-    width: 100%;
-}
-
-input {
+.form-field {
     margin-bottom: 20px;
 }
 
 .p-button-label {
     text-decoration: underline;
+}
+
+.invalid {
+    background-color: #f8d7da;
+    border-left: 4px solid #f44336;
 }

@@ -13,7 +13,7 @@ import { ImportsModule } from '../../../imports';
 })
 export class RequestsComponent {
   activeTab: string = 'all';
-  requests: RequestModel[] | null | undefined = undefined;
+  requests: RequestModel[] | null = null;
   myRequests: RequestModel[] | null = null;
 
   deleteDialogVisible: boolean = false;
@@ -73,7 +73,7 @@ export class RequestsComponent {
 
     this.searchQuery = queryParams['search'] || '';
 
-    this.requestService.getPrinters().subscribe((printers: any) => {
+    this.requestService.getPrintersUser().subscribe((printers: any) => {
       this.isOwningPrinter = printers?.length > 0;
     });
   }
@@ -85,8 +85,10 @@ export class RequestsComponent {
       .subscribe((requests: RequestModel[]) => {
         if (type === 'all') {
           this.requests = requests;
+          console.log('Requests:', this.requests);
         } else if (type === 'my') {
           this.myRequests = requests;
+          console.log('My requests:', this.myRequests);
         } else {
           console.error('Invalid filter type:', type);
         }
@@ -113,8 +115,9 @@ export class RequestsComponent {
     delete this.expandedRows[event.data.id];
   }
 
-  downloadRequest(requestId: number): void {
-    console.log('Download request with ID:', requestId);
+  downloadRequest(downloadUrl: string): void {
+    console.log('Download request:', downloadUrl);
+    window.open(downloadUrl, '_blank');
   }
 
   showDeleteDialog(request: RequestModel): void {
@@ -124,10 +127,10 @@ export class RequestsComponent {
 
   confirmDelete(): void {
     if (this.requestToDelete !== null) {
-      // this.requestService.deleteRequest(this.requestToDelete.id).subscribe(() => {
-      //   this.requests = this.requests?.filter(r => r.id !== this.requestToDelete?.id);
-      //   this.myRequests = this.myRequests?.filter(r => r.id !== this.requestToDelete?.id);
-      // });
+      this.requestService.deleteRequest(this.requestToDelete.id).subscribe(() => {
+        this.requests = (this.requests || []).filter(r => r.id !== this.requestToDelete?.id);
+        this.myRequests = (this.myRequests || []).filter(r => r.id !== this.requestToDelete?.id);
+      });
     }
     this.deleteDialogVisible = false;
   }

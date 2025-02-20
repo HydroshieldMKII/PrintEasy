@@ -22,6 +22,7 @@
     "@ngx-translate/http-loader": "^16.0.1",
     "@primeng/themes": "^19.0.6",
     "@primeuix/styled": "^0.4.1",
+    "angular-stl-model-viewer": "^13.0.0",
     "primeflex": "^3.3.1",
     "primeicons": "^7.0.0",
     "primeng": "^19.0.6",

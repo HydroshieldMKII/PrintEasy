@@ -3,168 +3,213 @@
     {{ isEditMode ? "Edit Request" : "Request Details" }}
   </h1>
 
-  <!-- Grid Layout (Responsive) -->
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <!-- Left Section: Request Details -->
-    <div class="flex flex-col gap-4">
-      <p-floatlabel variant="in">
-        <label for="name" class="block font-semibold">Name</label>
-        <input
-          id="name"
-          pInputText
-          [(ngModel)]="request.name"
-          class="w-full"
-          [disabled]="isViewMode"
-        />
-      </p-floatlabel>
-
-      <p-floatlabel variant="in">
-        <label for="budget" class="block font-semibold">Budget</label>
-        <input
-          id="budget"
-          pInputText
-          [(ngModel)]="request.budget"
-          class="w-full"
-          [disabled]="isViewMode"
-        />
-      </p-floatlabel>
-
-      <p-floatlabel variant="in">
-        <textarea
-          pTextarea
-          id="comment"
-          [(ngModel)]="request.comment"
-          rows="5"
-          cols="30"
-          style="resize: none"
-          class="h-full"
-          [disabled]="isViewMode"
-        ></textarea>
-        <label for="comment">Special comment about the request</label>
-      </p-floatlabel>
-
-      <p-floatlabel variant="in">
-        <div class="w-full">
-          <p-datepicker
-            id="targetDate"
-            [(ngModel)]="request.targetDate"
-            [showIcon]="true"
-            inputId="buttondisplay"
-            [showOnFocus]="false"
-            class="w-full"
-            [disabled]="isViewMode"
-            dateFormat="yy-mm-dd"
-          ></p-datepicker>
-          <label for="targetDate" class="block font-semibold"
-            >Target Date</label
-          >
+  <form [formGroup]="form">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Left Section: Request Details -->
+      <div class="flex flex-col">
+        <div class="form-field">
+          <p-floatlabel variant="in" floatLabel="always">
+            <input
+              id="name"
+              pInputText
+              formControlName="name"
+              class="w-full"
+              min="3"
+            />
+            <label for="name">Name</label>
+          </p-floatlabel>
+          <p-message
+          *ngIf="form.get('name')?.invalid && (form.get('name')?.dirty || form.get('name')?.touched)"
+          severity="error"
+          variant="simple"
+          size="small"
+        >Name is required</p-message>
         </div>
-      </p-floatlabel>
-    </div>
 
-    <!-- Right Section: STL Preview -->
-    <div class="stl-section flex flex-col items-center">
-      <div class="stl-placeholder">
-        <p>STL preview here</p>
+        <div class="form-field">
+          <p-floatlabel variant="in">
+            <label for="budget" class="block font-semibold">Budget</label>
+            <input
+              id="budget"
+              pInputText
+              formControlName="budget"
+              class="w-full"
+              type="number"
+              min="0"
+              max="10000"
+            />
+          </p-floatlabel>
+
+          <p-message
+            *ngIf="form.get('budget')?.invalid && (form.get('budget')?.dirty || form.get('budget')?.touched)"
+            severity="error"
+            variant="simple"
+            size="small"
+          >Budget is required</p-message>
+        </div>
+
+        <p-floatlabel variant="in">
+          <textarea
+            pTextarea
+            id="comment"
+            formControlName="comment"
+            rows="5"
+            cols="30"
+            style="resize: none"
+            class="h-full"
+          ></textarea>
+          <label for="comment">Special comment about the request</label>
+        </p-floatlabel>
+
+        <div class="form-filed">
+          <p-floatlabel variant="in">
+            <div class="w-full">
+              <p-datepicker
+                id="targetDate"
+                formControlName="targetDate"
+                [showIcon]="true"
+                inputId="buttondisplay"
+                [showOnFocus]="false"
+                class="w-full"
+                dateFormat="yy-mm-dd"
+              ></p-datepicker>
+              <label for="targetDate" class="block font-semibold">Target Date</label>
+            </div>
+          </p-floatlabel>
+        </div>
+
+        <p-message
+          *ngIf="form.get('targetDate')?.invalid && (form.get('targetDate')?.dirty || form.get('targetDate')?.touched)"
+          severity="error"
+          variant="simple"
+          size="small"
+        >Target Date is required</p-message>
       </div>
 
-      <div class="stl-actions flex gap-2 mt-4">
+      <!-- Right Section: STL Preview -->
+      <div class="stl-section flex flex-col items-center">
+        <div class="stl-placeholder">
+          <p-message
+            *ngIf="!request.stlFileUrl && !uploadedFile"
+            severity="warn"
+            text="No STL file uploaded"
+          ></p-message>
+          <stl-model-viewer *ngIf="(isEditMode || isViewMode) && request.stlFileUrl" [stlModels]="[request.stlFileUrl]"></stl-model-viewer>
+          <stl-model-viewer *ngIf="isNewMode && uploadedFileBlob" [stlModelFiles]="[uploadedFileBlob]"></stl-model-viewer>
+        </div>
+
+        <div class="stl-actions flex gap-2 mt-4">
+          <p-button
+            *ngIf="isViewMode"
+            label="Download file"
+            icon="pi pi-download"
+            class="p-button-outlined flex-1"
+            (onClick)="downloadFile(request.stlFileUrl)"
+          ></p-button>
+          <p-fileUpload
+            *ngIf="isEditMode || isNewMode"
+            mode="basic"
+            maxFileSize="10000000"
+            invalidFileSizeMessageDetail="File size is too large. Max 10MB"
+            invalidFileTypeMessageDetail="File type is not supported. Please upload a .stl file"
+            customUpload="false"
+            (onSelect)="onFileUpload($event)"
+            accept=".stl"
+            chooseLabel="Upload file"
+            class="flex-1"
+          ></p-fileUpload>
+        </div>
+      </div>
+    </div>
+
+    <!-- Presets Section -->
+    <div style="display: flex" class="justify-between items-center mt-6">
+      <h3 class="text-lg font-semibold self-center" style="margin-right: 10px">
+        {{ request.presets.length }} Presets recommended
         <p-button
-          *ngIf="!isEditMode"
-          label="Download file"
-          icon="pi pi-download"
-          class="p-button-outlined flex-1"
+          id="add-preset"
+          *ngIf="isEditMode || isNewMode"
+          label="Add preset"
+          [link]="true"
+          icon="pi pi-plus"
+          (click)="addPreset()"
         ></p-button>
-        <p-fileUpload
-          *ngIf="isEditMode"
-          mode="basic"
-          customUpload
-          (uploadHandler)="uploadFile($event)"
-          accept=".stl"
-          chooseLabel="Upload file"
-          class="flex-1"
-        ></p-fileUpload>
-      </div>
+      </h3>
     </div>
-  </div>
-
-  <div style="display: flex" class="justify-between items-center mt-6">
-    <h3 class="text-lg font-semibold self-center" style="margin-right: 10px">
-      {{ request.presets.length }} Presets Recommended
-      <p-button
-        id="add-preset"
-        *ngIf="isEditMode || isNewMode"
-        label="Add Preset"
-        [link]="true"
-        icon="pi pi-plus"
-        (click)="addPreset()"
-      ></p-button>
-    </h3>
-  </div>
-
-  <p-table
+  </form>
+    <!-- Reactive FormArray for Presets -->
+    
+    <p-table
     [value]="request.presets"
     dataKey="id"
     [tableStyle]="{ 'min-width': '50rem' }"
+    *ngIf="request.presets.length > 0"
   >
     <ng-template #header>
       <tr>
         <th>Printer</th>
         <th>Filament Type</th>
         <th>Color</th>
-        <th>Print Quality</th>
-        <th *ngIf="isEditMode" style="width: 10%">Actions</th>
+        <th>Print Quality (mm)</th>
+        <th *ngIf="isEditMode || isNewMode" style="width: 10%">Actions</th>
       </tr>
     </ng-template>
 
     <ng-template #body let-preset let-ri="rowIndex">
-      <tr>
+      <tr [ngClass]="{'invalid': !isPresetValid(preset)}">
         <!-- Printer -->
         <td>
           <p-dropdown
-            [(ngModel)]="preset.printer"
+            [(ngModel)]="preset.printerModel"
             [options]="printers"
+            optionLabel="label"
+            optionValue="value"
             placeholder="Select Printer"
             [disabled]="isViewMode"
             appendTo="body"
           ></p-dropdown>
         </td>
-
         <!-- Filament Type -->
         <td>
           <p-dropdown
             [(ngModel)]="preset.filamentType"
             [options]="filamentTypes"
+            optionLabel="label"
+            optionValue="value"
             placeholder="Select Filament"
             [disabled]="isViewMode"
             appendTo="body"
           ></p-dropdown>
         </td>
-
         <!-- Color -->
         <td>
           <p-dropdown
             [(ngModel)]="preset.color"
             [options]="colors"
+            optionLabel="label"
+            optionValue="value"
             placeholder="Select Color"
             [disabled]="isViewMode"
             appendTo="body"
           ></p-dropdown>
         </td>
-
         <!-- Print Quality -->
         <td>
-          <p-dropdown
-            [(ngModel)]="preset.printQuality"
-            [options]="printQualities"
-            placeholder="Select Quality"
-            [disabled]="isViewMode"
-            appendTo="body"
-          ></p-dropdown>
+          <p-inputnumber 
+            [showButtons]="isEditMode || isNewMode" 
+            buttonLayout="horizontal" 
+            spinnerMode="vertical" 
+            inputId="vertical" 
+            [inputStyle]="{ width: '4rem' }" 
+            [(ngModel)]="preset.printQuality" 
+            [step]="0.04" 
+            [min]="0.01" 
+            [max]="2"
+            [disabled]="isViewMode">
+          </p-inputnumber>
         </td>
-
         <!-- Delete Button -->
-        <td *ngIf="isEditMode">
+        <td *ngIf="isEditMode || isNewMode">
           <button
             pButton
             pRipple
@@ -177,11 +222,11 @@
           ></button>
         </td>
       </tr>
-    </ng-template>
+    </ng-template>    
   </p-table>
 
+  <!-- Other Buttons for view, edit, new modes ... -->
   <div class="flex justify-end mt-6 gap-3 edit-actions" *ngIf="isViewMode">
-    <!-- make an offer button -->
     <div class="flex justify-end">
       <button
         pButton
@@ -208,7 +253,7 @@
       label="Delete"
       icon="pi pi-trash"
       severity="danger"
-      (click)="deleteRequest()"
+      (click)="showDeleteDialog(request)"
     ></p-button>
     <p-button
       label="Save"
@@ -217,4 +262,52 @@
       (click)="saveChanges()"
     ></p-button>
   </div>
+
+  <div class="flex justify-end mt-6 gap-3 edit-actions" *ngIf="isNewMode">
+    <p-button
+      label="Cancel"
+      icon="pi pi-times"
+      severity="secondary"
+      (click)="cancelNew()"
+    ></p-button>
+    <p-button
+      label="Save"
+      icon="pi pi-save"
+      severity="success"
+      [disabled]="form.invalid || !uploadedFile"
+      (click)="createRequest()"
+    ></p-button>
+  </div>
 </div>
+
+<!-- Delete Confirmation Dialog -->
+<p-dialog
+  [(visible)]="deleteDialogVisible"
+  [modal]="true"
+  [style]="{ width: '25rem' }"
+  dismissableMask="true"
+  closable="false"
+  blockScroll="true"
+  resizable="false"
+  draggable="false"
+>
+  <ng-template #header>
+    <div class="inline-flex items-center justify-center gap-2">
+      <i class="pi pi-exclamation-triangle text-red-500 text-2xl"></i>
+      <span class="font-bold">Confirm Delete</span>
+    </div>
+  </ng-template>
+  <span class="text-surface-500 dark:text-surface-400 block mb-4">
+    Are you sure you want to delete the request "{{ requestToDelete?.name }}"?
+    This action cannot be undone.
+  </span>
+  <ng-template #footer>
+    <p-button
+      label="Cancel"
+      [text]="true"
+      severity="secondary"
+      (click)="deleteDialogVisible = false"
+    />
+    <p-button label="Delete" severity="danger" (click)="confirmDelete()" />
+  </ng-template>
+</p-dialog>

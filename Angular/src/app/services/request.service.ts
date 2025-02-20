@@ -29,11 +29,11 @@ export class RequestService {
         if (type) params.type = type;
 
         console.log("Filter params: ", params);
-        return this.fetchRequest(params);
+        return this.fetchRequests(params);
     }
-      
 
-    getPrinters(): Observable<any> {
+
+    getPrintersUser(): Observable<any> {
         return this.api.getRequest('api/printer_user').pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
@@ -45,11 +45,52 @@ export class RequestService {
         );
     }
 
-    fetchRequest(params: any): Observable<RequestModel[]> {
+    getRequestById(id: number): Observable<RequestModel | null> {
+        console.log("fetching info for request ID: ", id);
+        return this.api.getRequest(`api/request/${id}`).pipe(
+            map((response: ApiResponseModel) => {
+                if (response.status === 200) {
+                    console.log("Request response: ", response.data);
+                    const request = response.data?.['request'];
+                    console.log("Request: ", request);
+                    const user = new UserModel(
+                        request?.['user']?.['id'],
+                        request?.['user']?.['username'],
+                        request?.['user']?.['country']?.['name']
+                    );
+
+                    const presets = (request?.['preset_requests'] as any[]).map((preset: any) => {
+                        return new PresetModel(
+                            preset?.['id'],
+                            preset?.['print_quality'],
+                            preset?.['color']?.['name'],
+                            preset?.['filament']?.['name'],
+                            preset?.['printer']?.['model']
+                        );
+                    });
+
+                    return new RequestModel(
+                        request?.['id'],
+                        request?.['name'],
+                        request?.['budget'],
+                        new Date(request?.['target_date']),
+                        request?.['comment'],
+                        request?.['stl_file_url'],
+                        presets,
+                        user
+                    );
+                }
+                return null;
+            })
+        );
+    }
+
+    fetchRequests(params: any): Observable<RequestModel[]> {
         return this.api.getRequest('api/request', params).pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
-                    this.requests = (response.data as any)?.['requests'].map((request: any) => {
+                    console.log("Requests response: ", response.data);
+                    this.requests = (response.data as any)?.['request'].map((request: any) => {
                         const user = new UserModel(
                             request?.['user']?.['id'],
                             request?.['user']?.['username'],
@@ -58,6 +99,7 @@ export class RequestService {
 
                         const presets = (request?.['preset_requests'] as any[]).map((preset: any) => {
                             return new PresetModel(
+                                preset?.['id'],
                                 preset?.['print_quality'],
                                 preset?.['color']?.['name'],
                                 preset?.['filament']?.['name'],
@@ -78,6 +120,46 @@ export class RequestService {
                     });
                 }
                 return this.requests;
+            })
+        );
+    }
+
+    createRequest(request: FormData): Observable<ApiResponseModel> {
+        console.log("Creating request: ", request);
+        return this.api.postRequest('api/request', {}, request).pipe(
+            map((response: ApiResponseModel) => {
+                if (response.status === 201) {
+                    this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Request created successfully' });
+                } else {
+                    this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Request creation failed' });
+                }
+                return response;
+            })
+        );
+    }
+
+    deleteRequest(id: number): Observable<ApiResponseModel> {
+        return this.api.deleteRequest(`api/request/${id}`).pipe(
+            map((response: ApiResponseModel) => {
+                if (response.status === 200) {
+                    this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Request deleted successfully' });
+                } else {
+                    this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Request deletion failed' });
+                }
+                return response;
+            })
+        );
+    }
+
+    updateRequest(id: number, request: FormData): Observable<ApiResponseModel> {
+        return this.api.putRequest(`api/request/${id}`, {}, request).pipe(
+            map((response: ApiResponseModel) => {
+                if (response.status === 200) {
+                    this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Request updated successfully' });
+                } else {
+                    this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Request update failed' });
+                }
+                return response;
             })
         );
     }

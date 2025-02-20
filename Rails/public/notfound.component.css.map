@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/components/notfound/notfound.component.css"],
+  "sourcesContent": [".container {\n    display: flex;\n    flex-direction: column;\n}\n\n.block {\n    display: block;\n}\n\n.text-center {\n    text-align: center;\n}\n\n.display-1 {\n    font-size: 6rem;\n}"],
+  "mappings": ";AAAA,CAAC;AACG,WAAS;AACT,kBAAgB;AACpB;AAEA,CAAC;AACG,WAAS;AACb;AAEA,CAAC;AACG,cAAY;AAChB;AAEA,CAAC;AACG,aAAW;AACf;",
+  "names": []
+}
