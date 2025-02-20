@@ -48,7 +48,6 @@ class Api::RequestsControllerTest < ActionDispatch::IntegrationTest
     assert_equal @other_user_request.user.country.name, json_response['request'][0]['user']['country']['name']
     assert_empty json_response['errors']
   end
-  
 
   test "should return user's own requests for 'my' type" do
     get api_request_index_url, params: { type: 'my' }
@@ -159,7 +158,7 @@ class Api::RequestsControllerTest < ActionDispatch::IntegrationTest
     assert_empty json_response['errors']
   end
 
-  test "should not create request with invalid data" do
+  test "should not create request with invalid name" do
 
     assert_no_difference('Request.count') do
       post api_request_index_url, params: {
@@ -173,10 +172,85 @@ class Api::RequestsControllerTest < ActionDispatch::IntegrationTest
       JSON.parse(response.body)
     end
 
-    assert json_response['errors'].key?('name')
-    assert json_response['errors'].key?('budget')
-    assert json_response['errors'].key?('target_date')
-    assert json_response['errors'].key?('stl_file')
+    assert_equal "can't be blank", json_response['errors']['name'][0]
+  end
+
+  test "should not create request with invalid date" do
+    assert_no_difference('Request.count') do
+      post api_request_index_url, params: {
+        request: {
+          name: "Invalid Date Request",
+          comment: "This request has an invalid date",
+          budget: 100,
+          target_date: "1970-01-01",
+          stl_file: fixture_file_upload(Rails.root.join("test/fixtures/files/RUBY13.stl"), 'application/octet-stream'),
+          preset_requests_attributes: [
+            { color_id: 1, filament_id: 1, printer_id: 1, print_quality: 0.1 }
+          ]
+        }
+      }
+    end
+
+    assert_response :unprocessable_entity
+
+    json_response = assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+
+    assert_equal ["must be greater than #{Date.today}"], json_response['errors']['target_date']
+  end
+
+  test "should not create request with invalid budget" do
+    assert_no_difference('Request.count') do
+      post api_request_index_url, params: {
+        request: {
+          name: "Invalid Budget Request",
+          comment: "This request has an invalid budget",
+          budget: -10,
+          target_date: 5.days.from_now.to_date,
+          stl_file: fixture_file_upload(Rails.root.join("test/fixtures/files/RUBY13.stl"), 'application/octet-stream'),
+          preset_requests_attributes: [
+            { color_id: 1, filament_id: 1, printer_id: 1, print_quality: 0.1 }
+          ]
+        }
+      }
+    end
+
+    assert_response :unprocessable_entity
+
+    json_response = assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+
+    assert_equal ["must be greater than or equal to 0"], json_response['errors']['budget']
+  end
+
+  test "should not create request with invalid preset_requests id" do
+    assert_no_difference('Request.count') do
+      post api_request_index_url, params: {
+        request: {
+          name: "Invalid Preset Request ID",
+          comment: "This request has an invalid preset request id",
+          budget: 100,
+          target_date: 5.days.from_now.to_date,
+          stl_file: fixture_file_upload(Rails.root.join("test/fixtures/files/RUBY13.stl"), 'application/octet-stream'),
+          preset_requests_attributes: [
+            { color_id: 999, filament_id: 999, printer_id: 999, print_quality: 100.1 }
+          ]
+        }
+      }
+    end
+
+    assert_response :unprocessable_entity
+
+    json_response = assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+
+    assert_equal "must exist", json_response['errors']['preset_requests.color'][0]
+    assert_equal "must exist", json_response['errors']['preset_requests.filament'][0]
+    assert_equal "must exist", json_response['errors']['preset_requests.printer'][0]
+    assert_equal "must be less than 2", json_response['errors']['preset_requests.print_quality'][0]
   end
 
   ### UPDATE ACTION ###
@@ -327,7 +401,7 @@ class Api::RequestsControllerTest < ActionDispatch::IntegrationTest
   test "Data should not be updated if date is invalid" do
     assert_no_difference('Request.count') do
       patch api_request_url(@user_request), params: {
-        request: {name:"", budget: -10, target_date: "1970-01-01" }
+        request: {name:"abc", budget: 100, target_date: "1970-01-01" }
       }, as: :json
     end
     assert_response :unprocessable_entity
@@ -346,10 +420,10 @@ class Api::RequestsControllerTest < ActionDispatch::IntegrationTest
     assert_equal json_response['errors']['target_date'], ["must be greater than today"]
   end
 
-  test "should not allow user to update request with invalid data" do
+  test "should not allow user to update request with name" do
     assert_no_difference('Request.count') do
       patch api_request_url(@user_request), params: {
-        request: { name: "" }
+        request: { name: ""}
       }, as: :json
     end
 
@@ -359,13 +433,77 @@ class Api::RequestsControllerTest < ActionDispatch::IntegrationTest
       JSON.parse(response.body)
     end
 
-    p json_response
     assert_equal "can't be blank", json_response['errors']['name'][0]
     assert_equal "is too short (minimum is 3 characters)", json_response['errors']['name'][1]
-    # assert_equal
   end
 
+  test "should not allow user to update request with budget too low" do
+    assert_no_difference('Request.count') do
+      patch api_request_url(@user_request), params: {
+        request: { budget: -10 }
+      }, as: :json
+    end
 
+    assert_response :unprocessable_entity
+
+    json_response = assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+
+    assert_equal "must be greater than or equal to 0", json_response['errors']['budget'][0]
+  end
+
+  test "should not allow user to update request with budget too high" do
+    assert_no_difference('Request.count') do
+      patch api_request_url(@user_request), params: {
+        request: { budget: 1_000_000 }
+      }, as: :json
+    end
+
+    assert_response :unprocessable_entity
+
+    json_response = assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+
+    assert_equal "must be less than or equal to 10000", json_response['errors']['budget'][0]
+  end
+
+  test "should not allow user to update request with invalid stl_file" do
+    assert_no_difference('Request.count') do
+      patch api_request_url(@user_request), params: {
+        request: { stl_file: fixture_file_upload('test/fixtures/files/invalid.txt', 'text/plain') }
+      }
+    end
+
+    assert_response :unprocessable_entity
+
+    json_response = assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+
+    assert_equal "must have .stl extension", json_response['errors']['stl_file'][0]
+  end
+
+  test "should not allow user to update request with invalid preset_requests data" do
+    assert_no_difference('Request.count') do
+      patch api_request_url(@user_request), params: {
+        request: {
+          preset_requests_attributes: [
+            { color_id: 1, filament_id: 1, printer_id: 1, print_quality: -0.1 }
+          ]
+        }
+      }, as: :json
+    end
+
+    assert_response :unprocessable_entity
+
+    json_response = assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+
+    assert_equal "must be greater than 0", json_response['errors']['preset_requests.print_quality'][0]
+  end
 
   test "should not allow user to update another user's request" do
     sign_out @user
@@ -376,14 +514,6 @@ class Api::RequestsControllerTest < ActionDispatch::IntegrationTest
     }, as: :json
 
     assert_response :forbidden
-  end
-
-  test "should not update request with invalid data" do
-    patch api_request_url(@user_request), params: {
-      request: { name: "" }
-    }, as: :json
-
-    assert_response :unprocessable_entity
   end
 
   ### DELETE ACTION ###
@@ -398,12 +528,19 @@ class Api::RequestsControllerTest < ActionDispatch::IntegrationTest
       JSON.parse(response.body)
     end
 
-    p json_response
     assert_equal @user_request.id, json_response['request']['id']
+    assert_equal @user_request.name, json_response['request']['name']
+    assert_equal @user_request.budget, json_response['request']['budget']
+    assert_equal @user_request.comment, json_response['request']['comment']
+    assert_equal @user_request.target_date.to_s, json_response['request']['target_date']
+    assert_nil json_response['request']['stl_file_url']
+    assert_nil json_response['request']['preset_requests']
+
     assert_empty json_response['errors']
   end
 
   test "should not allow user to delete another user's request" do
+    sign_out @user
     sign_in @other_user
 
     assert_no_difference('Request.count') do
@@ -411,5 +548,11 @@ class Api::RequestsControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_response :forbidden
+
+    json_response = assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+
+    assert_equal "You are not allowed to delete this request", json_response['errors']['request'][0]
   end
 end
