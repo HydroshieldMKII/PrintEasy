@@ -69,4 +69,4 @@ yarn-debug.log*
 /public/uploads
 Rails/config/credentials/production.yml.enc
 Rails/config/credentials.yml.enc
-Rails/public
+Rails/public/
