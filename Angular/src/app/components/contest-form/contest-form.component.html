@@ -40,7 +40,7 @@
                       [class]="startDatePicker"></p-datepicker>
                     <label for="startDate">Date de début</label>
                   </p-floatlabel>
-                  <p-message severity="error" variant="simple" size="small">
+                  <p-message class="date-error" severity="error" variant="simple" size="small">
                     {{ contestForm.errors?.['dateError'] ? contestForm.errors?.['dateError'] : 'La date de début est
                     requise'
                     }}
@@ -91,6 +91,10 @@
           <div class="button-container">
             <p-button label="Annuler" type="button" (click)="onCancel()" icon="pi pi-times"
               severity="secondary"></p-button>
+            @if (isEdit) {
+            <p-button label="Supprimer" type="button" (click)="onDelete()" icon="pi pi-trash" severity="danger">
+            </p-button>
+            }
             <p-button label="Sauvegarder" [disabled]="!contestForm.valid" icon="pi pi-save" severity="success"
               (onClick)="onSubmit()"></p-button>
           </div>
@@ -99,3 +103,34 @@
     </form>
   </div>
 </div>
+
+<p-dialog
+  [(visible)]="deleteDialogVisible"
+  [modal]="true"
+  [style]="{ width: '25rem' }"
+  dismissableMask="true"
+  closable="false"
+  blockScroll="true"
+  resizable="false"
+  draggable="false"
+>
+  <ng-template #header>
+    <div class="inline-flex items-center justify-center gap-2">
+      <i class="pi pi-exclamation-triangle text-red-500 text-2xl"></i>
+      <span class="font-bold">Confirm Delete</span>
+    </div>
+  </ng-template>
+  <span class="text-surface-500 dark:text-surface-400 block mb-4">
+    Are you sure you want to delete the contest?
+    This action cannot be undone.
+  </span>
+  <ng-template #footer>
+    <p-button
+      label="Cancel"
+      [text]="true"
+      severity="secondary"
+      (click)="deleteDialogVisible = false"
+    />
+    <p-button label="Delete" severity="danger" (click)="confirmDelete()" />
+  </ng-template>
+</p-dialog>
