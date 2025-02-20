@@ -182,25 +182,25 @@ export class RequestFormComponent implements OnInit {
         contestFormData.append('request[stl_file]', this.uploadedFile);
       }
 
+      let hasError = false;
+      console.log('Presets:', this.request.presets);
       if (this.request.presets.length > 0) {
         this.request.presets.forEach((preset: any, index: number) => {
-          // Find the corresponding objects in your dropdown arrays
+
           const printer = this.printers.find((p: any) => p.label === preset.printer);
           const filament = this.filamentTypes.find((f: any) => f.label === preset.filamentType);
           const color = this.colors.find((c: any) => c.label === preset.color);
           console.log('Printer:', printer, 'Filament:', filament, 'Color:', color);
 
-          // Ensure that each selection is found before appending
+
           if (this.request.presets.length > 0) {
             this.request.presets.forEach((preset: any, index: number) => {
-              // Assuming preset.printer, preset.filamentType, and preset.color now contain the id values,
-              // we find the full object from our dropdown arrays by comparing the id (value).
+
               const printer = this.printers.find((p: any) => p.value == preset.printerModel);
               const filament = this.filamentTypes.find((f: any) => f.value == preset.filamentType);
               const color = this.colors.find((c: any) => c.value == preset.color);
               console.debug('Printer:', printer, 'Filament:', filament, 'Color:', color);
 
-              // Ensure that each selection is found before appending
               if (printer && filament && color && preset.printQuality) {
                 contestFormData.append(
                   `request[preset_requests_attributes][${index}][printer_id]`,
@@ -219,32 +219,34 @@ export class RequestFormComponent implements OnInit {
                   preset.printQuality
                 );
               } else {
-                console.error('Missing matching printer, filament, or color for preset:', preset);
+                hasError = true;
               }
             });
           }
-
-          // Log the form data entries to verify contents (browsers may not show FormData when logged directly)
-          for (const [key, value] of contestFormData.entries()) {
-            console.log(`${key}: ${value}`);
-          }
-
-          const obs = this.requestService.createRequest(contestFormData);
-
-          obs.subscribe(response => {
-            if ((this.isEditMode && response.status === 200)) {
-              this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Request updated successfully' });
-              this.router.navigate(['/requests/view', this.id]);
-            } else if (response.status === 201) {
-              this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Request created successfully' });
-              this.router.navigate(['/requests']);
-            } else {
-              this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Request creation failed' });
-            }
-          });
-        }
-        );
+        });
       }
+
+      if (hasError) {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid preset information. Please clear or complete your recommended preset.' });
+        return;
+      }
+
+      for (const [key, value] of contestFormData.entries()) {
+        console.log(`${key}: ${value}`);
+      }
+
+      const obs = this.requestService.createRequest(contestFormData);
+      // const obs = this.isNewMode ? this.requestService.createRequest(contestFormData) : this.requestService.updateRequest(this.id, contestFormData);
+
+      obs.subscribe(response => {
+        if ((this.isEditMode && response.status === 200)) {
+          this.router.navigate(['/requests/view', this.id]);
+        } else if (response.status === 201) {
+          this.router.navigate(['/requests']);
+        } else {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Request creation failed' });
+        }
+      });
     }
   }
 
@@ -266,5 +268,14 @@ export class RequestFormComponent implements OnInit {
     }
     this.deleteDialogVisible = false;
   }
+
+  isPresetValid(preset: any): boolean {
+    // Check that a valid printer, filament, and color are selected and that printQuality exists.
+    const printerValid = !!this.printers.find((p: any) => p.label === preset.printerModel);
+    const filamentValid = !!this.filamentTypes.find((f: any) => f.label === preset.filamentType);
+    const colorValid = !!this.colors.find((c: any) => c.label === preset.color);
+    return printerValid && filamentValid && colorValid && preset.printQuality;
+  }
+
 }
 

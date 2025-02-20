@@ -147,46 +147,43 @@
     </ng-template>
 
     <ng-template #body let-preset let-ri="rowIndex">
-      <tr>
+      <tr [ngClass]="{'invalid': !isPresetValid(preset)}">
         <!-- Printer -->
         <td>
           <p-dropdown
-          [(ngModel)]="preset.printerModel"
-          [options]="printers"
-          optionLabel="label"
-          optionValue="value"
-          placeholder="Select Printer"
-          [disabled]="isViewMode"
-          appendTo="body"
-        ></p-dropdown>
+            [(ngModel)]="preset.printerModel"
+            [options]="printers"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Select Printer"
+            [disabled]="isViewMode"
+            appendTo="body"
+          ></p-dropdown>
         </td>
-
         <!-- Filament Type -->
         <td>
           <p-dropdown
-          [(ngModel)]="preset.filamentType"
-          [options]="filamentTypes"
-          optionLabel="label"
-          optionValue="value"
-          placeholder="Select Filament"
-          [disabled]="isViewMode"
-          appendTo="body"
-        ></p-dropdown>
+            [(ngModel)]="preset.filamentType"
+            [options]="filamentTypes"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Select Filament"
+            [disabled]="isViewMode"
+            appendTo="body"
+          ></p-dropdown>
         </td>
-
         <!-- Color -->
         <td>
           <p-dropdown
-          [(ngModel)]="preset.color"
-          [options]="colors"
-          optionLabel="label"
-          optionValue="value"
-          placeholder="Select Color"
-          [disabled]="isViewMode"
-          appendTo="body"
-        ></p-dropdown>
+            [(ngModel)]="preset.color"
+            [options]="colors"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Select Color"
+            [disabled]="isViewMode"
+            appendTo="body"
+          ></p-dropdown>
         </td>
-
         <!-- Print Quality -->
         <td>
           <p-inputnumber 
@@ -200,15 +197,8 @@
             [min]="0.01" 
             [max]="2"
             [disabled]="isViewMode">
-            <ng-template #incrementbuttonicon>
-              <span class="pi pi-plus"></span>
-            </ng-template>
-            <ng-template #decrementbuttonicon>
-              <span class="pi pi-minus"></span>
-            </ng-template>
           </p-inputnumber>
         </td>
-
         <!-- Delete Button -->
         <td *ngIf="isEditMode || isNewMode">
           <button
@@ -223,7 +213,7 @@
           ></button>
         </td>
       </tr>
-    </ng-template>
+    </ng-template>    
   </p-table>
 
   <!-- Other Buttons for view, edit, new modes ... -->

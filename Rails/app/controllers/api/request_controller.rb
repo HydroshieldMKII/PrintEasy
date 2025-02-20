@@ -18,7 +18,7 @@ class Api::RequestController < ApplicationController
 
   # POST /requests
   def create
-    debugger
+    # debugger
     @request = Request.new(create_params)
     @request.user = current_user
 
