@@ -35,19 +35,20 @@ class Api::RequestController < AuthenticatedController
   # PATCH/PUT /requests/:id
   def update
     @request = Request.includes(:user, preset_requests: %i[color filament printer]).find(params[:id])
-
-    if update_params[:target_date].present? && update_params[:target_date].to_date.strftime("%a, %d %b %Y") != @request.target_date && update_params[:target_date].to_date < Date.today
-      # debugger
-      render json: { request: {}, errors: { target_date: ['must be greater than today'] } }, status: :unprocessable_entity
-      return
-    end
+    valid = true
     
     if @request.user != current_user
       render json: { request: {}, errors: { request: ['You are not allowed to update this request'] } }, status: :forbidden
       return
     end
 
-    if @request.update(update_params)
+    if update_params[:target_date].present? && update_params[:target_date].to_date.strftime("%a, %d %b %Y") != @request.target_date && update_params[:target_date].to_date < Date.today
+      # debugger
+      valid = false
+      @request.errors.add(:target_date, 'must be greater than today')
+    end
+
+    if valid && @request.update(update_params)
       render_request(@request)
     else
       # debugger
@@ -157,7 +158,7 @@ class Api::RequestController < AuthenticatedController
 
   def stl_file_extension?
     if params[:request][:stl_file].present?
-      extension = File.extname(params[:request][:stl_file].path)
+      extension = File.extname(params[:request][:stl_file]&.path)
       unless extension == '.stl'
         render json: { request: {}, errors: { stl_file: ['must have .stl extension'] } }, status: :unprocessable_entity
       end

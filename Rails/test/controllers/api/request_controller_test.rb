@@ -181,6 +181,8 @@ class Api::RequestsControllerTest < ActionDispatch::IntegrationTest
 
   ### UPDATE ACTION ###
   test "should partially update request with valid data" do
+    before_update = @user_request
+
     assert_difference('Request.count', 0) do
       patch api_request_url(@user_request), params: {
         request: { name: "Updated Request", budget: 999 }
@@ -198,6 +200,20 @@ class Api::RequestsControllerTest < ActionDispatch::IntegrationTest
       JSON.parse(response.body)
     end
 
+    #Check which data changed
+    @user_request.reload
+    assert_equal before_update.name, json_response['request']['name']
+    assert_equal before_update.budget, json_response['request']['budget']
+    assert_equal before_update.comment, @user_request.comment
+    assert_equal before_update.target_date, @user_request.target_date
+    assert_equal before_update.stl_file_url, @user_request.stl_file_url
+    assert_equal before_update.preset_requests.count, @user_request.preset_requests.count
+    assert_equal before_update.preset_requests[0].color_id, @user_request.preset_requests[0].color_id
+    assert_equal before_update.preset_requests[0].filament_id, @user_request.preset_requests[0].filament_id
+    assert_equal before_update.preset_requests[0].printer_id, @user_request.preset_requests[0].printer_id
+    assert_equal before_update.preset_requests[0].print_quality, @user_request.preset_requests[0].print_quality
+
+    # Check if the response is correct
     assert_equal "Updated Request", json_response['request']['name']
     assert_equal 999, json_response['request']['budget']
     assert_equal @user_request.comment, json_response['request']['comment']
@@ -224,20 +240,94 @@ class Api::RequestsControllerTest < ActionDispatch::IntegrationTest
           name: "Fully Updated Request",
           comment: "This is a fully updated request",
           budget: 999,
-          target_date: 5.days.from_now.to_date,
-          stl_file: fixture_file_upload('RUBY13.stl', 'application/octet-stream'),
+          target_date: "3000-01-01",
+          stl_file: fixture_file_upload('base.stl', 'application/octet-stream'),
           preset_requests_attributes: [
-            { color_id: 1, filament_id: 1, printer_id: 1, print_quality: 0.1 }
+            { id: @preset.id, color_id: 1, filament_id: 1, printer_id: 1, print_quality: 0.1, _destroy: true },
+            { color_id: 2, filament_id: 2, printer_id: 2, print_quality: 0.2 }
           ]
         }
-      }, as: :json
+      }
       end
+
+    assert_response :success
+    @user_request.reload
+
+    # Check if the data is correct
+    assert_equal "Fully Updated Request", @user_request.name
+    assert_equal "This is a fully updated request", @user_request.comment
+    assert_equal 999, @user_request.budget
+    assert_equal "3000-01-01", @user_request.target_date.to_s
+    assert_equal "base.stl", @user_request.stl_file.filename.to_s
+    assert_equal 1, @user_request.preset_requests.count
+    assert_equal 2, @user_request.preset_requests[0].color_id
+    assert_equal 2, @user_request.preset_requests[0].filament_id
+    assert_equal 2, @user_request.preset_requests[0].printer_id
+    assert_equal 0.2, @user_request.preset_requests[0].print_quality
+
+    # Check if the response is correct
+    json_response = assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+
+    assert_equal "Fully Updated Request", json_response['request']['name']
+    assert_equal "This is a fully updated request", json_response['request']['comment']
+    assert_equal 999, json_response['request']['budget']
+    assert_equal "3000-01-01", json_response['request']['target_date']
+    assert json_response['request']['stl_file_url'].present?
+    assert_equal 1, json_response['request']['preset_requests'].length
+    assert_equal 2, json_response['request']['preset_requests'][0]['color']['id']
+    assert_equal 2, json_response['request']['preset_requests'][0]['filament']['id']
+    assert_equal 2, json_response['request']['preset_requests'][0]['printer']['id']
+    assert_equal 0.2, json_response['request']['preset_requests'][0]['print_quality']
+    assert_equal @user_request.user.id, json_response['request']['user']['id']
+    assert_equal @user_request.user.username, json_response['request']['user']['username']
+    assert_equal @user_request.user.country.name, json_response['request']['user']['country']['name']
+    assert_empty json_response['errors']
+  end
+
+  test "should delete preset_requests" do
+    assert_difference('PresetRequest.count', -1) do
+      patch api_request_url(@user_request), params: {
+        request: {
+          name: "Fully Updated Request",
+          comment: "This is a fully updated request",
+          budget: 999,
+          target_date: "3000-01-01",
+          preset_requests_attributes: [
+            { id: @preset.id, color_id: 1, filament_id: 1, printer_id: 1, print_quality: 0.1, _destroy: true }
+          ]
+        }
+      }
+    end
+
+    assert_response :success
+    @user_request.reload
+    assert_equal 0, @user_request.preset_requests.count
+
+    json_response = assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+
+    assert_equal 0, json_response['request']['preset_requests'].length
+    assert_empty json_response['errors']
+
+    # Check if the response is correct
+    assert_equal "Fully Updated Request", json_response['request']['name']
+    assert_equal "This is a fully updated request", json_response['request']['comment']
+    assert_equal 999, json_response['request']['budget']
+    assert_equal "3000-01-01", json_response['request']['target_date']
+    assert json_response['request']['stl_file_url'].present?
+    assert_equal 0, json_response['request']['preset_requests'].length
+    assert_equal @user_request.user.id, json_response['request']['user']['id']
+    assert_equal @user_request.user.username, json_response['request']['user']['username']
+    assert_equal @user_request.user.country.name, json_response['request']['user']['country']['name']
   end
 
   test "Data should not be updated if invalid" do
     assert_no_difference('Request.count') do
       patch api_request_url(@user_request), params: {
-        request: { name: "", budget: -10, target_date: "1970-01-01" }
+        request: { budget: -10, target_date: "1970-01-01" }
       }, as: :json
     end
     assert_response :unprocessable_entity
@@ -253,8 +343,8 @@ class Api::RequestsControllerTest < ActionDispatch::IntegrationTest
       JSON.parse(response.body)
     end
 
-    p json_response
-    assert_equal json_response['errors'], "can't be blank"
+    assert_equal json_response['errors']['name'], ["must be filled"]
+    assert_equal json_response['errors']['target_date'], ["must be greater than today"]
   end
 
 
