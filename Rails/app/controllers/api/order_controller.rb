@@ -1,7 +1,7 @@
 class Api::OrderController < ApplicationController
   def index
     if current_user.nil?
-      render json: { errors: 'You are not authorized to view this page' }, status: :unauthorized and return
+      render json: { errors: {order: ['You are not authorized to view this page']} }, status: :unauthorized and return
     end
 
     if params[:type] == 'printer'
@@ -54,13 +54,14 @@ class Api::OrderController < ApplicationController
           }
         }
       ),
+      errors: {}
     }, status: :ok
   end
 
   def show
-    @order = Order.find(params[:id])
+    @order = Order.find(params[:id]) rescue nil
     if @order.nil?
-      render json: { errors: 'Order not found' }, status: :not_found
+      render json: { errors: {order: ['Order not found']} }, status: :not_found and return
     end
     if current_user == @order.consumer || current_user == @order.printer
       available_status = @order.order_status.last.available_status
@@ -114,10 +115,11 @@ class Api::OrderController < ApplicationController
               methods: %i[image_url]
             }
           }
-        ).merge({ available_status: available_status })
+        ).merge({ available_status: available_status }),
+        errors: {}
       }, status: :ok
     else
-      render json: { errors: 'You are not authorized to view this order' }, status: :unauthorized
+      render json: { errors: {order: ['You are not authorized to view this order']} }, status: :unauthorized
     end
   end
 end
