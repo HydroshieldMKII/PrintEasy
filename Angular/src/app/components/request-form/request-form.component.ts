@@ -244,6 +244,7 @@ export class RequestFormComponent implements OnInit {
     // 4. Submit the update request
     const obs = this.requestService.updateRequest(this.request.id, contestFormData);
     obs.subscribe(response => {
+      console.log('Response:', response);
       if (this.isEditMode && response.status === 200) {
         this.router.navigate(['/requests/view', this.request.id]);
       }
@@ -383,4 +384,5 @@ export class RequestFormComponent implements OnInit {
     const colorValid = !!this.colors.find((c: any) => c.label === preset.color);
     return printerValid && filamentValid && colorValid && preset.printQuality;
   }
+
 }
