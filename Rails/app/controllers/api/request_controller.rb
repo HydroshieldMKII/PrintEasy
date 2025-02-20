@@ -48,6 +48,14 @@ class Api::RequestController < AuthenticatedController
       @request.errors.add(:target_date, 'must be greater than today')
     end
 
+    #Check if the request has any offers accepted
+    if @request.has_offer_accepted?
+      valid = false
+      @request.errors.add(:base, 'Cannot update request with accepted offers')
+    end
+
+    update_params.delete(:preset_requests_attributes) if @request.has_offer_made?
+
     if valid && @request.update(update_params)
       render_request(@request)
     else
@@ -109,7 +117,7 @@ class Api::RequestController < AuthenticatedController
             }
           }
         },
-        methods: :stl_file_url
+        methods: %i[stl_file_url has_offer_made? has_offer_accepted?]
       ),
       errors: resource.respond_to?(:errors) ? resource.errors : {}
     }, status: status

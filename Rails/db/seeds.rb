@@ -286,6 +286,23 @@ Request.all.each do |request|
   end
 end
 
+#Request without offers
+req_no_offer = Request.create(
+  user: user1,
+  name: "Request without offers",
+  budget: 100.0,
+  comment: "This request has no offers.",
+  target_date: Time.now + 10.days
+)
+
+req_no_offer.stl_file.attach(
+  io: File.open(stl_file_path1),
+  filename: "RUBY13.stl",
+  content_type: "application/sla"
+)
+req_no_offer.save
+
+
 # Create Orders
 order1 = Order.create!(offer: Offer.first)
 order2 = Order.create!(offer: Offer.second)

@@ -253,6 +253,12 @@ class Api::RequestsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "must be less than 2", json_response['errors']['preset_requests.print_quality'][0]
   end
 
+  test "should not update offer with accepted offers" do
+  end
+
+  test "should not update request with offers" do
+  end
+
   ### UPDATE ACTION ###
   test "should partially update request with valid data" do
     before_update = @user_request

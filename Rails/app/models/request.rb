@@ -15,11 +15,15 @@ class Request < ApplicationRecord
 
   def stl_file_url
     return Rails.application.routes.url_helpers.rails_blob_url(stl_file, only_path: true)
+  end
 
-    #    if stl_file.attached?
-  #   Rails.application.routes.url_helpers.rails_blob_path(stl_file, only_path: true)
-  # else
-  #   nil
-  # end
+  def has_offer_made?
+    return offers.exists?
+  end
+
+  def has_offer_accepted?
+    offers.joins(order: :order_status)
+          .where(order_status: { status_name: 'Accepted' })
+          .exists?
   end
 end
