@@ -46,6 +46,10 @@ export class ContestService {
         if (response.status === 201) {
           this.messageService.add({ severity: 'success', summary: 'Succès', detail: 'Concours créé avec succès' });
         }
+        else {
+          console.log('error:', response.errors);
+          this.messageService.add({ severity: 'error', summary: 'Erreur', detail: 'Erreur lors de la création du concours' });
+        }
         return response;
       })
     );
@@ -56,6 +60,10 @@ export class ContestService {
       map(response => {
         if (response.status === 200) {
           this.messageService.add({ severity: 'success', summary: 'Succès', detail: 'Concours modifié avec succès' });
+        }
+        else {
+          console.log('error:', response.errors);
+          this.messageService.add({ severity: 'error', summary: 'Erreur', detail: 'Erreur lors de la modification du concours' });
         }
         return response;
       })
@@ -68,6 +76,10 @@ export class ContestService {
         if (response.status === 200) {
           this.messageService.add({ severity: 'success', summary: 'Succès',
             detail: 'Concours supprimé avec succès' });
+          }
+          else {
+            console.log('error:', response.errors);
+            this.messageService.add({ severity: 'error', summary: 'Erreur', detail: 'Erreur lors de la suppression du concours' });
           }
         return response;
       })
