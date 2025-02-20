@@ -4,20 +4,43 @@
 # model remove the "{}" from the fixture names and add the columns immediately
 # below each fixture, per the syntax in the comments below
 #
-one: {
+preset_one: {
   id: 1,
   color_id: 1,
   filament_id: 1,
   user_id: 1,
-  print_quality: "High"
+  print_quality: "0.12"
 }
 # column: value
 #
-two: {
+preset_two: {
   id: 2,
   color_id: 2,
   filament_id: 2,
   user_id: 2,
-  print_quality: "Low"
+  print_quality: "0.16"
 }
 # column: value
+preset_three: {
+  id: 3,
+  color_id: 3,
+  filament_id: 3,
+  user_id: 2,
+  print_quality: "0.20"
+}
+
+preset_four: {
+  id: 4,
+  color_id: 4,
+  filament_id: 4,
+  user_id: 2,
+  print_quality: "0.24"
+}
+
+preset_five: {
+  id: 5,
+  color_id: 5,
+  filament_id: 5,
+  user_id: 1,
+  print_quality: "0.28"
+}

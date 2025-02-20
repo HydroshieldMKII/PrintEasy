@@ -7,3 +7,21 @@ second_image_attachment:
   name: image
   record: contest_two (Contest)
   blob: first_image_blob
+
+first_stl_file_attachment:
+  name: stl_file
+  record_type: Request
+  record_id: 1
+  blob: first_stl_file_blob
+
+second_stl_file_attachment:
+  name: stl_file
+  record_type: Request
+  record_id: 2
+  blob: first_stl_file_blob
+
+third_stl_file_attachment:
+  name: stl_file
+  record_type: Request
+  record_id: 3
+  blob: first_stl_file_blob

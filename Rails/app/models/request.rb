@@ -11,9 +11,15 @@ class Request < ApplicationRecord
   validates :target_date, presence: true, comparison: { greater_than: Date.today }, on: :create
 
   has_one_attached :stl_file
-  validates :stl_file, presence: true
+  validates :stl_file, presence: true, on: :create
 
   def stl_file_url
     return Rails.application.routes.url_helpers.rails_blob_url(stl_file, only_path: true)
+
+    #    if stl_file.attached?
+  #   Rails.application.routes.url_helpers.rails_blob_path(stl_file, only_path: true)
+  # else
+  #   nil
+  # end
   end
 end

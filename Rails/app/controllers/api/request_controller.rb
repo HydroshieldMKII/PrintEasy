@@ -35,7 +35,7 @@ class Api::RequestController < ApplicationController
   def update
     @request = Request.includes(:user, preset_requests: %i[color filament printer]).find(params[:id])
 
-    if update_params[:target_date].to_date.strftime("%a, %d %b %Y") != @request.target_date && update_params[:target_date].to_date < Date.today
+    if update_params[:target_date].present? && update_params[:target_date].to_date.strftime("%a, %d %b %Y") != @request.target_date && update_params[:target_date].to_date < Date.today
       # debugger
       render json: { request: {}, errors: { target_date: ['must be greater than today'] } }, status: :unprocessable_entity
       return
@@ -76,7 +76,8 @@ class Api::RequestController < ApplicationController
                when 'my'
                  Request.includes(:user, preset_requests: %i[color filament printer]).where(user: current_user)
                else
-                 Request.none
+                 render json: { request: {}, errors: { type: ['is invalid'] } }, status: :unprocessable_entity
+                 return
                end
 
     requests = requests.where("name LIKE ?", "%#{params[:search]}%") if params[:search].present?

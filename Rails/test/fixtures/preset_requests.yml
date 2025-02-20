@@ -4,7 +4,7 @@
 # model remove the "{}" from the fixture names and add the columns immediately
 # below each fixture, per the syntax in the comments below
 #
-one: {
+preset_request_one: {
   id: 1,
   request_id: 1,
   color_id: 1,
@@ -14,9 +14,9 @@ one: {
 }
 # column: value
 #
-two: {
+preset_request_two: {
   id: 2,
-  request_id: 2,
+  request_id: 3,
   color_id: 2,
   filament_id: 2,
   printer_id: 2,
