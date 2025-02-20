@@ -4,6 +4,7 @@ class Api::RequestController < ApplicationController
   before_action :show_params, only: :show
   before_action :create_params, only: :create
   before_action :update_params, only: :update
+  before_action :stl_file_extension?, only: %i[create update]
 
   # GET /requests
   def index
@@ -150,5 +151,14 @@ class Api::RequestController < ApplicationController
 
   def update_params
     params.require(:request).permit(:name, :comment, :target_date, :budget, :stl_file, preset_requests_attributes: %i[id color_id filament_id printer_id print_quality _destroy])
+  end
+
+  def stl_file_extension?
+    if params[:request][:stl_file].present?
+      extension = File.extname(params[:request][:stl_file].tempfile.path)
+      unless extension == '.stl'
+        render json: { request: {}, errors: { stl_file: ['must have .stl extension'] } }, status: :unprocessable_entity
+      end
+    end
   end
 end
