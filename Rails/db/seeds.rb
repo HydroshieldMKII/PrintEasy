@@ -218,7 +218,82 @@ contest4.image.attach(
 
 contest4.save
 
-5.times do |i|
+contest5 = Contest.create(
+  theme: "Best 3D Printed Fashion",
+  submission_limit: 5,
+  start_at: Time.now,
+  end_at: Time.now + 30.days
+)
+
+contest5.image.attach(
+  io: File.open(Rails.root.join("db/seeds/files/DariusSlayJunior.jpg")),
+  filename: "DariusSlayJunior.jpg",
+  content_type: "image/jpg"
+)
+
+contest5.save
+
+contest6 = Contest.create(
+  theme: "Best 3D Printed Gadgets",
+  submission_limit: 5,
+  start_at: Time.now,
+  deleted_at: Time.now
+)
+
+contest6.image.attach(
+  io: File.open(Rails.root.join("db/seeds/files/DariusSlayJunior.jpg")),
+  filename: "DariusSlayJunior.jpg",
+  content_type: "image/jpg"
+)
+
+contest6.save
+
+contest7 = Contest.create(
+  theme: "Best 3D Printed Tools",
+  submission_limit: 5,
+  start_at: Time.now,
+)
+
+contest7.image.attach(
+  io: File.open(Rails.root.join("db/seeds/files/DariusSlayJunior.jpg")),
+  filename: "DariusSlayJunior.jpg",
+  content_type: "image/jpg"
+)
+
+contest7.save
+
+contest8 = Contest.create(
+  theme: "Best 3D Printed Medical Devices",
+  submission_limit: 5,
+  start_at: Time.now,
+  end_at: Time.now + 30.days
+)
+
+contest8.image.attach(
+  io: File.open(Rails.root.join("db/seeds/files/DariusSlayJunior.jpg")),
+  filename: "DariusSlayJunior.jpg",
+  content_type: "image/jpg"
+)
+
+contest8.save
+
+contest9 = Contest.create(
+  theme: "Best 3D Printed Automotive Parts",
+  submission_limit: 5,
+  start_at: Time.now,
+  deleted_at: Time.now,
+  end_at: Time.now + 30.days
+)
+
+contest9.image.attach(
+  io: File.open(Rails.root.join("db/seeds/files/DariusSlayJunior.jpg")),
+  filename: "DariusSlayJunior.jpg",
+  content_type: "image/jpg"
+)
+
+contest9.save
+
+50.times do |i|
   contest = Contest.create(
     theme: "Contest #{i + 3}",
     description: "Description for contest #{i + 3}.",
