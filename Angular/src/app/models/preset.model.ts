@@ -12,4 +12,14 @@ export class PresetModel {
         this.filamentType = filamentType;
         this.printerModel = printerModel;
     }
+
+    static fromAPI(data: any): PresetModel {
+        return new PresetModel(
+            data.id,
+            data.print_quality,
+            data.color,
+            data.filament_type,
+            data.printer_model
+        );
+    }
 }

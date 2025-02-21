@@ -64,7 +64,7 @@ export class OrderComponent {
   formVisible: boolean = false;
   isEdit: boolean = false;
   orderStatusForm: FormGroup;
-  image_url: string = '';
+  imageUrl: string = '';
   currentlySelectedOrderStatusId: number = -1
 
   constructor(private fb: FormBuilder) {
@@ -95,17 +95,17 @@ export class OrderComponent {
         this.order = response.data.order;
         console.log('Order:', this.order);
         if (this.order) {
-          this.currentStatus = this.order.order_status[this.order.order_status.length - 1];
-          if (this.order.available_status.includes('Cancelled')) {
+          this.currentStatus = this.order.orderStatus[this.order.orderStatus.length - 1];
+          if (this.order.availableStatus.includes('Cancelled')) {
             this.canCancel = true;
           }
-          if (this.order.available_status.includes('Arrived')) {
+          if (this.order.availableStatus.includes('Arrived')) {
             this.canArrive = true;
           }
           if (this.order.offer.request.user.id == this.auth.currentUser?.id) {
             this.consumer = true;
           }
-          for (let status of this.order.order_status) {
+          for (let status of this.order.orderStatus) {
             this.sortStatus(status);
           }
         }
@@ -116,7 +116,7 @@ export class OrderComponent {
 
   onFileSelect(event: any) {
     const file = event.files[0];
-    this.image_url = file["objectURL"].changingThisBreaksApplicationSecurity;
+    this.imageUrl = file["objectURL"].changingThisBreaksApplicationSecurity;
     this.orderStatusForm.patchValue({ image: file });
     console.log('Image:', file);
   }
@@ -190,7 +190,7 @@ export class OrderComponent {
   }
 
   sortStatus(status : OrderStatusModel) : void {
-    switch (status.status_name) {
+    switch (status.statusName) {
       case 'Accepted':
         this.AcceptedStatus.push(status);
         break;
@@ -215,7 +215,7 @@ export class OrderComponent {
 
   clearForm() : void {
     this.orderStatusForm.reset();
-    this.image_url = '';
+    this.imageUrl = '';
   }
 
   setForm() : void {
@@ -227,7 +227,7 @@ export class OrderComponent {
       const orderStatus = response.data.order_status;
       this.orderStatusForm.patchValue({ status_name: orderStatus.status_name });
       this.orderStatusForm.patchValue({ comment: orderStatus.comment });
-      this.image_url = orderStatus.image_url;
+      this.imageUrl = orderStatus.imageUrl;
       this.isEdit = true;
       this.formVisible = true;
     });

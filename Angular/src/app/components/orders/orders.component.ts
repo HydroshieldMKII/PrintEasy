@@ -17,6 +17,14 @@ export class OrdersComponent {
 
   myOrders: OrderModel[] = [];
   makeOrders: OrderModel[] = [];
+  statusColorRef: { [key: string]: string } = {
+    'Accepted': '#c5c5c5',
+    'Printing': '#fa6bff',
+    'Printed': '#ffb056',
+    'Shipped': '#56c1ff',
+    'Arrived': '#8fff62',
+    'Cancelled': '#ff6262'
+  }
 
   constructor() {
     this.getMyOrders();

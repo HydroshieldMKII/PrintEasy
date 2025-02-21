@@ -46,7 +46,17 @@ class Api::OrderController < ApplicationController
               filament: {},
             }
           },
-          review: {},
+          review: {
+            include: {
+              user: {
+                except: %i[created_at updated_at is_admin],
+                methods: %i[profile_picture_url],
+                include: {
+                  country: {}
+                }
+              }
+            }
+          },
           order_status: {
             except: %i[order_id],
             methods: %i[image_url]
@@ -107,7 +117,17 @@ class Api::OrderController < ApplicationController
                 filament: {},
               }
             },
-            review: {},
+            review: {
+              include: {
+                user: {
+                  except: %i[created_at updated_at is_admin],
+                  methods: %i[profile_picture_url],
+                  include: {
+                    country: {}
+                  }
+                }
+              }
+            },
             order_status: {
               except: %i[order_id],
               methods: %i[image_url]

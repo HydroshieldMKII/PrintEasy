@@ -37,15 +37,15 @@
                             <td>{{order.offer.request.name}}</td>
                             <td>{{order.offer.price | currency}}</td>
                             <td>
-                                <span class="status-tag" [ngStyle]="{'background-color': statusColorRef[order.order_status.at(-1).status_name || 0]}">
-                                    <p class="w-full">{{order.order_status.at(-1).status_name}}</p>
+                                <span class="status-tag" [ngStyle]="{'background-color': statusColorRef[order.orderStatus.at(-1).statusName || 0]}">
+                                    <p class="w-full">{{order.orderStatus.at(-1).statusName}}</p>
                                 </span>
                             </td>
-                            <td>{{order.offer.target_date}}</td>
+                            <td>{{order.offer.targetDate | date:'fullDate'}}</td>
                             <td>
                                 <div class="h-td-table">
-                                    <p-avatar label="" size="large" shape="circle" image="{{order.offer.printer_user.user.profile_picture_url}}"></p-avatar>
-                                    <p>{{order.offer.printer_user.user.username}}</p>
+                                    <p-avatar label="" size="large" shape="circle" image="{{order.offer.printerUser.user.profilePictureUrl}}"></p-avatar>
+                                    <p>{{order.offer.printerUser.user.username}}</p>
                                 </div>
                                 
                             </td>
@@ -99,14 +99,14 @@
                             <td>{{order.offer.request.name}}</td>
                             <td>{{order.offer.price}}</td>
                             <td>
-                                <span class="status-tag" [ngStyle]="{'background-color': statusColorRef[order.order_status.at(-1).status_name || 0]}">
-                                    <p class="w-full">{{order.order_status.at(-1).status_name}}</p>
+                                <span class="status-tag" [ngStyle]="{'background-color': statusColorRef[order.orderStatus.at(-1).statusName || 0]}">
+                                    <p class="w-full">{{order.orderStatus.at(-1).statusName}}</p>
                                 </span>
                             </td>
-                            <td>{{order.offer.target_date}}</td>
+                            <td>{{order.offer.targetDate | date:'fullDate'}}</td>
                             <td>
                                 <div class="h-td-table">
-                                    <p-avatar label="" size="large" shape="circle" image="{{order.offer.request.user.profile_picture_url}}"></p-avatar>
+                                    <p-avatar label="" size="large" shape="circle" image="{{order.offer.request.user.profilePictureUrl}}"></p-avatar>
                                     <p>{{order.offer.request.user.username}}</p>
                                 </div>
                                 
