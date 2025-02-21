@@ -35,6 +35,7 @@ class Api::OrderController < ApplicationController
                 include: {
                   user: {
                     except: %i[created_at updated_at is_admin],
+                    methods: %i[profile_picture_url],
                     include: {
                       country: {}
                     }
@@ -45,9 +46,7 @@ class Api::OrderController < ApplicationController
               filament: {},
             }
           },
-          review: {
-            except: %i[created_at updated_at],
-          },
+          review: {},
           order_status: {
             except: %i[order_id],
             methods: %i[image_url]
@@ -74,7 +73,7 @@ class Api::OrderController < ApplicationController
 
       render json: {
         order: @order.as_json(
-          except: %i[created_at updated_at, offer_id],
+          except: %i[offer_id],
           include: {
             offer: {
               except: %i[created_at updated_at printer_user_id request_id color_id filament_id],
@@ -83,7 +82,7 @@ class Api::OrderController < ApplicationController
                   except: %i[printer_id user_id],
                   include: {
                     user: {
-                      except: %i[created_at updated_at is_admin country_id],
+                      except: %i[created_at updated_at is_admin],
                       methods: %i[profile_picture_url],
                       include: {
                         country: {}
@@ -97,6 +96,7 @@ class Api::OrderController < ApplicationController
                   include: {
                     user: {
                       except: %i[created_at updated_at is_admin],
+                      methods: %i[profile_picture_url],
                       include: {
                         country: {}
                       }
@@ -107,9 +107,7 @@ class Api::OrderController < ApplicationController
                 filament: {},
               }
             },
-            review: {
-              except: %i[created_at updated_at],
-            },
+            review: {},
             order_status: {
               except: %i[order_id],
               methods: %i[image_url]
