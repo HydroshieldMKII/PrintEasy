@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class Api::RequestsControllerTest < ActionDispatch::IntegrationTest
+class RequestsControllerTest < ActionDispatch::IntegrationTest
   setup do
     @user = users(:one)
     @user_request = requests(:request_one)

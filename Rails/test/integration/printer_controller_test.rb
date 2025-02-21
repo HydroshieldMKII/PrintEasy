@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class Api::PrintersControllerTest < ActionDispatch::IntegrationTest
+class PrintersControllerTest < ActionDispatch::IntegrationTest
     def setup
         @user = users(:one)
         @printer1 = printers(:one)

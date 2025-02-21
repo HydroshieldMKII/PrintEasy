@@ -1,6 +1,6 @@
 require "test_helper"
 
-class Api::ContestControllerTest < ActionDispatch::IntegrationTest
+class ContestControllerTest < ActionDispatch::IntegrationTest
     include Devise::Test::IntegrationHelpers
     setup do
         sign_in users(:two)

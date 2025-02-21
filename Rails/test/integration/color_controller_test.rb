@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class Api::ColorControllerTest < ActionDispatch::IntegrationTest
+class ColorControllerTest < ActionDispatch::IntegrationTest
     def setup
         @user = users(:one)
         @color1 = colors(:color_one)
