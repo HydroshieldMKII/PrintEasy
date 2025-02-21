@@ -379,6 +379,23 @@ req_no_offer.stl_file.attach(
 )
 req_no_offer.save
 
+#Request 0$ budget
+req_free = Request.create(
+  user: user1,
+  name: "Request with 0$ budget",
+  budget: 0.0,
+  comment: "This request has 0$ budget.",
+  target_date: Time.now + 10.days
+)
+
+req_free.stl_file.attach(
+  io: File.open(stl_file_path1),
+  filename: "RUBY13.stl",
+  content_type: "application/sla"
+)
+
+req_free.save
+
 
 # Create Orders
 order1 = Order.create!(offer: Offer.first)

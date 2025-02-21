@@ -124,7 +124,7 @@
                 />
               </td>
               <td>{{ request.name }}</td>
-              <td>{{ request.budget | currency }}</td>
+              <td>{{ request.budget == 0 ? "Free":request.budget | currency }}</td>
               <td>{{ request.targetDate | date }}</td>
               <td>{{ request.user.country }}</td>
               <td>
