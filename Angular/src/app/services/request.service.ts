@@ -118,7 +118,7 @@ export class RequestService {
                             request?.['stl_file_url'],
                             presets,
                             user,
-                            request?.['has_offers_made?'],
+                            request?.['has_offer_made?'],
                             request?.['has_offer_accepted?']
                         );
                     });
@@ -135,7 +135,11 @@ export class RequestService {
                 if (response.status === 201) {
                     this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Request created successfully' });
                 } else {
-                    this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Request creation failed' });
+                    if (response.status === 422) {
+                        for (const [key, value] of Object.entries(response.errors)) {
+                            this.messageService.add({ severity: 'error', summary: 'Error', detail: `${key}: ${value}` });
+                        }
+                    }
                 }
                 return response;
             })

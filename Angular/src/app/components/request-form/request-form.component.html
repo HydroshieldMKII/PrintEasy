@@ -265,6 +265,7 @@
         (click)="makeAnOffer()"
         severity="info"
         appendTo="body"
+        [disabled]="request.hasOfferAccepted"
       ></button>
     </div>
   </div>
@@ -281,12 +282,14 @@
       icon="pi pi-trash"
       severity="danger"
       (click)="showDeleteDialog(request)"
+      [disabled]="request.hasOfferAccepted"
     ></p-button>
     <p-button
       label="Save"
       icon="pi pi-save"
       severity="success"
       (click)="saveChanges()"
+      [disabled]="request.hasOfferAccepted"
     ></p-button>
   </div>
 

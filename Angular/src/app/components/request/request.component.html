@@ -84,7 +84,7 @@
         <hr />
 
         <p-table
-          *ngIf="currentRequests.length > 0 && isOwningPrinter"
+          *ngIf="currentRequests.length > 0 && isOwningPrinter || activeTab == 'my'"
           [value]="currentRequests"
           dataKey="id"
           [tableStyle]="{ 'min-width': '60rem' }"
@@ -139,12 +139,14 @@
                     icon="pi pi-pencil"
                     title="Edit"
                     routerLink="/requests/edit/{{ request.id }}"
+                    [disabled]="request.hasOfferAccepted"
                   ></p-button>
                   <p-button
                     *ngIf="tab === 'my'"
                     icon="pi pi-trash"
                     title="Delete"
                     (onClick)="showDeleteDialog(request)"
+                    [disabled]="request.hasOfferAccepted"
                   ></p-button>
                   <a [href]="request.stlFileUrl" class="p-button" download style="text-decoration: none;"><i class="pi pi-download"></i></a>
                 </div>

@@ -73,6 +73,11 @@ class Api::RequestController < AuthenticatedController
       return
     end
 
+    if @request.has_offer_accepted?
+      render json: { request: {}, errors: { request: ['Cannot delete request with accepted offers'] } }, status: :unprocessable_entity
+      return
+    end
+
     @request.destroy
     render json: { request: @request, errors: {} }
   end

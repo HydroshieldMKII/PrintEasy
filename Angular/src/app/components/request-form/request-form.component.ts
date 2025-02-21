@@ -100,10 +100,10 @@ export class RequestFormComponent implements OnInit {
           }
 
           this.form = this.fb.group({
-            name: [{ value: this.request.name, disabled: this.isViewMode }, Validators.required],
-            budget: [{ value: this.request.budget, disabled: this.isViewMode }, Validators.required],
-            targetDate: [{ value: new Date(this.request.targetDate).toISOString().substring(0, 10), disabled: this.isViewMode }, [Validators.required, this.dateValidator]],
-            comment: [{ value: this.request.comment, disabled: this.isViewMode }]
+            name: [{ value: this.request.name, disabled: this.isViewMode || this.request.hasOfferAccepted }, Validators.required],
+            budget: [{ value: this.request.budget, disabled: this.isViewMode || this.request.hasOfferAccepted }, Validators.required],
+            targetDate: [{ value: new Date(this.request.targetDate).toISOString().substring(0, 10), disabled: this.isViewMode || this.request.hasOfferAccepted }, [Validators.required, this.dateValidator]],
+            comment: [{ value: this.request.comment, disabled: this.isViewMode || this.request.hasOfferAccepted }]
           });
 
         });
@@ -339,15 +339,12 @@ export class RequestFormComponent implements OnInit {
       }
 
       const obs = this.requestService.createRequest(contestFormData);
-      // const obs = this.isNewMode ? this.requestService.createRequest(contestFormData) : this.requestService.updateRequest(this.id, contestFormData);
 
       obs.subscribe(response => {
         if ((this.isEditMode && response.status === 200)) {
           this.router.navigate(['/requests/view', this.id]);
         } else if (response.status === 201) {
-          this.router.navigate(['/requests']);
-        } else {
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Request creation failed' });
+          this.router.navigate(['/requests/view/', response.data.request.id]);
         }
       });
     }
