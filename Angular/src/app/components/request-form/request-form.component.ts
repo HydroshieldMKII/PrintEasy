@@ -175,7 +175,6 @@ export class RequestFormComponent implements OnInit {
         const color = this.colors.find((c: any) => c.label === preset.color);
 
         if (printer && filament && color && preset.printQuality) {
-          // If preset exists (editing an existing record), add its id
           if (preset.id) {
             contestFormData.append(
               `request[preset_requests_attributes][${presetIndex}][id]`,
