@@ -93,6 +93,10 @@
     gap: 2rem;
 }
 
+.date-error {
+    max-width: 280px;
+}
+
 .container-row-date {
     display: flex;
     flex-direction: row;
@@ -176,7 +180,15 @@
     }
 
     .button-container {
-        margin-top: 1.5rem;
-        justify-content: start;
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap; 
+    }
+
+    .p-button {
+        width: auto;
+        min-width: 80px;
+        max-width: 100px;
+        white-space: nowrap; 
     }
 }

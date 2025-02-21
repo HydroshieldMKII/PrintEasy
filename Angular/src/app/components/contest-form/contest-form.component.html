@@ -40,7 +40,7 @@
                       [class]="startDatePicker"></p-datepicker>
                     <label for="startDate">Date de début</label>
                   </p-floatlabel>
-                  <p-message severity="error" variant="simple" size="small">
+                  <p-message class="date-error" severity="error" variant="simple" size="small">
                     {{ contestForm.errors?.['dateError'] ? contestForm.errors?.['dateError'] : 'La date de début est
                     requise'
                     }}
@@ -91,6 +91,10 @@
           <div class="button-container">
             <p-button label="Annuler" type="button" (click)="onCancel()" icon="pi pi-times"
               severity="secondary"></p-button>
+            @if (isEdit) {
+            <p-button label="Supprimer" type="button" (click)="onDelete()" icon="pi pi-trash" severity="danger">
+            </p-button>
+            }
             <p-button label="Sauvegarder" [disabled]="!contestForm.valid" icon="pi pi-save" severity="success"
               (onClick)="onSubmit()"></p-button>
           </div>

@@ -21,6 +21,8 @@ export class ContestService {
         if (response.status === 200) {
           return response.data.contests.map((contest: any) => ContestModel.fromApi(contest));
         } else {
+          console.log('error:', response.errors);
+          this.messageService.add({ severity: 'error', summary: 'Erreur', detail: 'Erreur lors de la récupération des concours' });
           return [];
         }
       })
@@ -31,9 +33,10 @@ export class ContestService {
     return this.api.getRequest(`api/contest/${id}`).pipe(
       map(response => {
         if (response.status === 200) {
-          console.log('start_at from bd:', response.data.contest.start_at);
           return ContestModel.fromApi(response.data.contest);
         } else {
+          console.log('error:', response.errors);
+          this.messageService.add({ severity: 'error', summary: 'Erreur', detail: 'Erreur lors de la récupération du concours' });
           return null;
         }
       })

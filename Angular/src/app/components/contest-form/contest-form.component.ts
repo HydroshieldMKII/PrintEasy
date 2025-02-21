@@ -75,28 +75,31 @@ export class ContestFormComponent {
     const startDate = group.get('startDate')?.value;
     const endDate = group.get('endDate')?.value;
 
-    if (!startDate || !endDate) {
-      return null;
-    }
-    
-    if (startDate.getTime() === this.currentStartDate.getTime() && endDate.getTime() === this.currentEndDate?.getTime()) {
+    if (!startDate) {
       return null;
     }
 
-    if (startDate && new Date() > new Date(startDate)) {
-      this.startDatePicker = "ng-invalid ng-dirty";
-      return { dateError: 'La date de début doit être avant la date actuelle' };
+    const startDateTime = new Date(startDate).getTime();
+    const endDateTime = endDate ? new Date(endDate).getTime() : null;
+
+    if (startDateTime === this.currentStartDate.getTime() && endDateTime === this.currentEndDate?.getTime() || startDateTime === this.currentStartDate.getTime() && !endDate) {
+      return null;
     }
 
-    if (startDate.getTime() > endDate.getTime()) {
+    if (endDateTime && startDateTime > endDateTime) {
       this.startDatePicker = "ng-invalid ng-dirty";
       return { dateError: 'La date de début doit être avant la date de fin' };
     }
 
-    if (startDate.getTime() + 24 * 60 * 60 * 1000 > endDate.getTime()) {
+    if (endDateTime && startDateTime + 24 * 60 * 60 * 1000 > endDateTime) {
       this.startDatePicker = "ng-invalid ng-dirty";
-      return { dateError: 'Il doit y avoir 24h de différence' };
-    } 
+      return { dateError: 'Il doit y avoir 24h de différence avec la date de fin' };
+    }
+
+    if (startDateTime < new Date().getTime()) {
+      this.startDatePicker = "ng-invalid ng-dirty";
+      return { dateError: 'La date de début doit être après la date et l\'heure actuelle' };
+    }
 
     this.startDatePicker = "";
     return null;
@@ -137,7 +140,14 @@ export class ContestFormComponent {
     }
   }
 
+  onDelete() {
+  }
+
   onCancel() {
     this.contestForm.reset();
+    this.imageUrl = '';
+    this.noImagePreview = "image-preview-container";
+    this.currentEndDate = null;
+    this.currentStartDate = new Date();
   }
 }
