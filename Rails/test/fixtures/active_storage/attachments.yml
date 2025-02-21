@@ -25,3 +25,8 @@ third_stl_file_attachment:
   record_type: Request
   record_id: 3
   blob: first_stl_file_blob
+
+third_image_attachment:
+  name: image
+  record: order_status_one (Order_status)
+  blob: first_image_blob

@@ -13,6 +13,5 @@ export class UserModel {
         this.createdAt = createdAt;
         this.profile_picture_url = profile_picture_url;
         this.isAdmin = isAdmin;
-        // debugger;
     }
 }

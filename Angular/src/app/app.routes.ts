@@ -11,6 +11,7 @@ import { RequestFormComponent } from './components/request-form/request-form.com
 import { OrderComponent } from './components/order/order.component';
 
 import { AuthenticationGuard } from './guards/authentication.guard';
+import { ContestGuard } from './guards/contest.guard';
 
 export const routes: Routes = [
   {
@@ -57,7 +58,7 @@ export const routes: Routes = [
   },
   {
     path: '',
-    canActivate: [AuthenticationGuard],
+    canActivateChild: [ContestGuard],
     children: [
       {
         path: 'contest',
