@@ -5,6 +5,7 @@ class Api::PrintersControllerTest < ActionDispatch::IntegrationTest
         @user = users(:one)
         @printer1 = printers(:one)
         @printer2 = printers(:two)
+        @printer3 = printers(:three)
 
         sign_in @user
     end
@@ -21,7 +22,8 @@ class Api::PrintersControllerTest < ActionDispatch::IntegrationTest
 
         expected_response = [
             {"id" => @printer1.id, "model" => @printer1.model},
-            {"id" => @printer2.id, "model" => @printer2.model}
+            {"id" => @printer2.id, "model" => @printer2.model},
+            {"id" => @printer3.id, "model" => @printer3.model}
         ]
 
         assert_equal expected_response, json_response

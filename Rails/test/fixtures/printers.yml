@@ -9,3 +9,8 @@ two: {
   id: 2,
   model: "Creality",
 }
+
+three: {
+  id: 3,
+  model: "Prusa",
+}
