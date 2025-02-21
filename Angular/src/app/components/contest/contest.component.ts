@@ -10,11 +10,12 @@ import { InputTextModule } from 'primeng/inputtext';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SpeedDialModule } from 'primeng/speeddial';
+import { DialogModule } from 'primeng/dialog';
 
 @Component({
   selector: 'app-contest',
   standalone: true,
-  imports: [CardModule, ButtonModule, InputTextModule, FormsModule, CommonModule, SpeedDialModule],
+  imports: [CardModule, ButtonModule, InputTextModule, FormsModule, CommonModule, SpeedDialModule, DialogModule],
   templateUrl: './contest.component.html',
   styleUrls: ['./contest.component.css']
 })
@@ -22,7 +23,10 @@ export class ContestComponent {
   route = inject(Router);
   contestService = inject(ContestService);
   authService = inject(AuthService);
+
   contests: ContestModel[] = [];
+  id: number = 0;
+  deleteDialogVisible: boolean = false;
 
   constructor() {
     this.contestService.getContests().subscribe((response) => {
@@ -48,13 +52,16 @@ export class ContestComponent {
     this.route.navigate(['/contest', id]);
   }
 
+  confirmDelete() {
+    this.contestService.deleteContest(this.id).subscribe(() => {
+      this.deleteDialogVisible = false;
+      this.contests = this.contests.filter(contest => contest.id !== 1);
+    }
+    );
+  }
+
   deleteContest(id: number) {
-    console.log("Delete contest", id);
-    this.contestService.deleteContest(id).subscribe((response) => {
-      console.log('Delete contest:', response);
-      if (response.status === 200) {
-        this.contests = this.contests.filter(contest => contest.id !== id);
-      }
-    });
+    this.id = id;
+    this.deleteDialogVisible = true;
   }
 }

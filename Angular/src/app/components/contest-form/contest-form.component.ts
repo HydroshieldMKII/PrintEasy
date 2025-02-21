@@ -19,6 +19,7 @@ export class ContestFormComponent {
 
   contestForm: FormGroup;
   isEdit: boolean = false;
+  deleteDialogVisible: boolean = false;
   startDatePicker = "";
   imageUrl: string = '';
   noImagePreview: string = "image-preview-container";
@@ -141,6 +142,15 @@ export class ContestFormComponent {
   }
 
   onDelete() {
+    this.deleteDialogVisible = true;
+  }
+
+  confirmDelete() {
+    this.contestService.deleteContest(this.route.snapshot.params['id']).subscribe(response => {
+      if (response.status === 200) {
+        this.router.navigate(['/contest']);
+      }
+    });
   }
 
   onCancel() {
