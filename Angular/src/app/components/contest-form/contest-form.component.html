@@ -11,9 +11,9 @@
               <div class="field col-12">
                 <p-floatlabel variant="in">
                   <input id="theme" pInputText formControlName="theme" type="text" />
-                  <label for="theme" class="p-text-bold">Thème</label>
+                  <label for="theme" class="p-text-bold">Theme</label>
                 </p-floatlabel>
-                <p-message severity="error" variant="simple" size="small">Le theme est requis</p-message>
+                <p-message severity="error" variant="simple" size="small">The theme is required</p-message>
               </div>
 
               <!-- Limite -->
@@ -28,7 +28,7 @@
                     rows="4"></textarea>
                   <label for="description" class="p-text-bold">Description</label>
                 </p-floatlabel>
-                <p-message severity="error" variant="simple" size="small">La description est trop longue</p-message>
+                <p-message severity="error" variant="simple" size="small">The description is too long</p-message>
               </div>
 
               <!-- Date de début -->
@@ -38,11 +38,10 @@
                     <p-datepicker [hourFormat]="'24'" [showTime]="true" size="large" formControlName="startDate"
                       [showIcon]="true" inputId="buttondisplay" [showOnFocus]="false" dateFormat="yy-mm-dd"
                       [class]="startDatePicker"></p-datepicker>
-                    <label for="startDate">Date de début</label>
+                    <label for="startDate">Start date</label>
                   </p-floatlabel>
                   <p-message class="date-error" severity="error" variant="simple" size="small">
-                    {{ contestForm.errors?.['dateError'] ? contestForm.errors?.['dateError'] : 'La date de début est
-                    requise'
+                    {{ contestForm.errors?.['dateError'] ? contestForm.errors?.['dateError'] : 'Start date is required'
                     }}
                   </p-message>
                 </div>
@@ -52,7 +51,7 @@
                     <p-datepicker [hourFormat]="'24'" [showTime]="true" size="large" formControlName="endDate"
                       [showIcon]="true" inputId="buttondisplay" [showOnFocus]="false"
                       dateFormat="yy-mm-dd"></p-datepicker>
-                    <label for="endDate" class="center-label">Date de fin</label>
+                    <label for="endDate" class="center-label">End date</label>
                   </p-floatlabel>
                 </div>
 
@@ -60,9 +59,9 @@
                   <p-floatlabel variant="in">
                     <p-inputnumber id="limit" formControlName="limit" [min]="1" [max]="30"
                       [showButtons]="true"></p-inputnumber>
-                    <label for="limit" class="p-text-bold">Limite</label>
+                    <label for="limit" class="p-text-bold">Limit</label>
                   </p-floatlabel>
-                  <p-message severity="error" variant="simple" size="small">La limite est requise</p-message>
+                  <p-message severity="error" variant="simple" size="small">Limit is required</p-message>
                 </div>
               </div>
 
@@ -89,13 +88,13 @@
         <!-- Boutons -->
         <div class="">
           <div class="button-container">
-            <p-button label="Annuler" type="button" (click)="onCancel()" icon="pi pi-times"
+            <p-button label="Cancel" type="button" (click)="onCancel()" icon="pi pi-times"
               severity="secondary"></p-button>
             @if (isEdit) {
-            <p-button label="Supprimer" type="button" (click)="onDelete()" icon="pi pi-trash" severity="danger">
+            <p-button label="Delete" type="button" (click)="onDelete()" icon="pi pi-trash" severity="danger">
             </p-button>
             }
-            <p-button label="Sauvegarder" [disabled]="!contestForm.valid" icon="pi pi-save" severity="success"
+            <p-button label="Save" [disabled]="!contestForm.valid" icon="pi pi-save" severity="success"
               (onClick)="onSubmit()"></p-button>
           </div>
         </div>

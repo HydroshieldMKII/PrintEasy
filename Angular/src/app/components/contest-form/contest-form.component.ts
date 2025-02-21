@@ -89,17 +89,17 @@ export class ContestFormComponent {
 
     if (endDateTime && startDateTime > endDateTime) {
       this.startDatePicker = "ng-invalid ng-dirty";
-      return { dateError: 'La date de début doit être avant la date de fin' };
+      return { dateError: 'Start date must be before the end date' };
     }
 
     if (endDateTime && startDateTime + 24 * 60 * 60 * 1000 > endDateTime) {
       this.startDatePicker = "ng-invalid ng-dirty";
-      return { dateError: 'Il doit y avoir 24h de différence avec la date de fin' };
+      return { dateError: 'There must be a 24-hour difference from the end date' };
     }
 
     if (startDateTime < new Date().getTime()) {
       this.startDatePicker = "ng-invalid ng-dirty";
-      return { dateError: 'La date de début doit être après la date et l\'heure actuelle' };
+      return { dateError: 'The start date must be after the current date and time' };
     }
 
     this.startDatePicker = "";
