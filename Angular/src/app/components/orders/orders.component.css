@@ -1,0 +1,27 @@
+.h-td-table {
+    display: flex; 
+    flex-direction: row; 
+    gap: 15px; 
+    align-items: center;
+}
+
+.status-tag {
+    color: rgb(34, 34, 34);
+    border-radius: 10px;
+    height: 30px;
+    padding: 7px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    align-items: center;
+    width: 100px;
+    text-align: center;
+}
+
+.w-full {
+    width: 100%;
+}
+
+i {
+    font-size: 1.5rem;
+}
