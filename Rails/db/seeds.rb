@@ -286,10 +286,30 @@ Request.all.each do |request|
   end
 end
 
+
+
+#Request without offers
+req_no_offer = Request.create(
+  user: user1,
+  name: "Request without offers",
+  budget: 100.0,
+  comment: "This request has no offers.",
+  target_date: Time.now + 10.days
+)
+
+req_no_offer.stl_file.attach(
+  io: File.open(stl_file_path1),
+  filename: "RUBY13.stl",
+  content_type: "application/sla"
+)
+req_no_offer.save
+
+
 # Create Orders
 order1 = Order.create!(offer: Offer.first)
 order2 = Order.create!(offer: Offer.second)
 order3 = Order.create!(offer: Offer.third)
+order4 = Order.create!(offer: Offer.last)
 
 Review.create!(
   order: order2,
@@ -307,6 +327,7 @@ status_shipped = Status.create!(name: "Shipped")
 status_arrived = Status.create!(name: "Arrived")
 status_cancelled = Status.create!(name: "Cancelled")
 
+OrderStatus.create!(order: order4, status: status_accepted, comment: "offer accepted, printing soon.")
 OrderStatus.create!(order: order3, status: status_accepted, comment: "offer accepted, printing soon.")
 OrderStatus.create!(order: order2, status: status_accepted, comment: "offer accepted, printing soon.")
 OrderStatus.create!(order: order2, status: status_printing, comment: "Order started printing.")

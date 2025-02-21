@@ -2,10 +2,15 @@
 
 one: {
   id: 1,
-  model: MyString
+  model: "Bambulab",
 }
 
 two: {
   id: 2,
-  model: MyString
+  model: "Creality",
+}
+
+three: {
+  id: 3,
+  model: "Prusa",
 }

@@ -1,6 +1,4 @@
-class Api::FilamentController < ApplicationController
-    before_action :authenticate_user!
-
+class Api::FilamentController < AuthenticatedController
     def index
         filaments = Filament.all
         render json: filaments
