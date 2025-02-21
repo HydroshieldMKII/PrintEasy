@@ -10,6 +10,8 @@ export class RequestModel {
     stlFileUrl: string;
     presets: PresetModel[];
     user: UserModel;
+    hasOffers: boolean;
+    hasOfferAccepted: boolean;
 
     constructor(
         id: number,
@@ -19,7 +21,9 @@ export class RequestModel {
         comment: string,
         stlFileUrl: string,
         presets: PresetModel[],
-        user: UserModel
+        user: UserModel,
+        hasOffers: boolean,
+        hasOfferAccepted: boolean
     ) {
         this.id = id;
         this.name = name;
@@ -29,5 +33,7 @@ export class RequestModel {
         this.stlFileUrl = stlFileUrl;
         this.presets = presets;
         this.user = user;
+        this.hasOffers = hasOffers;
+        this.hasOfferAccepted = hasOfferAccepted
     }
 }

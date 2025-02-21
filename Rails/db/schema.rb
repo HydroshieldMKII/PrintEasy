@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_02_17_183201) do
+ActiveRecord::Schema[7.1].define(version: 2025_02_21_001028) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -108,6 +108,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_17_183201) do
     t.index ["color_id"], name: "index_preset_requests_on_color_id"
     t.index ["filament_id"], name: "index_preset_requests_on_filament_id"
     t.index ["printer_id"], name: "index_preset_requests_on_printer_id"
+    t.index ["request_id", "color_id", "filament_id", "printer_id", "print_quality"], name: "index_preset_requests_uniqueness", unique: true
     t.index ["request_id"], name: "index_preset_requests_on_request_id"
   end
 

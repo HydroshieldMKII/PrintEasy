@@ -226,7 +226,7 @@ export class RequestFormComponent implements OnInit {
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
-        detail: 'Invalid preset information. Field all the preset and make sure they are unique.'
+        detail: 'Invalid preset information. Fill all the preset and make sure they are unique.'
       });
       return;
     }

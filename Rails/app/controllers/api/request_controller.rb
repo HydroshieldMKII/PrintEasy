@@ -1,5 +1,5 @@
 class Api::RequestController < AuthenticatedController
-  before_action :authenticate_user!
+  rescue_from ActiveRecord::RecordNotUnique, with: :handle_record_not_unique
   before_action :index_params, only: :index
   before_action :show_params, only: :show
   before_action :create_params, only: :create
@@ -80,20 +80,27 @@ class Api::RequestController < AuthenticatedController
   private
 
   def fetch_requests
-    requests = case params[:type]
-               when 'all'
-                 Request.includes(:user, preset_requests: %i[color filament printer]).where.not(user: current_user)
-               when 'my'
-                 Request.includes(:user, preset_requests: %i[color filament printer]).where(user: current_user)
-               else
-                 render json: { request: {}, errors: { type: ['is invalid'] } }, status: :unprocessable_entity
-                 return
-               end
-
+    case params[:type]
+    when 'all'
+      # Exclude requests that have any accepted offers.
+      accepted_request_ids = Request.joins(offers: { order: :order_status })
+                                    .where(order_status: { status_name: 'Accepted' })
+                                    .select(:id)
+  
+      requests = Request.includes(:user, preset_requests: %i[color filament printer])
+                        .where.not(user: current_user)
+                        .where.not(id: accepted_request_ids)
+    when 'my'
+      requests = Request.includes(:user, preset_requests: %i[color filament printer])
+                        .where(user: current_user)
+    else
+      return []
+    end
+  
     requests = requests.where("name LIKE ?", "%#{params[:search]}%") if params[:search].present?
     requests = filter_requests(requests)
     requests = sort_requests(requests)
-
+  
     requests
   end
 
@@ -171,5 +178,10 @@ class Api::RequestController < AuthenticatedController
         render json: { request: {}, errors: { stl_file: ['must have .stl extension'] } }, status: :unprocessable_entity
       end
     end
+  end
+
+  def handle_record_not_unique(exception)
+    render json: { request: {}, errors: { preset_requests: ['Duplicate preset exists in the request'] } },
+           status: :unprocessable_entity
   end
 end

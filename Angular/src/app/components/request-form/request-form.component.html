@@ -143,6 +143,7 @@
             accept=".stl"
             chooseLabel="Upload file"
             class="flex-1"
+            [disabled]="request.hasOffers"
           ></p-fileUpload>
         </div>
       </div>
@@ -154,17 +155,16 @@
         {{ request.presets.length }} Presets recommended
         <p-button
           id="add-preset"
-          *ngIf="isEditMode || isNewMode"
+          *ngIf="(isEditMode || isNewMode) && !request.hasOffers"
           label="Add preset"
           [link]="true"
           icon="pi pi-plus"
           (click)="addPreset()"
         ></p-button>
       </h3>
-    </div>
-  </form>
-    <!-- Reactive FormArray for Presets -->
-    
+      <p *ngIf="isEditMode && request.hasOffers" style="color: red;" >You cant edit the presets and file. Offers have been made.</p>
+    </div> 
+  </form>    
     <p-table
     [value]="request.presets"
     dataKey="id"
@@ -191,7 +191,7 @@
             optionLabel="label"
             optionValue="value"
             placeholder="Select Printer"
-            [disabled]="isViewMode"
+            [disabled]="isViewMode || request.hasOffers"
             appendTo="body"
           ></p-dropdown>
         </td>
@@ -203,7 +203,7 @@
             optionLabel="label"
             optionValue="value"
             placeholder="Select Filament"
-            [disabled]="isViewMode"
+            [disabled]="isViewMode || request.hasOffers"
             appendTo="body"
           ></p-dropdown>
         </td>
@@ -215,7 +215,7 @@
             optionLabel="label"
             optionValue="value"
             placeholder="Select Color"
-            [disabled]="isViewMode"
+            [disabled]="isViewMode || request.hasOffers"
             appendTo="body"
           ></p-dropdown>
         </td>
@@ -231,7 +231,7 @@
             [step]="0.04" 
             [min]="0.01" 
             [max]="2"
-            [disabled]="isViewMode">
+            [disabled]="isViewMode || request.hasOffers">
           </p-inputnumber>
         </td>
         <!-- Delete Button -->
@@ -245,6 +245,7 @@
             (click)="removePreset(ri)"
             severity="danger"
             appendTo="body"
+            [disabled]="request.hasOffers"
           ></button>
         </td>
       </tr>

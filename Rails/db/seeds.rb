@@ -286,6 +286,8 @@ Request.all.each do |request|
   end
 end
 
+
+
 #Request without offers
 req_no_offer = Request.create(
   user: user1,
@@ -307,6 +309,7 @@ req_no_offer.save
 order1 = Order.create!(offer: Offer.first)
 order2 = Order.create!(offer: Offer.second)
 order3 = Order.create!(offer: Offer.third)
+order4 = Order.create!(offer: Offer.last)
 
 Review.create!(
   order: order2,
@@ -324,6 +327,7 @@ status_shipped = Status.create!(name: "Shipped")
 status_arrived = Status.create!(name: "Arrived")
 status_cancelled = Status.create!(name: "Cancelled")
 
+OrderStatus.create!(order: order4, status: status_accepted, comment: "offer accepted, printing soon.")
 OrderStatus.create!(order: order3, status: status_accepted, comment: "offer accepted, printing soon.")
 OrderStatus.create!(order: order2, status: status_accepted, comment: "offer accepted, printing soon.")
 OrderStatus.create!(order: order2, status: status_printing, comment: "Order started printing.")
