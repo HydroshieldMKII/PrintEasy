@@ -15,7 +15,7 @@ import { DialogModule } from 'primeng/dialog';
 @Component({
   selector: 'app-contest',
   standalone: true,
-  imports: [CardModule, ButtonModule, InputTextModule, FormsModule, CommonModule, SpeedDialModule, DialogModule],
+  imports: [CardModule, ButtonModule, InputTextModule, FormsModule, CommonModule, SpeedDialModule, DialogModule, RouterLink],
   templateUrl: './contest.component.html',
   styleUrls: ['./contest.component.css']
 })

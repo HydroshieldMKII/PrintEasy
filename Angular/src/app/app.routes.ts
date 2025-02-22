@@ -10,6 +10,8 @@ import { RequestsComponent } from './components/request/request.component';
 import { RequestFormComponent } from './components/request-form/request-form.component';
 import { OrderComponent } from './components/order/order.component';
 import { OrdersComponent } from './components/orders/orders.component';
+import { SubmissionComponent } from './components/submission/submission.component';
+import { SubmissionsComponent } from './components/submissions/submissions.component';
 
 import { AuthenticationGuard } from './guards/authentication.guard';
 import { ContestGuard } from './guards/contest.guard';
@@ -75,6 +77,11 @@ export const routes: Routes = [
         path: 'contest/:id',
         component: ContestFormComponent,
         title: 'Edit Contest',
+      },
+      {
+        path: 'contest/:id/submissions',
+        component: SubmissionsComponent,
+        title: 'Submissions',
       }
     ]
   },

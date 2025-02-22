@@ -31,7 +31,7 @@
             </div>
 
 
-            <button pButton label="Contest detail" class="p-button-outlined contest-detail-button"></button>
+            <button [routerLink]="['/contest', contest.id, 'submissions']" pButton label="Contest detail" class="p-button-outlined contest-detail-button"></button>
             
             @if (authService.currentUser?.isAdmin) {
             <div class="admin-buttons">

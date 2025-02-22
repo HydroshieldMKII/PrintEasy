@@ -8,7 +8,7 @@
           <!-- Thème -->
           <div class="container-column">
             <div>
-              <div class="field col-12">
+              <div class="">
                 <p-floatlabel variant="in">
                   <input id="theme" pInputText formControlName="theme" type="text" />
                   <label for="theme" class="p-text-bold">Theme</label>
@@ -22,7 +22,7 @@
 
             <div>
               <!-- Description -->
-              <div class="field col-8">
+              <div class="mt-12">
                 <p-floatlabel variant="in">
                   <textarea class="description-textarea" id="description" pTextarea formControlName="description"
                     rows="4"></textarea>
@@ -32,10 +32,10 @@
               </div>
 
               <!-- Date de début -->
-              <div class="container-row field col-12">
-                <div class="field col-12">
+              <div class="container-row mt-12">
+                <div class="">
                   <p-floatlabel variant="in">
-                    <p-datepicker [hourFormat]="'24'" [showTime]="true" size="large" formControlName="startDate"
+                    <p-datepicker [hourFormat]="'24'" [showTime]="true" formControlName="startDate"
                       [showIcon]="true" inputId="buttondisplay" [showOnFocus]="false" dateFormat="yy-mm-dd"
                       [class]="startDatePicker"></p-datepicker>
                     <label for="startDate">Start date</label>
@@ -46,9 +46,9 @@
                   </p-message>
                 </div>
 
-                <div class="field col-12">
+                <div class="">
                   <p-floatlabel variant="in">
-                    <p-datepicker [hourFormat]="'24'" [showTime]="true" size="large" formControlName="endDate"
+                    <p-datepicker [hourFormat]="'24'" [showTime]="true" formControlName="endDate"
                       [showIcon]="true" inputId="buttondisplay" [showOnFocus]="false"
                       dateFormat="yy-mm-dd"></p-datepicker>
                     <label for="endDate" class="center-label">End date</label>
@@ -57,7 +57,7 @@
 
                 <div class="">
                   <p-floatlabel variant="in">
-                    <p-inputnumber id="limit" formControlName="limit" [min]="1" [max]="30"
+                    <p-inputnumber [style]="{'width': '400px'}" id="limit" formControlName="limit" [min]="1" [max]="30"
                       [showButtons]="true"></p-inputnumber>
                     <label for="limit" class="p-text-bold">Limit</label>
                   </p-floatlabel>
@@ -68,7 +68,7 @@
             </div>
           </div>
 
-          <div class="field col-12">
+          <div class="">
             <div [class]="noImagePreview">
               <div *ngIf="imageUrl">
                 <img [src]="imageUrl" alt="" class="image-preview" />
@@ -76,8 +76,8 @@
             </div>
 
             <!-- Upload de l'image -->
-            <div class="">
-              <div class="fileUploadContainer">
+            <div class="mt-12 items-center">
+              <div class="fileUploadContainer center">
                 <!-- <label for="image" class="p-text-bold">Image</label> -->
                 <p-fileUpload mode="basic" name="image" accept="image/*" [maxFileSize]="1000000"
                   (onSelect)="onFileSelect($event)" chooseLabel="Upload file"></p-fileUpload>
@@ -86,7 +86,7 @@
           </div>
         </div>
         <!-- Boutons -->
-        <div class="">
+        <div class="mt-12">
           <div class="button-container">
             <p-button label="Cancel" type="button" (click)="onCancel()" icon="pi pi-times"
               severity="secondary"></p-button>
