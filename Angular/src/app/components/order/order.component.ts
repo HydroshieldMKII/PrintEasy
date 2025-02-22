@@ -15,7 +15,7 @@ import { AuthService } from '../../services/authentication.service';
 
 @Component({
   selector: 'app-orders',
-  imports: [ImportsModule, DropdownModule],
+  imports: [ImportsModule, DropdownModule, ReactiveFormsModule],
   templateUrl: './order.component.html',
   styleUrl: './order.component.css'
 })
@@ -36,6 +36,14 @@ export class OrderComponent {
     'Arrived': '#8fff62',
     'Cancelled': '#ff6262'
   }
+  statusDefaultCommentRef: { [key: string]: string } = {
+    'Accepted': 'the order has been accepted.',
+    'Printing': 'the order is being printed.',
+    'Printed': 'the order has been printed.',
+    'Shipped': 'the order has been shipped.',
+    'Arrived': 'the order has arrived.',
+    'Cancelled': 'the order has been cancelled.'
+  }
   editMenuItems: MenuItem[] = [
     {
       label: 'Edit',
@@ -52,6 +60,7 @@ export class OrderComponent {
       }
     }
   ]
+  statusActions: MenuItem[] = [];
   AcceptedStatus: OrderStatusModel[] = [];
   PrintingStatus: OrderStatusModel[] = [];
   PrintedStatus: OrderStatusModel[] = [];
@@ -68,13 +77,13 @@ export class OrderComponent {
   currentlySelectedOrderStatusId: number = -1
 
   constructor(private fb: FormBuilder) {
-    this.refreshOrder();
-
     this.orderStatusForm = this.fb.group({
-      status_name: ['', Validators.required],
+      statusName: ['', Validators.required],
       comment: [],
       image: [null]
     });
+    
+    this.refreshOrder();
   }
 
   refreshOrder() : void {
@@ -108,6 +117,70 @@ export class OrderComponent {
           for (let status of this.order.orderStatus) {
             this.sortStatus(status);
           }
+          for (let status of this.order.availableStatus) {
+            switch (status) {
+              case 'Accepted':
+                this.statusActions.push({
+                  label: 'Accepted', 
+                  icon: 'pi pi-play',
+                  command: () => {
+                    this.ShowOrderStatusForm();
+                    this.orderStatusForm.patchValue({ statusName: 'Accepted' });
+                  }
+                });
+                break;
+              case 'Printing':
+                this.statusActions.push({
+                  label: 'Printing', 
+                  icon: 'pi pi-print',
+                  command: () => {
+                    this.ShowOrderStatusForm();
+                    this.orderStatusForm.patchValue({ statusName: 'Printing' });
+                  }
+                });
+                break;
+              case 'Printed':
+                this.statusActions.push({
+                  label: 'Printed', 
+                  icon: 'pi pi-check-circle',
+                  command: () => {
+                    this.ShowOrderStatusForm();
+                    this.orderStatusForm.patchValue({ statusName: 'Printed' });
+                  }
+                });
+                break;
+              case 'Shipped':
+                this.statusActions.push({
+                  label: 'Shipped', 
+                  icon: 'pi pi-send',
+                  command: () => {
+                    this.ShowOrderStatusForm();
+                    this.orderStatusForm.patchValue({ statusName: 'Shipped' });
+                  }
+                });
+                break;
+              case 'Arrived':
+                this.statusActions.push({
+                  label: 'Arrived', 
+                  icon: 'pi pi-home',
+                  command: () => {
+                    this.ShowOrderStatusForm();
+                    this.orderStatusForm.patchValue({ statusName: 'Arrived' });
+                  }
+                });
+                break;
+              case 'Cancelled':
+                this.statusActions.push({
+                  label: 'Cancelled', 
+                  icon: 'pi pi-ban',
+                  command: () => {
+                    this.ShowOrderStatusForm();
+                    this.orderStatusForm.patchValue({ statusName: 'Cancelled' });
+                  }
+                });
+                break;
+            }
+          }
         }
       }
       
@@ -121,35 +194,8 @@ export class OrderComponent {
     console.log('Image:', file);
   }
 
-  Cancel() : void {
-    const cancelStatusData = new FormData();
-
-    cancelStatusData.append('order_status[status_name]', 'Cancelled');
-    cancelStatusData.append('order_status[order_id]', this.order?.id.toString() || '');
-
-    this.orderStatusService.createOrderStatus(cancelStatusData).subscribe((response : ApiResponseModel) => {
-      console.log('Order status created:', response);
-      if (response.status == 201) {
-        this.refreshOrder();
-      }
-    });
-  }
-
-  Arrive() : void {
-    const arriveStatusData = new FormData();
-
-    arriveStatusData.append('order_status[status_name]', 'Arrived');
-    arriveStatusData.append('order_status[order_id]', this.order?.id.toString() || '');
-
-    this.orderStatusService.createOrderStatus(arriveStatusData).subscribe((response : ApiResponseModel) => {
-      console.log('Order status created:', response.data.order_status);
-      if (response.status == 201) {
-        this.refreshOrder();
-      }
-    });
-  }
-
   ShowOrderStatusForm() : void {
+    this.clearForm();
     this.formVisible = true;
   }
 
@@ -158,7 +204,7 @@ export class OrderComponent {
       console.log('Order status data:', this.orderStatusForm.value);
 
       const orderStatusData = new FormData();
-      orderStatusData.append('order_status[status_name]', this.orderStatusForm.value.status_name);
+      orderStatusData.append('order_status[status_name]', this.orderStatusForm.value.statusName);
       orderStatusData.append('order_status[order_id]', this.order?.id.toString() || '');
       if (this.orderStatusForm.value.comment != null) {
         orderStatusData.append('order_status[comment]', this.orderStatusForm.value.comment);
@@ -215,6 +261,7 @@ export class OrderComponent {
 
   clearForm() : void {
     this.orderStatusForm.reset();
+    this.isEdit = false;
     this.imageUrl = '';
   }
 
@@ -225,8 +272,8 @@ export class OrderComponent {
         return;
       }
       const orderStatus = response.data.order_status;
-      this.orderStatusForm.patchValue({ status_name: orderStatus.status_name });
-      this.orderStatusForm.patchValue({ comment: orderStatus.comment });
+      this.orderStatusForm.patchValue({ statusName: orderStatus.statusName });
+      this.orderStatusForm.patchValue({ comment: orderStatus.comment });  
       this.imageUrl = orderStatus.imageUrl;
       this.isEdit = true;
       this.formVisible = true;

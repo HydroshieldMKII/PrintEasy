@@ -76,7 +76,7 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
-    assert_equal ["You are not authorized to view this page"], @parsed_response["errors"]["order"]
+    assert_equal ["Invalid login credentials"], @parsed_response["errors"]["connection"]
   end
 
   test "should not get show -> not signed in" do
@@ -88,7 +88,7 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
-    assert_equal ["You are not authorized to view this order"], @parsed_response["errors"]["order"]
+    assert_equal ["Invalid login credentials"], @parsed_response["errors"]["connection"]
   end
 
   private

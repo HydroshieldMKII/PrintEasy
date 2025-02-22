@@ -1,13 +1,10 @@
-class Api::OrderController < ApplicationController
+class Api::OrderController < AuthenticatedController
   def index
-    if current_user.nil?
-      render json: { errors: {order: ['You are not authorized to view this page']} }, status: :unauthorized and return
-    end
 
     if params[:type] == 'printer'
-      @orders = Order.joins(offer: { printer_user: :user }).where(users: {id: current_user&.id})
+      @orders = Order.joins(offer: { printer_user: :user }).where(users: {id: current_user&.id}).order('offers.target_date DESC')
     else
-      @orders = Order.joins(offer: { request: :user }).where(users: {id: current_user&.id})
+      @orders = Order.joins(offer: { request: :user }).where(users: {id: current_user&.id}).order('offers.target_date DESC')
     end
 
     render json: {
@@ -68,10 +65,12 @@ class Api::OrderController < ApplicationController
   end
 
   def show
+    #TODO: remove rescue nil and return
     @order = Order.find(params[:id]) rescue nil
     if @order.nil?
       render json: { errors: {order: ['Order not found']} }, status: :not_found and return
-    end
+    end 
+
     if current_user == @order.consumer || current_user == @order.printer
       available_status = @order.order_status.last.available_status
       if current_user == @order.consumer && @order.order_status.last.status_name != 'Accepted'

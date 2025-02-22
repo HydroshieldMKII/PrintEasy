@@ -1,11 +1,11 @@
 <div>
-    <p-tabs value="0">
+    <p-tabs [value]="tab">
         <p-tablist>
-            <p-tab value="0">My Orders</p-tab>
-            <p-tab value="1">TO-DOs</p-tab>
+            <p-tab [value]="'commands'" (click)="openCommands()">Commands</p-tab>
+            <p-tab [value]="'contracts'" (click)="openContracts()">Contracts</p-tab>
         </p-tablist>
         <p-tabpanels>
-            <p-tabpanel value="0">
+            <p-tabpanel [value]="'commands'">
                 <p-table [value]="myOrders" [tableStyle]="{'width': '100%'}">
                     <ng-template #header>
                         <tr>
@@ -44,7 +44,7 @@
                             <td>{{order.offer.targetDate | date:'fullDate'}}</td>
                             <td>
                                 <div class="h-td-table">
-                                    <p-avatar label="" size="large" shape="circle" image="{{order.offer.printerUser.user.profilePictureUrl}}"></p-avatar>
+                                    <p-avatar label="" size="large" shape="circle" *ngIf="order.offer.printerUser.user.profilePictureUrl" image="{{order.offer.printerUser.user.profilePictureUrl}}"></p-avatar>
                                     <p>{{order.offer.printerUser.user.username}}</p>
                                 </div>
                                 
@@ -67,7 +67,7 @@
                     </ng-template>
                 </p-table>
             </p-tabpanel>
-            <p-tabpanel value="1">
+            <p-tabpanel [value]="'contracts'">
                 <p-table [value]="makeOrders" [tableStyle]="{'width': '100%'}">
                     <ng-template #header>
                         <tr>
@@ -75,9 +75,11 @@
                                 Name
                             </th>
                             <th>
-                                Price
+                                <div class="right-cell">
+                                    Price
+                                </div>
                             </th>
-                            <th>
+                            <th class="center-cell">
                                 Status
                             </th>
                             <th>
@@ -97,16 +99,22 @@
                     <ng-template #body let-order>
                         <tr>
                             <td>{{order.offer.request.name}}</td>
-                            <td>{{order.offer.price}}</td>
                             <td>
-                                <span class="status-tag" [ngStyle]="{'background-color': statusColorRef[order.orderStatus.at(-1).statusName || 0]}">
-                                    <p class="w-full">{{order.orderStatus.at(-1).statusName}}</p>
-                                </span>
+                                <div class="right-cell">
+                                    {{order.offer.price | currency}}
+                                </div>
+                            </td>
+                            <td>
+                                <div class="center-cell">
+                                    <span class="status-tag" [ngStyle]="{'background-color': statusColorRef[order.orderStatus.at(-1).statusName || 0]}">
+                                        <p class="w-full">{{order.orderStatus.at(-1).statusName}}</p>
+                                    </span>
+                                </div>
                             </td>
                             <td>{{order.offer.targetDate | date:'fullDate'}}</td>
                             <td>
                                 <div class="h-td-table">
-                                    <p-avatar label="" size="large" shape="circle" image="{{order.offer.request.user.profilePictureUrl}}"></p-avatar>
+                                    <p-avatar label="" size="large" shape="circle" *ngIf="order.offer.request.user.profilePictureUrl" image="{{order.offer.request.user.profilePictureUrl}}"></p-avatar>
                                     <p>{{order.offer.request.user.username}}</p>
                                 </div>
                                 

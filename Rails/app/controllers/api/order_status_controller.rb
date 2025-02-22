@@ -8,7 +8,7 @@ class Api::OrderStatusController < ApplicationController
             render json: { errors: {order_status: ['Order Status not found']} }, status: :not_found and return
         end
         if current_user == this_status.consumer || current_user == this_status.printer
-            render json: { order_status: this_status.as_json(except: %i[created_at updated_at]), errors: {} }, status: :ok
+            render json: { order_status: this_status.as_json(except: %i[created_at updated_at], methods: %i[image_url]), errors: {} }, status: :ok
         else
             render json: { errors: {order_status: ['You are not authorized to view this order status']} }, status: :unauthorized
         end

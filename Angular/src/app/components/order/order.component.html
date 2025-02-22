@@ -11,13 +11,15 @@
             
             <div class="h-row">
                 <p>Printer Owner :</p>
-                <p-avatar label="" size="large" shape="circle" image="{{order?.offer?.printerUser?.user?.profilePictureUrl}}"></p-avatar>
-                <p class="h3c">{{order?.offer?.printerUser?.user?.username}}</p>
+                <div style="display: flex; flex-direction: row; gap: 10px;">
+                    <p-avatar label="" size="large" shape="circle" image="{{order?.offer?.printerUser?.user?.profilePictureUrl}}"></p-avatar>
+                    <p class="h3c">{{order?.offer?.printerUser?.user?.username}}</p>
+                </div>
             </div>
 
             <div class="h-row">
                 <p>Price :</p>
-                <p class="h3c">{{order?.offer?.price}}$</p>
+                <p class="h3c">{{order?.offer?.price | currency}}</p>
             </div>
 
             <div class="h-row">
@@ -33,21 +35,12 @@
             </div>
 
             <div style="margin-bottom: 1.5rem;">
-                <p-fieldset legend="Comment">
-                    <p class="m-0">
+                <p-fieldset legend="Comment" class="comment-container">
+                    <p>
                         {{order?.offer?.request?.comment}}
                     </p>
                 </p-fieldset>
             </div>
-            
-
-            <p-button
-                label="Abort"
-                icon="pi pi-trash"
-                severity="danger"
-                [disabled]="!canCancel"
-                (click)="Cancel()">
-            </p-button>
         </div>
     </div>
 
@@ -68,7 +61,7 @@
                 <p-dropdown 
                     formControlName="status_name" 
                     [options]="order?.availableStatus"
-                    placeholder="{{isEdit ? orderStatusForm.value.status_name : 'Select a status'}}"
+                    placeholder="{{isEdit ? orderStatusForm.value.statusName : 'Select a status'}}"
                     appendTo="body"
                     [style]="{width: '100%'}"
                     [disabled]="isEdit">
@@ -102,8 +95,10 @@
         <p-tabpanels>
             <p-tabpanel value="0">
 
-                <p-speeddial *ngIf="!consumer && canCancel" direction="left" [style]="{ position: 'absolute', top: 1, right: 'calc(1%)' }" [buttonProps]="{ severity: 'success', rounded: true }" (onClick)="ShowOrderStatusForm()"/>
-
+                <div style="width: 100%; display: flex; flex-direction: row; align-items: flex-start;">
+                    <p-speeddial *ngIf="statusActions.length > 0" showIcon="pi pi-pen-to-square" [model]="statusActions" direction="right" [style]="{'margin-left': '4px'}" [buttonProps]="{ severity: 'contrast'}" [tooltipOptions]="{ tooltipPosition: 'bottom' }" />
+                </div>
+                
                 <p-stepper [value]="1">
 
                     <p-step-item [value]="1" [ngStyle]="{'opacity': AcceptedStatus.length === 0 ? 0.5 : 1}">
@@ -134,6 +129,7 @@
                                         <div class="status-content-image" *ngIf="status.imageUrl">
                                             <img class="status-content-image" [src]="status.imageUrl" alt="">
                                         </div>
+                                        <p *ngIf="!status.comment">{{statusDefaultCommentRef['Accepted']}}</p>
                                         <p>{{status.comment}}</p>
                                     </div>
                                 </div>
@@ -169,6 +165,7 @@
                                         <div class="status-content-image" *ngIf="status.imageUrl">
                                             <img class="status-content-image" [src]="status.imageUrl" alt="">
                                         </div>
+                                        <p *ngIf="!status.comment">{{statusDefaultCommentRef['Printing']}}</p>
                                         <p>{{status.comment}}</p>
                                     </div>
                                 </div>
@@ -203,6 +200,7 @@
                                         <div class="status-content-image" *ngIf="status.imageUrl">
                                             <img class="status-content-image" [src]="status.imageUrl" alt="">
                                         </div>
+                                        <p *ngIf="!status.comment">{{statusDefaultCommentRef['Printed']}}</p>
                                         <p>{{status.comment}}</p>
                                     </div>
                                 </div>
@@ -237,6 +235,7 @@
                                         <div class="status-content-image" *ngIf="status.imageUrl">
                                             <img class="status-content-image" [src]="status.imageUrl" alt="">
                                         </div>
+                                        <p *ngIf="!status.comment">{{statusDefaultCommentRef['Shipped']}}</p>
                                         <p>{{status.comment}}</p>
                                     </div>
                                 </div>
@@ -263,15 +262,9 @@
                                         <div class="status-content-image" *ngIf="status.imageUrl">
                                             <img class="status-content-image" [src]="status.imageUrl" alt="">
                                         </div>
+                                        <p *ngIf="!status.comment">{{statusDefaultCommentRef['Arrived']}}</p>
                                         <p>{{status.comment}}</p>
                                     </div>
-                                    <p-button 
-                                        *ngIf="ArrivedStatus.length === 0 && CancelledStatus.length === 0 && consumer"
-                                        label="Confirm Arrival"
-                                        icon="pi pi-check"
-                                        [disabled]="!canArrive"
-                                        (click)="Arrive()">
-                                    </p-button>
                                 </div>
                             </ng-template>
                         </p-step-panel>
@@ -296,6 +289,7 @@
                                         <div class="status-content-image" *ngIf="status.imageUrl">
                                             <img class="status-content-image" [src]="status.imageUrl" alt="">
                                         </div>
+                                        <p *ngIf="!status.comment">{{statusDefaultCommentRef['Cancelled']}}</p>
                                         <p>{{status.comment}}</p>
                                     </div>
                                 </div>
