@@ -1,15 +1,17 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one: {
-  user: one,
-  contest: one,
-  name: MyString,
-  description: MyString
+submission_one: {
+  id: 1,
+  user_id: 1,
+  contest_id: 1,
+  name: Submission one,
+  description: Submission one
 }
 
-two: {
-  user: two,
-  contest: two,
-  name: MyString,
-  description: MyString
+submission_two: {
+  id: 2,
+  user_id: 2,
+  contest_id: 2,
+  name: Submission two,
+  description: Submission two
 }

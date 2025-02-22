@@ -17,8 +17,7 @@ export class ContestGuard implements CanActivateChild {
         console.log('Route:', route);
         console.log("authService.currentUser", this.authService.currentUser);
     
-        // Vérifier si l'URL correspond à /contest/new ou /contest/{id} (nombre)
-        const contestEditPattern = /^\/contest\/\d+$/; // Capture /contest/{id} où {id} est un nombre
+        const contestEditPattern = /^\/contest\/\d+$/;
     
         if ((url === '/contest/new' || contestEditPattern.test(url)) && !this.authService.currentUser?.isAdmin) {
             this.router.navigate(['/']);
