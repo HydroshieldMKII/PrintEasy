@@ -342,6 +342,20 @@ class Api::SubmissionControllerTest < ActionDispatch::IntegrationTest
     assert_equal ["Submission not found"], @parsed_response["errors"]["submission"]
   end
 
+  test "should not update submission with invalid id" do
+    assert_difference('Submission.count', 0) do
+      patch api_submission_url(9), params: { submission: { user_id: @user.id, contest_id: @contest.id, name: "Updated Submission", description: "Updated Description", files: [fixture_file_upload("base.stl", @stl_file.content_type)] } }
+    end
+
+    assert_response :not_found
+
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+
+    assert_equal ["Submission not found"], @parsed_response["errors"]["submission"]
+  end
+
   test "should not destroy submission with invalid user" do
     sign_out @user
     sign_in users(:two)
@@ -357,5 +371,53 @@ class Api::SubmissionControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_equal ["You are not authorized to perform this action"], @parsed_response["errors"]["user"]
+  end
+
+  test "should not destroy submission without login" do
+    sign_out @user
+
+    assert_difference('Submission.count', 0) do
+      delete api_submission_url(@submission)
+    end
+
+    assert_response :unauthorized
+
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+
+    assert_equal ["Invalid login credentials"], @parsed_response["errors"]["connection"]
+  end
+
+  test "should not update submission without login" do
+    sign_out @user
+
+    assert_difference('Submission.count', 0) do
+      patch api_submission_url(@submission), params: { submission: { user_id: @user.id, contest_id: @contest.id, name: "Updated Submission", description: "Updated Description", files: [fixture_file_upload("base.stl", @stl_file.content_type)] } }
+    end
+
+    assert_response :unauthorized
+
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+
+    assert_equal ["Invalid login credentials"], @parsed_response["errors"]["connection"]
+  end
+
+  test "should not create submission without login" do
+    sign_out @user
+
+    assert_difference('Submission.count', 0) do
+      post api_submission_index_url, params: { submission: { user_id: @user.id, contest_id: @contest.id, name: "New Submission", description: "New Description", files: [fixture_file_upload(@stl_file.filename.to_s, @stl_file.content_type)] } }
+    end
+
+    assert_response :unauthorized
+
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+
+    assert_equal ["Invalid login credentials"], @parsed_response["errors"]["connection"]
   end
 end

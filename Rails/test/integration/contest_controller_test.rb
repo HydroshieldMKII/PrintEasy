@@ -14,7 +14,7 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
         assert_nothing_raised do
             @parsed_response = JSON.parse(response.body)
         end
-        debugger
+        
         assert_response :success
 
         assert_equal 2, @parsed_response["contests"].count
