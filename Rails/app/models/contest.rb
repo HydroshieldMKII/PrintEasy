@@ -11,16 +11,19 @@ class Contest < ApplicationRecord
     validates :description, length: { maximum: 200 }
     validates :submission_limit, presence: true, numericality: { only_integer: true, greater_than: 0, less_than: 30 }
     validates :start_at, presence: true
+    validates :start_at, comparison: { greater_than: -> { Time.now }, message: "must be in the future" }, on: :create 
+    validates :start_at, comparison: { greater_than: -> { Time.now }, message: "must be in the future" }, on: :update, if: -> { will_save_change_to_attribute?(:start_at) }
+    validates :start_at, comparison: { less_than: :end_at, message: "must be before end_at" }, if: -> { end_at.present? }
     validates :image, presence: true
 
-    validate :past?, on: [:create, :update]
+    # validate :past?, on: [:create, :update]
 
     def soft_delete
         update(deleted_at: Time.now)
     end
 
     def restore
-        update(deleted_at: nil)
+        update(delaeted_at: nil)
     end
 
     def deleted?

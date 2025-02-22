@@ -295,7 +295,7 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
         end
 
         assert_response :unprocessable_entity
-        assert_equal ["must be at least one day after start_at"], @parsed_response["errors"]["end_at"]
+        assert_equal ["must be before end_at"], @parsed_response["errors"]["start_at"]
     end
 
     test "should not update contest -> start_at in the past" do
@@ -321,7 +321,7 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
         end
 
         assert_response :unprocessable_entity
-        assert_equal ["must be at least one day after start_at"], @parsed_response["errors"]["end_at"]
+        assert_equal ["must be before end_at"], @parsed_response["errors"]["start_at"]
     end
 
     test "should not show contest if deleted -> contest found" do
@@ -385,7 +385,7 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
         end
 
         assert_response :unprocessable_entity
-        assert_equal ["can't be blank"], @parsed_response["errors"]["start_at"]
+        assert_equal ["can't be blank", "must be in the future"], @parsed_response["errors"]["start_at"]
     end
 
     test "should not update contest -> no start_at" do
@@ -398,7 +398,7 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
         end
 
         assert_response :unprocessable_entity
-        assert_equal ["can't be blank"], @parsed_response["errors"]["start_at"]
+        assert_equal ["can't be blank", "must be in the future", "must be before end_at"], @parsed_response["errors"]["start_at"]
     end
 
     test "should not create contest -> not admin" do
