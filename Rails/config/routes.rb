@@ -16,6 +16,7 @@ Rails.application.routes.draw do
     resources :contest, except: [:new, :edit]
     resources :color
     resources :filament
+    resources :submission
   end
 
   match '*url', to: "angular#index", via: :get

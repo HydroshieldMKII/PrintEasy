@@ -322,6 +322,13 @@ submission1.files.attach(
   filename: "RUBY13.stl",
   content_type: "application/sla"
 )
+
+submission1.files.attach(
+  io: File.open(Rails.root.join("db/seeds/files/DariusSlayJunior.jpg")),
+  filename: "DariusSlayJunior.jpg",
+  content_type: "image/jpg"
+)
+
 submission1.save
 
 submission2 = Submission.create(

@@ -1,11 +1,13 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one: {
-  user: 1,
-  submission: 1
+  id: 1,
+  user_id: 1,
+  submission_id: 1
 }
 
 two: {
-  user: 2,
-  submission: 2
+  id: 2,
+  user_id: 2,
+  submission_id: 2
 }

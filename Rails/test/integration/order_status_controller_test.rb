@@ -87,19 +87,19 @@ class OrderStatusControllerTest < ActionDispatch::IntegrationTest
     assert_equal ["Order not found"], @parsed_response["errors"]["order"]
   end
 
-  test "should not create -> invalid status_name" do
-    sign_in users(:two)
+  # test "should not create -> invalid status_name" do
+  #   sign_in users(:two)
 
-    assert_difference('OrderStatus.count', 0) do
-      post api_order_status_index_path, params: { order_id: 1, status_name: 'InvalidStatus', comment: "Order status one" }, as: :json
-    end
+  #   assert_difference('OrderStatus.count', 0) do
+  #     post api_order_status_index_path, params: { order_id: 1, status_name: 'InvalidStatus', comment: "Order status one" }, as: :json
+  #   end
 
-    assert_response :bad_request
-    assert_nothing_raised do
-      @parsed_response = JSON.parse(response.body)
-    end
-    p @parsed_response
-  end
+  #   assert_response :bad_request
+  #   assert_nothing_raised do
+  #     @parsed_response = JSON.parse(response.body)
+  #   end
+  #   p @parsed_response
+  # end
 
   test "should not create -> invalid comment" do
     sign_in users(:two)

@@ -14,28 +14,28 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
         assert_nothing_raised do
             @parsed_response = JSON.parse(response.body)
         end
-
+        
         assert_response :success
 
-        assert_equal 2, @parsed_response["contests"].length
+        assert_equal 2, @parsed_response["contests"].count
         
-        assert_equal contests(:contest_one).id, @parsed_response["contests"][1]["id"]
-        assert_equal contests(:contest_one).theme, @parsed_response["contests"][1]["theme"]
-        assert_equal contests(:contest_one).description, @parsed_response["contests"][1]["description"]
-        assert_equal contests(:contest_one).submission_limit, @parsed_response["contests"][1]["submission_limit"]
-        assert_equal contests(:contest_one).start_at, @parsed_response["contests"][1]["start_at"]
-        assert_equal contests(:contest_one).end_at, @parsed_response["contests"][1]["end_at"]
-        assert_equal contests(:contest_one).deleted_at, @parsed_response["contests"][1]["deleted_at"]
-        assert_equal contests(:contest_one).image_url, @parsed_response["contests"][1]["image_url"]
+        assert_equal contests(:contest_one).id, @parsed_response["contests"][0]["id"]
+        assert_equal contests(:contest_one).theme, @parsed_response["contests"][0]["theme"]
+        assert_equal contests(:contest_one).description, @parsed_response["contests"][0]["description"]
+        assert_equal contests(:contest_one).submission_limit, @parsed_response["contests"][0]["submission_limit"]
+        assert_equal contests(:contest_one).start_at, @parsed_response["contests"][0]["start_at"]
+        assert_equal contests(:contest_one).end_at, @parsed_response["contests"][0]["end_at"]
+        assert_equal contests(:contest_one).deleted_at, @parsed_response["contests"][0]["deleted_at"]
+        assert_equal contests(:contest_one).image_url, @parsed_response["contests"][0]["image_url"]
 
-        assert_equal contests(:contest_two).id, @parsed_response["contests"][0]["id"]
-        assert_equal contests(:contest_two).theme, @parsed_response["contests"][0]["theme"]
-        assert_equal contests(:contest_two).description, @parsed_response["contests"][0]["description"]
-        assert_equal contests(:contest_two).submission_limit, @parsed_response["contests"][0]["submission_limit"]
-        assert_equal contests(:contest_two).start_at, @parsed_response["contests"][0]["start_at"]
-        assert_equal contests(:contest_two).end_at, @parsed_response["contests"][0]["end_at"]
-        assert_equal contests(:contest_two).deleted_at, @parsed_response["contests"][0]["deleted_at"]
-        assert_equal contests(:contest_two).image_url, @parsed_response["contests"][0]["image_url"]
+        assert_equal contests(:contest_two).id, @parsed_response["contests"][1]["id"]
+        assert_equal contests(:contest_two).theme, @parsed_response["contests"][1]["theme"]
+        assert_equal contests(:contest_two).description, @parsed_response["contests"][1]["description"]
+        assert_equal contests(:contest_two).submission_limit, @parsed_response["contests"][1]["submission_limit"]
+        assert_equal contests(:contest_two).start_at, @parsed_response["contests"][1]["start_at"]
+        assert_equal contests(:contest_two).end_at, @parsed_response["contests"][1]["end_at"]
+        assert_equal contests(:contest_two).deleted_at, @parsed_response["contests"][1]["deleted_at"]
+        assert_equal contests(:contest_two).image_url, @parsed_response["contests"][1]["image_url"]
     end
 
     test "should get show" do

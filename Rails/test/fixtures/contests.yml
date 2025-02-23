@@ -1,6 +1,7 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 contest_one:
+  id: 1
   theme: Contest1
   description: MyString
   submission_limit: 1
@@ -9,6 +10,7 @@ contest_one:
   end_at: <%= 2.days.from_now %>
 
 contest_two:
+  id: 2
   theme: Contest2
   description: MyString
   submission_limit: 1

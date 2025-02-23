@@ -1,11 +1,13 @@
 first_image_attachment:
   name: image
-  record: contest_one (Contest)
+  record_id: 1
+  record_type: Contest
   blob: first_image_blob
 
 second_image_attachment:
   name: image
-  record: contest_two (Contest)
+  record_id: 2
+  record_type: Contest
   blob: first_image_blob
 
 first_stl_file_attachment:
@@ -30,3 +32,27 @@ third_image_attachment:
   name: image
   record: order_status_one (Order_status)
   blob: first_image_blob
+
+fourth_image_attachment:
+  name: files
+  record_id: 1
+  record_type: Submission
+  blob: first_image_blob
+
+fifth_image_attachment:
+  name: files
+  record_id: 2
+  record_type: Submission
+  blob: first_image_blob
+
+fourth_stl_file_attachment:
+  name: files
+  record_id: 1
+  record_type: Submission
+  blob: first_stl_file_blob
+
+fifth_stl_file_attachment:
+  name: files
+  record_id: 2
+  record_type: Submission
+  blob: first_stl_file_blob
