@@ -52,6 +52,22 @@ user1.profile_picture.attach(
   content_type: "image/jpg"
 )
 
+user2 = User.create!(
+  username: "bbb",
+  password: "bbbbbb",
+  password_confirmation: "bbbbbb",
+  country_id: 3,
+  is_admin: false
+)
+
+user2.profile_picture.attach(
+  io: File.open(Rails.root.join("db/seeds/files/ruby.jpg")),
+  filename: "ruby.jpg",
+  content_type: "image/jpg"
+)
+
+user2.save
+
 # Create Printers
 printers = ["Bambulab", "Anycubic", "Artillery", "Creality", "Elegoo", "Flashforge", "Monoprice", "Prusa", "Qidi", "Sindoh", "Ultimaker", "XYZprinting", "Zortrax"]
 printers.each do |printer|
@@ -372,6 +388,29 @@ submission3.files.attach(
 )
 
 submission3.save
+
+5.times do |i|
+  submission = Submission.create(
+    name: "Submission #{i + 1}",
+    description: "Description for submission #{i + 1}.",
+    user: user2,
+    contest: contest1
+  )
+
+  submission.files.attach(
+    io: File.open(Rails.root.join("db/seeds/files/RUBY13.stl")),
+    filename: "RUBY13.stl",
+    content_type: "application/sla"
+  )
+
+  submission.files.attach(
+    io: File.open(Rails.root.join("db/seeds/files/DariusSlayJunior.jpg")),
+    filename: "DariusSlayJunior.jpg",
+    content_type: "image/jpg"
+  )
+
+  submission.save
+end
 
 # Likes for Submissions
 Like.create!(user: admin, submission: submission2)
