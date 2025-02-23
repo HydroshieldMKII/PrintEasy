@@ -7,6 +7,7 @@ import { ApiResponseModel } from '../models/api-response.model';
 import { ContestModel } from '../models/contest.model';
 import { ApiRequestService } from './api.service';
 import { SubmissionModel } from '../models/submission.model';
+import { UserSubmission } from '../models/user-submission';
 
 
 
@@ -18,12 +19,12 @@ export class SubmissionService {
 
   constructor(private api: ApiRequestService) { }
 
-  getSubmissions(contest_id: number): Observable<SubmissionModel[]> {
-    return this.api.getRequest(`api/submission?submission[contest_id]=${contest_id}`).pipe(
+  getSubmissions(contest_id: number): Observable<UserSubmission[]> {
+    return this.api.getRequest(`api/user_submission?submission[contest_id]=${contest_id}`).pipe(
       map(response => {
         if (response.status === 200) {
           console.log('submissions:', response.data.submissions);
-          return response.data.submissions.map((submission: any) => SubmissionModel.fromApi(submission));
+          return response.data.submissions.map((submission: any) => UserSubmission.fromApi(submission));
         } else {
           console.log('error:', response.errors);
           this.messageService.add({ severity: 'error', summary: 'Erreur', detail: 'Erreur lors de la récupération des soumissions' });

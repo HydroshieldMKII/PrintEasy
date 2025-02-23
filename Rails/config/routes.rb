@@ -17,6 +17,7 @@ Rails.application.routes.draw do
     resources :color
     resources :filament
     resources :submission
+    resources :user_submission, only: [:index, :show]
   end
 
   match '*url', to: "angular#index", via: :get

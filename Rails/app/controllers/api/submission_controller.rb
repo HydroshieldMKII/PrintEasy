@@ -4,7 +4,16 @@ class Api::SubmissionController < AuthenticatedController
   
     def index
       @submissions = Contest.find(submission_params[:contest_id]).submissions
-    
+      # debugger
+      # @users_with_submissions = @submissions.select(:user_id).distinct.map do |user|
+      #   {
+      #     id: user.id,
+      #     username: user.username,
+      #     profile_picture: user.profile_picture_url,
+      #     submissions: user.submissions.as_json(include: :likes, methods: [:stl_url, :image_url])
+      #   }
+      # end
+
       render json: {submissions: @submissions.as_json(include: :likes, methods: [:stl_url, :image_url])}, status: :ok
     end
     

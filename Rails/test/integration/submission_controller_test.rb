@@ -23,7 +23,7 @@ class Api::SubmissionControllerTest < ActionDispatch::IntegrationTest
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
-
+    debugger
     assert_equal @contest.submissions.count, @parsed_response["submissions"].count
     assert_equal @contest.submissions.first.name, @parsed_response["submissions"].first["name"]
     assert_equal @contest.submissions.first.description, @parsed_response["submissions"].first["description"]

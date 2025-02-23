@@ -16,8 +16,6 @@ class Contest < ApplicationRecord
     validates :start_at, comparison: { less_than: :end_at, message: "must be before end_at" }, if: -> { end_at.present? }
     validates :image, presence: true
 
-    # validate :past?, on: [:create, :update]
-
     def soft_delete
         update(deleted_at: Time.now)
     end
@@ -32,43 +30,5 @@ class Contest < ApplicationRecord
 
     def image_url
         image && Rails.application.routes.url_helpers.rails_blob_path(image, only_path: true)
-    end
-
-    private
-
-    # def set_start_at
-    #     if self.start_at.nil?
-    #         self.start_at = Time.now
-    #     end
-    # end
-
-    def start_at_has_changed?
-        if !self.start_at_was.nil? && !self.start_at.nil?
-            return self.start_at_was.change(sec: 0) != self.start_at.change(sec: 0)
-        end
-
-        return true
-    end
-
-    def end_at_has_changed?
-        if !self.end_at.nil? && !self.end_at_was.nil?
-            return self.end_at_was.change(sec: 0) != self.end_at.change(sec: 0)
-        end
-
-        return true
-    end
-
-    def past?
-        return if deleted_at_changed? || (!start_at_has_changed? && !end_at_has_changed?) || start_at.nil?
-
-        if self.start_at < Time.now.change(sec: 0)
-            errors.add(:start_at, "must be in the future")
-        end
-
-        if !self.end_at.nil?
-            if self.end_at < self.start_at + 1.day
-                errors.add(:end_at, "must be at least one day after start_at")
-            end
-        end
     end
 end

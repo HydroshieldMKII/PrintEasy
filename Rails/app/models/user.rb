@@ -4,6 +4,7 @@ class User < ApplicationRecord
   has_many :requests, dependent: :destroy
   has_many :offers, dependent: :destroy
   has_many :printer_users, dependent: :destroy
+  has_many :submissions, dependent: :destroy
 
   has_one_attached :profile_picture
 

@@ -160,7 +160,7 @@ contest1 = Contest.create(
   theme: "Best 3D Printed Art",
   description: "Create and submit your best 3D printed designs.",
   submission_limit: 5,
-  start_at: Time.now,
+  start_at: Time.now + 1.days,
   end_at: Time.now + 30.days
 )
 
@@ -176,7 +176,7 @@ contest2 = Contest.create(
   description: "Create and submit your best 3D printed toys.",
   submission_limit: 5,
   deleted_at: Time.now,
-  start_at: Time.now
+  start_at: Time.now + 1.days,
 )
 
 contest2.image.attach(
@@ -190,7 +190,7 @@ contest3 = Contest.create(
   theme: "Best 3D Printed Jewelry",
   description: "Create and submit your best 3D printed jewelry.",
   submission_limit: 5,
-  start_at: Time.now
+  start_at: Time.now + 2.days
 )
 
 contest3.image.attach(
@@ -206,7 +206,7 @@ contest4 = Contest.create(
   description: "Create and submit your best 3D printed home decor.",
   submission_limit: 5,
   deleted_at: Time.now,
-  start_at: Time.now,
+  start_at: Time.now + 5.days,
   end_at: Time.now + 30.days
 )
 
@@ -221,7 +221,7 @@ contest4.save
 contest5 = Contest.create(
   theme: "Best 3D Printed Fashion",
   submission_limit: 5,
-  start_at: Time.now,
+  start_at: Time.now + 4.days,
   end_at: Time.now + 30.days
 )
 
@@ -236,7 +236,7 @@ contest5.save
 contest6 = Contest.create(
   theme: "Best 3D Printed Gadgets",
   submission_limit: 5,
-  start_at: Time.now,
+  start_at: Time.now + 3.days,
   deleted_at: Time.now
 )
 
@@ -251,7 +251,7 @@ contest6.save
 contest7 = Contest.create(
   theme: "Best 3D Printed Tools",
   submission_limit: 5,
-  start_at: Time.now,
+  start_at: Time.now + 1.days,
 )
 
 contest7.image.attach(
@@ -265,7 +265,7 @@ contest7.save
 contest8 = Contest.create(
   theme: "Best 3D Printed Medical Devices",
   submission_limit: 5,
-  start_at: Time.now,
+  start_at: Time.now + 2.days,
   end_at: Time.now + 30.days
 )
 
@@ -281,7 +281,7 @@ contest9 = Contest.create(
   theme: "Best 3D Printed Automotive Parts",
   submission_limit: 5,
   start_at: Time.now,
-  deleted_at: Time.now,
+  deleted_at: Time.now + 1.days,
   end_at: Time.now + 30.days
 )
 
@@ -298,8 +298,8 @@ contest9.save
     theme: "Contest #{i + 3}",
     description: "Description for contest #{i + 3}.",
     submission_limit: 5,
-    start_at: Time.now,
-    end_at: Time.now + 30.days
+    start_at: Time.now + i.days,
+    end_at: Time.now + 30.days + i.days
   )
 
   contest.image.attach(
@@ -314,7 +314,7 @@ submission1 = Submission.create(
   name: "3D Dragon",
   description: "A detailed dragon model.",
   user: admin,
-  contest_id: contest1.id
+  contest: contest1
 )
 
 submission1.files.attach(
@@ -335,7 +335,7 @@ submission2 = Submission.create(
   name: "Space Shuttle",
   description: "NASA space shuttle model.",
   user: user1,
-  contest_id: contest1.id
+  contest: contest1
 )
 
 submission2.files.attach(
@@ -349,7 +349,29 @@ submission2.files.attach(
   filename: "dragon.jpg",
   content_type: "image/jpg"
 )
+
 submission2.save
+
+submission3 = Submission.create(
+  name: "3D Printed Toy",
+  description: "A toy model.",
+  user: admin,
+  contest: contest1
+)
+
+submission3.files.attach(
+  io: File.open(Rails.root.join("db/seeds/files/RUBY13.stl")),
+  filename: "RUBY13.stl",
+  content_type: "application/sla"
+)
+
+submission3.files.attach(
+  io: File.open(Rails.root.join("db/seeds/files/DariusSlayJunior.jpg")),
+  filename: "DariusSlayJunior.jpg",
+  content_type: "image/jpg"
+)
+
+submission3.save
 
 # Likes for Submissions
 Like.create!(user: admin, submission: submission2)

@@ -33,18 +33,6 @@ third_image_attachment:
   record: order_status_one (Order_status)
   blob: first_image_blob
 
-fourth_image_attachment:
-  name: files
-  record_id: 1
-  record_type: Submission
-  blob: first_image_blob
-
-fifth_image_attachment:
-  name: files
-  record_id: 2
-  record_type: Submission
-  blob: first_image_blob
-
 fourth_stl_file_attachment:
   name: files
   record_id: 1
@@ -56,3 +44,15 @@ fifth_stl_file_attachment:
   record_id: 2
   record_type: Submission
   blob: first_stl_file_blob
+
+fourth_image_attachment:
+  name: files
+  record_id: 1
+  record_type: Submission
+  blob: first_image_blob
+
+fifth_image_attachment:
+  name: files
+  record_id: 2
+  record_type: Submission
+  blob: first_image_blob
