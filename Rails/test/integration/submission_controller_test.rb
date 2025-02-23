@@ -24,12 +24,12 @@ class Api::SubmissionControllerTest < ActionDispatch::IntegrationTest
       @parsed_response = JSON.parse(response.body)
     end
 
-    assert_equal @contest.submissions.count, @parsed_response.count
-    assert_equal @contest.submissions.first.name, @parsed_response.first["name"]
-    assert_equal @contest.submissions.first.description, @parsed_response.first["description"]
-    assert_equal @contest.submissions.first.stl_url, @parsed_response.first["stl_url"]
-    assert_equal @contest.submissions.first.image_url, @parsed_response.first["image_url"]
-    assert_equal @contest.submissions.first.likes.count, @parsed_response.first["likes"].count
+    assert_equal @contest.submissions.count, @parsed_response["submissions"].count
+    assert_equal @contest.submissions.first.name, @parsed_response["submissions"].first["name"]
+    assert_equal @contest.submissions.first.description, @parsed_response["submissions"].first["description"]
+    assert_equal @contest.submissions.first.stl_url, @parsed_response["submissions"].first["stl_url"]
+    assert_equal @contest.submissions.first.image_url, @parsed_response["submissions"].first["image_url"]
+    assert_equal @contest.submissions.first.likes.count, @parsed_response["submissions"].first["likes"].count
   end
 
   test "should show submission" do
@@ -43,11 +43,11 @@ class Api::SubmissionControllerTest < ActionDispatch::IntegrationTest
       @parsed_response = JSON.parse(response.body)
     end
 
-    assert_equal @submission.name, @parsed_response["name"]
-    assert_equal @submission.description, @parsed_response["description"]
-    assert_equal @submission.stl_url, @parsed_response["stl_url"]
-    assert_equal @submission.image_url, @parsed_response["image_url"]
-    assert_equal @submission.likes.count, @parsed_response["likes"].count
+    assert_equal @submission.name, @parsed_response["submission"]["name"]
+    assert_equal @submission.description, @parsed_response["submission"]["description"]
+    assert_equal @submission.stl_url, @parsed_response["submission"]["stl_url"]
+    assert_equal @submission.image_url, @parsed_response["submission"]["image_url"]
+    assert_equal @submission.likes.count, @parsed_response["submission"]["likes"].count
   end
 
   test "should create submission" do

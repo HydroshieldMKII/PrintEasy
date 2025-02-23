@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { ImportsModule } from '../../../imports';
 
@@ -12,8 +13,9 @@ import { SubmissionService } from '../../services/submission.service';
 })
 export class SubmissionsComponent {
   products: any[];
-
   responsiveOptions: any[] | undefined;
+
+  paramsId: number = 0;
 
   productCardStyle = {
     background: 'var(--surface-card)',
@@ -23,7 +25,15 @@ export class SubmissionsComponent {
     'border': '1px solid red',
   };
 
-  constructor(private submissionService: SubmissionService) {
+  constructor(private submissionService: SubmissionService, private route: ActivatedRoute) {
+    this.route.params.subscribe(params => {
+      this.paramsId = params['id'];
+      console.log('Params ID:', this.paramsId);
+    });
+
+    this.submissionService.getSubmissions(this.paramsId).subscribe((data) => {
+      console.log(data);
+    });
     this.products = this.submissionService.getProductsData();
 
     this.responsiveOptions = [

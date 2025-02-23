@@ -5,11 +5,11 @@ class Api::SubmissionController < AuthenticatedController
     def index
       @submissions = Contest.find(submission_params[:contest_id]).submissions
     
-      render json: @submissions.as_json(include: :likes, methods: [:stl_url, :image_url]), status: :ok
+      render json: {submissions: @submissions.as_json(include: :likes, methods: [:stl_url, :image_url])}, status: :ok
     end
     
     def show
-      render json: @submission.as_json(include: :likes, methods: [:stl_url, :image_url]), status: :ok
+      render json: {submission: @submission.as_json(include: :likes, methods: [:stl_url, :image_url])}, status: :ok
     end
   
     def create
@@ -30,12 +30,8 @@ class Api::SubmissionController < AuthenticatedController
     end
   
     def destroy
-      if @submission
-        @submission.destroy
-        render json: {submission: @submission.as_json(include: :likes, methods: [:stl_url, :image_url]), errors: {}}, status: :ok
-      else
-        render json: { errors: { submission: ["Submission not found"] } }, status: :not_found
-      end
+      @submission.destroy
+      render json: {submission: @submission.as_json(include: :likes, methods: [:stl_url, :image_url]), errors: {}}, status: :ok
     end
     
     private

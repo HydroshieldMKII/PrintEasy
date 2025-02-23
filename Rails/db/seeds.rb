@@ -314,7 +314,7 @@ submission1 = Submission.create(
   name: "3D Dragon",
   description: "A detailed dragon model.",
   user: admin,
-  contest: contest1
+  contest_id: contest1.id
 )
 
 submission1.files.attach(
@@ -324,8 +324,8 @@ submission1.files.attach(
 )
 
 submission1.files.attach(
-  io: File.open(Rails.root.join("db/seeds/files/DariusSlayJunior.jpg")),
-  filename: "DariusSlayJunior.jpg",
+  io: File.open(Rails.root.join("db/seeds/files/red_skeleton.jpg")),
+  filename: "red_skeleton.jpg",
   content_type: "image/jpg"
 )
 
@@ -335,13 +335,19 @@ submission2 = Submission.create(
   name: "Space Shuttle",
   description: "NASA space shuttle model.",
   user: user1,
-  contest: contest1
+  contest_id: contest1.id
 )
 
 submission2.files.attach(
   io: File.open(Rails.root.join("db/seeds/files/RUBY13.stl")),
   filename: "RUBY13.stl",
   content_type: "application/sla"
+)
+
+submission2.files.attach(
+  io: File.open(Rails.root.join("db/seeds/files/dragon.jpg")),
+  filename: "dragon.jpg",
+  content_type: "image/jpg"
 )
 submission2.save
 
