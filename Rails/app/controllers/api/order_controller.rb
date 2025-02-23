@@ -136,7 +136,7 @@ class Api::OrderController < AuthenticatedController
         errors: {}
       }, status: :ok
     else
-      render json: { errors: {order: ['You are not authorized to view this order']} }, status: :unauthorized
+      render json: { errors: {order: ['You are not authorized to view this order']} }, status: :forbidden
     end
   end
 end

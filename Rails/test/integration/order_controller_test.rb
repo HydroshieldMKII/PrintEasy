@@ -60,7 +60,7 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
       get api_order_path(1), as: :json
     end
 
-    assert_response :unauthorized
+    assert_response :forbidden
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end

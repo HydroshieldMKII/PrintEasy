@@ -64,7 +64,7 @@ class OrderStatusControllerTest < ActionDispatch::IntegrationTest
       get api_order_status_path(1), as: :json
     end
 
-    assert_response :unauthorized
+    assert_response :forbidden
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
@@ -124,7 +124,7 @@ class OrderStatusControllerTest < ActionDispatch::IntegrationTest
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
-    assert_equal ["You are not authorized to create a new status for this order"], @parsed_response["errors"]["order_status"]
+    assert_equal ["Invalid login credentials"], @parsed_response["errors"]["connection"]
   end
 
   test "should not create -> no status_name" do
@@ -244,7 +244,7 @@ class OrderStatusControllerTest < ActionDispatch::IntegrationTest
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
-    assert_equal ["You are not authorized to update this order status"], @parsed_response["errors"]["order_status"]
+    assert_equal ["Invalid login credentials"], @parsed_response["errors"]["connection"]
   end
 
   test "should not update -> not found" do
@@ -267,7 +267,7 @@ class OrderStatusControllerTest < ActionDispatch::IntegrationTest
       patch api_order_status_path(1), params: { status_name: 'Printing', comment: "Order Status one" }, as: :json
     end
 
-    assert_response :unauthorized
+    assert_response :forbidden
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
@@ -389,7 +389,7 @@ class OrderStatusControllerTest < ActionDispatch::IntegrationTest
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
-    assert_equal ["You are not authorized to delete this order status"], @parsed_response["errors"]["order_status"]
+    assert_equal ["Invalid login credentials"], @parsed_response["errors"]["connection"]
   end
 
   test "should not destroy -> not found" do
@@ -412,7 +412,7 @@ class OrderStatusControllerTest < ActionDispatch::IntegrationTest
       delete api_order_status_path(1), as: :json
     end
 
-    assert_response :unauthorized
+    assert_response :forbidden
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
