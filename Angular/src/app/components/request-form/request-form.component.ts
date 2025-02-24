@@ -10,9 +10,10 @@ import { PresetService } from '../../services/preset.service';
 import { StlModelViewerModule } from 'angular-stl-model-viewer';
 import { FilamentModel } from '../../models/filament.model';
 import { FormGroup } from '@angular/forms';
-import { FileSelectEvent, FileUploadEvent } from 'primeng/fileupload';
+import { FileSelectEvent } from 'primeng/fileupload';
 import { RequestModel } from '../../models/request.model';
 import { MessageService } from 'primeng/api';
+import { AuthService } from '../../services/authentication.service';
 
 @Component({
   selector: 'app-request-form',
@@ -25,6 +26,7 @@ export class RequestFormComponent implements OnInit {
   isNewMode = false;
   isViewMode = false;
   id: number | null = null;
+  isMine: boolean = false;
   uploadedFile: any = null;
   uploadedFileBlob: any = null;
   deleteDialogVisible: boolean = false;
@@ -46,7 +48,7 @@ export class RequestFormComponent implements OnInit {
   form!: FormGroup;
 
   constructor(private router: Router, private route: ActivatedRoute,
-    private requestService: RequestService, private presetService: PresetService, private fb: FormBuilder, private messageService: MessageService) {
+    private requestService: RequestService, private presetService: PresetService, private fb: FormBuilder, private messageService: MessageService, private authService: AuthService) {
     //init form empty
     this.form = this.fb.group({
       name: new FormControl('', [Validators.required, Validators.minLength(3)]),
@@ -88,12 +90,13 @@ export class RequestFormComponent implements OnInit {
       this.colors = colors.map((color: ColorModel) => ({ label: color.name, value: color.name, id: color.id }));
     });
 
-
-
     if (this.isEditMode || this.isViewMode) {
       if (this.id !== null) {
         this.requestService.getRequestById(this.id).subscribe((request) => {
           this.request = request;
+
+          this.isMine = request?.user.id === this.authService.currentUser?.id;
+          console.log("Is mine:", this.isMine);
 
           if (this.request === null) {
             this.router.navigate(['/requests']);

@@ -134,22 +134,28 @@
                     icon="pi pi-arrow-right"
                     title="See Details"
                     routerLink="/requests/view/{{ request.id }}"
+                    *ngIf="tab === 'all'"
                   ></p-button>
                   <p-button
-                    *ngIf="tab === 'my'"
+                    *ngIf="tab === 'mine'"
                     icon="pi pi-pencil"
                     title="Edit"
                     routerLink="/requests/edit/{{ request.id }}"
                     [disabled]="request.hasOfferAccepted"
                   ></p-button>
                   <p-button
-                    *ngIf="tab === 'my'"
+                    *ngIf="tab === 'mine'"
                     icon="pi pi-trash"
                     title="Delete"
                     (onClick)="showDeleteDialog(request)"
                     [disabled]="request.hasOfferAccepted"
                   ></p-button>
                   <a [href]="request.stlFileUrl" class="p-button" download style="text-decoration: none;"><i class="pi pi-download"></i></a>
+                  <p-button
+                  icon="pi pi-share-alt"
+                  title="Share"
+                  (click)="copyToClipboard('requests/view/' + request.id)"
+                ></p-button>
                 </div>
               </td>
             </tr>

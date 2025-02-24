@@ -4,6 +4,8 @@ import { Router, RouterLink } from '@angular/router';
 import { RequestModel } from '../../models/request.model';
 import { RequestService } from '../../services/request.service';
 import { ImportsModule } from '../../../imports';
+import { MessageService } from 'primeng/api';
+import { Clipboard } from '@angular/cdk/clipboard';
 
 @Component({
   selector: 'app-request',
@@ -65,7 +67,7 @@ export class RequestsComponent {
     return this.activeTab === 'mine' ? this.myRequests || [] : this.requests || [];
   }
 
-  constructor(private requestService: RequestService, private router: Router) {
+  constructor(private requestService: RequestService, private router: Router, private messageService: MessageService, private clipboard: Clipboard) {
     const queryParams = this.router.parseUrl(this.router.url).queryParams;
     this.currentFilter = queryParams['filter'] || '';
     this.currentSort = queryParams['sort'] || '';
@@ -178,5 +180,13 @@ export class RequestsComponent {
     this.filter('all');
     this.filter('mine');
   }
+
+  copyToClipboard(text: string): void {
+    const fullUrl = new URL(text, window.location.origin).href;
+    console.log('Copied to clipboard:', fullUrl);
+    this.clipboard.copy(fullUrl);
+    this.messageService.add({ severity: 'success', summary: 'Copied to clipboard' });
+  }
+
 }
 
