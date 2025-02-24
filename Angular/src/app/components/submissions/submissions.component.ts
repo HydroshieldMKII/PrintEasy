@@ -66,25 +66,10 @@ export class SubmissionsComponent {
 
     this.responsiveOptions = [
       {
-        breakpoint: '1400px',
-        numVisible: 2,
-        numScroll: 1,
-      },
-      {
-        breakpoint: '1199px',
-        numVisible: 3,
-        numScroll: 1,
-      },
-      {
-        breakpoint: '767px',
-        numVisible: 2,
-        numScroll: 1,
-      },
-      {
-        breakpoint: '575px',
+        breakpoint: '450px',
         numVisible: 1,
-        numScroll: 1,
-      },
+        numScroll: 1
+      }
     ];
   }
 
@@ -112,10 +97,15 @@ export class SubmissionsComponent {
   onSelectImage(event: any) {
     console.log('Image:', event.files[0]);
     const file = event.files[0];
-    this.imageUrl = URL.createObjectURL(file);
-    console.log('Image URL:', this.imageUrl);
-    this.noImagePreview = '';
-    this.submissionForm.patchValue({ image: file });
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+    if (allowedTypes.includes(file.type)) {
+      this.imageUrl = URL.createObjectURL(file);
+      console.log('Image URL:', this.imageUrl);
+      this.noImagePreview = '';
+      this.submissionForm.patchValue({ image: file });
+    } else {
+      console.log('Invalid image type');
+    }
   }
 
   onUploadStl(event: any) {
@@ -123,14 +113,22 @@ export class SubmissionsComponent {
     const file = event.files[0];
     this.uploadedFile = file;
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      this.uploadedFileBlob = reader.result;
-      console.log('File:', this.uploadedFileBlob);
-    };
-    reader.readAsArrayBuffer(file);
-    this.noStlPreview = '';
-    this.submissionForm.patchValue({ stl: file });
+    if (file && file.name.endsWith('.stl')) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        this.uploadedFileBlob = reader.result;
+        console.log('File:', this.uploadedFileBlob);
+      };
+      reader.readAsArrayBuffer(file);
+      this.noStlPreview = '';
+      this.submissionForm.patchValue({ stl: file });
+    } else {
+      console.log('Invalid STL file');
+    }
+  }
+
+  onFileUploadError(event: any) {
+    console.log('Error:', event);
   }
 
   imageValidator(control: AbstractControl): ValidationErrors | null {
