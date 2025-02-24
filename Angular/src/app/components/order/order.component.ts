@@ -4,6 +4,7 @@ import { ImportsModule } from '../../../imports';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, ValidationErrors, AbstractControl } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
 import { MenuItem } from 'primeng/api';
+import { StlModelViewerModule } from 'angular-stl-model-viewer';
 
 import { OrderModel } from '../../models/order.model';
 import { OrderStatusModel } from '../../models/order-status.model';
@@ -15,7 +16,7 @@ import { AuthService } from '../../services/authentication.service';
 
 @Component({
   selector: 'app-orders',
-  imports: [ImportsModule, DropdownModule, ReactiveFormsModule],
+  imports: [ImportsModule, DropdownModule, ReactiveFormsModule, StlModelViewerModule],
   templateUrl: './order.component.html',
   styleUrl: './order.component.css'
 })

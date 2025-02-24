@@ -29,6 +29,7 @@ class Api::OrderController < AuthenticatedController
               },
               request: {
                 except: %i[created_at updated_at user_id],
+                methods: %i[stl_file_url],
                 include: {
                   user: {
                     except: %i[created_at updated_at is_admin],
@@ -98,6 +99,7 @@ class Api::OrderController < AuthenticatedController
                 },
                 request: {
                   except: %i[created_at updated_at user_id],
+                  methods: %i[stl_file_url],
                   include: {
                     user: {
                       except: %i[created_at updated_at is_admin],
