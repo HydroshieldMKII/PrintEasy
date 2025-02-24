@@ -130,7 +130,7 @@
       <div class="stl-section flex flex-col items-center">
         <div class="stl-placeholder">
           <p-message
-            *ngIf="!request.stlFileUrl && !uploadedFile"
+            *ngIf="!request.stlFileUrl && !uploadedFileBlob"
             severity="warn"
             text="No STL file uploaded"
           ></p-message>

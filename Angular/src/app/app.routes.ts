@@ -8,6 +8,8 @@ import { UserProfileComponent } from './components/user-profile/user-profile.com
 import { ContestFormComponent } from './components/contest-form/contest-form.component';
 import { RequestsComponent } from './components/request/request.component';
 import { RequestFormComponent } from './components/request-form/request-form.component';
+import { OfferFormComponent } from './components/offer-form/offer-form.component';
+import { OffersComponent } from './components/offer/offer.component';
 import { OrderComponent } from './components/order/order.component';
 import { OrdersComponent } from './components/orders/orders.component';
 
@@ -58,6 +60,32 @@ export const routes: Routes = [
     ]
   },
   {
+    path: 'offers',
+    canActivate: [AuthenticationGuard],
+    children: [
+      {
+        path: '',
+        component: OffersComponent,
+        title: 'Request'
+      },
+      {
+        path: 'view/:id',
+        component: OfferFormComponent,
+        title: 'Request'
+      },
+      {
+        path: 'edit/:id',
+        component: OfferFormComponent,
+        title: 'Request'
+      },
+      {
+        path: 'new',
+        component: OfferFormComponent,
+        title: 'Request'
+      }
+    ]
+  },
+  {
     path: '',
     canActivateChild: [ContestGuard],
     children: [
@@ -82,7 +110,7 @@ export const routes: Routes = [
     path: 'profile',
     component: UserProfileComponent,
     title: 'Profile',
-  }, 
+  },
   {
     path: 'orders',
     canActivate: [AuthenticationGuard],

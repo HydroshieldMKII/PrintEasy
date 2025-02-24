@@ -1,0 +1,274 @@
+<div class="card p-4">
+    <div class="flex justify-between items-center">
+      <h1 class="text-4xl font-bold">Offers</h1>
+      <p-button
+        label="Create a request"
+        icon="pi pi-plus"
+        routerLink="/requests/new"
+      />
+    </div>
+  
+    <p-toast />
+  
+    <p-tabs [(value)]="activeTab">
+      <p-tablist>
+        <p-tab value="all" (click)="onTabChange('all')">Offer received</p-tab>
+        <p-tab value="mine" (click)="onTabChange('mine')">My pending offer</p-tab>
+      </p-tablist>
+  
+      <p-tabpanels>
+        <p-tabpanel *ngFor="let tab of ['all', 'mine']" [value]="tab">
+          <div class="flex justify-between items-center my-3 ssf-container">
+            <div class="flex gap-2 toggle-all">
+              <p-button
+                label="Expand All"
+                icon="pi pi-plus"
+                text
+                (onClick)="expandAll()"
+              />
+              <p-button
+                label="Collapse All"
+                icon="pi pi-minus"
+                text
+                (onClick)="collapseAll()"
+              />
+            </div>
+            <div class="flex gap-2 ssf">
+              <p-floatlabel variant="in">
+                <p-select
+                  inputId="in_label"
+                  [options]="filterOptions"
+                  [(ngModel)]="selectedFilterOption"
+                  optionLabel="label"
+                  styleClass="w-full"
+                  variant="filled"
+                  (onChange)="onFilterChange($event)"
+                />
+                <label for="in_label">Filter by</label>
+              </p-floatlabel>
+              <p-floatlabel variant="in">
+                <p-select
+                  inputId="in_label"
+                  [options]="sortOptions"
+                  [(ngModel)]="selectedSortOption"
+                  optionLabel="label"
+                  styleClass="w-full"
+                  variant="filled"
+                  (onChange)="onSortChange($event)"
+                />
+                <label for="in_label">Sort by</label>
+              </p-floatlabel>
+              <form (ngSubmit)="onSearch()">
+                <span class="p-input-icon-right">
+                  <i class="pi pi-search" style="margin-right: 5px"></i>
+                  <input
+                    pInputText
+                    type="text"
+                    placeholder="Search"
+                    [(ngModel)]="searchQuery"
+                    name="searchQuery"
+                    class="search-field"
+                    style="margin-bottom: 10px; margin-right: 10px"
+                  />
+                </span>
+                <button
+                  pButton
+                  type="submit"
+                  icon="pi pi-search"
+                  label="Search"
+                  class="search-btn"
+                ></button>
+              </form>
+            </div>
+          </div>
+  
+          <hr />
+  
+          <p-table
+            *ngIf="currentRequests.length > 0 && isOwningPrinter || activeTab == 'mine'"
+            [value]="currentRequests"
+            dataKey="id"
+            [tableStyle]="{ 'min-width': '60rem' }"
+            [expandedRowKeys]="expandedRows"
+            (onRowExpand)="onRowExpand($event)"
+            (onRowCollapse)="onRowCollapse($event)"
+          >
+            <ng-template #header>
+              <tr>
+                <th style="width: 5rem"></th>
+                <th >Name </th>
+                <th >
+                  Budget
+                </th>
+                <th >
+                  Target Date
+                </th>
+                <th >
+                  Country
+                </th>
+                <th style="width: 4rem">Actions</th>
+              </tr>
+            </ng-template>
+  
+            <ng-template #body let-request let-expanded="expanded">
+              <tr>
+                <td>
+                  <p-button
+                    type="button"
+                    [pRowToggler]="request"
+                    [text]="true"
+                    [rounded]="true"
+                    [plain]="true"
+                    [icon]="
+                      expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'
+                    "
+                  />
+                </td>
+                <td>{{ request.name }}</td>
+                <td>{{ request.budget == 0 ? "Free":request.budget | currency }}</td>
+                <td>{{ request.targetDate | date }}</td>
+                <td>{{ request.user.country }}</td>
+                <td>
+                  <div class="flex gap-2">
+                    <p-button
+                      icon="pi pi-arrow-right"
+                      title="See Details"
+                      routerLink="/requests/view/{{ request.id }}"
+                      *ngIf="tab === 'all'"
+                    ></p-button>
+                    <p-button
+                      *ngIf="tab === 'mine'"
+                      icon="pi pi-pencil"
+                      title="Edit"
+                      routerLink="/requests/edit/{{ request.id }}"
+                      [disabled]="request.hasOfferAccepted"
+                    ></p-button>
+                    <p-button
+                      *ngIf="tab === 'mine'"
+                      icon="pi pi-trash"
+                      title="Delete"
+                      (onClick)="showDeleteDialog(request)"
+                      [disabled]="request.hasOfferAccepted"
+                    ></p-button>
+                    <a [href]="request.stlFileUrl" class="p-button" download style="text-decoration: none;"><i class="pi pi-download"></i></a>
+                    <p-button
+                    icon="pi pi-share-alt"
+                    title="Share"
+                    (click)="copyToClipboard('requests/view/' + request.id)"
+                  ></p-button>
+                  </div>
+                </td>
+              </tr>
+            </ng-template>
+  
+            <ng-template #expandedrow let-request>
+              <tr>
+                <td colspan="7" style="background-color: #f5f5f5">
+                  <div>
+                    <h3>Preset Details</h3>
+                    <p-table
+                      *ngIf="request.presets.length > 0"
+                      [value]="request.presets"
+                      dataKey="id"
+                    >
+                      <ng-template #header>
+                        <tr>
+                          <th>
+                            Printer Model
+                          </th>
+                          <th>
+                            Filament Type 
+                          </th>
+                          <th>
+                            Color
+                          </th>
+                          <th>
+                            Print Quality 
+                          </th>
+                        </tr>
+                      </ng-template>
+                      <ng-template #body let-preset>
+                        <tr>
+                          <td>{{ preset.printerModel }}</td>
+                          <td>{{ preset.filamentType }}</td>
+                          <td>{{ preset.color }}</td>
+                          <td>{{ preset.printQuality }}mm</td>
+                        </tr>
+                      </ng-template>
+                    </p-table>
+                    <div
+                      *ngIf="request.presets.length === 0"
+                      class="empty-message"
+                    >
+                      <i class="pi pi-inbox text-4xl text-gray-400"></i>
+                      <p class="text-lg font-semibold text-gray-500">
+                        No presets recommended. Any preset is welcomed!
+                      </p>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+  
+          <div
+            *ngIf="activeTab == 'all' && !isOwningPrinter"
+            class="empty-message"
+            style="width: 100%; height: 100%;"
+          >
+            <i class="pi pi-inbox text-6xl text-gray-400"></i>
+            <p class="text-xl font-semibold text-gray-500 mt-2" *ngIf="!isOwningPrinter">
+              You dont have a printer! Add one to see people's requests and
+              contribute to the community.
+            </p>
+          </div>
+  
+          <div
+            *ngIf="
+              (isOwningPrinter && currentRequests.length === 0) ||
+              (activeTab == 'my' && currentRequests.length === 0)
+            "
+            class="empty-message"
+          >
+            <i class="pi pi-inbox text-6xl text-gray-400"></i>
+            <p class="text-xl font-semibold text-gray-500 mt-2">
+              Nothing to show here.
+            </p>
+          </div>
+        </p-tabpanel>
+      </p-tabpanels>
+    </p-tabs>
+  </div>
+  
+  <!-- Delete Confirmation Dialog -->
+  <p-dialog
+    [(visible)]="deleteDialogVisible"
+    [modal]="true"
+    [style]="{ width: '25rem' }"
+    dismissableMask="true"
+    closable="false"
+    blockScroll="true"
+    resizable="false"
+    draggable="false"
+  >
+    <ng-template #header>
+      <div class="inline-flex items-center justify-center gap-2">
+        <i class="pi pi-exclamation-triangle text-red-500 text-2xl"></i>
+        <span class="font-bold">Confirm Delete</span>
+      </div>
+    </ng-template>
+    <span class="text-surface-500 dark:text-surface-400 block mb-4">
+      Are you sure you want to delete the request "{{ requestToDelete?.name }}"?
+      This action cannot be undone.
+    </span>
+    <ng-template #footer>
+      <p-button
+        label="Cancel"
+        [text]="true"
+        severity="secondary"
+        (click)="deleteDialogVisible = false"
+      />
+      <p-button label="Delete" severity="danger" (click)="confirmDelete()" />
+    </ng-template>
+  </p-dialog>
+  
