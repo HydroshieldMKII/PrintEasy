@@ -6,15 +6,13 @@
 
 html,
 body {
-    height: 97%;
+    min-height: dvh;
     margin: 0;
     padding: 0;
 }
 
 .card {
     margin: 10px;
-    height: 92vh;
-    /* Full viewport height */
     display: flex;
     flex-direction: column;
 }
@@ -166,13 +164,45 @@ h3 {
     font-size: 1.2rem;
 }
 
+.ssf {
+    display: flex;
+}
+
+.ssf-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 @media (max-width: 768px) {
-    .ssf{
+    .ssf {
         display: block;
     }
 
     /* each child */
-    .ssf > * {
+    .ssf>* {
         margin-bottom: 1rem;
+    }
+
+    .ssf-container {
+        display: block;
+    }
+
+    p-select {
+        width: 100%;
+    }
+
+    .search-btn {
+        display: none;
+    }
+
+    .search-field {
+        width: 100%;
+    }
+
+    hr {
+        margin-top: 0;
+        margin-bottom: 0;
+        height: 0px;
     }
 }

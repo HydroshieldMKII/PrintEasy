@@ -18,7 +18,7 @@
 
     <p-tabpanels>
       <p-tabpanel *ngFor="let tab of ['all', 'mine']" [value]="tab">
-        <div class="flex justify-between items-center my-3">
+        <div class="flex justify-between items-center my-3 ssf-container">
           <div class="flex gap-2 toggle-all">
             <p-button
               label="Expand All"
@@ -67,6 +67,7 @@
                   placeholder="Search"
                   [(ngModel)]="searchQuery"
                   name="searchQuery"
+                  class="search-field"
                   style="margin-bottom: 10px; margin-right: 10px"
                 />
               </span>
