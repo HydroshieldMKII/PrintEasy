@@ -44,7 +44,6 @@ h2 {
     font-size: 1rem;
     color: #666;
     border-radius: 10px;
-    margin-bottom: 25px;
 }
 
 .dialog {
@@ -67,6 +66,28 @@ h2 {
     outline-color: transparent;
     box-shadow: var(--p-inputtext-shadow);
     object-fit: contain;
+}
+
+.stl-preview {
+    width: 300px;
+    height: 300px;
+    max-width: 300px;
+    max-height: 300px;
+    color: var(--p-inputtext-color);
+    background: var(--p-inputtext-background);
+    border: 1px solid var(--p-inputtext-border-color);
+    transition: background var(--p-inputtext-transition-duration), color var(--p-inputtext-transition-duration), border-color var(--p-inputtext-transition-duration), outline-color var(--p-inputtext-transition-duration), box-shadow var(--p-inputtext-transition-duration);
+    appearance: none;
+    border-radius: var(--p-inputtext-border-radius);
+    outline-color: transparent;
+    box-shadow: var(--p-inputtext-shadow);
+}
+
+.stl-preview-file {
+    width: 296px;
+    height: 296px;
+    max-width: 296px;
+    max-height: 296px;
 }
 
 .image-preview:hover {
@@ -117,6 +138,10 @@ h2 {
 
 .m-2 {
     margin: 0.5rem;
+}
+
+.mt-25 {
+    margin-top: 25px;
 }
 
 .p-4 {

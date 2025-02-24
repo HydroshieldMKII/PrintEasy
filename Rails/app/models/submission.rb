@@ -7,7 +7,6 @@ class Submission < ApplicationRecord
 
   validates :name, presence: true, length: { maximum: 30 }
   validates :description, length: { maximum: 200 }
-  validates :user, presence: true
   validates :contest, presence: true
   validates :files, presence: true
   validate :files_presence_and_format

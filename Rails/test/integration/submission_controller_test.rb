@@ -23,7 +23,7 @@ class Api::SubmissionControllerTest < ActionDispatch::IntegrationTest
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
-    debugger
+
     assert_equal @contest.submissions.count, @parsed_response["submissions"].count
     assert_equal @contest.submissions.first.name, @parsed_response["submissions"].first["name"]
     assert_equal @contest.submissions.first.description, @parsed_response["submissions"].first["description"]
@@ -132,20 +132,6 @@ class Api::SubmissionControllerTest < ActionDispatch::IntegrationTest
     assert_equal ["must exist", "can't be blank"], @parsed_response["errors"]["contest"]
   end
 
-  test "should not create submission without user_id" do
-    assert_difference('Submission.count', 0) do
-      post api_submission_index_url, params: { submission: { contest_id: @contest.id, name: "New Submission", description: "New Description", files: [fixture_file_upload(@stl_file.filename.to_s, @stl_file.content_type)] } }
-    end
-
-    assert_response :unprocessable_entity
-
-    assert_nothing_raised do
-      @parsed_response = JSON.parse(response.body)
-    end
-
-    assert_equal ["must exist", "can't be blank"], @parsed_response["errors"]["user"]
-  end
-
   test "should not create submission without files" do
     assert_difference('Submission.count', 0) do
       post api_submission_index_url, params: { submission: { user_id: @user.id, contest_id: @contest.id, name: "New Submission", description: "New Description" } }
@@ -230,20 +216,6 @@ class Api::SubmissionControllerTest < ActionDispatch::IntegrationTest
     assert_equal ["must exist", "can't be blank"], @parsed_response["errors"]["contest"]
   end
 
-  test "should not update submission without user_id" do
-    assert_difference('Submission.count', 0) do
-      patch api_submission_url(@submission), params: { submission: {user_id: nil, contest_id: @contest.id, name: "Updated Submission", description: "Updated Description", files: [fixture_file_upload("base.stl", @stl_file.content_type)] } }
-    end
-
-    assert_response :unprocessable_entity
-
-    assert_nothing_raised do
-      @parsed_response = JSON.parse(response.body)
-    end
-
-    assert_equal ["must exist", "can't be blank"], @parsed_response["errors"]["user"]
-  end
-
   test "should not update submission without files" do
     assert_difference('Submission.count', 0) do
       patch api_submission_url(@submission), params: { submission: {user_id: @user.id, contest_id: @contest.id, name: "Updated Submission", description: "Updated Description", files: [] } }
@@ -312,20 +284,6 @@ class Api::SubmissionControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_equal ["must exist","can't be blank"], @parsed_response["errors"]["contest"]
-  end
-
-  test "should not update submission with invalid user_id" do
-    assert_difference('Submission.count', 0) do
-      patch api_submission_url(@submission), params: { submission: {user_id: 9, contest_id: @contest.id, name: "Updated Submission", description: "Updated Description", files: [fixture_file_upload("base.stl", @stl_file.content_type)] } }
-    end
-
-    assert_response :unprocessable_entity
-
-    assert_nothing_raised do
-      @parsed_response = JSON.parse(response.body)
-    end
-
-    assert_equal ["must exist","can't be blank"], @parsed_response["errors"]["user"]
   end
 
   test "should not destroy submission with invalid id" do
@@ -419,5 +377,93 @@ class Api::SubmissionControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_equal ["Invalid login credentials"], @parsed_response["errors"]["connection"]
+  end
+
+  test "should not show submission without login" do
+    sign_out @user
+
+    assert_difference('Submission.count', 0) do
+      get api_submission_url(@submission)
+    end
+
+    assert_response :unauthorized
+
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+
+    assert_equal ["Invalid login credentials"], @parsed_response["errors"]["connection"]
+  end
+
+  test "should not get index without login" do
+    sign_out @user
+
+    assert_difference('Submission.count', 0) do
+      get api_submission_index_url, params: { submission: { contest_id: @contest.id } }
+    end
+
+    assert_response :unauthorized
+
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+
+    assert_equal ["Invalid login credentials"], @parsed_response["errors"]["connection"]
+  end
+
+  test "should not get index without contest_id" do
+    assert_difference('Submission.count', 0) do
+      get api_submission_index_url
+    end
+
+    assert_response :unprocessable_entity
+
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+
+    assert_equal ["param is missing or the value is empty: submission"], @parsed_response["errors"]["base"]
+  end
+
+  test "should not show submission without id" do
+    assert_difference('Submission.count', 0) do
+      get api_submission_url(9)
+    end
+
+    assert_response :not_found
+
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+
+    assert_equal ["Submission not found"], @parsed_response["errors"]["submission"]
+  end
+
+  test "should not update submission without id" do
+    assert_difference('Submission.count', 0) do
+      patch api_submission_url(9), params: { submission: { user_id: @user.id, contest_id: @contest.id, name: "Updated Submission", description: "Updated Description", files: [fixture_file_upload("base.stl", @stl_file.content_type)] } }
+    end
+
+    assert_response :not_found
+
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+
+    assert_equal ["Submission not found"], @parsed_response["errors"]["submission"]
+  end
+
+  test "should not destroy submission without id" do
+    assert_difference('Submission.count', 0) do
+      delete api_submission_url(9)
+    end
+
+    assert_response :not_found
+
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+
+    assert_equal ["Submission not found"], @parsed_response["errors"]["submission"]
   end
 end

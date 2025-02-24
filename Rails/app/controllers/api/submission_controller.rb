@@ -23,6 +23,8 @@ class Api::SubmissionController < AuthenticatedController
   
     def create
       @submission = Submission.new(submission_params)
+      current_user.submissions << @submission
+
       if @submission.save
         render json: {submission: @submission.as_json(methods: [:stl_url, :image_url]), errors: {}}, status: :created
       else
@@ -63,7 +65,7 @@ class Api::SubmissionController < AuthenticatedController
     end
   
     def submission_params
-      params.require(:submission).permit(:id, :user_id, :contest_id, :name, :description, :created_at, :updated_at, files: [])
+      params.require(:submission).permit(:id, :contest_id, :name, :description, :created_at, :updated_at, files: [])
     end
   end
   

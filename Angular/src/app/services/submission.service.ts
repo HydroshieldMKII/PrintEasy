@@ -34,6 +34,28 @@ export class SubmissionService {
     );
   }
 
+  createSubmission(submission: FormData): Observable<ApiResponseModel> {
+    return this.api.postRequest('api/submission', {}, submission).pipe(
+      map(response => {
+        if (response.status === 201) {
+          this.messageService.add({
+            severity: 'success', summary: 'Succès',
+            detail: 'Soumission créée avec succès'
+          });
+        }
+        else {
+          console.log('error:', response.errors);
+          this.messageService.add({
+            severity: 'error', summary: 'Erreur',
+            detail: 'Erreur lors de la création de la soumission'
+          });
+        }
+        return response;
+      }
+      )
+    );
+  }
+
   getProductsData() {
     return [
       {

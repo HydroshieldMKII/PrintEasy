@@ -37,7 +37,7 @@
         </div>
         <div>
             <p-carousel [value]="submission.submissions" [numVisible]="3" [numScroll]="1"
-                [responsiveOptions]="responsiveOptions">
+                [responsiveOptions]="responsiveOptions" class="custom-carousel">
                 <ng-template let-product #item>
                     <div class="border border-surface-200 dark:border-surface-700 rounded m-2 p-4" [style]="{
                     'width': submission.submissions.length === 1 ? '33%' : (submission.submissions.length === 2 ? '65.5%' : 'auto')
@@ -95,25 +95,29 @@
 
                     <div class="container-row">
                         <div>
-                            <div class="image-preview-container">
-
+                            <div [class]="noStlPreview">
+                                <div *ngIf="uploadedFileBlob" class="stl-preview">
+                                    <stl-model-viewer [stlModelFiles]="[uploadedFileBlob]" class="stl-preview-file"></stl-model-viewer>
+                                </div>
                             </div>
-                            <div class="mt-12 items-center">
+                            <div class="mt-25">
                                 <div class="fileUploadContainer center">
-                                    <p-fileUpload mode="basic" name="image" accept="image/*" [maxFileSize]="1000000"
-                                        chooseLabel="Upload stl"></p-fileUpload>
+                                    <p-fileUpload mode="basic" name="image" accept=".stl" [maxFileSize]="1000000"
+                                        chooseLabel="Upload STL" (onSelect)="onUploadStl($event)"></p-fileUpload>
                                 </div>
                             </div>
                         </div>
 
                         <div>
-                            <div class="image-preview-container">
-
+                            <div [class]="noImagePreview">
+                                <div *ngIf="imageUrl">
+                                    <img [src]="imageUrl" alt="" class="image-preview" />
+                                </div>
                             </div>
-                            <div class="mt-12 items-center">
+                            <div class="mt-25">
                                 <div class="fileUploadContainer center">
                                     <p-fileUpload mode="basic" name="image" accept="image/*" [maxFileSize]="1000000"
-                                        chooseLabel="Upload image"></p-fileUpload>
+                                        chooseLabel="Upload image" (onSelect)="onSelectImage($event)"></p-fileUpload>
                                 </div>
                             </div>
                         </div>
@@ -122,7 +126,7 @@
                     <div class="button-container">
                         <p-button label="Cancel" type="button" icon="pi pi-times"
                             severity="secondary"></p-button>
-                        <p-button label="Save" [disabled]="!submissionForm.valid" icon="pi pi-save" severity="success"></p-button>
+                        <p-button label="Save" (onClick)="onSubmit()" [disabled]="!submissionForm.valid" icon="pi pi-save" severity="success"></p-button>
                     </div>
                 </div>
 
