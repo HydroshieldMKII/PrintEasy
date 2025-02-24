@@ -119,7 +119,9 @@ textarea {
     .stl-actions {
         flex-direction: column;
     }
+
 }
+
 
 #comment {
     resize: none;

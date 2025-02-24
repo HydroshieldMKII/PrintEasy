@@ -46,7 +46,12 @@ export class RequestFormComponent implements OnInit {
   filamentTypes: { label: string, value: string, id: number }[] = [];
   colors: { label: string, value: string, id: number }[] = [];
 
-  form!: FormGroup;
+  form: FormGroup = new FormGroup({
+    name: new FormControl('', [Validators.required, Validators.minLength(3)]),
+    budget: new FormControl('', [Validators.required, Validators.min(0), Validators.max(10000)]),
+    targetDate: new FormControl('', [Validators.required, this.dateValidator]),
+    comment: new FormControl('', Validators.maxLength(200))
+  });
 
   constructor(
     private router: Router,
@@ -84,8 +89,8 @@ export class RequestFormComponent implements OnInit {
       this.router.navigate(['/requests']);
     }
 
-    if (this.isEditMode || this.isViewMode) {
-
+    if (this.isNewMode) {
+      console.log('Loading all presets...');
       this.presetService.getAllPrinters().subscribe((printers) => {
         this.printers = printers.map((printer: PrinterModel) => ({
           label: printer.model,
@@ -109,14 +114,37 @@ export class RequestFormComponent implements OnInit {
           id: color.id
         }));
       });
+    }
 
+    if (this.isEditMode || this.isViewMode) {
       if (this.id !== null) {
         this.requestService.getRequestById(this.id).subscribe((request) => {
           this.request = request;
           this.isMine = request?.user.id === this.authService.currentUser?.id;
+
           if (this.request === null) {
             this.router.navigate(['/requests']);
           }
+
+
+          this.colors = this.request.presets.map((preset: any) => ({
+            label: preset.color,
+            value: preset.color,
+            id: preset.color_id
+          }));
+
+          this.filamentTypes = this.request.presets.map((preset: any) => ({
+            label: preset.filamentType,
+            value: preset.filamentType,
+            id: preset.filament_id
+          }));
+
+          this.printers = this.request.presets.map((preset: any) => ({
+            label: preset.printerModel,
+            value: preset.printerModel,
+            id: preset.printer_id
+          }));
+
 
           if (this.isMine && this.isViewMode) {
             this.router.navigate(['/requests/edit', this.id]);
@@ -178,6 +206,7 @@ export class RequestFormComponent implements OnInit {
 
   submitRequest(): void {
     if (this.form.invalid) {
+      console.log('Invalid form:', this.form);
       this.messageService.add({
         severity: 'error',
         summary: 'Error',

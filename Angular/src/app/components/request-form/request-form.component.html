@@ -95,13 +95,13 @@
         <div class="form-field">
           <p-floatlabel variant="in">
             <div class="w-full">
-              <p-datepicker
+                <p-datepicker
                 id="targetDate"
                 formControlName="targetDate"
                 [showIcon]="true"
                 inputId="buttondisplay"
                 [showOnFocus]="false"
-                class="w-full"
+                styleClass="date-picker-full-on-mobile"
                 dateFormat="yy-mm-dd"
               ></p-datepicker>
               <label for="targetDate" class="block font-semibold">Target Date</label>
@@ -186,32 +186,7 @@
       </p>
     </div>
 
-    <!-- Action Buttons -->
-    <div class="flex justify-end mt-6 gap-3 edit-actions" *ngIf="isEditMode || isNewMode">
-      <p-button
-        type="button"
-        label="Cancel"
-        icon="pi pi-times"
-        severity="secondary"
-        (click)="isEditMode ? cancelEdit() : cancelNew()"
-      ></p-button>
-      <p-button
-        *ngIf="isEditMode"
-        type="button"
-        label="Delete"
-        icon="pi pi-trash"
-        severity="danger"
-        (click)="showDeleteDialog(request)"
-        [disabled]="request.hasOfferAccepted"
-      ></p-button>
-      <p-button
-        type="submit"
-        label="Save"
-        icon="pi pi-save"
-        severity="success"
-        [disabled]="form.invalid || (isNewMode && !uploadedFile) || request.hasOfferAccepted"
-      ></p-button>
-    </div>
+    <button type="submit" style="display: none;"></button>
   </form>
 
   <!-- Presets Table (outside the form) -->
@@ -295,6 +270,34 @@
       </tr>
     </ng-template>
   </p-table>
+
+      <!-- Action Buttons -->
+      <div class="flex justify-end mt-6 gap-3 edit-actions" *ngIf="isEditMode || isNewMode">
+        <p-button
+          type="button"
+          label="Cancel"
+          icon="pi pi-times"
+          severity="secondary"
+          (click)="isEditMode ? cancelEdit() : cancelNew()"
+        ></p-button>
+        <p-button
+          *ngIf="isEditMode"
+          type="button"
+          label="Delete"
+          icon="pi pi-trash"
+          severity="danger"
+          (click)="showDeleteDialog(request)"
+          [disabled]="request.hasOfferAccepted"
+        ></p-button>
+        <p-button
+          (onClick)="submitRequest()"
+          label="Save"
+          icon="pi pi-save"
+          severity="success"
+          id="save-button"
+          [disabled]="form.invalid || (isNewMode && !uploadedFile) || request.hasOfferAccepted"
+        ></p-button>
+      </div>
 
   <!-- Delete Confirmation Dialog -->
   <p-dialog
