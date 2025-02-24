@@ -8,18 +8,27 @@ class Request < ApplicationRecord
   validates :name, presence: true, length: { in: 3..30 }
   validates :budget, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 10_000 }
   validates :comment, length: { maximum: 200 }
+  
+  has_one_attached :stl_file
+
+  # Create validations
+  validates :stl_file, presence: true, on: :create
   validates :target_date, presence: true, comparison: { greater_than: Date.today }, on: :create
+
+  # Update validations
+  validate :target_date_cannot_be_in_the_past_on_update, on: :update
+  validate :cannot_update_if_offer_accepted, on: :update
+  
+  validate :stl_file_must_have_stl_extension
   validate :unique_preset_requests
 
-  has_one_attached :stl_file
-  validates :stl_file, presence: true, on: :create
-
+  # Helper 
   def stl_file_url
-    return Rails.application.routes.url_helpers.rails_blob_url(stl_file, only_path: true)
+    Rails.application.routes.url_helpers.rails_blob_url(stl_file, only_path: true)
   end
 
   def has_offer_made?
-    return offers.exists?
+    offers.exists?
   end
 
   def has_offer_accepted?
@@ -28,7 +37,29 @@ class Request < ApplicationRecord
           .exists?
   end
 
+  # Validations
   private
+
+  def target_date_cannot_be_in_the_past_on_update
+    if target_date_changed? && target_date < Date.today #https://api.rubyonrails.org/v7.1/classes/ActiveModel/Dirty.html
+      errors.add(:target_date, 'must be greater than today')
+    end
+  end
+
+  def stl_file_must_have_stl_extension
+    return unless stl_file.attached?
+    filename = stl_file.filename.to_s
+    extension = File.extname(filename)
+    unless extension.downcase == '.stl'
+      errors.add(:stl_file, 'must have .stl extension')
+    end
+  end
+
+  def cannot_update_if_offer_accepted
+    if has_offer_accepted?
+      errors.add(:base, 'Cannot update request with accepted offers')
+    end
+  end
 
   def unique_preset_requests
     seen = {}

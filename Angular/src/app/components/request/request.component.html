@@ -12,12 +12,12 @@
 
   <p-tabs [(value)]="activeTab">
     <p-tablist>
-      <p-tab value="all">All Requests</p-tab>
-      <p-tab value="my">My Requests</p-tab>
+      <p-tab value="all" (click)="onTabChange('all')">All Requests</p-tab>
+      <p-tab value="mine" (click)="onTabChange('mine')">My Requests</p-tab>
     </p-tablist>
 
     <p-tabpanels>
-      <p-tabpanel *ngFor="let tab of ['all', 'my']" [value]="tab">
+      <p-tabpanel *ngFor="let tab of ['all', 'mine']" [value]="tab">
         <div class="flex justify-between items-center my-3">
           <div class="flex gap-2 toggle-all">
             <p-button
@@ -84,7 +84,7 @@
         <hr />
 
         <p-table
-          *ngIf="currentRequests.length > 0 && isOwningPrinter || activeTab == 'my'"
+          *ngIf="currentRequests.length > 0 && isOwningPrinter || activeTab == 'mine'"
           [value]="currentRequests"
           dataKey="id"
           [tableStyle]="{ 'min-width': '60rem' }"

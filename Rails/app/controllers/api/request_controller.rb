@@ -4,12 +4,10 @@ class Api::RequestController < AuthenticatedController
   before_action :show_params, only: :show
   before_action :create_params, only: :create
   before_action :update_params, only: :update
-  before_action :stl_file_extension?, only: %i[create update]
 
   # GET /requests
   def index
     @requests = fetch_requests
-    
     render_request(@requests)
   end
 
@@ -21,7 +19,6 @@ class Api::RequestController < AuthenticatedController
 
   # POST /requests
   def create
-    # debugger
     @request = Request.new(create_params)
     @request.user = current_user
 
@@ -35,31 +32,19 @@ class Api::RequestController < AuthenticatedController
   # PATCH/PUT /requests/:id
   def update
     @request = Request.includes(:user, preset_requests: %i[color filament printer]).find(params[:id])
-    valid = true
     
+    # Authorization check remains in the controller.
     if @request.user != current_user
       render json: { request: {}, errors: { request: ['You are not allowed to update this request'] } }, status: :forbidden
       return
     end
 
-    if update_params[:target_date].present? && update_params[:target_date].to_date.strftime("%a, %d %b %Y") != @request.target_date && update_params[:target_date].to_date < Date.today
-      # debugger
-      valid = false
-      @request.errors.add(:target_date, 'must be greater than today')
-    end
-
-    #Check if the request has any offers accepted
-    if @request.has_offer_accepted?
-      valid = false
-      @request.errors.add(:base, 'Cannot update request with accepted offers')
-    end
-
+    # Remove nested preset attributes if offers have already been made.
     update_params.delete(:preset_requests_attributes) if @request.has_offer_made?
 
-    if valid && @request.update(update_params)
+    if @request.update(update_params)
       render_request(@request)
     else
-      # debugger
       render json: { request: {}, errors: @request.errors }, status: :unprocessable_entity
     end
   end
@@ -87,17 +72,14 @@ class Api::RequestController < AuthenticatedController
   def fetch_requests
     case params[:type]
     when 'all'
-      # Exclude requests that have any accepted offers.
-      accepted_request_ids = Request.joins(offers: { order: :order_status })
-                                    .where(order_status: { status_name: 'Accepted' })
-                                    .select(:id)
-  
+      accepted_requests = Request.joins(offers: { order: :order_status })
+                   .where(order_status: { status_name: 'Accepted' })
+    
       requests = Request.includes(:user, preset_requests: %i[color filament printer])
-                        .where.not(user: current_user)
-                        .where.not(id: accepted_request_ids)
-    when 'my'
-      requests = Request.includes(:user, preset_requests: %i[color filament printer])
-                        .where(user: current_user)
+              .where.not(user: current_user)
+              .where.not(id: accepted_requests)
+    when 'mine'
+      requests = current_user.requests.includes(:user, preset_requests: %i[color filament printer])
     else
       return []
     end
@@ -131,6 +113,7 @@ class Api::RequestController < AuthenticatedController
         },
         methods: %i[stl_file_url has_offer_made? has_offer_accepted?]
       ),
+      has_printer: has_printer?,
       errors: resource.respond_to?(:errors) ? resource.errors : {}
     }, status: status
   end
@@ -138,7 +121,7 @@ class Api::RequestController < AuthenticatedController
   def filter_requests(requests)
     case params[:filter]
     when 'owned-printer' 
-      requests.joins(:preset_requests).where(preset_requests: { printer_id: current_user.printer_users.pluck(:printer_id) }).distinct #https://apidock.com/rails/ActiveRecord/Calculations/pluck
+      requests.joins(:preset_requests).where(preset_requests: { printer_id: current_user.printer_users.pluck(:printer_id) }).distinct
     when 'country'
       requests.joins(:user).where(users: { country_id: current_user.country_id }).distinct
     else
@@ -149,13 +132,12 @@ class Api::RequestController < AuthenticatedController
   def sort_requests(requests)
     return requests unless params[:sortCategory].present? && params[:sort].present?
 
-    sort_column = case params[:sortCategory]
-                  when 'name' then 'name'
-                  when 'date' then 'target_date'
-                  when 'budget' then 'budget'
-                  when 'country' then 'users.country_id'
-                  else 'created_at'
-                  end
+    sort_column = {
+      'name' => 'requests.name',
+      'date' => 'target_date',
+      'budget' => 'budget',
+      'country' => 'users.country_id'
+    }.fetch(params[:sortCategory], 'created_at')
     sort_direction = params[:sort] == 'asc' ? 'ASC' : 'DESC'
     requests.order("#{sort_column} #{sort_direction}")
   end
@@ -169,20 +151,17 @@ class Api::RequestController < AuthenticatedController
   end
 
   def create_params
-    params.require(:request).permit(:name, :comment, :target_date, :budget, :stl_file, preset_requests_attributes: %i[color_id filament_id printer_id print_quality])
+    params.require(:request).permit(:name, :comment, :target_date, :budget, :stl_file, 
+                                    preset_requests_attributes: %i[color_id filament_id printer_id print_quality])
   end
 
   def update_params
-    params.require(:request).permit(:name, :comment, :target_date, :budget, :stl_file, preset_requests_attributes: %i[id color_id filament_id printer_id print_quality _destroy])
+    params.require(:request).permit(:name, :comment, :target_date, :budget, :stl_file, 
+                                    preset_requests_attributes: %i[id color_id filament_id printer_id print_quality _destroy])
   end
 
-  def stl_file_extension?
-    if params[:request][:stl_file].present?
-      extension = File.extname(params[:request][:stl_file]&.path)
-      unless extension == '.stl'
-        render json: { request: {}, errors: { stl_file: ['must have .stl extension'] } }, status: :unprocessable_entity
-      end
-    end
+  def has_printer?
+    current_user.printer_users.exists?
   end
 
   def handle_record_not_unique(exception)

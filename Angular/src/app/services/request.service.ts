@@ -19,7 +19,7 @@ export class RequestService {
 
     constructor(private api: ApiRequestService) { }
 
-    filter(filterParams: string, sortCategory: string, orderParams: string, searchParams: string, type: string): Observable<RequestModel[]> {
+    filter(filterParams: string, sortCategory: string, orderParams: string, searchParams: string, type: string): Observable<[RequestModel[], boolean]> {
         const params: any = {};
 
         if (filterParams) params.filter = filterParams;
@@ -87,7 +87,7 @@ export class RequestService {
         );
     }
 
-    fetchRequests(params: any): Observable<RequestModel[]> {
+    fetchRequests(params: any): Observable<[RequestModel[], boolean]> {
         return this.api.getRequest('api/request', params).pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
@@ -123,7 +123,7 @@ export class RequestService {
                         );
                     });
                 }
-                return this.requests;
+                return [this.requests, response.data?.['has_printer']];
             })
         );
     }
