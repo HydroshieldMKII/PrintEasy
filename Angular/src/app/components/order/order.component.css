@@ -183,6 +183,16 @@ input {
     flex-grow: 1;
 }
 
+.comment-container {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.comment {
+    word-break: break-all;
+    overflow-wrap: break-word;
+}
+
 /* Mobile Responsive */
 @media (max-width: 768px) {
     .grid {
@@ -212,6 +222,11 @@ input {
     .h-row p {
         margin: 5px;
     }
+}
+
+.p-button-Accepted {
+    background-color: #ff0000;
+    color: #ff0000;
 }
 
 

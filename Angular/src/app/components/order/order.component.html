@@ -36,7 +36,7 @@
 
             <div style="margin-bottom: 1.5rem;">
                 <p-fieldset legend="Comment" class="comment-container">
-                    <p>
+                    <p class="m-0" class="comment">
                         {{order?.offer?.request?.comment}}
                     </p>
                 </p-fieldset>
@@ -59,7 +59,7 @@
                     <label for="comment">Special comment about the status update</label>
                 </p-floatlabel>
                 <p-dropdown 
-                    formControlName="status_name" 
+                    formControlName="statusName" 
                     [options]="order?.availableStatus"
                     placeholder="{{isEdit ? orderStatusForm.value.statusName : 'Select a status'}}"
                     appendTo="body"
