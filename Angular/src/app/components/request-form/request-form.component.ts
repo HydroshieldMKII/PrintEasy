@@ -14,6 +14,7 @@ import { FileSelectEvent } from 'primeng/fileupload';
 import { RequestModel } from '../../models/request.model';
 import { MessageService } from 'primeng/api';
 import { AuthService } from '../../services/authentication.service';
+import { PresetModel } from '../../models/preset.model';
 
 @Component({
   selector: 'app-request-form',
@@ -89,62 +90,67 @@ export class RequestFormComponent implements OnInit {
       this.router.navigate(['/requests']);
     }
 
-    if (this.isNewMode) {
-      console.log('Loading all presets...');
-      this.presetService.getAllPrinters().subscribe((printers) => {
-        this.printers = printers.map((printer: PrinterModel) => ({
-          label: printer.model,
-          value: printer.model,
-          id: printer.id
-        }));
-      });
-
-      this.presetService.getAllFilaments().subscribe((filamentTypes) => {
-        this.filamentTypes = filamentTypes.map((filament: FilamentModel) => ({
-          label: filament.name,
-          value: filament.name,
-          id: filament.id
-        }));
-      });
-
-      this.presetService.getAllColors().subscribe((colors) => {
-        this.colors = colors.map((color: ColorModel) => ({
-          label: color.name,
-          value: color.name,
-          id: color.id
-        }));
-      });
-    }
-
     if (this.isEditMode || this.isViewMode) {
       if (this.id !== null) {
         this.requestService.getRequestById(this.id).subscribe((request) => {
           this.request = request;
+          console.log('Request loaded:', this.request);
           this.isMine = request?.user.id === this.authService.currentUser?.id;
 
           if (this.request === null) {
             this.router.navigate(['/requests']);
           }
 
+          if (this.isViewMode) {
+            this.colors = this.request.presets.map((preset: PresetModel) => ({
+              label: preset.color.name,
+              value: preset.color.name,
+              id: preset.color.id
+            }));
 
-          this.colors = this.request.presets.map((preset: any) => ({
-            label: preset.color,
-            value: preset.color,
-            id: preset.color_id
-          }));
+            console.log('Colors:', this.colors);
 
-          this.filamentTypes = this.request.presets.map((preset: any) => ({
-            label: preset.filamentType,
-            value: preset.filamentType,
-            id: preset.filament_id
-          }));
+            this.filamentTypes = this.request.presets.map((preset: PresetModel) => ({
+              label: preset.filamentType.name,
+              value: preset.filamentType.name,
+              id: preset.filamentType.id
+            }));
 
-          this.printers = this.request.presets.map((preset: any) => ({
-            label: preset.printerModel,
-            value: preset.printerModel,
-            id: preset.printer_id
-          }));
+            console.log('Filament types:', this.filamentTypes);
 
+            this.printers = this.request.presets.map((preset: PresetModel) => ({
+              label: preset.printerModel.model,
+              value: preset.printerModel.model,
+              id: preset.printerModel.id
+            }));
+
+            console.log('Printers:', this.printers);
+          } else {
+            console.log('Loading all presets...');
+            this.presetService.getAllPrinters().subscribe((printers) => {
+              this.printers = printers.map((printer: PrinterModel) => ({
+                label: printer.model,
+                value: printer.model,
+                id: printer.id
+              }));
+            });
+
+            this.presetService.getAllFilaments().subscribe((filamentTypes) => {
+              this.filamentTypes = filamentTypes.map((filament: FilamentModel) => ({
+                label: filament.name,
+                value: filament.name,
+                id: filament.id
+              }));
+            });
+
+            this.presetService.getAllColors().subscribe((colors) => {
+              this.colors = colors.map((color: ColorModel) => ({
+                label: color.name,
+                value: color.name,
+                id: color.id
+              }));
+            });
+          }
 
           if (this.isMine && this.isViewMode) {
             this.router.navigate(['/requests/edit', this.id]);
@@ -263,9 +269,10 @@ export class RequestFormComponent implements OnInit {
 
     if (this.request.presets && this.request.presets.length > 0) {
       for (const preset of this.request.presets) {
-        const printer = this.printers.find((p: any) => p.label === preset.printerModel || p.label === preset.printer);
-        const filament = this.filamentTypes.find((f: any) => f.label === preset.filamentType);
-        const color = this.colors.find((c: any) => c.label === preset.color);
+        const printer = this.printers.find((p: any) => p.label === preset.printerModel.model);
+        const filament = this.filamentTypes.find((f: any) => f.label === preset.filamentType.name);
+        const color = this.colors.find((c: any) => c.label === preset.color.name);
+        console.log('Preset:', preset);
         if (printer && filament && color && preset.printQuality && this.isPresetValid(preset)) {
           if (preset.id) {
             formData.append(`request[preset_requests_attributes][${presetIndex}][id]`, preset.id.toString());
@@ -316,7 +323,12 @@ export class RequestFormComponent implements OnInit {
   }
 
   addPreset(): void {
-    this.request.presets.push({ printer: '', filamentType: '', color: '', printQuality: '0.16' });
+    this.request.presets.push({
+      printerModel: { model: '' },
+      filamentType: { name: '' },
+      color: { name: '' },
+      printQuality: 0.16
+    });
   }
 
   downloadFile(downloadUrl: string): void {
@@ -338,15 +350,17 @@ export class RequestFormComponent implements OnInit {
   }
 
   isPresetValid(preset: any): boolean {
-    const printerValid = !!this.printers.find((p: any) => p.label === preset.printerModel);
-    const filamentValid = !!this.filamentTypes.find((f: any) => f.label === preset.filamentType);
-    const colorValid = !!this.colors.find((c: any) => c.label === preset.color);
+    const printerValid = !!this.printers.find((p: any) => p.label === preset.printerModel.model);
+    const filamentValid = !!this.filamentTypes.find((f: any) => f.label === preset.filamentType.name);
+    const colorValid = !!this.colors.find((c: any) => c.label === preset.color.name);
+
     const isDuplicate = this.request.presets.filter((p: any) =>
-      p.printerModel === preset.printerModel &&
-      p.filamentType === preset.filamentType &&
-      p.color === preset.color &&
+      p.printerModel.model === preset.printerModel.model &&
+      p.filamentType.name === preset.filamentType.name &&
+      p.color.name === preset.color.name &&
       p.printQuality === preset.printQuality
     ).length > 1;
+
     return printerValid && filamentValid && colorValid && preset.printQuality && !isDuplicate;
   }
 }

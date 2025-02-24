@@ -209,7 +209,7 @@
       <tr [ngClass]="{ 'invalid': !isPresetValid(preset) }">
         <td>
           <p-dropdown
-            [(ngModel)]="preset.printerModel"
+            [(ngModel)]="preset.printerModel.model"
             [options]="printers"
             optionLabel="label"
             optionValue="value"
@@ -220,7 +220,7 @@
         </td>
         <td>
           <p-dropdown
-            [(ngModel)]="preset.filamentType"
+            [(ngModel)]="preset.filamentType.name"
             [options]="filamentTypes"
             optionLabel="label"
             optionValue="value"
@@ -231,7 +231,7 @@
         </td>
         <td>
           <p-dropdown
-            [(ngModel)]="preset.color"
+            [(ngModel)]="preset.color.name"
             [options]="colors"
             optionLabel="label"
             optionValue="value"
