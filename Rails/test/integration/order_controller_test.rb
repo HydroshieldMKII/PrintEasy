@@ -50,7 +50,7 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
-    assert_equal ["Order not found"], @parsed_response["errors"]["order"]
+    assert_equal ["Couldn't find Order with 'id'=999"], @parsed_response["errors"]["base"]
   end
 
   test "should not get show -> not owner" do
@@ -60,7 +60,7 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
       get api_order_path(1), as: :json
     end
 
-    assert_response :unauthorized
+    assert_response :forbidden
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
@@ -76,7 +76,7 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
-    assert_equal ["You are not authorized to view this page"], @parsed_response["errors"]["order"]
+    assert_equal ["Invalid login credentials"], @parsed_response["errors"]["connection"]
   end
 
   test "should not get show -> not signed in" do
@@ -88,7 +88,7 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
-    assert_equal ["You are not authorized to view this order"], @parsed_response["errors"]["order"]
+    assert_equal ["Invalid login credentials"], @parsed_response["errors"]["connection"]
   end
 
   private

@@ -6,12 +6,12 @@ import { FilamentModel } from "./filament.model";
 export class OfferModel {
     id: number;
     request: RequestModel;
-    printer_user: PrinterUserModel;
+    printerUser: PrinterUserModel;
     color: ColorModel;
     filament: FilamentModel;
     price: number;
-    print_quality: number;
-    target_date: Date;
+    printQuality: number;
+    targetDate: Date;
 
     constructor(
         id: number,
@@ -25,11 +25,24 @@ export class OfferModel {
     ) {
         this.id = id;
         this.request = request;
-        this.printer_user = printer_user;
+        this.printerUser = printer_user;
         this.color = color;
         this.filament = filament;
         this.price = price;
-        this.print_quality = print_quality;
-        this.target_date = target_date
+        this.printQuality = print_quality;
+        this.targetDate = target_date
+    }
+
+    static fromAPI(data: any): OfferModel {
+        return new OfferModel(
+            data.id,
+            RequestModel.fromAPI(data.request),
+            PrinterUserModel.fromAPI(data.printer_user),
+            ColorModel.fromAPI(data.color),
+            FilamentModel.fromAPI(data.filament),
+            data.price,
+            data.print_quality,
+            new Date(data.target_date)
+        );
     }
 }

@@ -9,4 +9,11 @@ export class PrinterModel {
         this.id = id;
         this.model = model;
     }
+
+    static fromAPI(data: any): PrinterModel {
+        return new PrinterModel(
+            data.id,
+            data.model
+        );
+    }
 }

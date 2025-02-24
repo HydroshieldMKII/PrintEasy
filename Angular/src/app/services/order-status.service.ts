@@ -14,7 +14,8 @@ export class OrderStatusService {
 
     getOrderStatus(orderStatusId: number): Observable<ApiResponseModel> {
         return this.api.getRequest(`api/order_status/${orderStatusId}`).pipe(
-            map(response => {
+            map((response : ApiResponseModel) => {
+                response.data.order_status = OrderStatusModel.fromAPI(response.data.order_status);
                 return response;
             })
         );

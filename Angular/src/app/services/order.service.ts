@@ -16,6 +16,7 @@ export class OrderService {
     getMyOrders(): Observable<ApiResponseModel> {
         return this.api.getRequest('api/order').pipe(
             map((response: ApiResponseModel) => {
+                response.data.orders = response.data.orders.map((order: any) => OrderModel.fromAPI(order));
                 return response;
             })
         );
@@ -24,6 +25,7 @@ export class OrderService {
     getMakeOrders(): Observable<ApiResponseModel> {
         return this.api.getRequest('api/order?type=printer').pipe(
             map((response: ApiResponseModel) => {
+                response.data.orders = response.data.orders.map((order: any) => OrderModel.fromAPI(order));
                 return response;
             })
         );
@@ -32,6 +34,7 @@ export class OrderService {
     getOrder(id: number): Observable<ApiResponseModel> {
         return this.api.getRequest(`api/order/${id}`).pipe(
             map((response: ApiResponseModel) => {
+                response.data.order = OrderModel.fromAPI(response.data.order);
                 return response;
             })
         );
