@@ -77,13 +77,36 @@ export class OrderComponent {
   currentlySelectedOrderStatusId: number = -1
 
   constructor(private fb: FormBuilder) {
-    this.orderStatusForm = this.fb.group({
-      statusName: ['', Validators.required],
-      comment: [],
-      image: [null]
-    });
-    
     this.refreshOrder();
+
+    this.orderStatusForm = this.fb.group({
+      statusName: ['', [Validators.required, this.statusNameValidator.bind(this)]],
+      comment: ['', [Validators.minLength(5), Validators.maxLength(200)]],
+      image: [null, this.imageValidator.bind(this)]
+    });
+  }
+
+  imageValidator(control: AbstractControl): ValidationErrors | null {
+    const file = control.value;
+    if (file) {
+      const validImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
+      if (!validImageTypes.includes(file.type)) {
+        return { invalidFileType: 'Only image files are allowed' };
+      }
+    }
+    return null;
+  }
+
+  statusNameValidator(control: AbstractControl): ValidationErrors | null {
+    const statusName = control.value;
+    if (!statusName) {
+      return { statusNameError: 'Status is required' };
+    }
+    if (this.order?.availableStatus.includes(statusName)) {
+      return null;
+    }else{
+      return { statusNameError: 'Invalid status' };
+    }
   }
 
   refreshOrder() : void {
@@ -123,6 +146,9 @@ export class OrderComponent {
                 this.statusActions.push({
                   label: 'Accepted', 
                   icon: 'pi pi-play',
+                  style: { backgroundColor: "#ff0000", color: "#ff0000" },
+                  styleClass: 'p-button-Accepted',
+                  iconStyle: { color: "#ff0000" },
                   command: () => {
                     this.ShowOrderStatusForm();
                     this.orderStatusForm.patchValue({ statusName: 'Accepted' });
@@ -181,6 +207,7 @@ export class OrderComponent {
                 break;
             }
           }
+          console.log('Status actions:', this.statusActions);
         }
       }
       

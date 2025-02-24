@@ -58,6 +58,7 @@
                         ></textarea>
                     <label for="comment">Special comment about the status update</label>
                 </p-floatlabel>
+                <p-message severity="error">Comment has to be between 5 and 200 characters</p-message>
                 <p-dropdown 
                     formControlName="statusName" 
                     [options]="order?.availableStatus"
