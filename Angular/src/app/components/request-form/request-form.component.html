@@ -135,11 +135,11 @@
             text="No STL file uploaded"
           ></p-message>
           <stl-model-viewer
-            *ngIf="(isEditMode || isViewMode) && request.stlFileUrl"
+            *ngIf="!uploadedFileBlob && (isEditMode || isViewMode) && request.stlFileUrl"
             [stlModels]="[request.stlFileUrl]"
           ></stl-model-viewer>
           <stl-model-viewer
-            *ngIf="isNewMode && uploadedFileBlob"
+            *ngIf="uploadedFileBlob && (isEditMode || isViewMode)"
             [stlModelFiles]="[uploadedFileBlob]"
           ></stl-model-viewer>
         </div>

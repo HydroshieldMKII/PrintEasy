@@ -50,7 +50,7 @@ export class RequestFormComponent implements OnInit {
   form: FormGroup = new FormGroup({
     name: new FormControl('', [Validators.required, Validators.minLength(3)]),
     budget: new FormControl('', [Validators.required, Validators.min(0), Validators.max(10000)]),
-    targetDate: new FormControl('', [Validators.required, this.dateValidator]),
+    targetDate: new FormControl('', [Validators.required]),
     comment: new FormControl('', Validators.maxLength(200))
   });
 
@@ -62,15 +62,21 @@ export class RequestFormComponent implements OnInit {
     private fb: FormBuilder,
     private messageService: MessageService,
     private authService: AuthService
-  ) { }
+  ) {
+    this.dateValidator = this.dateValidator.bind(this);
+  }
 
   dateValidator(control: AbstractControl) {
     const selectedDate = new Date(control.value);
-    // Normalize date
-    selectedDate.setHours(0, 0, 0, 0);
+    if (isNaN(selectedDate.getTime())) {
+      return { dateError: true };
+    }
+
+    if (this.request && selectedDate.toISOString().substring(0, 10) === this.request.targetDate) {
+      return null;
+    }
 
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
 
     if (selectedDate < today) {
       return { dateError: true };
@@ -102,13 +108,14 @@ export class RequestFormComponent implements OnInit {
           }
 
           if (this.isViewMode) {
+            console.log('Loading presets locally...');
             this.colors = this.request.presets.map((preset: PresetModel) => ({
               label: preset.color.name,
               value: preset.color.name,
               id: preset.color.id
             }));
 
-            console.log('Colors:', this.colors);
+            console.log('Colors detected:', this.colors);
 
             this.filamentTypes = this.request.presets.map((preset: PresetModel) => ({
               label: preset.filamentType.name,
@@ -116,7 +123,7 @@ export class RequestFormComponent implements OnInit {
               id: preset.filamentType.id
             }));
 
-            console.log('Filament types:', this.filamentTypes);
+            console.log('Filament types detected:', this.filamentTypes);
 
             this.printers = this.request.presets.map((preset: PresetModel) => ({
               label: preset.printerModel.model,
@@ -124,9 +131,9 @@ export class RequestFormComponent implements OnInit {
               id: preset.printerModel.id
             }));
 
-            console.log('Printers:', this.printers);
+            console.log('Printers detected:', this.printers);
           } else {
-            console.log('Loading all presets...');
+            console.log('Loading all presets for edit...');
             this.presetService.getAllPrinters().subscribe((printers) => {
               this.printers = printers.map((printer: PrinterModel) => ({
                 label: printer.model,
