@@ -1,11 +1,6 @@
 <div class="card p-4">
     <div class="flex justify-between items-center">
       <h1 class="text-4xl font-bold">Offers</h1>
-      <p-button
-        label="Create a request"
-        icon="pi pi-plus"
-        routerLink="/requests/new"
-      />
     </div>
   
     <p-toast />
@@ -33,56 +28,8 @@
                 (onClick)="collapseAll()"
               />
             </div>
-            <div class="flex gap-2 ssf">
-              <p-floatlabel variant="in">
-                <p-select
-                  inputId="in_label"
-                  [options]="filterOptions"
-                  [(ngModel)]="selectedFilterOption"
-                  optionLabel="label"
-                  styleClass="w-full"
-                  variant="filled"
-                  (onChange)="onFilterChange($event)"
-                />
-                <label for="in_label">Filter by</label>
-              </p-floatlabel>
-              <p-floatlabel variant="in">
-                <p-select
-                  inputId="in_label"
-                  [options]="sortOptions"
-                  [(ngModel)]="selectedSortOption"
-                  optionLabel="label"
-                  styleClass="w-full"
-                  variant="filled"
-                  (onChange)="onSortChange($event)"
-                />
-                <label for="in_label">Sort by</label>
-              </p-floatlabel>
-              <form (ngSubmit)="onSearch()">
-                <span class="p-input-icon-right">
-                  <i class="pi pi-search" style="margin-right: 5px"></i>
-                  <input
-                    pInputText
-                    type="text"
-                    placeholder="Search"
-                    [(ngModel)]="searchQuery"
-                    name="searchQuery"
-                    class="search-field"
-                    style="margin-bottom: 10px; margin-right: 10px"
-                  />
-                </span>
-                <button
-                  pButton
-                  type="submit"
-                  icon="pi pi-search"
-                  label="Search"
-                  class="search-btn"
-                ></button>
-              </form>
-            </div>
           </div>
-  
-          <hr />
+        
   
           <p-table
             *ngIf="currentRequests.length > 0 && isOwningPrinter || activeTab == 'mine'"
@@ -131,26 +78,11 @@
                 <td>
                   <div class="flex gap-2">
                     <p-button
-                      icon="pi pi-arrow-right"
-                      title="See Details"
-                      routerLink="/requests/view/{{ request.id }}"
-                      *ngIf="tab === 'all'"
-                    ></p-button>
-                    <p-button
-                      *ngIf="tab === 'mine'"
-                      icon="pi pi-pencil"
-                      title="Edit"
-                      routerLink="/requests/edit/{{ request.id }}"
-                      [disabled]="request.hasOfferAccepted"
-                    ></p-button>
-                    <p-button
-                      *ngIf="tab === 'mine'"
-                      icon="pi pi-trash"
-                      title="Delete"
-                      (onClick)="showDeleteDialog(request)"
-                      [disabled]="request.hasOfferAccepted"
-                    ></p-button>
-                    <a [href]="request.stlFileUrl" class="p-button" download style="text-decoration: none;"><i class="pi pi-download"></i></a>
+                    icon="pi pi-arrow-right"
+                    title="See Details"
+                    routerLink="/requests/view/{{ request.id }}"
+                    *ngIf="tab === 'mine'"
+                  ></p-button>
                     <p-button
                     icon="pi pi-share-alt"
                     title="Share"

@@ -53,6 +53,6 @@ class Api::OfferController < AuthenticatedController
     end
 
     def offer_params
-        # params.require(:offer).permit(:name, :description, :price, :image_url)
+        params.require(:offer).permit(:request_id, :printer_user_id, :color_id, :filament_id, :price, :status)
     end
 end

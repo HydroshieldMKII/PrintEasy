@@ -139,7 +139,7 @@
             [stlModels]="[request.stlFileUrl]"
           ></stl-model-viewer>
           <stl-model-viewer
-            *ngIf="uploadedFileBlob && (isEditMode || isViewMode)"
+            *ngIf="uploadedFileBlob && (isEditMode || isNewMode)"
             [stlModelFiles]="[uploadedFileBlob]"
           ></stl-model-viewer>
         </div>

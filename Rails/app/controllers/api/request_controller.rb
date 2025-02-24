@@ -161,7 +161,7 @@ class Api::RequestController < AuthenticatedController
   end
 
   def has_printer?
-    current_user.printer_users.exists?
+    current_user.printer.exists?
   end
 
   def handle_record_not_unique(exception)
