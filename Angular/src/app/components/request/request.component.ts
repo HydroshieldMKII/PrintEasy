@@ -185,7 +185,7 @@ export class RequestsComponent {
     const fullUrl = new URL(text, window.location.origin).href;
     console.log('Copied to clipboard:', fullUrl);
     this.clipboard.copy(fullUrl);
-    this.messageService.add({ severity: 'success', summary: 'Copied to clipboard' });
+    this.messageService.add({ severity: 'success', summary: 'Copied request to clipboard' });
   }
 
 }
