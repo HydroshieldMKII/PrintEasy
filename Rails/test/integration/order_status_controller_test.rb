@@ -54,7 +54,7 @@ class OrderStatusControllerTest < ActionDispatch::IntegrationTest
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
-    assert_equal ["Order Status not found"], @parsed_response["errors"]["order_status"]
+    assert_equal ["Couldn't find OrderStatus with 'id'=999"], @parsed_response["errors"]["base"]
   end
 
   test "should not return the order status of an order that the user does not possess" do
@@ -80,11 +80,12 @@ class OrderStatusControllerTest < ActionDispatch::IntegrationTest
       post api_order_status_index_path, params: { order_id: 999, status_name: 'Printing', comment: "Order status one" }, as: :json
     end
 
-    assert_response :not_found
+    assert_response :bad_request
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
-    assert_equal ["Couldn't find Order with 'id'=999"], @parsed_response["errors"]["base"]
+    assert_equal ["must exist"], @parsed_response["errors"]["order"]
+    assert_equal ["Order does not exist"], @parsed_response["errors"]["order_id"]
   end
 
   test "should not create -> invalid status_name" do

@@ -8,6 +8,7 @@ class OrderStatus < ApplicationRecord
   validates :comment, length: { minimum: 5 }, if: -> { comment.present? }
   validates :status_name, presence: true
   validates :order_id, presence: true
+  validate :order_id_exists, on: :create
   validate :user_can_create_status
   validate :user_can_modify, on: [:destroy, :update]
   validate :can_create_state, on: :create
@@ -118,6 +119,14 @@ class OrderStatus < ApplicationRecord
     end
     errors.add(:order_status, "You are not authorized to delete this status")
     return false
+  end
+
+  def order_id_exists
+    if Order.find_by(id: self.order_id).nil?
+      errors.add(:order_id, "Order does not exist")
+      throw(:abort)
+    end
+    return true
   end
 
   def can_create_state()

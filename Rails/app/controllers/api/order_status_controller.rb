@@ -1,16 +1,11 @@
 class Api::OrderStatusController < AuthenticatedController
     before_action :order_status_params_update, only: %i[update]
     before_action :order_status_params_create, only: %i[create]
+    before_action :get_order_status, only: %i[show update destroy]
 
     def show
-        #TODO: remove rescue nil and return
-        this_status = OrderStatus.find(params[:id]) rescue nil
-        if this_status.nil?
-            render json: { errors: {order_status: ['Order Status not found']} }, status: :not_found and return
-        end
-
-        if current_user == this_status.consumer || current_user == this_status.printer
-            render json: { order_status: this_status.as_json(except: %i[created_at updated_at], methods: %i[image_url]), errors: {} }, status: :ok
+        if current_user == @order_status.consumer || current_user == @order_status.printer
+            render json: { order_status: @order_status.as_json(except: %i[created_at updated_at], methods: %i[image_url]), errors: {} }, status: :ok
         else
             render json: { errors: {order_status: ['You are not authorized to view this order status']} }, status: :forbidden
         end
@@ -18,7 +13,6 @@ class Api::OrderStatusController < AuthenticatedController
 
     # PUT /order_status
     def update
-        @order_status = OrderStatus.find(params[:id])
 
         if @order_status.update(order_status_params_update)
             render json: { order_status: @order_status.as_json(methods: %i[image_url]), errors: {} }, status: :ok
@@ -30,9 +24,7 @@ class Api::OrderStatusController < AuthenticatedController
         render json: { errors: { order_status: [e.to_s]}.as_json }, status: :bad_request
     end
 
-    def create
-        Order.find(order_status_params_create[:order_id])
-        
+    def create        
         @order_status = OrderStatus.new(order_status_params_create)
         if @order_status.save
             render json: { order_status: @order_status.as_json(methods: %i[image_url]), errors: {} }, status: :created
@@ -42,7 +34,6 @@ class Api::OrderStatusController < AuthenticatedController
     end
 
     def destroy
-        @order_status = OrderStatus.find(params[:id])
         if @order_status.destroy!
             render json: { order_status: @order_status.as_json(), errors: {} }, status: :ok
         else
@@ -62,6 +53,10 @@ class Api::OrderStatusController < AuthenticatedController
 
     def order_status_params_create
         params.require(:order_status).permit(:status_name, :comment, :image, :order_id)
+    end
+
+    def get_order_status
+        @order_status = OrderStatus.find(params[:id])
     end
 
 end

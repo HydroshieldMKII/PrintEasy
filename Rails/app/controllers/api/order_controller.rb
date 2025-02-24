@@ -65,7 +65,6 @@ class Api::OrderController < AuthenticatedController
   end
 
   def show
-    #TODO: remove rescue nil and return
     @order = Order.find(params[:id])
 
     if current_user == @order.consumer || current_user == @order.printer
