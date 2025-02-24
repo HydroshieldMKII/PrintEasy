@@ -8,9 +8,12 @@ class OrderStatus < ApplicationRecord
   validates :comment, length: { minimum: 5 }, if: -> { comment.present? }
   validates :status_name, presence: true
   validates :order_id, presence: true
+  validate :user_can_create_status
+  validate :user_can_modify, on: [:destroy, :update]
+  validate :can_create_state, on: :create
   validate :can_transition, on: :create
   validate :state_valid?
-  before_destroy :can_destroy, prepend: true
+  before_destroy :can_destroy?, prepend: true
   before_destroy :is_frozen?, prepend: true
   before_update :is_frozen?, prepend: true
 
@@ -101,7 +104,49 @@ class OrderStatus < ApplicationRecord
     return true
   end
 
-  def can_destroy
+  def user_can_create_status()
+    if self.order.printer == Current.user || self.order.consumer == Current.user
+      return true
+    end
+    errors.add(:order_status, "You are not authorized to create a new status for this order")
+    return false
+  end
+
+  def user_can_modify()
+    if self.order.printer == Current.user
+      return true
+    end
+    errors.add(:order_status, "You are not authorized to delete this status")
+    return false
+  end
+
+  def can_create_state()
+    last_state = self.order&.order_status&.order(created_at: :desc)&.first.status_name
+    if Current.user == self.order.consumer
+      if ['Cancelled', 'Accepted', 'Printing', 'Printed', 'Shipped'].include?(self.status_name)
+        if self.status_name == 'Cancelled'
+          if last_state != 'Accepted'
+            errors.add(:order_status, "Invalid transition from #{last_state} to #{self.status_name}")
+            return false
+          end
+        else
+          if last_state == nil
+            return true
+          end
+          errors.add(:order_status, "Invalid transition from #{last_state} to #{self.status_name}")
+          return false
+        end
+      end
+    elsif Current.user == self.order.printer
+      if self.status_name == 'Arrived'
+        errors.add(:order_status, "Invalid transition from #{last_state} to Arrived")
+        return false
+      end
+    end
+    return true
+  end
+
+  def can_destroy?
     if ['Accepted', 'Cancelled', 'Arrived', 'Shipped'].include?(self.status_name)
       raise CannotDestroyStatusError, "Cannot delete the status"
     end

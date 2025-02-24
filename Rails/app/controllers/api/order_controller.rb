@@ -66,10 +66,7 @@ class Api::OrderController < AuthenticatedController
 
   def show
     #TODO: remove rescue nil and return
-    @order = Order.find(params[:id]) rescue nil
-    if @order.nil?
-      render json: { errors: {order: ['Order not found']} }, status: :not_found and return
-    end 
+    @order = Order.find(params[:id])
 
     if current_user == @order.consumer || current_user == @order.printer
       available_status = @order.order_status.last.available_status
