@@ -99,7 +99,7 @@ stl_file_path1 = Rails.root.join("db/seeds/files/RUBY13.stl")
   req = Request.create(
     user: admin,
     name: "Admin Request #{i + 1}",
-    budget: (i + 1) * 20.0,
+    budget: (i + 1) * 20.00,
     comment: "This is request number #{i + 1} from admin.",
     target_date: Time.now + (i + 5).days
   )
@@ -123,7 +123,7 @@ end
   req = Request.create(
     user: user1,
     name: "User Request #{i + 1}",
-    budget: (i + 1) * 15.0,
+    budget: (i + 1) * 15.00,
     comment: "This is request number #{i + 1} from user.",
     target_date: Time.now + (i + 10).days
   )
@@ -374,7 +374,7 @@ end
 req_no_offer = Request.create(
   user: user1,
   name: "Request without offers",
-  budget: 100.0,
+  budget: 100.00,
   comment: "This request has no offers.",
   target_date: Time.now + 10.days
 )
@@ -390,7 +390,7 @@ req_no_offer.save
 req_free = Request.create(
   user: user1,
   name: "Request with 0$ budget",
-  budget: 0.0,
+  budget: 0.00,
   comment: "This request has 0$ budget.",
   target_date: Time.now + 10.days
 )
