@@ -147,9 +147,6 @@ export class OrderComponent {
                 this.statusActions.push({
                   label: 'Accepted', 
                   icon: 'pi pi-play',
-                  style: { backgroundColor: "#ff0000", color: "#ff0000" },
-                  styleClass: 'p-button-Accepted',
-                  iconStyle: { color: "#ff0000" },
                   command: () => {
                     this.ShowOrderStatusForm();
                     this.orderStatusForm.patchValue({ statusName: 'Accepted' });

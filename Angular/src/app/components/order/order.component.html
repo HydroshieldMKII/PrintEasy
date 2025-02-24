@@ -102,7 +102,7 @@
             <p-tabpanel value="0">
 
                 <div style="width: 100%; display: flex; flex-direction: row; align-items: flex-start;">
-                    <p-speeddial *ngIf="statusActions.length > 0" showIcon="pi pi-pen-to-square" [model]="statusActions" direction="right" [style]="{'margin-left': '4px'}" [buttonProps]="{ severity: 'contrast'}" [tooltipOptions]="{ tooltipPosition: 'bottom' }" />
+                    <p-speeddial *ngIf="statusActions.length > 0" showIcon="pi pi-pen-to-square" class="p-actions-container" [model]="statusActions" direction="right" [style]="{'margin-left': '4px'}" [buttonProps]="{ severity: 'contrast'}" [tooltipOptions]="{ tooltipPosition: 'bottom' }" />
                 </div>
                 
                 <p-stepper [value]="1">

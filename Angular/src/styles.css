@@ -17,3 +17,27 @@ form p-message[severity="error"] {
 form p-floatlabel:has(.ng-dirty.ng-invalid)~p-message {
     display: block;
 }
+
+.p-actions-container [ng-reflect-icon="pi pi-play"] {
+    background-color: #c5c5c5 !important;
+}
+
+.p-actions-container [ng-reflect-icon="pi pi-print"] {
+    background-color: #fa6bff !important;
+}
+
+.p-actions-container [ng-reflect-icon="pi pi-check-circle"] {
+    background-color: #ffb056 !important;
+}
+
+.p-actions-container [ng-reflect-icon="pi pi-send"] {
+    background-color: #56c1ff !important;
+}
+
+.p-actions-container [ng-reflect-icon="pi pi-home"] {
+    background-color: #8fff62 !important;
+}
+
+.p-actions-container [ng-reflect-icon="pi pi-ban"] {
+    background-color: #ff6262 !important;
+}
