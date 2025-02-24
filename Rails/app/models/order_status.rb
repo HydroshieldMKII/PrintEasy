@@ -157,6 +157,9 @@ class OrderStatus < ApplicationRecord
 
   def can_destroy?
     if ['Accepted', 'Cancelled', 'Arrived', 'Shipped'].include?(self.status_name)
+      if self.status_name == 'Accepted' && self.order.order_status.where(status_name: "Accepted").count > 1
+        return true
+      end
       raise CannotDestroyStatusError, "Cannot delete the status"
     end
     return true
