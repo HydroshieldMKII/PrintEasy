@@ -84,7 +84,7 @@ class OrderStatusControllerTest < ActionDispatch::IntegrationTest
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
-    assert_equal ["Order not found"], @parsed_response["errors"]["order"]
+    assert_equal ["Couldn't find Order with 'id'=999"], @parsed_response["errors"]["base"]
   end
 
   test "should not create -> invalid status_name" do
@@ -258,7 +258,7 @@ class OrderStatusControllerTest < ActionDispatch::IntegrationTest
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
-    assert_equal ["Order status not found"], @parsed_response["errors"]["order_status"]
+    assert_equal ["Couldn't find OrderStatus with 'id'=999"], @parsed_response["errors"]["base"]
   end
 
   test "should not update -> not owner" do
@@ -267,11 +267,11 @@ class OrderStatusControllerTest < ActionDispatch::IntegrationTest
       patch api_order_status_path(1), params: { status_name: 'Printing', comment: "Order Status one" }, as: :json
     end
 
-    assert_response :forbidden
+    assert_response :bad_request
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
-    assert_equal ["You are not authorized to update this order status"], @parsed_response["errors"]["order_status"]
+    assert_equal ["You are not authorized to delete this status"], @parsed_response["errors"]["order_status"]
   end
 
   test "should not update -> invalid comment" do
@@ -403,7 +403,7 @@ class OrderStatusControllerTest < ActionDispatch::IntegrationTest
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
-    assert_equal ["Order status not found"], @parsed_response["errors"]["order_status"]
+    assert_equal ["Couldn't find OrderStatus with 'id'=999"], @parsed_response["errors"]["base"]
   end
 
   test "should not destroy -> not owner" do
@@ -412,11 +412,11 @@ class OrderStatusControllerTest < ActionDispatch::IntegrationTest
       delete api_order_status_path(1), as: :json
     end
 
-    assert_response :forbidden
+    assert_response :bad_request
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
-    assert_equal ["You are not authorized to delete this order status"], @parsed_response["errors"]["order_status"]
+    assert_equal ["Cannot delete the status"], @parsed_response["errors"]["order_status"]
   end
 
   

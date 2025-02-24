@@ -50,7 +50,7 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
-    assert_equal ["Order not found"], @parsed_response["errors"]["order"]
+    assert_equal ["Couldn't find Order with 'id'=999"], @parsed_response["errors"]["base"]
   end
 
   test "should not get show -> not owner" do
