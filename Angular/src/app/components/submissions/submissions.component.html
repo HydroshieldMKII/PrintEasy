@@ -52,8 +52,9 @@
                             <div>{{ product.description }}</div>
                             <div class="flex items-center gap-2">
                                 <!-- Nombre de likes -->
-                                <span class="font-semibold text-gray-700 dark:text-gray-300">{{ product.likes.length }}</span>
-                            
+                                <span class="font-semibold text-gray-700 dark:text-gray-300">{{ product.likes.length
+                                    }}</span>
+
                                 <!-- Bouton Like -->
                                 <!-- <p-button 
                                     [icon]="product.liked ? 'pi pi-heart-fill' : 'pi pi-heart'"
@@ -61,7 +62,7 @@
                                     [outlined]="!product.liked"
                                     (click)="toggleLike(product)"
                                 /> -->
-                                
+
                                 <p-button icon="pi pi-heart" severity="secondary" />
 
                                 <!-- Bouton Download -->
@@ -73,5 +74,59 @@
             </p-carousel>
         </div>
     </div>
-    <p-button severity="info" label="I want to participate" class="button-participate"></p-button>
+    <p-button (click)="showDialog()" severity="info" label="I want to participate"
+        class="button-participate"></p-button>
+
+    <p-dialog header="Participate in the contest" [(visible)]="display" [modal]="true" [style]="{'max-width': '1000px' }"
+        class="responsive-dialog">
+        <form [formGroup]="submissionForm">
+            <div class="container-popup">
+                <div class="container-column w-full">
+                    <p-floatlabel variant="in">
+                        <input type="text" pInputText formControlName="name" class="w-full" />
+                        <label for="name">Name</label>
+                    </p-floatlabel>
+
+                    <p-floatlabel variant="in">
+                        <textarea class="description-textarea w-full" id="description" pTextarea
+                            formControlName="description" rows="4"></textarea>
+                        <label for="description">Description</label>
+                    </p-floatlabel>
+
+                    <div class="container-row">
+                        <div>
+                            <div class="image-preview-container">
+
+                            </div>
+                            <div class="mt-12 items-center">
+                                <div class="fileUploadContainer center">
+                                    <p-fileUpload mode="basic" name="image" accept="image/*" [maxFileSize]="1000000"
+                                        chooseLabel="Upload stl"></p-fileUpload>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="image-preview-container">
+
+                            </div>
+                            <div class="mt-12 items-center">
+                                <div class="fileUploadContainer center">
+                                    <p-fileUpload mode="basic" name="image" accept="image/*" [maxFileSize]="1000000"
+                                        chooseLabel="Upload image"></p-fileUpload>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="button-container">
+                        <p-button label="Cancel" type="button" icon="pi pi-times"
+                            severity="secondary"></p-button>
+                        <p-button label="Save" [disabled]="!submissionForm.valid" icon="pi pi-save" severity="success"></p-button>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </p-dialog>
 </div>

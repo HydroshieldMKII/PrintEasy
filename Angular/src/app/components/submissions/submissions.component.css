@@ -7,8 +7,73 @@ h2 {
     font-style: italic;
 }
 
+.container-column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.description-textarea {
+    resize: vertical;
+    max-height: 200px;
+    min-height: 100px;
+    overflow-y: auto;
+}
+
+.container-popup {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
 .contest-container {
     text-align: center;
+}
+
+.image-preview-container {
+    width: 300px;
+    height: 300px;
+    max-width: 300px;
+    max-height: 300px;
+    background: #f0f0f0;
+    border: 2px dashed #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 1rem;
+    color: #666;
+    border-radius: 10px;
+    margin-bottom: 25px;
+}
+
+.dialog {
+    width: 100%;
+}
+
+.image-preview {
+    width: 300px;
+    height: 300px;
+    max-width: 300px;
+    max-height: 300px;
+    color: var(--p-inputtext-color);
+    background: var(--p-inputtext-background);
+    padding-block: var(--p-inputtext-padding-y);
+    padding-inline: var(--p-inputtext-padding-x);
+    border: 1px solid var(--p-inputtext-border-color);
+    transition: background var(--p-inputtext-transition-duration), color var(--p-inputtext-transition-duration), border-color var(--p-inputtext-transition-duration), outline-color var(--p-inputtext-transition-duration), box-shadow var(--p-inputtext-transition-duration);
+    appearance: none;
+    border-radius: var(--p-inputtext-border-radius);
+    outline-color: transparent;
+    box-shadow: var(--p-inputtext-shadow);
+    object-fit: contain;
+}
+
+.image-preview:hover {
+    background: var(--p-inputtext-hover-background);
+    color: var(--p-inputtext-hover-color);
+    border-color: var(--p-inputtext-hover-border-color);
+    box-shadow: var(--p-inputtext-hover-shadow);
 }
 
 .button-participate {
@@ -117,13 +182,18 @@ h2 {
 
 .dark\:border-surface-700 {
     border-color: #2d2d2d;
-
-
 }
 
 .button-container {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     margin-top: 1rem;
     gap: 10px;
+}
+
+@media (max-width: 768px) {
+    .container-row {
+        flex-direction: column;
+        align-items: center;
+    }
 }
