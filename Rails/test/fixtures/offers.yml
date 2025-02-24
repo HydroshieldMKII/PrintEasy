@@ -96,3 +96,16 @@ seven: {
   updated_at: 2021-01-01,
   print_quality: "High"
 }
+
+eight: {
+  id: 8,
+  request_id: 1,
+  printer_user_id: 2,
+  color_id: 1,
+  filament_id: 1,
+  price: 1.5,
+  target_date: 2021-01-01,
+  created_at: 2021-01-01,
+  updated_at: 2021-01-01,
+  print_quality: "High"
+}

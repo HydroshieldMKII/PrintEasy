@@ -27,3 +27,8 @@ six: {
   id: 6,
   offer_id: 7
 }
+
+seven: {
+  id: 7,
+  offer_id: 8
+}
