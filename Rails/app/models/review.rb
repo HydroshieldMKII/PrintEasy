@@ -4,7 +4,7 @@ class Review < ApplicationRecord
 
   has_many_attached :image
 
-  before_action :set_review_user
+  before_validation :set_review_user
   validates :title, presence: true, length: { maximum: 30, minimum: 5 }
   validates :rating, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0, less_than_or_equal_to: 5 }
   validates :description, length: { maximum: 200 , minimum: 5 }
@@ -13,9 +13,19 @@ class Review < ApplicationRecord
   validate :order_belongs_to_user
   validate :order_status_permits_review
 
+  def image_url
+    if self.image.attached?
+      Rails.application.routes.url_helpers.url_for(self.image, only_path: true)
+    end
+  end
+
   private
 
   def order_belongs_to_user
+    if self.order.nil?
+      errors.add(:order_id, 'Order must exist')
+      throw :abort
+    end
     if self.order.offer.request.user != Current.user
       errors.add(:order_id, 'Order does not belong to the user')
       return false

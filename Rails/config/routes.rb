@@ -12,6 +12,7 @@ Rails.application.routes.draw do
     resources :offer
     resources :order_status
     resources :order
+    resources :review
     resources :status
     resources :contest, except: [:new, :edit]
     resources :color

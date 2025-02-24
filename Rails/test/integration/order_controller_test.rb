@@ -18,7 +18,7 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
-    assert_equal 6, @parsed_response["orders"].length
+    assert_equal 7, @parsed_response["orders"].length
     tested_order = @parsed_response["orders"][0]
     testOrder(tested_order)
     assert_empty @parsed_response["errors"]
