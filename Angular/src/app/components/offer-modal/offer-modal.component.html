@@ -53,24 +53,24 @@
 
         <div class="offer-form-field">
             <p-inputnumber 
-              formControlName="quality"
-              [showButtons]="true" 
-              buttonLayout="horizontal" 
-              inputId="horizontal" 
-              spinnerMode="horizontal"
-              placeholder="Quality"
-              [step]="0.04" 
-              mode="decimal"
-              [min]="0.01"
-              [max]="1" 
-            >
-              <ng-template #incrementbuttonicon>
-                <span class="pi pi-plus"></span>
-              </ng-template>
-              <ng-template #decrementbuttonicon>
-                <span class="pi pi-minus"></span>
-              </ng-template>
-            </p-inputnumber>
+            formControlName="quality"
+            suffix="mm"
+            [showButtons]="true" 
+            buttonLayout="horizontal" 
+            inputId="horizontal" 
+            spinnerMode="horizontal"
+            placeholder="Quality"
+            [step]="0.04" 
+            mode="decimal"
+            [min]="0.01"
+            [max]="2">
+            <ng-template #incrementbuttonicon>
+              <span class="pi pi-plus"></span>
+            </ng-template>
+            <ng-template #decrementbuttonicon>
+              <span class="pi pi-minus"></span>
+            </ng-template>
+          </p-inputnumber>
         </div>
       </div>
 
@@ -104,18 +104,18 @@
           </div>
 
             <div class="form-group">
-            <p-floatlabel variant="in">
-              <input
-              id="price"
-              type="number"
-              pInputText
-              formControlName="price"
-              class="full-width"
-              min="0"
-              max="10000"
-              />
-              <label for="price">Price</label>
-            </p-floatlabel>
+              <p-floatlabel variant="in">
+                <p-inputnumber
+                  formControlName="price"
+                  [min]="0"
+                  [max]="10000"
+                  [minFractionDigits]="2"
+                  [maxFractionDigits]="2"
+                  prefix="$"
+                  styleClass="full-width"
+                ></p-inputnumber>
+                <label for="price">Price</label>
+              </p-floatlabel>
             </div>
         </div>
       </div>
