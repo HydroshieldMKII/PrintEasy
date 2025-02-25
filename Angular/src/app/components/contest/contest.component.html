@@ -1,4 +1,4 @@
-<div class="container">
+<div class="contest-container">
     @if (authService.currentUser?.isAdmin) {
     <p-speeddial direction="left" [style]="{ position: 'absolute', top: 1, right: 'calc(1%)' }"
         [buttonProps]="{ severity: 'success', rounded: true }" (onClick)="newContest()" />
@@ -20,7 +20,7 @@
     <div class="contest-list">
         <div *ngFor="let contest of contests" class="card">
             <div class="contest-content">
-                <img [src]="contest.image" alt="Contest image" class="contest-image" />
+                <img [src]="contest.image" alt="Contest image" class="contest-image" loading="lazy" />
                 <div class="contest-details">
                     <h3 class="contest-theme">{{ contest.theme }}</h3>
                     <p class="contest-description">{{ contest.description ? (contest.description.length > 30 ? (contest.description | slice:0:30) + '...' : contest.description) : '' }}</p>

@@ -15,6 +15,7 @@ class Submission < ApplicationRecord
  
   validate :stl_must_be_valid
   validate :image_must_be_valid
+  validate :submissions_limit, on: :create
 
   def stl_url
     stl && url_for(stl)
@@ -25,6 +26,14 @@ class Submission < ApplicationRecord
   end
 
   private
+  
+  def submissions_limit
+    return if contest.nil?
+
+    if user.submissions.count >= contest.submission_limit
+      errors.add(:submission, "has reached the submission limit")
+    end
+  end
 
   def url_for(file)
     Rails.application.routes.url_helpers.rails_blob_url(file, only_path: true)

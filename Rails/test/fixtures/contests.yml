@@ -4,7 +4,7 @@ contest_one:
   id: 1
   theme: Contest1
   description: MyString
-  submission_limit: 1
+  submission_limit: 2
   deleted_at: null
   start_at: <%= 1.day.from_now %>
   end_at: <%= 2.days.from_now %>

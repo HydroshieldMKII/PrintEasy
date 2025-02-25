@@ -20,6 +20,10 @@ class Contest < ApplicationRecord
         update(deleted_at: Time.now)
     end
 
+    def finished?
+        end_at && end_at < Time.now
+    end
+
     def restore
         update(delaeted_at: nil)
     end

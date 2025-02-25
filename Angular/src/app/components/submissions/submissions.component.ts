@@ -87,25 +87,13 @@ export class SubmissionsComponent {
     submissionForm.append('submission[name]', this.submissionForm.value.name);
     submissionForm.append('submission[description]', this.submissionForm.value.description);
     submissionForm.append('submission[contest_id]', this.paramsId.toString());
-  
-    if (!this.submissionForm.value.image && this.imageUrl) {
-      const imageFile = await this.createFileFromUrl(this.imageUrl, "uploaded_image.jpg");
-      this.submissionForm.patchValue({ image: imageFile });
-    }
-  
-    if (!this.submissionForm.value.stl && this.stlUrl) {
-      const stlFile = await this.createFileFromUrl(this.stlUrl, "uploaded_stl.stl");
-      this.submissionForm.patchValue({ stl: stlFile });
-    }
-  
-    await new Promise(resolve => setTimeout(resolve, 0)); 
     
     if (this.submissionForm.value.stl) {
-      submissionForm.append('submission[files][]', this.submissionForm.value.stl);
+      submissionForm.append('submission[stl]', this.submissionForm.value.stl);
     }
 
     if (this.submissionForm.value.image) {
-      submissionForm.append('submission[files][]', this.submissionForm.value.image);
+      submissionForm.append('submission[image]', this.submissionForm.value.image);
     }
   
     const submissionObservable = this.isEdit

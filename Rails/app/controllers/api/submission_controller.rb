@@ -23,8 +23,8 @@ class Api::SubmissionController < AuthenticatedController
   
     def create
       @submission = Submission.new(submission_params)
+      
       current_user.submissions << @submission
-
       if @submission.save
         render json: {submission: @submission.as_json(methods: [:stl_url, :image_url]), errors: {}}, status: :created
       else
