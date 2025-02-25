@@ -61,7 +61,7 @@ end
 # Assign Printers to Users
 PrinterUser.create!(user: user1, printer: Printer.first, acquired_date: Time.now)
 PrinterUser.create!(user: user1, printer: Printer.second, acquired_date: Time.now - 1.year)
-PrinterUser.create!(user: user1, printer: Printer.third, acquired_date: Time.now - 2.years)
+PrinterUser.create!(user: admin, printer: Printer.third, acquired_date: Time.now - 2.years)
 
 # Create Colors
 colors = ["Red", "Blue", "Green", "Yellow", "Black", "White", "Orange", "Purple", "Pink", "Brown", "Gray"]

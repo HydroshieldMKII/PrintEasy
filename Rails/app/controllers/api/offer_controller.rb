@@ -3,6 +3,18 @@ class Api::OfferController < AuthenticatedController
         offers = Offer.all
         render_offers(filter_offers(offers))
     end
+
+    def show
+        offer = Offer.find(params[:id])
+
+        if offer.printer_user.user != current_user
+            render json: { offer: {}, errors: { offer: ['You are not allowed to view this offer'] } }, status: :forbidden
+            return
+        end
+
+        render_offers(offer)
+    end
+
     def create
         offer = Offer.new(offer_params)
         if offer.save

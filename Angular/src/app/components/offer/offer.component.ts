@@ -6,10 +6,11 @@ import { OfferService } from '../../services/offer.service';
 import { ImportsModule } from '../../../imports';
 import { MessageService } from 'primeng/api';
 import { Clipboard } from '@angular/cdk/clipboard';
+import { OfferModalComponent } from '../offer-modal/offer-modal.component';
 
 @Component({
   selector: 'app-offer',
-  imports: [ImportsModule, RouterLink],
+  imports: [ImportsModule, RouterLink, OfferModalComponent],
   templateUrl: './offer.component.html',
   styleUrls: ['./offer.component.css']
 })
@@ -116,5 +117,12 @@ export class OffersComponent {
     console.log("Canceling id: ", offer.id)
   }
 
+  acceptOffer(offer: OfferModel) {
+    console.log("Accepting id: ", offer.id)
+  }
+
+  refuseOffer(offer: OfferModel) {
+    console.log("Rejecting id: ", offer.id)
+  }
 }
 

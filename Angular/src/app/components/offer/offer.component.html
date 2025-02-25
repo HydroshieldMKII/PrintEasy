@@ -126,6 +126,7 @@
                             icon="pi pi-pencil"
                             title="Edit this offer"
                             (click)="editOffer(offer)"
+                            *ngIf="activeTab == 'mine'"
                           ></button>
                           <button
                             pButton
@@ -133,7 +134,27 @@
                             icon="pi pi-times"
                             title="Cancel this offer"
                             (click)="cancelOffer(offer)"
+                            *ngIf="activeTab == 'mine'"
                           ></button>
+
+                          <button
+                          pButton
+                          type="button"
+                          icon="pi pi-check"
+                          title="Accept this offer"
+                          severity="success"
+                          (click)="acceptOffer(offer)"
+                          *ngIf="activeTab == 'all'"
+                        ></button>
+                        <button
+                          pButton
+                          type="button"
+                          icon="pi pi-times"
+                          title="Refuse this offer"
+                          severity="danger"
+                          (click)="refuseOffer(offer)"
+                          *ngIf="activeTab == 'all'"
+                        ></button>
                           </div>
                         </td>                        
                       </tr>
@@ -151,18 +172,15 @@
             class="empty-message"
             style="width: 100%; height: 100%;"
           >
-            <i class="pi pi-inbox text-6xl text-gray-400"></i>
+            <!-- <i class="pi pi-inbox text-6xl text-gray-400"></i>
             <p class="text-xl font-semibold text-gray-500 mt-2" *ngIf="!isOwningPrinter">
               You dont have a printer! Add one to see people's requests and
               contribute to the community.
-            </p>
+            </p> -->
           </div>
   
           <div
-            *ngIf="
-              (isOwningPrinter && currentOffers.length === 0) ||
-              (activeTab == 'my' && currentOffers.length === 0)
-            "
+            *ngIf="(currentOffers.length === 0)"
             class="empty-message"
           >
             <i class="pi pi-inbox text-6xl text-gray-400"></i>
@@ -206,4 +224,6 @@
       <p-button label="Delete" severity="danger" (click)="confirmDelete()" />
     </ng-template>
   </p-dialog>
+
+  <app-offer-modal></app-offer-modal>
   
