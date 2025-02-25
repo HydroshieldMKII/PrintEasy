@@ -1,6 +1,4 @@
 import { inject, Injectable } from '@angular/core';
-import { RequestModel } from '../models/request.model';
-import { PresetModel } from '../models/preset.model';
 import { OfferModel } from '../models/offer.model';
 import { UserModel } from '../models/user.model';
 import { PrinterModel } from '../models/printer.model';

@@ -1,4 +1,4 @@
-import { PresetModel } from './preset.model';
+import { RequestPresetModel } from './request-preset.model';
 import { UserModel } from './user.model';
 
 export class RequestModel {
@@ -8,7 +8,7 @@ export class RequestModel {
     targetDate: Date;
     comment: string;
     stlFileUrl: string;
-    presets: PresetModel[];
+    presets: RequestPresetModel[];
     user: UserModel;
     hasOffers: boolean;
     hasOfferAccepted: boolean;
@@ -20,7 +20,7 @@ export class RequestModel {
         targetDate: Date,
         comment: string,
         stlFileUrl: string,
-        presets: PresetModel[],
+        presets: RequestPresetModel[],
         user: UserModel,
         hasOffers: boolean,
         hasOfferAccepted: boolean

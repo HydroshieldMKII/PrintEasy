@@ -24,6 +24,7 @@
         <div class="offer-form-field">
           <p-dropdown
           formControlName="preset"
+          [options]="presets"
           optionLabel="label"
           placeholder="Choose a quick preset"
           class="w-full"
@@ -33,6 +34,7 @@
         <div class="offer-form-field">
           <p-dropdown
           formControlName="color"
+          [options]="colors"
           optionLabel="label"
           placeholder="Select a color"
           class="w-full"
@@ -42,17 +44,41 @@
         <div class="offer-form-field">
               <p-dropdown
               formControlName="filament"
+              [options]="filaments"
               optionLabel="label"
               placeholder="Select a filament"
               class="w-full"
             ></p-dropdown>
-          </div>  
+        </div>  
+
+        <div class="offer-form-field">
+            <p-inputnumber 
+              formControlName="quality"
+              [showButtons]="true" 
+              buttonLayout="horizontal" 
+              inputId="horizontal" 
+              spinnerMode="horizontal"
+              placeholder="Quality"
+              [step]="0.04" 
+              mode="decimal"
+              [min]="0.01"
+              [max]="1" 
+            >
+              <ng-template #incrementbuttonicon>
+                <span class="pi pi-plus"></span>
+              </ng-template>
+              <ng-template #decrementbuttonicon>
+                <span class="pi pi-minus"></span>
+              </ng-template>
+            </p-inputnumber>
+        </div>
       </div>
 
       <div class="flex space-y-3">
         <h3 class="font-medium text-gray-700">Print</h3>
         <p-dropdown
           formControlName="printer"
+          [options]="printers"
           optionLabel="label"
           placeholder="Choose your printer"
           class="w-full"

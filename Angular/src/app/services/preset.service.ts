@@ -9,6 +9,7 @@ import { ApiResponseModel } from '../models/api-response.model';
 
 import { map, Observable, of } from 'rxjs';
 import { MessageService } from 'primeng/api';
+import { PrinterUserModel } from '../models/printer-user.model';
 
 @Injectable({
     providedIn: 'root'
@@ -22,6 +23,29 @@ export class PresetService {
     private cachedPrinters: PrinterModel[] | null = null;
 
     constructor(private api: ApiRequestService) { }
+
+    getAllPresets(): Observable<PresetModel[]> {
+        return this.api.getRequest('api/preset').pipe(
+            map((response: ApiResponseModel) => {
+                if (response.status === 200) {
+                    console.log("Fetched Presets:", response.data);
+                    return (response.data as any[]).map(item => ({
+                        id: item.id,
+                        printQuality: item.print_quality,
+                        color: {
+                            id: item.color.id,
+                            name: item.color.name
+                        },
+                        filament: {
+                            id: item.filament.id,
+                            name: item.filament.name
+                        }
+                    } as PresetModel));
+                }
+                return [];
+            })
+        );
+    }
 
     getAllColors(): Observable<ColorModel[]> {
         if (this.cachedColors) {
@@ -53,6 +77,23 @@ export class PresetService {
                     console.log("Fetched Filaments:", response.data);
                     this.cachedFilaments = response.data as FilamentModel[];
                     return this.cachedFilaments;
+                }
+                return [];
+            })
+        );
+    }
+
+    getPrinterUsers(): Observable<PrinterUserModel[]> {
+        return this.api.getRequest('api/printer_user').pipe(
+            map((response: ApiResponseModel) => {
+                if (response.status === 200) {
+                    console.log("Fetched Printer Users:", response.data);
+                    return (response.data as any[]).map(item => new PrinterUserModel(
+                        item.id,
+                        item.user,
+                        item.printer,
+                        new Date(item.acquired_date)
+                    ));
                 }
                 return [];
             })

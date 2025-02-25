@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { RequestModel } from '../models/request.model';
-import { PresetModel } from '../models/preset.model';
+import { RequestPresetModel } from '../models/request-preset.model';
 import { UserModel } from '../models/user.model';
 import { PrinterModel } from '../models/printer.model';
 import { FilamentModel } from '../models/filament.model';
@@ -62,7 +62,7 @@ export class RequestService {
 
                     console.log("Fetched presets: ", request?.['preset_requests']);
                     const presets = (request?.['preset_requests'] as any[]).map((preset: any) => {
-                        return new PresetModel(
+                        return new RequestPresetModel(
                             preset?.['id'],
                             preset?.['print_quality'],
                             new ColorModel(preset?.['color']?.['id'], preset?.['color']?.['name']),
@@ -102,7 +102,7 @@ export class RequestService {
                         );
 
                         const presets = (request?.['preset_requests'] as any[]).map((preset: any) => {
-                            return new PresetModel(
+                            return new RequestPresetModel(
                                 preset?.['id'],
                                 preset?.['print_quality'],
                                 preset?.['color']?.['name'],

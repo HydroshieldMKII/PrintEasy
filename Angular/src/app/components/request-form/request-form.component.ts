@@ -14,7 +14,7 @@ import { FileSelectEvent } from 'primeng/fileupload';
 import { RequestModel } from '../../models/request.model';
 import { MessageService } from 'primeng/api';
 import { AuthService } from '../../services/authentication.service';
-import { PresetModel } from '../../models/preset.model';
+import { RequestPresetModel } from '../../models/request-preset.model';
 import { OfferModalComponent } from '../offer-modal/offer-modal.component';
 
 @Component({
@@ -111,7 +111,7 @@ export class RequestFormComponent implements OnInit {
 
           if (this.isViewMode) {
             console.log('Loading presets locally...');
-            this.colors = this.request.presets.map((preset: PresetModel) => ({
+            this.colors = this.request.presets.map((preset: RequestPresetModel) => ({
               label: preset.color.name,
               value: preset.color.name,
               id: preset.color.id
@@ -119,7 +119,7 @@ export class RequestFormComponent implements OnInit {
 
             console.log('Colors detected:', this.colors);
 
-            this.filamentTypes = this.request.presets.map((preset: PresetModel) => ({
+            this.filamentTypes = this.request.presets.map((preset: RequestPresetModel) => ({
               label: preset.filamentType.name,
               value: preset.filamentType.name,
               id: preset.filamentType.id
@@ -127,7 +127,7 @@ export class RequestFormComponent implements OnInit {
 
             console.log('Filament types detected:', this.filamentTypes);
 
-            this.printers = this.request.presets.map((preset: PresetModel) => ({
+            this.printers = this.request.presets.map((preset: RequestPresetModel) => ({
               label: preset.printerModel.model,
               value: preset.printerModel.model,
               id: preset.printerModel.id
