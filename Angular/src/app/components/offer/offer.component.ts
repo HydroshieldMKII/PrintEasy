@@ -25,6 +25,19 @@ export class OffersComponent {
   isOwningPrinter: boolean | null = null;
   expandedRowKeys: { [key: number]: boolean } = {};
 
+  get groupedOffers(): { request: any; offers: OfferModel[] }[] {
+    const groups: { [key: number]: { request: any; offers: OfferModel[] } } = {};
+    this.currentOffers.forEach(offer => {
+      if (!groups[offer.request.id]) {
+        groups[offer.request.id] = { request: offer.request, offers: [] };
+      }
+      groups[offer.request.id].offers.push(offer);
+    });
+    return Object.values(groups);
+  }
+
+
+
   onTabChange(tab: string): void {
     console.log('Tab changed:', tab);
     this.activeTab = tab;
@@ -80,6 +93,10 @@ export class OffersComponent {
 
   isRowExpanded(rowId: number): boolean {
     return !!this.expandedRowKeys[rowId];  // Check if this row is expanded
+  }
+
+  getOffersForRequest(requestId: number): OfferModel[] {
+    return this.currentOffers.filter(o => o.request.id === requestId);
   }
 
   downloadRequest(downloadUrl: string): void {

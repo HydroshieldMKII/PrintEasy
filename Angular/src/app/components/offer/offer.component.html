@@ -13,160 +13,42 @@
   
       <p-tabpanels>
         <p-tabpanel *ngFor="let tab of ['all', 'mine']" [value]="tab">  
-            <p-table
-            *ngIf="currentOffers.length > 0 || activeTab == 'mine'"
-            [value]="currentOffers"
-            dataKey="id"
-            [expandedRowKeys]="expandedRowKeys"
-            (onRowExpand)="onRowExpand($event)"
-            (onRowCollapse)="onRowCollapse($event)"
-          >
-        
-            <ng-template #header>
-              <tr>
-                <th style="width: 5rem"></th>
-                <th >Name </th>
-                <th >
-                  Price
-                </th>
-                <th >
-                  Target Date
-                </th>
-                <th >
-                  Country
-                </th>
-                <th style="width: 4rem">Actions</th>
-              </tr>
-            </ng-template>
-  
-            <ng-template #body let-offer let-expanded="expanded">
-              <tr>
-                <td>
-                  <p-button
-                    type="button"
-                    [pRowToggler]="offer"
-                    [text]="true"
-                    [rounded]="true"
-                    [plain]="true"
-                    [icon]="
-                      expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'
-                    "
-                  />
-                </td>
-                <td>{{offer.request.name}}</td>
-                <td>{{offer.request.budget | currency}}</td>
-                <td>{{offer.request.target_date}}</td>
-                <td>{{offer.printer_user.user.country}}</td>
-                <td>
-                  <div class="flex gap-2">
-                    <p-button
-                    icon="pi pi-arrow-right"
-                    title="See Details"
-                    routerLink="/requests/view/{{ offer.request.id }}"
-                    *ngIf="tab === 'mine'"
-                  ></p-button>
-                    <p-button
-                    icon="pi pi-share-alt"
-                    title="Share"
-                    (click)="copyToClipboard('requests/view/' + offer.id)"
-                  ></p-button>
-                  <p-button
-                  *ngIf="tab === 'mine'"
-                  icon="pi pi-trash"
-                  severity="danger"
-                  title="Delete all offers for this request"
-                  (onClick)="showDeleteDialog(offer)"
-                ></p-button>
-                  </div>
-                </td>
-              </tr>
-            </ng-template>
-  
-            <ng-template #expandedrow let-offer>
-              <tr>
-                <td colspan="7" style="background-color: #f5f5f5">
-                  <div>
-                    <h3>{{activeTab == 'mine' ? 'My offer details' : 'Offer details'}}</h3>
-                    <p-table
-                      [value]="[offer]"
-                      dataKey="id"
-                    >
-                    <ng-template #header>
-                      <tr>
-                        <th *ngIf="activeTab == 'all'">User</th>
-                        <th>Printer</th>
-                        <th>Filament</th>
-                        <th>Color</th>
-                        <th>Quality</th>
-                        <th>Price offered</th>
-                        <th>Date offered</th>
-                        <th>Actions</th>
-                      </tr>
-                    </ng-template>
-                    <ng-template #body let-offer>
-                      <tr>
-                        <td *ngIf="activeTab == 'all'">
-                          {{ offer.printer_user.user.username }}<br>
-                          {{ offer.printer_user.user.country }}
-                        </td>
-                        <td>
-                          {{ offer.printer_user.printer.model }}<br>
-                          <span class="text-gray-500">Acquired on {{ offer.printer_user.aquired_date | date:'mediumDate' }}</span>
-                        </td>
-                        <td>{{offer.color.name}}</td>
-                        <td>{{ offer.filament.name }}</td>
-                        <td>{{ offer.print_quality }}mm</td>
-                        <td>{{offer.price | currency}}</td>
-                        <td>{{offer.target_date}}</td>
-                        <td>
-                          <div class="flex gap-2">
-                            <button
-                            pButton
-                            type="button"
-                            icon="pi pi-pencil"
-                            title="Edit this offer"
-                            (click)="editOffer(offer)"
-                            *ngIf="activeTab == 'mine'"
-                          ></button>
-                          <button
-                            pButton
-                            type="button"
-                            icon="pi pi-times"
-                            title="Cancel this offer"
-                            severity="danger"
-                            (click)="cancelOffer(offer)"
-                            *ngIf="activeTab == 'mine'"
-                          ></button>
-
-                          <button
-                          pButton
-                          type="button"
-                          icon="pi pi-check"
-                          title="Accept this offer"
-                          severity="success"
-                          (click)="acceptOffer(offer)"
-                          *ngIf="activeTab == 'all'"
-                        ></button>
-                        <button
-                          pButton
-                          type="button"
-                          icon="pi pi-times"
-                          title="Refuse this offer"
-                          severity="danger"
-                          (click)="refuseOffer(offer)"
-                          *ngIf="activeTab == 'all'"
-                        ></button>
-                          </div>
-                        </td>                        
-                      </tr>
-                    </ng-template>
-                    
-                    </p-table>
-                  </div>
-                </td>
-              </tr>
-            </ng-template>
-          </p-table>
+          <div *ngFor="let group of groupedOffers" class="mb-6">
+            <div class="request-header p-2 bg-gray-100 rounded">
+                <h2 class="text-xl"><span class="font-bold">{{ group.request.name }}</span> • {{ group.request.budget | currency }} • {{ group.request.target_date | date:'mediumDate' }}</h2>
+            </div>
+            
+            <p-table [value]="group.offers" dataKey="id">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>Username</th>
+                  <th>Printer</th>
+                  <th>Filament</th>
+                  <th>Color</th>
+                  <th>Price Offered</th>
+                  <th>Offer Date</th>
+                  <th>Actions</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-offer>
+                <tr>
+                  <td>{{ offer.printer_user.user.username }}</td>
+                  <td>{{ offer.printer_user.printer.model }}</td>
+                  <td>{{ offer.filament.name }}</td>
+                  <td>{{ offer.color.name }}</td>
+                  <td>{{ offer.price | currency }}</td>
+                  <td>{{ offer.target_date | date:'mediumDate' }}</td>
+                  <td>
+                    <button pButton type="button" icon="pi pi-pencil" title="Edit this offer" (click)="editOffer(offer)" *ngIf="activeTab === 'mine'"></button>
+                    <button pButton type="button" icon="pi pi-times" title="Cancel this offer" severity="danger" (click)="cancelOffer(offer)" *ngIf="activeTab === 'mine'"></button>
+                    <button pButton type="button" icon="pi pi-check" title="Accept this offer" severity="success" (click)="acceptOffer(offer)" *ngIf="activeTab === 'all'"></button>
+                    <button pButton type="button" icon="pi pi-times" title="Refuse this offer" severity="danger" (click)="refuseOffer(offer)" *ngIf="activeTab === 'all'"></button>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+          
   
           <div
             *ngIf="activeTab == 'all' && !isOwningPrinter"
