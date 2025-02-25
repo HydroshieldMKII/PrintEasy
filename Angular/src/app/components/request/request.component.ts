@@ -4,6 +4,8 @@ import { Router, RouterLink } from '@angular/router';
 import { RequestModel } from '../../models/request.model';
 import { RequestService } from '../../services/request.service';
 import { ImportsModule } from '../../../imports';
+import { MessageService } from 'primeng/api';
+import { Clipboard } from '@angular/cdk/clipboard';
 
 @Component({
   selector: 'app-request',
@@ -12,7 +14,7 @@ import { ImportsModule } from '../../../imports';
   styleUrls: ['./request.component.css']
 })
 export class RequestsComponent {
-  activeTab: string = 'all';
+  activeTab: string = 'mine';
   requests: RequestModel[] | null = null;
   myRequests: RequestModel[] | null = null;
 
@@ -48,48 +50,60 @@ export class RequestsComponent {
     { label: 'Country (Desc)', value: 'country-desc' }
   ];
 
-  get currentRequests(): RequestModel[] {
-    console.debug('Current requests:', this.activeTab === 'my' ? this.myRequests : this.requests);
-    console.debug('Active tab:', this.activeTab);
-    console.debug('My requests:', this.myRequests);
-    console.debug('Requests:', this.requests);
-    return this.activeTab === 'my' ? this.myRequests || [] : this.requests || [];
+  onTabChange(tab: string): void {
+    console.log('Tab changed:', tab);
+    this.activeTab = tab;
+    this.router.navigate([], { queryParams: { tab: this.activeTab }, queryParamsHandling: 'merge' });
+
+    if (this.activeTab === 'all' && !this.requests) {
+      this.filter(this.activeTab);
+    }
+    if (this.activeTab === 'mine' && !this.myRequests) {
+      this.filter(this.activeTab);
+    }
   }
 
+  get currentRequests(): RequestModel[] {
+    return this.activeTab === 'mine' ? this.myRequests || [] : this.requests || [];
+  }
 
-  constructor(private requestService: RequestService, private router: Router) {
+  constructor(private requestService: RequestService, private router: Router, private messageService: MessageService, private clipboard: Clipboard) {
     const queryParams = this.router.parseUrl(this.router.url).queryParams;
     this.currentFilter = queryParams['filter'] || '';
     this.currentSort = queryParams['sort'] || '';
     this.currentSortCategory = queryParams['sortCategory'] || '';
     this.searchQuery = queryParams['search'] || '';
 
-    this.filter('all');
-    this.filter('my');
+    // set tab
+    this.activeTab = queryParams['tab'] || 'mine';
+    this.router.navigate([], { queryParams: { tab: this.activeTab }, queryParamsHandling: 'merge' });
+
+    // Fetch requests
+    this.filter(this.activeTab);
 
     // Select the corresponding select sort and filter
     this.selectedFilterOption = this.filterOptions.find(option => option.value === this.currentFilter) || this.filterOptions[0];
-    console.log('Selected filter option:', this.selectedFilterOption);
-
     this.selectedSortOption = this.sortOptions.find(option => option.value === `${this.currentSortCategory}-${this.currentSort}`) || this.sortOptions[0];
-    console.log('Selected sort option:', this.selectedSortOption);
 
+    // Set serach
     this.searchQuery = queryParams['search'] || '';
-
-    this.requestService.getPrintersUser().subscribe((printers: any) => {
-      this.isOwningPrinter = printers?.length > 0;
-    });
   }
 
 
   filter(type: string): void {
     this.requestService
       .filter(this.currentFilter, this.currentSortCategory, this.currentSort, this.searchQuery, type)
-      .subscribe((requests: RequestModel[]) => {
+      .subscribe(([requests, isOwningPrinter]: [RequestModel[], boolean]) => {
+
+        if (this.isOwningPrinter === null) {
+          console.log('Is owning printer:', isOwningPrinter);
+          this.isOwningPrinter = isOwningPrinter;
+        }
+
         if (type === 'all') {
           this.requests = requests;
           console.log('Requests:', this.requests);
-        } else if (type === 'my') {
+        } else if (type === 'mine') {
           this.myRequests = requests;
           console.log('My requests:', this.myRequests);
         } else {
@@ -143,7 +157,7 @@ export class RequestsComponent {
     this.router.navigate([], { queryParams: { search: this.searchQuery || null }, queryParamsHandling: 'merge' });
 
     this.filter('all');
-    this.filter('my');
+    this.filter('mine');
   }
 
 
@@ -153,7 +167,7 @@ export class RequestsComponent {
     this.router.navigate([], { queryParams: { filter: this.currentFilter || null }, queryParamsHandling: 'merge' });
 
     this.filter('all');
-    this.filter('my');
+    this.filter('mine');
   }
 
   onSortChange(event: { value: SelectItem }): void {
@@ -164,7 +178,14 @@ export class RequestsComponent {
     this.router.navigate([], { queryParams: { sortCategory: this.currentSortCategory || null, sort: this.currentSort || null }, queryParamsHandling: 'merge' });
 
     this.filter('all');
-    this.filter('my');
+    this.filter('mine');
+  }
+
+  copyToClipboard(text: string): void {
+    const fullUrl = new URL(text, window.location.origin).href;
+    console.log('Copied to clipboard:', fullUrl);
+    this.clipboard.copy(fullUrl);
+    this.messageService.add({ severity: 'success', summary: 'Copied request to clipboard' });
   }
 
 }

@@ -1,5 +1,5 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable, Injector } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { map, catchError, tap } from 'rxjs/operators';
 import { ApiResponseModel } from '../models/api-response.model';
@@ -11,8 +11,7 @@ import { Router } from '@angular/router';
 })
 
 export class ApiRequestService {
-
-    constructor(private http: HttpClient, private router: Router) { }
+    constructor(private http: HttpClient, private router: Router, private injector: Injector) { }
 
     getRequest(query: string, params?: { [key: string]: string }): Observable<ApiResponseModel> {
         return this.http.get<ApiResponseModel>(query, { params, observe: 'response' }).pipe(
@@ -24,11 +23,6 @@ export class ApiRequestService {
                 response.body
             )),
             catchError((error: HttpErrorResponse) => {
-                // if (error.status === 401) {
-                //     this.authService.logOut().subscribe(() => {
-                //         this.router.navigate(['/login']);
-                //     });
-                // }
                 return this.handleHttpError(error);
             })
         );
@@ -101,6 +95,13 @@ export class ApiRequestService {
             }
         } else {
             formattedErrors["general"] = error.message || "An unexpected error occurred.";
+        }
+
+        if (error.status === 401) {
+            console.error('Unauthorized request:', error);
+            // const authService = this.injector.get(AuthService);
+            // authService.logOut();
+            this.router.navigate(['/login']);
         }
 
         return of(new ApiResponseModel(

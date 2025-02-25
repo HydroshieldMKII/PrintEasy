@@ -47,8 +47,8 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
     assert_empty json_response['errors']
   end
 
-  test "should return user's own requests for 'my' type" do
-    get api_request_index_url, params: { type: 'my' }
+  test "should return user's own requests for 'mine' type" do
+    get api_request_index_url, params: { type: 'mine' }
     assert_response :success
 
     json_response = assert_nothing_raised do
@@ -247,7 +247,7 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "must exist", json_response['errors']['preset_requests.color'][0]
     assert_equal "must exist", json_response['errors']['preset_requests.filament'][0]
     assert_equal "must exist", json_response['errors']['preset_requests.printer'][0]
-    assert_equal "must be less than 2", json_response['errors']['preset_requests.print_quality'][0]
+    assert_equal "must be less than or equal to 2", json_response['errors']['preset_requests.print_quality'][0]
   end
 
   test "should not update request with accepted offers" do
