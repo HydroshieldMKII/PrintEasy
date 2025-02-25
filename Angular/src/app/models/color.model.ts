@@ -9,4 +9,11 @@ export class ColorModel {
         this.id = id;
         this.name = name;
     }
+
+    static fromAPI(data: any): ColorModel {
+        return new ColorModel(
+            data.id,
+            data.name
+        );
+    }
 }

@@ -3,8 +3,8 @@ class User < ApplicationRecord
   has_many :presets, dependent: :destroy
   has_many :requests, dependent: :destroy
   has_many :offers, dependent: :destroy
-  has_many :printer_users, dependent: :destroy
-  has_many :submissions, dependent: :destroy
+  has_many :printer_user, dependent: :destroy
+  has_many :printer, through: :printer_user
 
   has_one_attached :profile_picture
 

@@ -1,35 +1,141 @@
 <div>
-    <p-tabs value="0">
+    <p-tabs [value]="tab">
         <p-tablist>
-            <p-tab value="0">My Orders</p-tab>
-            <p-tab value="1">TO-DOs</p-tab>
+            <p-tab [value]="'commands'" (click)="openCommands()">Commands</p-tab>
+            <p-tab [value]="'contracts'" (click)="openContracts()">Contracts</p-tab>
         </p-tablist>
         <p-tabpanels>
-            <p-tabpanel value="0">
-                <div style="display: flex; flex-direction: column; gap: 10px;" *ngIf="myOrders != []">
-                    <div *ngFor="let order of myOrders" style="display: flex; flex-direction: row; gap: 20px">
-                        <p>{{order.offer.request.name}}</p>
-                        <p>{{order.offer.printer_user.user.username}}</p>
-                        <p-button
-                            icon="pi pi-arrow-right"
-                            title="See Details"
-                            routerLink="/orders/view/{{ order.id }}"
-                        ></p-button>
-                    </div>
-                </div>
+            <p-tabpanel [value]="'commands'">
+                <p-table [value]="myOrders" [tableStyle]="{'width': '100%'}">
+                    <ng-template #header>
+                        <tr>
+                            <th>
+                                Name
+                            </th>
+                            <th>
+                                Price
+                            </th>
+                            <th>
+                                Status
+                            </th>
+                            <th>
+                                Target Date
+                            </th>
+                            <th>
+                                Printer
+                            </th>
+                            <th>
+                                Rating
+                            </th>
+                            <th>
+                                Actions
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template #body let-order>
+                        <tr>
+                            <td>{{order.offer.request.name}}</td>
+                            <td>{{order.offer.price | currency}}</td>
+                            <td>
+                                <span class="status-tag" [ngStyle]="{'background-color': statusColorRef[order.orderStatus.at(-1).statusName || 0]}">
+                                    <p class="w-full">{{order.orderStatus.at(-1).statusName}}</p>
+                                </span>
+                            </td>
+                            <td>{{order.offer.targetDate | date:'fullDate'}}</td>
+                            <td>
+                                <div class="h-td-table">
+                                    <p-avatar label="" size="large" shape="circle" *ngIf="order.offer.printerUser.user.profilePictureUrl" image="{{order.offer.printerUser.user.profilePictureUrl}}"></p-avatar>
+                                    <p>{{order.offer.printerUser.user.username}}</p>
+                                </div>
+                                
+                            </td>
+                            <td>
+                                <div *ngIf="order.review" class="h-td-table">
+                                    <p>{{order.review?.rating}}</p>
+                                    <i class="pi pi-star-fill"></i>
+                                </div>
+                                <p *ngIf="!order.review">No Review</p>
+                            </td>
+                            <td>
+                                <p-button
+                                    icon="pi pi-arrow-right"
+                                    title="See Details"
+                                    routerLink="/orders/view/{{ order.id }}"
+                                ></p-button>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
             </p-tabpanel>
-            <p-tabpanel value="1">
-                <div style="display: flex; flex-direction: column; gap: 10px;" *ngIf="makeOrders != []">
-                    <div *ngFor="let order of makeOrders" style="display: flex; flex-direction: row; gap: 20px">
-                        <p>{{order.offer.request.name}}</p>
-                        <p>{{order.offer.printer_user.user.username}}</p>
-                        <p-button
-                            icon="pi pi-arrow-right"
-                            title="See Details"
-                            routerLink="/orders/view/{{ order.id }}"
-                        ></p-button>
-                    </div>
-                </div>
+            <p-tabpanel [value]="'contracts'">
+                <p-table [value]="makeOrders" [tableStyle]="{'width': '100%'}">
+                    <ng-template #header>
+                        <tr>
+                            <th>
+                                Name
+                            </th>
+                            <th>
+                                <div class="right-cell">
+                                    Price
+                                </div>
+                            </th>
+                            <th class="center-cell">
+                                Status
+                            </th>
+                            <th>
+                                Target Date
+                            </th>
+                            <th>
+                                Consumer
+                            </th>
+                            <th>
+                                Rating
+                            </th>
+                            <th>
+                                Actions
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template #body let-order>
+                        <tr>
+                            <td>{{order.offer.request.name}}</td>
+                            <td>
+                                <div class="right-cell">
+                                    {{order.offer.price | currency}}
+                                </div>
+                            </td>
+                            <td>
+                                <div class="center-cell">
+                                    <span class="status-tag" [ngStyle]="{'background-color': statusColorRef[order.orderStatus.at(-1).statusName || 0]}">
+                                        <p class="w-full">{{order.orderStatus.at(-1).statusName}}</p>
+                                    </span>
+                                </div>
+                            </td>
+                            <td>{{order.offer.targetDate | date:'fullDate'}}</td>
+                            <td>
+                                <div class="h-td-table">
+                                    <p-avatar label="" size="large" shape="circle" *ngIf="order.offer.request.user.profilePictureUrl" image="{{order.offer.request.user.profilePictureUrl}}"></p-avatar>
+                                    <p>{{order.offer.request.user.username}}</p>
+                                </div>
+                                
+                            </td>
+                            <td>
+                                <div *ngIf="order.review" class="h-td-table">
+                                    <p>{{order.review?.rating}}</p>
+                                    <i class="pi pi-star-fill"></i>
+                                </div>
+                                <p *ngIf="!order.review">No Review</p>
+                            </td>
+                            <td>
+                                <p-button
+                                    icon="pi pi-arrow-right"
+                                    title="See Details"
+                                    routerLink="/orders/view/{{ order.id }}"
+                                ></p-button>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
             </p-tabpanel>
         </p-tabpanels>
     </p-tabs>

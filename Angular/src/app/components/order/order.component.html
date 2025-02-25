@@ -1,53 +1,51 @@
 <div class="card">
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="stl-section flex flex-col items-center">
-            <div class="stl-placeholder">
-              <p>STL preview here</p>
-            </div>
-        </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6" style="margin-bottom: 5px;">
+        
         <div class="flex-col gap-6">
             <p class="h1c">{{order?.offer?.request?.name}}</p>
             
             <div class="h-row">
                 <p>Printer Owner :</p>
-                <p-avatar label="" size="large" shape="circle" image="{{order?.offer?.printer_user?.user?.profile_picture_url}}"></p-avatar>
-                <p class="h3c">{{order?.offer?.printer_user?.user?.username}}</p>
+                <div style="display: flex; flex-direction: row; gap: 10px;">
+                    <p-avatar label="" size="large" shape="circle" image="{{order?.offer?.printerUser?.user?.profilePictureUrl}}"></p-avatar>
+                    <p class="h3c">{{order?.offer?.printerUser?.user?.username}}</p>
+                </div>
             </div>
 
             <div class="h-row">
                 <p>Price :</p>
-                <p class="h3c">{{order?.offer?.price}}$</p>
+                <p class="h3c">{{order?.offer?.price | currency}}</p>
             </div>
 
             <div class="h-row">
                 <p>Current Status :</p>
-                <span [ngStyle]="{'color': 'rgb(34, 34, 34)', 'background-color': statusColorRef[currentStatus?.status_name || 0], 'border-radius': '10px', 'height': '30px', 'padding': '7px', 'display': 'flex', 'flex-direction': 'row', 'align-items': 'center'}">
-                    <p>{{currentStatus?.status_name}}</p>
+                <span [ngStyle]="{'color': 'rgb(34, 34, 34)', 'background-color': statusColorRef[currentStatus?.statusName || 0], 'border-radius': '10px', 'height': '30px', 'padding': '7px', 'display': 'flex', 'flex-direction': 'row', 'align-items': 'center'}">
+                    <p>{{currentStatus?.statusName}}</p>
                 </span>
             </div>
 
             <div class="h-row">
                 <p>Target Date :</p>
-                <p class="h3c">{{order?.offer?.target_date | date:'fullDate'}}</p>
+                <p class="h3c">{{order?.offer?.targetDate | date:'fullDate'}}</p>
             </div>
 
             <div style="margin-bottom: 1.5rem;">
-                <p-fieldset legend="Comment">
-                    <p class="m-0">
+                <p-fieldset legend="Comment" class="comment-container">
+                    <p class="m-0" class="comment">
                         {{order?.offer?.request?.comment}}
                     </p>
                 </p-fieldset>
             </div>
-            
+        </div>
 
-            <p-button
-                label="Abort"
-                icon="pi pi-trash"
-                severity="danger"
-                [disabled]="!canCancel"
-                (click)="Cancel()">
-            </p-button>
+        <div class="stl-section flex flex-col items-center">
+            <div *ngIf="!order?.offer?.request?.stlFileUrl" class="stl-placeholder">
+              <p>STL preview here</p>
+            </div>
+            <div class="stl-viewer-container">
+                <stl-model-viewer style="width: 100%; height: 100%;" *ngIf="order?.offer?.request?.stlFileUrl" [stlModels]="[order?.offer?.request?.stlFileUrl ?? '']"></stl-model-viewer>
+            </div>
         </div>
     </div>
 
@@ -65,16 +63,17 @@
                         ></textarea>
                     <label for="comment">Special comment about the status update</label>
                 </p-floatlabel>
+                <p-message severity="error">Comment has to be between 5 and 200 characters</p-message>
                 <p-dropdown 
-                    formControlName="status_name" 
-                    [options]="order?.available_status"
-                    placeholder="{{isEdit ? orderStatusForm.value.status_name : 'Select a status'}}"
+                    formControlName="statusName" 
+                    [options]="order?.availableStatus"
+                    placeholder="{{isEdit ? orderStatusForm.value.statusName : 'Select a status'}}"
                     appendTo="body"
                     [style]="{width: '100%'}"
                     [disabled]="isEdit">
                 </p-dropdown>
-                <img src="{{image_url}}" alt="" class="image-preview" />
-                <div *ngIf="image_url == ''" class="image-placeholder">
+                <img src="{{imageUrl}}" alt="" class="image-preview" />
+                <div *ngIf="imageUrl == ''" class="image-placeholder">
                     <p>Image</p>
                 </div>
                 <div>
@@ -102,8 +101,10 @@
         <p-tabpanels>
             <p-tabpanel value="0">
 
-                <p-speeddial *ngIf="!consumer && canCancel" direction="left" [style]="{ position: 'absolute', top: 1, right: 'calc(1%)' }" [buttonProps]="{ severity: 'success', rounded: true }" (onClick)="ShowOrderStatusForm()"/>
-
+                <div style="width: 100%; display: flex; flex-direction: row; align-items: flex-start;">
+                    <p-speeddial *ngIf="statusActions.length > 0" showIcon="pi pi-pen-to-square" [model]="statusActions" direction="right" [style]="{'margin-left': '4px'}" [buttonProps]="{ severity: 'contrast'}" [tooltipOptions]="{ tooltipPosition: 'bottom' }" />
+                </div>
+                
                 <p-stepper [value]="1">
 
                     <p-step-item [value]="1" [ngStyle]="{'opacity': AcceptedStatus.length === 0 ? 0.5 : 1}">
@@ -123,7 +124,7 @@
                                     <div *ngFor="let status of AcceptedStatus" class="status-content-container">
                                         <div class="status-content-header" [ngStyle]="{'margin-bottom': consumer ? '0px' : '-20px'}">
                                             <div class="status-content-date-container">
-                                                <p class="status-content-date">{{status.updated_at | date:'medium'}}</p>
+                                                <p class="status-content-date">{{status.updatedAt | date:'medium'}}</p>
                                             </div>
                                             <div class="three-dot-container" *ngIf="!consumer">
                                                 <p-button [rounded]="true" [text]="true" icon="pi pi-ellipsis-v" (click)="menu.toggle($event); setSelectedOrderStatus(status.id)" />
@@ -131,9 +132,10 @@
                                             </div>
                                         </div>
                                         
-                                        <div class="status-content-image" *ngIf="status.image_url">
-                                            <img class="status-content-image" [src]="status.image_url" alt="">
+                                        <div class="status-content-image" *ngIf="status.imageUrl">
+                                            <img class="status-content-image" [src]="status.imageUrl" alt="">
                                         </div>
+                                        <p *ngIf="!status.comment">{{statusDefaultCommentRef['Accepted']}}</p>
                                         <p>{{status.comment}}</p>
                                     </div>
                                 </div>
@@ -158,7 +160,7 @@
                                     <div *ngFor="let status of PrintingStatus" class="status-content-container">
                                         <div class="status-content-header" [ngStyle]="{'margin-bottom': consumer ? '0px' : '-20px'}">
                                             <div class="status-content-date-container">
-                                                <p class="status-content-date">{{status.updated_at | date:'medium'}}</p>
+                                                <p class="status-content-date">{{status.updatedAt | date:'medium'}}</p>
                                             </div>
                                             <div class="three-dot-container" *ngIf="!consumer">
                                                 <p-button [rounded]="true" [text]="true" icon="pi pi-ellipsis-v" (click)="menu.toggle($event); setSelectedOrderStatus(status.id)" />
@@ -166,9 +168,10 @@
                                             </div>
                                         </div>
 
-                                        <div class="status-content-image" *ngIf="status.image_url">
-                                            <img class="status-content-image" [src]="status.image_url" alt="">
+                                        <div class="status-content-image" *ngIf="status.imageUrl">
+                                            <img class="status-content-image" [src]="status.imageUrl" alt="">
                                         </div>
+                                        <p *ngIf="!status.comment">{{statusDefaultCommentRef['Printing']}}</p>
                                         <p>{{status.comment}}</p>
                                     </div>
                                 </div>
@@ -193,16 +196,17 @@
                                     <div *ngFor="let status of PrintedStatus" class="status-content-container">
                                         <div class="status-content-header" [ngStyle]="{'margin-bottom': consumer ? '0px' : '-20px'}">
                                             <div class="status-content-date-container">
-                                                <p class="status-content-date">{{status.updated_at | date:'medium'}}</p>
+                                                <p class="status-content-date">{{status.updatedAt | date:'medium'}}</p>
                                             </div>
                                             <div class="three-dot-container" *ngIf="!consumer">
                                                 <p-button [rounded]="true" [text]="true" icon="pi pi-ellipsis-v" (click)="menu.toggle($event); setSelectedOrderStatus(status.id)" />
                                                 <p-tieredmenu #menu [model]="editMenuItems" [popup]="true"></p-tieredmenu>
                                             </div>
                                         </div>
-                                        <div class="status-content-image" *ngIf="status.image_url">
-                                            <img class="status-content-image" [src]="status.image_url" alt="">
+                                        <div class="status-content-image" *ngIf="status.imageUrl">
+                                            <img class="status-content-image" [src]="status.imageUrl" alt="">
                                         </div>
+                                        <p *ngIf="!status.comment">{{statusDefaultCommentRef['Printed']}}</p>
                                         <p>{{status.comment}}</p>
                                     </div>
                                 </div>
@@ -227,16 +231,17 @@
                                     <div *ngFor="let status of ShippedStatus" class="status-content-container">
                                         <div class="status-content-header" [ngStyle]="{'margin-bottom': consumer ? '0px' : '-20px'}">
                                             <div class="status-content-date-container">
-                                                <p class="status-content-date">{{status.updated_at | date:'medium'}}</p>
+                                                <p class="status-content-date">{{status.updatedAt | date:'medium'}}</p>
                                             </div>
                                             <div class="three-dot-container" *ngIf="!consumer">
                                                 <p-button [rounded]="true" [text]="true" icon="pi pi-ellipsis-v" (click)="menu.toggle($event); setSelectedOrderStatus(status.id)" />
                                                 <p-tieredmenu #menu [model]="editMenuItems" [popup]="true"></p-tieredmenu>
                                             </div>
                                         </div>
-                                        <div class="status-content-image" *ngIf="status.image_url">
-                                            <img class="status-content-image" [src]="status.image_url" alt="">
+                                        <div class="status-content-image" *ngIf="status.imageUrl">
+                                            <img class="status-content-image" [src]="status.imageUrl" alt="">
                                         </div>
+                                        <p *ngIf="!status.comment">{{statusDefaultCommentRef['Shipped']}}</p>
                                         <p>{{status.comment}}</p>
                                     </div>
                                 </div>
@@ -259,19 +264,13 @@
                             <ng-template #content>
                                 <div class="status-content-container-container">
                                     <div *ngFor="let status of ArrivedStatus" class="status-content-container">
-                                        <p class="status-content-date">{{status.updated_at | date:'medium'}}</p>
-                                        <div class="status-content-image" *ngIf="status.image_url">
-                                            <img class="status-content-image" [src]="status.image_url" alt="">
+                                        <p class="status-content-date">{{status.updatedAt | date:'medium'}}</p>
+                                        <div class="status-content-image" *ngIf="status.imageUrl">
+                                            <img class="status-content-image" [src]="status.imageUrl" alt="">
                                         </div>
+                                        <p *ngIf="!status.comment">{{statusDefaultCommentRef['Arrived']}}</p>
                                         <p>{{status.comment}}</p>
                                     </div>
-                                    <p-button 
-                                        *ngIf="ArrivedStatus.length === 0 && CancelledStatus.length === 0 && consumer"
-                                        label="Confirm Arrival"
-                                        icon="pi pi-check"
-                                        [disabled]="!canArrive"
-                                        (click)="Arrive()">
-                                    </p-button>
                                 </div>
                             </ng-template>
                         </p-step-panel>
@@ -292,10 +291,11 @@
                             <ng-template #content>
                                 <div class="status-content-container-container">
                                     <div *ngFor="let status of CancelledStatus" class="status-content-container">
-                                        <p class="status-content-date">{{status.updated_at | date:'medium'}}</p>
-                                        <div class="status-content-image" *ngIf="status.image_url">
-                                            <img class="status-content-image" [src]="status.image_url" alt="">
+                                        <p class="status-content-date">{{status.updatedAt | date:'medium'}}</p>
+                                        <div class="status-content-image" *ngIf="status.imageUrl">
+                                            <img class="status-content-image" [src]="status.imageUrl" alt="">
                                         </div>
+                                        <p *ngIf="!status.comment">{{statusDefaultCommentRef['Cancelled']}}</p>
                                         <p>{{status.comment}}</p>
                                     </div>
                                 </div>

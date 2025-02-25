@@ -17,3 +17,9 @@ form p-message[severity="error"] {
 form p-floatlabel:has(.ng-dirty.ng-invalid)~p-message {
     display: block;
 }
+
+@media (max-width: 768px) {
+    .date-picker-full-on-mobile {
+        width: 100%;
+    }
+}

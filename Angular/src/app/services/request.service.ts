@@ -2,6 +2,9 @@ import { inject, Injectable } from '@angular/core';
 import { RequestModel } from '../models/request.model';
 import { PresetModel } from '../models/preset.model';
 import { UserModel } from '../models/user.model';
+import { PrinterModel } from '../models/printer.model';
+import { FilamentModel } from '../models/filament.model';
+import { ColorModel } from '../models/color.model';
 
 import { ApiRequestService } from './api.service';
 import { ApiResponseModel } from '../models/api-response.model';
@@ -19,7 +22,7 @@ export class RequestService {
 
     constructor(private api: ApiRequestService) { }
 
-    filter(filterParams: string, sortCategory: string, orderParams: string, searchParams: string, type: string): Observable<RequestModel[]> {
+    filter(filterParams: string, sortCategory: string, orderParams: string, searchParams: string, type: string): Observable<[RequestModel[], boolean]> {
         const params: any = {};
 
         if (filterParams) params.filter = filterParams;
@@ -50,22 +53,21 @@ export class RequestService {
         return this.api.getRequest(`api/request/${id}`).pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
-                    console.log("Request response: ", response.data);
                     const request = response.data?.['request'];
-                    console.log("Request: ", request);
                     const user = new UserModel(
                         request?.['user']?.['id'],
                         request?.['user']?.['username'],
                         request?.['user']?.['country']?.['name']
                     );
 
+                    console.log("Fetched presets: ", request?.['preset_requests']);
                     const presets = (request?.['preset_requests'] as any[]).map((preset: any) => {
                         return new PresetModel(
                             preset?.['id'],
                             preset?.['print_quality'],
-                            preset?.['color']?.['name'],
-                            preset?.['filament']?.['name'],
-                            preset?.['printer']?.['model']
+                            new ColorModel(preset?.['color']?.['id'], preset?.['color']?.['name']),
+                            new FilamentModel(preset?.['filament']?.['id'], preset?.['filament']?.['name']),
+                            new PrinterModel(preset?.['printer']?.['id'], preset?.['printer']?.['model'])
                         );
                     });
 
@@ -87,7 +89,7 @@ export class RequestService {
         );
     }
 
-    fetchRequests(params: any): Observable<RequestModel[]> {
+    fetchRequests(params: any): Observable<[RequestModel[], boolean]> {
         return this.api.getRequest('api/request', params).pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
@@ -123,7 +125,7 @@ export class RequestService {
                         );
                     });
                 }
-                return this.requests;
+                return [this.requests, response.data?.['has_printer']];
             })
         );
     }

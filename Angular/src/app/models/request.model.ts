@@ -36,4 +36,19 @@ export class RequestModel {
         this.hasOffers = hasOffers;
         this.hasOfferAccepted = hasOfferAccepted
     }
+
+    static fromAPI(data: any): RequestModel {
+        return new RequestModel(
+            data.id,
+            data.name,
+            data.budget,
+            new Date(data.target_date),
+            data.comment,
+            data.stl_file_url,
+            (data.presets ? data.presets.map((preset: any) => PresetModel.fromAPI(preset)) : []),
+            UserModel.fromAPI(data.user),
+            data.has_offers,
+            data.has_offer_accepted
+        );
+    }
 }

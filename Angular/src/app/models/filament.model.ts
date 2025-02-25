@@ -6,4 +6,11 @@ export class FilamentModel {
         this.id = id;
         this.name = name;
     }
+
+    static fromAPI(data: any): FilamentModel {
+        return new FilamentModel(
+            data.id,
+            data.name
+        );
+    }
 }

@@ -56,7 +56,7 @@ class AuthControllerTest < ActionDispatch::IntegrationTest
       @parsed_response = JSON.parse(response.body)
     end
     
-    assert_equal ["param is missing or the value is empty: user"], @parsed_response["errors"]["user"]
+    assert_equal ["param is missing or the value is empty or invalid: user"], @parsed_response["errors"]["user"]
   end
 
   test "should not sign up -> no username" do

@@ -14,13 +14,33 @@ import { ApiResponseModel } from '../../models/api-response.model';
 })
 export class OrdersComponent {
   orderService: OrderService = inject(OrderService);
+  router : Router = inject(Router);
 
   myOrders: OrderModel[] = [];
   makeOrders: OrderModel[] = [];
+  statusColorRef: { [key: string]: string } = {
+    'Accepted': '#c5c5c5',
+    'Printing': '#fa6bff',
+    'Printed': '#ffb056',
+    'Shipped': '#56c1ff',
+    'Arrived': '#8fff62',
+    'Cancelled': '#ff6262'
+  }
+  tab : string = 'commands';
 
   constructor() {
-    this.getMyOrders();
-    this.getMakeOrders();
+    if (this.router.routerState.snapshot.root.queryParams["tab"] == 'commands') {
+      this.tab = 'commands';
+      this.getMyOrders();
+    }
+    else if (this.router.routerState.snapshot.root.queryParams["tab"] == 'contracts') {
+      this.tab = 'contracts';
+      this.getMakeOrders();
+    }
+    else {
+      this.tab = 'commands';
+      this.getMyOrders();
+    }
   }
 
   getMyOrders() {
@@ -35,6 +55,20 @@ export class OrdersComponent {
       this.makeOrders = response.data.orders;
       console.log(this.makeOrders);
     });
+  }
+
+  openContracts() {
+    this.router.navigate(['/orders'], { queryParams: { tab: 'contracts' } });
+    if (this.makeOrders.length == 0){
+      this.getMakeOrders();
+    }
+  }
+
+  openCommands() {
+    this.router.navigate(['/orders'], { queryParams: { tab: 'commands' } });
+    if (this.myOrders.length == 0){
+      this.getMyOrders();
+    }
   }
 }
 
