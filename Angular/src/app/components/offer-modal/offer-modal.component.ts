@@ -150,11 +150,11 @@ export class OfferModalComponent {
 
       this.offerService.createOffer(formData).subscribe(
         response => {
-          console.log('Offer created successfully:', response);
-          this.closeModal();
-        },
-        error => {
-          console.error('Error creating offer:', error);
+          if (response.status === 200) {
+            this.offerModalVisible = false;
+          } else {
+            console.log('Error:', response);
+          }
         }
       );
     }
