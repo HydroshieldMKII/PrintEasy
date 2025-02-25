@@ -3,6 +3,7 @@ import { ImportsModule } from '../../../imports';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
 import { PresetService } from '../../services/preset.service';
+import { OfferService } from '../../services/offer.service';
 import { PresetModel } from '../../models/preset.model';
 import { ColorModel } from '../../models/color.model';
 import { FilamentModel } from '../../models/filament.model';
@@ -17,6 +18,8 @@ import { PrinterUserModel } from '../../models/printer-user.model';
 })
 export class OfferModalComponent {
   @Input() offerModalVisible: boolean = false;
+  @Input() requestIdToEdit: number | null = null;
+
   @Output() offerModalVisibleChange = new EventEmitter<boolean>();
 
   isEditMode: boolean = false;
@@ -30,10 +33,9 @@ export class OfferModalComponent {
   colors: { label: string, value: string, id: number }[] = [];
   filaments: { label: string, value: string, id: number }[] = [];
 
-  constructor(private fb: FormBuilder, private presetService: PresetService) {
+  constructor(private fb: FormBuilder, private presetService: PresetService, private offerService: OfferService) {
     this.offerForm = this.fb.group({
       preset: [this.selectedPreset],
-      type: [null, Validators.required],
       color: [null, Validators.required],
       filament: [null, Validators.required],
       quality: [null, [Validators.required, Validators.min(0.01), Validators.max(2)]],
@@ -128,10 +130,37 @@ export class OfferModalComponent {
 
   submitOffer() {
     if (this.offerForm.valid) {
-      console.log('Offer Submitted:', this.offerForm.value);
-      this.offerModalVisible = false;
+      const formValues = this.offerForm.value;
+      const formData = new FormData();
+
+      if (!this.requestIdToEdit) {
+        console.error('Error: requestIdToEdit is not set.');
+        return;
+      } else {
+        console.log('requestIdToEdit:', this.requestIdToEdit);
+      }
+
+      formData.append('offer[request_id]', this.requestIdToEdit.toString());
+      formData.append('offer[printer_user_id]', formValues.printer.id.toString());
+      formData.append('offer[color_id]', formValues.color.id.toString());
+      formData.append('offer[filament_id]', formValues.filament.id.toString());
+      formData.append('offer[price]', formValues.price.toString());
+      formData.append('offer[print_quality]', formValues.quality.toString());
+      formData.append('offer[target_date]', formValues.targetDate.toISOString());
+
+      this.offerService.createOffer(formData).subscribe(
+        response => {
+          console.log('Offer created successfully:', response);
+          this.closeModal();
+        },
+        error => {
+          console.error('Error creating offer:', error);
+        }
+      );
     }
   }
+
+
 
   deleteOffer() {
     console.log('Offer Deleted');

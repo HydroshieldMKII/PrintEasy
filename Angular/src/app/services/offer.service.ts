@@ -173,10 +173,10 @@ export class OfferService {
 
     createOffer(offer: FormData): Observable<ApiResponseModel> {
         console.log("Creating request: ", offer);
-        return this.api.postRequest('api/request', {}, offer).pipe(
+        return this.api.postRequest('api/offer', {}, offer).pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 201) {
-                    this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Request created successfully' });
+                    this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Offer created successfully' });
                 } else {
                     if (response.status === 422) {
                         for (const [key, value] of Object.entries(response.errors)) {
@@ -193,9 +193,9 @@ export class OfferService {
         return this.api.deleteRequest(`api/request/${id}`).pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
-                    this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Request deleted successfully' });
+                    this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Offer deleted successfully' });
                 } else {
-                    this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Request deletion failed' });
+                    this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Offer deletion failed' });
                 }
                 return response;
             })

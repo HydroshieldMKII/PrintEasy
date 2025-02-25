@@ -41,8 +41,8 @@
               <tr>
                 <td *ngIf="activeTab == 'all'">{{ offer.printer_user.user.username }}</td>
                 <td>{{ offer.printer_user.printer.model }}</td>
-                <td>{{ offer.filament.name }}</td>
                 <td>{{ offer.color.name }}</td>
+                <td>{{ offer.filament.name }}</td>
                 <td>{{ offer.price | currency }}</td>
                 <td>{{ offer.target_date | date:'mediumDate' }}</td>
                 <td>

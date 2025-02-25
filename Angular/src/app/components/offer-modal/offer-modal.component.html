@@ -83,6 +83,7 @@
           placeholder="Choose your printer"
           class="w-full"
           [ngStyle]="{ 'margin-bottom': '10px' }"
+          appendTo="body"
         ></p-dropdown>
 
         <div class="form-row">
@@ -97,6 +98,7 @@
                   [showOnFocus]="false"
                   styleClass="date-picker-full-on-mobile"
                   dateFormat="yy-mm-dd"
+                  appendTo="body"
                 ></p-datepicker>
                 <label for="targetDate" class="block font-semibold">Target Date</label>
               </div>
@@ -112,7 +114,7 @@
                   [minFractionDigits]="2"
                   [maxFractionDigits]="2"
                   prefix="$"
-                  styleClass="full-width"
+                  [ngStyle]="{ width: '100%' }"
                 ></p-inputnumber>
                 <label for="price">Price</label>
               </p-floatlabel>
