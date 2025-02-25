@@ -84,11 +84,11 @@ class Api::OfferController < AuthenticatedController
     def filter_offers(offers)
       case params[:type]
       when 'all' # Offers received
-        offers.where(request_id: current_user.requests.pluck(:id)).distinct
+        offers.where(request_id: current_user.requests.pluck(:id)).where.not(id: Order.pluck(:offer_id)).distinct
       when 'mine' # Offers sent (pending)
-        offers.where(printer_user_id: current_user.printer_user.pluck(:id)).distinct
+        offers.where(printer_user_id: current_user.printer_user.pluck(:id)).where.not(id: Order.pluck(:offer_id)).distinct
       else
-        []
+      []
       end
     end
   

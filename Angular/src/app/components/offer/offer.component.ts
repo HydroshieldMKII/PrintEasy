@@ -20,6 +20,7 @@ export class OffersComponent {
 
   deleteDialogVisible: boolean = false;
   offerToDelete: any | null = null;
+  requestToDelete: any | null = null;
   isOwningPrinter: boolean | null = null;
 
   // Use the native API structure directly
@@ -74,12 +75,18 @@ export class OffersComponent {
   }
 
   confirmDelete(): void {
-    if (this.offerToDelete !== null) {
-      // Call your deletion logic here.
-      // Example:
-      // this.offerService.deleteOffer(this.offerToDelete.id).subscribe(() => {
-      //   // Update the local array after deletion.
-      // });
+    if (this.offerToDelete !== null && this.requestToDelete !== null) {
+      this.offerService.deleteOffer(this.offerToDelete.id).subscribe((response) => {
+        if (response.status === 200) {
+          const index = this.requestToDelete.offers.indexOf(this.offerToDelete);
+          if (index !== -1) {
+            this.requestToDelete.offers.splice(index, 1);
+          }
+        }
+
+        this.offerToDelete = null;
+        this.requestToDelete = null;
+      });
     }
     this.deleteDialogVisible = false;
   }
@@ -94,8 +101,11 @@ export class OffersComponent {
     console.log("editing id:", offer.id);
   }
 
-  cancelOffer(offer: any): void {
-    console.log("Canceling id:", offer.id);
+  cancelOffer(offer: any, request: any): void {
+    console.log("Canceling:", offer);
+    this.offerToDelete = offer;
+    this.requestToDelete = request;
+    this.deleteDialogVisible = true;
   }
 
   acceptOffer(offer: any): void {

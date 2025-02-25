@@ -37,6 +37,7 @@ export class OfferService {
                             request?.['comment'],
                             new Date(request?.['target_date']),
                             (request?.['offers'] as any[]).map((offer: any) => {
+                                console.log("raw getOffer to create from: ", offer);
                                 return new OfferModel(
                                     offer?.['id'],
                                     offer?.['request'],
@@ -190,7 +191,7 @@ export class OfferService {
     }
 
     deleteOffer(id: number): Observable<ApiResponseModel> {
-        return this.api.deleteRequest(`api/request/${id}`).pipe(
+        return this.api.deleteRequest(`api/offer/${id}`).pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
                     this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Offer deleted successfully' });
