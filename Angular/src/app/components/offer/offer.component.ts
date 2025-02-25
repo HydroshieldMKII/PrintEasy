@@ -1,119 +1,83 @@
 import { Component } from '@angular/core';
-import { SelectItem } from 'primeng/api';
-import { Router, RouterLink } from '@angular/router';
-import { OfferModel } from '../../models/offer.model';
+import { Router } from '@angular/router';
 import { OfferService } from '../../services/offer.service';
-import { ImportsModule } from '../../../imports';
 import { MessageService } from 'primeng/api';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { OfferModalComponent } from '../offer-modal/offer-modal.component';
+import { ImportsModule } from '../../../imports';
 
 @Component({
   selector: 'app-offer',
-  imports: [ImportsModule, RouterLink, OfferModalComponent],
+  imports: [ImportsModule, OfferModalComponent],
   templateUrl: './offer.component.html',
   styleUrls: ['./offer.component.css']
 })
 export class OffersComponent {
   activeTab: string = 'mine';
-  offers: OfferModel[] | null = null;
-  myOffers: OfferModel[] | null = null;
+  // The API now returns a list of Request objects with nested offers
+  offers: any[] | null = null;  // For "all" offers (received)
+  myOffers: any[] | null = null; // For "my" pending offers
 
   deleteDialogVisible: boolean = false;
-  offerToDelete: OfferModel | null = null;
-
+  offerToDelete: any | null = null;
   isOwningPrinter: boolean | null = null;
-  expandedRowKeys: { [key: number]: boolean } = {};
 
-  get groupedOffers(): { request: any; offers: OfferModel[] }[] {
-    const groups: { [key: number]: { request: any; offers: OfferModel[] } } = {};
-    this.currentOffers.forEach(offer => {
-      if (!groups[offer.request.id]) {
-        groups[offer.request.id] = { request: offer.request, offers: [] };
-      }
-      groups[offer.request.id].offers.push(offer);
-    });
-    return Object.values(groups);
-  }
-
-
-
-  onTabChange(tab: string): void {
-    console.log('Tab changed:', tab);
-    this.activeTab = tab;
-    this.router.navigate([], { queryParams: { tab: this.activeTab }, queryParamsHandling: 'merge' });
-
-    if (this.activeTab === 'all' && !this.offers) {
-      this.offerService.getOffers().subscribe((offers: OfferModel[]) => {
-        this.offers = offers;
-      });
-    }
-    if (this.activeTab === 'mine' && !this.myOffers) {
-      this.offerService.getMyOffers().subscribe((offers: OfferModel[]) => {
-        this.myOffers = offers
-      });
-    }
-  }
-
-  get currentOffers(): OfferModel[] {
+  // Use the native API structure directly
+  get currentRequests(): any[] {
     return this.activeTab === 'mine' ? this.myOffers || [] : this.offers || [];
   }
 
-  constructor(private offerService: OfferService, private router: Router, private messageService: MessageService, private clipboard: Clipboard) {
+  constructor(
+    private offerService: OfferService,
+    private router: Router,
+    private messageService: MessageService,
+    private clipboard: Clipboard
+  ) {
     const queryParams = this.router.parseUrl(this.router.url).queryParams;
-
-    // set tab
     this.activeTab = queryParams['tab'] || 'mine';
     this.router.navigate([], { queryParams: { tab: this.activeTab }, queryParamsHandling: 'merge' });
 
     if (this.activeTab === 'all') {
-      this.offerService.getOffers().subscribe((offers: OfferModel[]) => {
-        this.offers = offers;
+      this.offerService.getOffers().subscribe((requests: any[]) => {
+        this.offers = requests;
       });
     } else if (this.activeTab === 'mine') {
-      console.log('Getting my offers');
-      this.offerService.getMyOffers().subscribe((offers: OfferModel[]) => {
-        console.log('Got my offers:', offers);
-        this.myOffers = offers;
+      this.offerService.getMyOffers().subscribe((requests: any[]) => {
+        this.myOffers = requests;
       });
     }
   }
 
-
-  onRowExpand(event: any): void {
-    console.log("Expanding row:", event.data.id);
-    this.expandedRowKeys = {};  // Reset previous expanded rows
-    this.expandedRowKeys[event.data.id] = true;  // Expand only the clicked row
-  }
-
-  onRowCollapse(event: any): void {
-    console.log("Collapsing row:", event.data.id);
-    delete this.expandedRowKeys[event.data.id];  // Remove the collapsed row
-  }
-
-  isRowExpanded(rowId: number): boolean {
-    return !!this.expandedRowKeys[rowId];  // Check if this row is expanded
-  }
-
-  getOffersForRequest(requestId: number): OfferModel[] {
-    return this.currentOffers.filter(o => o.request.id === requestId);
+  onTabChange(tab: string): void {
+    this.activeTab = tab;
+    this.router.navigate([], { queryParams: { tab: this.activeTab }, queryParamsHandling: 'merge' });
+    if (this.activeTab === 'all' && !this.offers) {
+      this.offerService.getOffers().subscribe((requests: any[]) => {
+        this.offers = requests;
+      });
+    }
+    if (this.activeTab === 'mine' && !this.myOffers) {
+      this.offerService.getMyOffers().subscribe((requests: any[]) => {
+        this.myOffers = requests;
+      });
+    }
   }
 
   downloadRequest(downloadUrl: string): void {
-    console.log('Download request:', downloadUrl);
     window.open(downloadUrl, '_blank');
   }
 
-  showDeleteDialog(request: OfferModel): void {
-    this.offerToDelete = request;
+  showDeleteDialog(offer: any): void {
+    this.offerToDelete = offer;
     this.deleteDialogVisible = true;
   }
 
   confirmDelete(): void {
     if (this.offerToDelete !== null) {
+      // Call your deletion logic here.
+      // Example:
       // this.offerService.deleteOffer(this.offerToDelete.id).subscribe(() => {
-      //   this.offers = (this.offers || []).filter(r => r.id !== this.offerToDelete?.id);
-      //   this.myOffers = (this.myOffers || []).filter(r => r.id !== this.offerToDelete?.id);
+      //   // Update the local array after deletion.
       // });
     }
     this.deleteDialogVisible = false;
@@ -121,25 +85,23 @@ export class OffersComponent {
 
   copyToClipboard(text: string): void {
     const fullUrl = new URL(text, window.location.origin).href;
-    console.log('Copied to clipboard:', fullUrl);
     this.clipboard.copy(fullUrl);
     this.messageService.add({ severity: 'success', summary: 'Copied request to clipboard' });
   }
 
-  editOffer(offer: OfferModel): void {
-    console.log("editing id: ", offer.id)
+  editOffer(offer: any): void {
+    console.log("editing id:", offer.id);
   }
 
-  cancelOffer(offer: OfferModel) {
-    console.log("Canceling id: ", offer.id)
+  cancelOffer(offer: any): void {
+    console.log("Canceling id:", offer.id);
   }
 
-  acceptOffer(offer: OfferModel) {
-    console.log("Accepting id: ", offer.id)
+  acceptOffer(offer: any): void {
+    console.log("Accepting id:", offer.id);
   }
 
-  refuseOffer(offer: OfferModel) {
-    console.log("Rejecting id: ", offer.id)
+  refuseOffer(offer: any): void {
+    console.log("Rejecting id:", offer.id);
   }
 }
-

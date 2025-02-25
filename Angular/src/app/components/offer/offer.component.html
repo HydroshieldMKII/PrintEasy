@@ -1,112 +1,99 @@
 <div class="card p-4">
-    <div class="flex justify-between items-center">
-      <h1 class="text-4xl font-bold">Offers</h1>
-    </div>
-  
-    <p-toast />
-  
-    <p-tabs [(value)]="activeTab">
-      <p-tablist>
-        <p-tab value="all" (click)="onTabChange('all')">Offer received</p-tab>
-        <p-tab value="mine" (click)="onTabChange('mine')">My pending offer</p-tab>
-      </p-tablist>
-  
-      <p-tabpanels>
-        <p-tabpanel *ngFor="let tab of ['all', 'mine']" [value]="tab">  
-          <div *ngFor="let group of groupedOffers" class="mb-6">
-            <div class="request-header p-2 bg-gray-100 rounded">
-                <h2 class="text-xl"><span class="font-bold">{{ group.request.name }}</span> • {{ group.request.budget | currency }} • {{ group.request.target_date | date:'mediumDate' }}</h2>
-            </div>
-            
-            <p-table [value]="group.offers" dataKey="id">
-              <ng-template pTemplate="header">
-                <tr>
-                  <th>Username</th>
-                  <th>Printer</th>
-                  <th>Filament</th>
-                  <th>Color</th>
-                  <th>Price Offered</th>
-                  <th>Offer Date</th>
-                  <th>Actions</th>
-                </tr>
-              </ng-template>
-              <ng-template pTemplate="body" let-offer>
-                <tr>
-                  <td>{{ offer.printer_user.user.username }}</td>
-                  <td>{{ offer.printer_user.printer.model }}</td>
-                  <td>{{ offer.filament.name }}</td>
-                  <td>{{ offer.color.name }}</td>
-                  <td>{{ offer.price | currency }}</td>
-                  <td>{{ offer.target_date | date:'mediumDate' }}</td>
-                  <td>
-                    <button pButton type="button" icon="pi pi-pencil" title="Edit this offer" (click)="editOffer(offer)" *ngIf="activeTab === 'mine'"></button>
-                    <button pButton type="button" icon="pi pi-times" title="Cancel this offer" severity="danger" (click)="cancelOffer(offer)" *ngIf="activeTab === 'mine'"></button>
-                    <button pButton type="button" icon="pi pi-check" title="Accept this offer" severity="success" (click)="acceptOffer(offer)" *ngIf="activeTab === 'all'"></button>
-                    <button pButton type="button" icon="pi pi-times" title="Refuse this offer" severity="danger" (click)="refuseOffer(offer)" *ngIf="activeTab === 'all'"></button>
-                  </td>
-                </tr>
-              </ng-template>
-            </p-table>
-          </div>
-          
-  
-          <div
-            *ngIf="activeTab == 'all' && !isOwningPrinter"
-            class="empty-message"
-            style="width: 100%; height: 100%;"
-          >
-            <!-- <i class="pi pi-inbox text-6xl text-gray-400"></i>
-            <p class="text-xl font-semibold text-gray-500 mt-2" *ngIf="!isOwningPrinter">
-              You dont have a printer! Add one to see people's requests and
-              contribute to the community.
-            </p> -->
-          </div>
-  
-          <div
-            *ngIf="(currentOffers.length === 0)"
-            class="empty-message"
-          >
-            <i class="pi pi-inbox text-6xl text-gray-400"></i>
-            <p class="text-xl font-semibold text-gray-500 mt-2">
-              Nothing to show here.
-            </p>
-          </div>
-        </p-tabpanel>
-      </p-tabpanels>
-    </p-tabs>
+  <div class="flex justify-between items-center">
+    <h1 class="text-4xl font-bold">Offers</h1>
   </div>
-  
-  <!-- Delete Confirmation Dialog -->
-  <p-dialog
-    [(visible)]="deleteDialogVisible"
-    [modal]="true"
-    [style]="{ width: '25rem' }"
-    dismissableMask="true"
-    closable="false"
-    blockScroll="true"
-    resizable="false"
-    draggable="false"
-  >
-    <ng-template #header>
-      <div class="inline-flex items-center justify-center gap-2">
-        <i class="pi pi-exclamation-triangle text-red-500 text-2xl"></i>
-        <span class="font-bold">Confirm Delete</span>
-      </div>
-    </ng-template>
-    <span class="text-surface-500 dark:text-surface-400 block mb-4">
-      Are you sure you want to delete this offer?
-      This action cannot be undone.
-    </span>
-    <ng-template #footer>
-      <p-button
-        label="Cancel"
-        [text]="true"
-        severity="secondary"
-        (click)="deleteDialogVisible = false"
-      />
-      <p-button label="Delete" severity="danger" (click)="confirmDelete()" />
-    </ng-template>
-  </p-dialog>
 
-  <app-offer-modal></app-offer-modal>
-  
+  <p-toast></p-toast>
+
+  <p-tabs [(value)]="activeTab">
+    <p-tablist>
+      <p-tab value="all" (click)="onTabChange('all')">Offer received</p-tab>
+      <p-tab value="mine" (click)="onTabChange('mine')">My pending offer</p-tab>
+    </p-tablist>
+
+    <p-tabpanels>
+      <p-tabpanel *ngFor="let tab of ['all', 'mine']" [value]="tab">
+        <!-- Directly iterate through the native API structure -->
+        <div *ngFor="let request of currentRequests" class="mb-6">
+          <div class="request-header p-2 bg-gray-100 rounded">
+            <h2 class="text-xl">
+              <span class="font-bold">{{ request.name }}</span> •
+              {{ request.budget | currency }} •
+              {{ request.target_date | date:'mediumDate' }}
+            </h2>
+          </div>
+
+          <p-table [value]="request.offers" dataKey="id">
+            <ng-template pTemplate="header">
+              <tr>
+                <th>Username</th>
+                <th>Printer</th>
+                <th>Filament</th>
+                <th>Color</th>
+                <th>Price Offered</th>
+                <th>Offer Date</th>
+                <th>Actions</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-offer>
+              <tr>
+                <td>{{ offer.printer_user.user.username }}</td>
+                <td>{{ offer.printer_user.printer.model }}</td>
+                <td>{{ offer.filament.name }}</td>
+                <td>{{ offer.color.name }}</td>
+                <td>{{ offer.price | currency }}</td>
+                <td>{{ offer.target_date | date:'mediumDate' }}</td>
+                <td>
+                  <button pButton type="button" icon="pi pi-pencil" title="Edit this offer" (click)="editOffer(offer)" *ngIf="activeTab === 'mine'"></button>
+                  <button pButton type="button" icon="pi pi-times" title="Cancel this offer" severity="danger" (click)="cancelOffer(offer)" *ngIf="activeTab === 'mine'"></button>
+                  <button pButton type="button" icon="pi pi-check" title="Accept this offer" severity="success" (click)="acceptOffer(offer)" *ngIf="activeTab === 'all'"></button>
+                  <button pButton type="button" icon="pi pi-times" title="Refuse this offer" severity="danger" (click)="refuseOffer(offer)" *ngIf="activeTab === 'all'"></button>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+
+        <div *ngIf="activeTab == 'all' && !isOwningPrinter" class="empty-message" style="width: 100%; height: 100%;">
+          <!-- Optionally display a message if no printer is available -->
+        </div>
+
+        <div *ngIf="(currentRequests.length === 0)" class="empty-message">
+          <i class="pi pi-inbox text-6xl text-gray-400"></i>
+          <p class="text-xl font-semibold text-gray-500 mt-2">
+            Nothing to show here.
+          </p>
+        </div>
+      </p-tabpanel>
+    </p-tabpanels>
+  </p-tabs>
+</div>
+
+<!-- Delete Confirmation Dialog -->
+<p-dialog
+  [(visible)]="deleteDialogVisible"
+  [modal]="true"
+  [style]="{ width: '25rem' }"
+  dismissableMask="true"
+  closable="false"
+  blockScroll="true"
+  resizable="false"
+  draggable="false"
+>
+  <ng-template #header>
+    <div class="inline-flex items-center justify-center gap-2">
+      <i class="pi pi-exclamation-triangle text-red-500 text-2xl"></i>
+      <span class="font-bold">Confirm Delete</span>
+    </div>
+  </ng-template>
+  <span class="text-surface-500 dark:text-surface-400 block mb-4">
+    Are you sure you want to delete this offer?
+    This action cannot be undone.
+  </span>
+  <ng-template #footer>
+    <p-button label="Cancel" [text]="true" severity="secondary" (click)="deleteDialogVisible = false" />
+    <p-button label="Delete" severity="danger" (click)="confirmDelete()" />
+  </ng-template>
+</p-dialog>
+
+<app-offer-modal></app-offer-modal>

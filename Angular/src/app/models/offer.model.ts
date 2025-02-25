@@ -1,35 +1,24 @@
-import { RequestModel } from "./request.model";
-import { PrinterUserModel } from "./printer-user.model";
-import { ColorModel } from "./color.model";
-import { FilamentModel } from "./filament.model";
-
 export class OfferModel {
-    id: number;
-    request: RequestModel;
-    printer_user: PrinterUserModel;
-    color: ColorModel;
-    filament: FilamentModel;
-    price: number;
-    print_quality: number;
-    target_date: Date;
+    requestId: number;
+    requestName: string;
+    requestBudget: number;
+    requestComment: string;
+    requestTargetdate: Date;
+    offers: any[];
 
     constructor(
         id: number,
-        request: RequestModel,
-        printer_user: PrinterUserModel,
-        color: ColorModel,
-        filament: FilamentModel,
-        price: number,
-        print_quality: number,
-        target_date: Date
+        name: string,
+        budget: number,
+        comment: string,
+        target_date: Date,
+        offers: any[] = []
     ) {
-        this.id = id;
-        this.request = request;
-        this.printer_user = printer_user;
-        this.color = color;
-        this.filament = filament;
-        this.price = price;
-        this.print_quality = print_quality;
-        this.target_date = target_date
+        this.requestId = id;
+        this.requestName = name;
+        this.requestBudget = budget;
+        this.requestComment = comment;
+        this.requestTargetdate = target_date;
+        this.offers = offers;
     }
 }

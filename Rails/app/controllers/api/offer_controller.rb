@@ -1,82 +1,87 @@
 class Api::OfferController < AuthenticatedController
     def index
-        offers = Offer.all
-        render_offers(filter_offers(offers))
+      offers = Offer.all
+      render_request_with_offers(filter_offers(offers))
     end
-
+  
     def show
-        offer = Offer.find(params[:id])
-
-        if offer.printer_user.user != current_user
-            render json: { offer: {}, errors: { offer: ['You are not allowed to view this offer'] } }, status: :forbidden
-            return
-        end
-
-        render_offers(offer)
+      offer = Offer.find(params[:id])
+      if offer.printer_user.user != current_user
+        render json: { offer: {}, errors: { offer: ['You are not allowed to view this offer'] } }, status: :forbidden
+        return
+      end
+  
+      render_request_with_offers(offer)
     end
-
+  
     def create
-        offer = Offer.new(offer_params)
-        if offer.save
-            render json: offer
-        else
-            render json: { errors: offer.errors }, status: :unprocessable_entity
-        end
+      offer = Offer.new(offer_params)
+      if offer.save
+        render json: offer
+      else
+        render json: { errors: offer.errors }, status: :unprocessable_entity
+      end
     end
+  
     def update
-        offer = Offer.find(params[:id])
-        if offer.update(offer_params)
-            render json: offer
-        else
-            render json: { errors: offer.errors }, status: :unprocessable_entity
-        end
+      offer = Offer.find(params[:id])
+      if offer.update(offer_params)
+        render json: offer
+      else
+        render json: { errors: offer.errors }, status: :unprocessable_entity
+      end
     end
+  
     def destroy
-        Offer.find(params[:id]).destroy
+      if Offer.find(params[:id]).destroy
+        render json: { errors: {} }, status: :ok
+      else
+        render json: { errors: { offer: offer.errors } }, status: :unprocessable_entity
+      end
     end
+  
     private
-
-    def render_offers(resource, status: :ok)
-        render json: {
-            offer: resource.as_json(
-                except: %i[request_id printer_user_id created_at updated_at color_id filament_id],
-                include: {
-                    color: {},
-                    filament: {},
-                    printer_user: {
-                        except: %i[printer_id user_id],
-                        include: {
-                            user: {
-                                except: %i[country_id created_at updated_at is_admin],
-                                include: {
-                                    country: {}
-                                }
-                            },
-                            printer: {}
+  
+    def render_request_with_offers(resource, status: :ok)
+        grouped = resource.group_by(&:request)
+        requests = grouped.map do |request_obj, offers|
+          request_obj.as_json(
+            except: %i[user_id created_at updated_at]
+          ).merge(
+            offers: offers.as_json(
+              except: %i[request_id printer_user_id created_at updated_at color_id filament_id],
+              include: {
+                printer_user: {
+                    only: %i[id],
+                    include: {
+                        user: {
+                            only: %i[id username]
+                        },
+                        printer: {
+                            only: %i[id model]
                         }
-                    },
-                    request: {
-                        except: %i[user_id created_at updated_at],
                     }
                 }
-            ),
-            errors: resource.respond_to?(:errors) ? resource.errors : {}
-        }, status: status
-    end
-
-    def filter_offers(offers)
-        case params[:type]
-        when 'all' #offer received
-            offers.where(request_id: current_user.requests.pluck(:id)).distinct
-        when 'mine' #offer sent (pending)
-            offers.where(printer_user_id: current_user.printer_user.pluck(:id)).distinct
-        else
-          []
+              }
+            )
+          )
         end
+        render json: { requests: requests, errors: {} }, status: status
     end
-      
-
+  
+    def filter_offers(offers)
+      case params[:type]
+      when 'all' # Offers received
+        offers.where(request_id: current_user.requests.pluck(:id)).distinct
+      when 'mine' # Offers sent (pending)
+        offers.where(printer_user_id: current_user.printer_user.pluck(:id)).distinct
+      else
+        []
+      end
+    end
+  
     def offer_params
-        params.require(:offer).permit(:request_id, :printer_user_id, :color_id, :filament_id, :price)
+      params.require(:offer).permit(:request_id, :printer_user_id, :color_id, :filament_id, :price)
     end
-end
+  end
+  
