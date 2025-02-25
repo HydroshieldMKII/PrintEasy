@@ -8,8 +8,9 @@ import { StlModelViewerModule } from 'angular-stl-model-viewer';
 
 
 import { SubmissionService } from '../../services/submission.service';
-import { SubmissionModel } from '../../models/submission.model';
 import { ContestService } from '../../services/contest.service';
+import { AuthService } from '../../services/authentication.service';
+import { SubmissionModel } from '../../models/submission.model';
 import { ContestModel } from '../../models/contest.model';
 import { UserSubmission } from '../../models/user-submission';
 
@@ -22,6 +23,7 @@ import { UserSubmission } from '../../models/user-submission';
 export class SubmissionsComponent {
   submissionService: SubmissionService = inject(SubmissionService);
   contestService: ContestService = inject(ContestService);
+  authService: AuthService = inject(AuthService);
 
   submissionForm: FormGroup;
   contest: ContestModel | null = null;
@@ -30,6 +32,7 @@ export class SubmissionsComponent {
   contestDurationInDays: string = '';
   paramsId: number = 0;
   display: boolean = false;
+  deleteDialogVisible: boolean = false
   stlUrl: string = '';
   imageUrl: string = '';
   noImagePreview: string = 'image-preview-container';
@@ -37,6 +40,7 @@ export class SubmissionsComponent {
   uploadedFile: any = null;
   uploadedFileBlob: any = null;
   isEdit: boolean = false;
+  submissionId: number = 0;
 
   constructor(private route: ActivatedRoute, private router: Router, private fb: FormBuilder) {
     this.submissionForm = this.fb.group({
@@ -73,20 +77,57 @@ export class SubmissionsComponent {
     ];
   }
 
-  onSubmit() {
+  async onSubmit() {
     if (this.submissionForm.invalid) {
       return;
     }
     console.log('Form:', this.submissionForm.value);
-
+  
     const submissionForm = new FormData();
     submissionForm.append('submission[name]', this.submissionForm.value.name);
     submissionForm.append('submission[description]', this.submissionForm.value.description);
     submissionForm.append('submission[contest_id]', this.paramsId.toString());
-    submissionForm.append('submission[files][]', this.submissionForm.value.stl);
-    submissionForm.append('submission[files][]', this.submissionForm.value.image);
+  
+    if (!this.submissionForm.value.image && this.imageUrl) {
+      const imageFile = await this.createFileFromUrl(this.imageUrl, "uploaded_image.jpg");
+      this.submissionForm.patchValue({ image: imageFile });
+    }
+  
+    if (!this.submissionForm.value.stl && this.stlUrl) {
+      const stlFile = await this.createFileFromUrl(this.stlUrl, "uploaded_stl.stl");
+      this.submissionForm.patchValue({ stl: stlFile });
+    }
+  
+    await new Promise(resolve => setTimeout(resolve, 0)); 
+    
+    if (this.submissionForm.value.stl) {
+      submissionForm.append('submission[files][]', this.submissionForm.value.stl);
+    }
 
-    this.submissionService.createSubmission(submissionForm).subscribe((data) => {
+    if (this.submissionForm.value.image) {
+      submissionForm.append('submission[files][]', this.submissionForm.value.image);
+    }
+  
+    const submissionObservable = this.isEdit
+      ? this.submissionService.updateSubmission(submissionForm, this.submissionId)
+      : this.submissionService.createSubmission(submissionForm);
+  
+    submissionObservable.subscribe(() => {
+      this.display = false;
+      this.submissionService.getSubmissions(this.paramsId).subscribe((data) => {
+        this.submissions = data;
+      });
+    });
+  }
+
+  onDelete(id: number) {
+    this.deleteDialogVisible = true;
+    this.submissionId = id;
+  }
+
+  confirmDelete() {
+    this.submissionService.deleteSubmission(this.submissionId).subscribe(() => {
+      this.deleteDialogVisible = false;
       this.display = false;
       this.submissionService.getSubmissions(this.paramsId).subscribe((data) => {
         this.submissions = data;
@@ -100,7 +141,6 @@ export class SubmissionsComponent {
     const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
     if (allowedTypes.includes(file.type)) {
       this.imageUrl = URL.createObjectURL(file);
-      console.log('Image URL:', this.imageUrl);
       this.noImagePreview = '';
       this.submissionForm.patchValue({ image: file });
     } else {
@@ -117,7 +157,6 @@ export class SubmissionsComponent {
       const reader = new FileReader();
       reader.onloadend = () => {
         this.uploadedFileBlob = reader.result;
-        console.log('File:', this.uploadedFileBlob);
       };
       reader.readAsArrayBuffer(file);
       this.noStlPreview = '';
@@ -133,21 +172,50 @@ export class SubmissionsComponent {
 
   imageValidator(control: AbstractControl): ValidationErrors | null {
     const image = control.value;
-    if (!image) {
+    if (!image && !this.isEdit) {
       return { imageError: 'Image is required' };
     }
+
     return null;
   }
 
   stlValidator(control: AbstractControl): ValidationErrors | null {
     const stl = control.value;
-    if (!stl) {
+
+    if (!stl && !this.isEdit) {
       return { stlError: 'STL file is required' };
     }
+
     return null;
   }
 
-  showDialog() {
+  async createFileFromUrl(url: string, filename: string): Promise<File> {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    console.log('Blob:', blob);
+    const fileType = blob.type || 'image/jpeg'; // Détermine le type MIME
+
+    return new File([blob], filename, { type: fileType });
+  }
+
+  showDialog(submission: SubmissionModel | null) {
+    this.isEdit = !!submission;
+
+    this.submissionId = submission?.id || 0;
+
+    this.submissionForm.patchValue({
+      name: submission?.name || '',
+      description: submission?.description || '',
+      image: null,
+      stl: null
+    });
+
+    this.stlUrl = submission?.stlUrl || '';
+    this.imageUrl = submission?.imageUrl || '';
+
+    this.noImagePreview = this.isEdit ? '' : 'image-preview-container';
+    this.noStlPreview = this.isEdit ? '' : 'image-preview-container';
+
     this.display = true;
   }
 }

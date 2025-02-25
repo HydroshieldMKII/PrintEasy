@@ -210,7 +210,7 @@ h2 {
     border-color: #e5e7eb;
 }
 
-:host ::ng-deep .p-button-label {
+:host ::ng-deep .p-button.p-button-info .p-button-label {
     font-size: 20px;
     margin-bottom: 4px;
 }
@@ -246,5 +246,14 @@ h2 {
 
     .allo {
         width: 100% !important;
+    }
+
+    :host ::ng-deep .p-button.p-button-info {
+        width: 230px;
+        height: 55px;
+    }
+
+    :host ::ng-deep .p-button.p-button-info .p-button-label {
+        font-size: 18px;
     }
 }

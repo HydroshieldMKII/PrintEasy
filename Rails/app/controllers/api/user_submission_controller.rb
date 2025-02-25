@@ -3,12 +3,10 @@ class Api::UserSubmissionController < ApplicationController
         @contest = Contest.find(submission_params[:contest_id])
 
         @submissions = @contest.submissions.includes(:likes, :user)
-      
+
         @users_with_submissions = @submissions.group_by(&:user).map do |user, user_submissions|
           {
-            id: user.id,
-            username: user.username,
-            profile_picture: user.profile_picture_url,
+            user: user.as_json,
             submissions: user_submissions.as_json(include: :likes, methods: [:image_url, :stl_url])
           }
         end

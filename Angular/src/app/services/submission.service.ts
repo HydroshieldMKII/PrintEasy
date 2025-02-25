@@ -56,6 +56,50 @@ export class SubmissionService {
     );
   }
 
+  updateSubmission(submission: FormData, id: number): Observable<ApiResponseModel> {
+    return this.api.putRequest(`api/submission/${id}`, {}, submission).pipe(
+      map(response => {
+        if (response.status === 200) {
+          this.messageService.add({
+            severity: 'success', summary: 'Succès',
+            detail: 'Soumission modifiée avec succès'
+          });
+        }
+        else {
+          console.log('error:', response.errors);
+          this.messageService.add({
+            severity: 'error', summary: 'Erreur',
+            detail: 'Erreur lors de la modification de la soumission'
+          });
+        }
+        return response;
+      }
+      )
+    );
+  }
+
+  deleteSubmission(id: number): Observable<ApiResponseModel> {
+    return this.api.deleteRequest(`api/submission/${id}`).pipe(
+      map(response => {
+        if (response.status === 200) {
+          this.messageService.add({
+            severity: 'success', summary: 'Succès',
+            detail: 'Soumission supprimée avec succès'
+          });
+        }
+        else {
+          console.log('error:', response.errors);
+          this.messageService.add({
+            severity: 'error', summary: 'Erreur',
+            detail: 'Erreur lors de la suppression de la soumission'
+          });
+        }
+        return response;
+      }
+      )
+    );
+  }
+
   getProductsData() {
     return [
       {

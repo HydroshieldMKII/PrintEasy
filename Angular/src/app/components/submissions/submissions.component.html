@@ -32,7 +32,7 @@
     <div *ngFor="let submission of submissions">
         <div class="mt-4">
             <h2>
-                {{ submission.username }}
+                {{ submission.user.username }}
             </h2>
         </div>
         <div>
@@ -67,6 +67,12 @@
 
                                 <!-- Bouton Download -->
                                 <p-button icon="pi pi-download" severity="primary" />
+
+                                @if (authService.currentUser?.id === submission.user.id) {
+                                <p-button (click)="showDialog(product)" type="button" icon="pi pi-pencil"
+                                    severity="primary"></p-button>
+                                <p-button (click)="onDelete(product.id)" type="button" icon="pi pi-trash" severity="danger"></p-button>
+                                }
                             </div>
                         </div>
                     </div>
@@ -74,11 +80,11 @@
             </p-carousel>
         </div>
     </div>
-    <p-button (click)="showDialog()" severity="info" label="I want to participate"
+    <p-button (click)="showDialog(null)" severity="info" label="I want to participate"
         class="button-participate"></p-button>
 
-    <p-dialog header="Participate in the contest" [(visible)]="display" [modal]="true" [style]="{'max-width': '1000px' }"
-        class="responsive-dialog">
+    <p-dialog header="Participate in the contest" [(visible)]="display" [modal]="true"
+        [style]="{'max-width': '1000px' }" class="responsive-dialog">
         <form [formGroup]="submissionForm">
             <div class="container-popup">
                 <div class="container-column w-full">
@@ -96,14 +102,18 @@
                     <div class="container-row">
                         <div>
                             <div [class]="noStlPreview">
-                                <div *ngIf="uploadedFileBlob" class="stl-preview">
-                                    <stl-model-viewer [stlModelFiles]="[uploadedFileBlob]" class="stl-preview-file"></stl-model-viewer>
+                                <div *ngIf="uploadedFileBlob || stlUrl" class="stl-preview">
+                                    <stl-model-viewer *ngIf="isEdit" [stlModels]="[stlUrl]"
+                                        class="stl-preview-file"></stl-model-viewer>
+                                    <stl-model-viewer *ngIf="!isEdit" [stlModelFiles]="[uploadedFileBlob]"
+                                        class="stl-preview-file"></stl-model-viewer>
                                 </div>
                             </div>
                             <div class="mt-25">
                                 <div class="fileUploadContainer center">
                                     <p-fileUpload mode="basic" name="image" accept=".stl" [maxFileSize]="1000000"
-                                        chooseLabel="Upload STL" (onSelect)="onUploadStl($event)" (onError)="onFileUploadError($event)"></p-fileUpload>
+                                        chooseLabel="Upload STL" (onSelect)="onUploadStl($event)"
+                                        (onError)="onFileUploadError($event)"></p-fileUpload>
                                 </div>
                             </div>
                         </div>
@@ -117,16 +127,17 @@
                             <div class="mt-25">
                                 <div class="fileUploadContainer center">
                                     <p-fileUpload mode="basic" name="image" accept="image/*" [maxFileSize]="1000000"
-                                        chooseLabel="Upload image" (onSelect)="onSelectImage($event)" (onError)="onFileUploadError($event)"></p-fileUpload>
+                                        chooseLabel="Upload image" (onSelect)="onSelectImage($event)"
+                                        (onError)="onFileUploadError($event)"></p-fileUpload>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="button-container">
-                        <p-button label="Cancel" type="button" icon="pi pi-times"
-                            severity="secondary"></p-button>
-                        <p-button size="large" label="Save" (onClick)="onSubmit()" [disabled]="!submissionForm.valid" icon="pi pi-save" severity="success"></p-button>
+                        <p-button label="Cancel" type="button" icon="pi pi-times" severity="secondary"></p-button>
+                        <p-button size="large" label="Save" (onClick)="onSubmit()" [disabled]="!submissionForm.valid"
+                            icon="pi pi-save" severity="success"></p-button>
                     </div>
                 </div>
 
@@ -134,3 +145,21 @@
         </form>
     </p-dialog>
 </div>
+
+<p-dialog [(visible)]="deleteDialogVisible" [modal]="true" [style]="{ width: '25rem' }" dismissableMask="true"
+    closable="false" blockScroll="true" resizable="false" draggable="false">
+    <ng-template #header>
+        <div class="inline-flex items-center justify-center gap-2">
+            <i class="pi pi-exclamation-triangle text-red-500 text-2xl"></i>
+            <span class="font-bold">Confirm Delete</span>
+        </div>
+    </ng-template>
+    <span class="text-surface-500 dark:text-surface-400 block mb-4">
+        Are you sure you want to delete the contest?
+        This action cannot be undone.
+    </span>
+    <ng-template #footer>
+        <p-button label="Cancel" [text]="true" severity="secondary" (click)="deleteDialogVisible = false" />
+        <p-button label="Delete" severity="danger" (click)="confirmDelete()" />
+    </ng-template>
+</p-dialog>

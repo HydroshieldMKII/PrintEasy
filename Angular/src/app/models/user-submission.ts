@@ -1,20 +1,26 @@
 import { SubmissionModel } from './submission.model';
+import { UserModel } from './user.model';
 
 export class UserSubmission {
-    id: number;
-    username: string;
+    user: UserModel;
     submissions: SubmissionModel[];
 
-    constructor(id: number, username: string, submissions: SubmissionModel[]) {
-        this.id = id;
-        this.username = username;
+    constructor(user: UserModel, submissions: SubmissionModel[]) {
+        this.user = user;
         this.submissions = submissions;
     }
 
     static fromApi(data: any): UserSubmission {
+        console.log('UserSubmission:', data);
         return new UserSubmission(
-            data?.['id'],
-            data?.['username'],
+            new UserModel(
+                data?.['user']?.['id'],
+                data?.['user']?.['username'],
+                data?.['user']?.['country'],
+                data?.['user']?.['profile_picture_url'],
+                new Date(data?.['user']?.['created_at']),
+                data?.['user']?.['isAdmin']
+            ),
             data?.['submissions']?.map((submission: any) => SubmissionModel.fromApi(submission))
         );
     }
