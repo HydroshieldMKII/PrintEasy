@@ -15,10 +15,11 @@ import { RequestModel } from '../../models/request.model';
 import { MessageService } from 'primeng/api';
 import { AuthService } from '../../services/authentication.service';
 import { PresetModel } from '../../models/preset.model';
+import { OfferModalComponent } from '../offer-modal/offer-modal.component';
 
 @Component({
   selector: 'app-request-form',
-  imports: [ImportsModule, DropdownModule, StlModelViewerModule],
+  imports: [ImportsModule, DropdownModule, StlModelViewerModule, OfferModalComponent],
   templateUrl: './request-form.component.html',
   styleUrl: './request-form.component.css'
 })
@@ -31,15 +32,10 @@ export class RequestFormComponent implements OnInit {
   uploadedFile: any = null;
   uploadedFileBlob: any = null;
   deleteDialogVisible: boolean = false;
+  offerModalVisible: boolean = false;
   requestToDelete: RequestModel | null = null;
   presetToDelete: any[] = [];
   todayDate = new Date().toISOString().substring(0, 10);
-
-  //offer form
-  offerDialogVisible: boolean = false;
-  printName: string = 'A cool print';
-
-  offerForm: FormGroup;
 
   request: any = {
     name: '',
@@ -70,16 +66,6 @@ export class RequestFormComponent implements OnInit {
     private authService: AuthService
   ) {
     this.dateValidator = this.dateValidator.bind(this);
-
-    this.offerForm = this.fb.group({
-      preset: [null],
-      type: [null, Validators.required],
-      color: [null, Validators.required],
-      filament: [null, Validators.required],
-      printer: [null, Validators.required],
-      targetDate: [null, Validators.required],
-      price: [null, [Validators.required, Validators.min(0)]]
-    });
   }
 
   dateValidator(control: AbstractControl) {
@@ -262,7 +248,7 @@ export class RequestFormComponent implements OnInit {
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
-        detail: 'Invalid preset information. Please clear or complete your recommended preset.'
+        detail: 'Invalid or duplicated preset information. Please clear or complete your recommended presets.'
       });
       return;
     }
@@ -341,11 +327,6 @@ export class RequestFormComponent implements OnInit {
     this.router.navigate(['/requests']);
   }
 
-  makeAnOffer(): void {
-    console.log('Offer made:', this.request);
-    this.offerDialogVisible = true;
-  }
-
   addPreset(): void {
     this.request.presets.push({
       printerModel: { model: '' },
@@ -373,6 +354,10 @@ export class RequestFormComponent implements OnInit {
     this.deleteDialogVisible = false;
   }
 
+  makeAnOffer(): void {
+    this.offerModalVisible = true;
+  }
+
   isPresetValid(preset: any): boolean {
     const printerValid = !!this.printers.find((p: any) => p.label === preset.printerModel.model);
     const filamentValid = !!this.filamentTypes.find((f: any) => f.label === preset.filamentType.name);
@@ -388,26 +373,11 @@ export class RequestFormComponent implements OnInit {
     return printerValid && filamentValid && colorValid && preset.printQuality && !isDuplicate;
   }
 
-  openOfferModal(editMode = false, offerData: any = null) {
-    this.isEditMode = editMode;
-    this.offerDialogVisible = true;
-
-    if (editMode && offerData) {
-      this.offerForm.patchValue(offerData);
-    } else {
-      this.offerForm.reset();
-    }
+  showOfferModal(): void {
+    this.offerModalVisible = true;
   }
 
-  submitOffer() {
-    if (this.offerForm.valid) {
-      console.log('Offer Submitted:', this.offerForm.value);
-      this.offerDialogVisible = false;
-    }
-  }
-
-  deleteOffer() {
-    console.log('Offer Deleted');
-    this.offerDialogVisible = false;
+  hideOfferModal(): void {
+    this.offerModalVisible = false;
   }
 }

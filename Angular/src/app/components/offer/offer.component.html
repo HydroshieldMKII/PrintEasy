@@ -65,17 +65,18 @@
                     routerLink="/requests/view/{{ offer.request.id }}"
                     *ngIf="tab === 'mine'"
                   ></p-button>
-                  <p-button
-                  *ngIf="tab === 'mine'"
-                  icon="pi pi-trash"
-                  title="Delete all offers for this request"
-                  (onClick)="showDeleteDialog(offer)"
-                ></p-button>
                     <p-button
                     icon="pi pi-share-alt"
                     title="Share"
                     (click)="copyToClipboard('requests/view/' + offer.id)"
                   ></p-button>
+                  <p-button
+                  *ngIf="tab === 'mine'"
+                  icon="pi pi-trash"
+                  severity="danger"
+                  title="Delete all offers for this request"
+                  (onClick)="showDeleteDialog(offer)"
+                ></p-button>
                   </div>
                 </td>
               </tr>
@@ -115,8 +116,8 @@
                         <td>{{offer.color.name}}</td>
                         <td>{{ offer.filament.name }}</td>
                         <td>{{ offer.print_quality }}mm</td>
-                        <td>{{offer.target_date}}</td>
                         <td>{{offer.price | currency}}</td>
+                        <td>{{offer.target_date}}</td>
                         <td>
                           <div class="flex gap-2">
                             <button
