@@ -62,6 +62,7 @@ end
 PrinterUser.create!(user: user1, printer: Printer.first, acquired_date: Time.now)
 PrinterUser.create!(user: user1, printer: Printer.second, acquired_date: Time.now - 1.year)
 PrinterUser.create!(user: admin, printer: Printer.third, acquired_date: Time.now - 2.years)
+PrinterUser.create!(user: admin, printer: Printer.fourth, acquired_date: Time.now - 3.years)
 
 # Create Colors
 colors = ["Red", "Blue", "Green", "Yellow", "Black", "White", "Orange", "Purple", "Pink", "Brown", "Gray"]
@@ -354,19 +355,45 @@ colors = Color.all
 filaments = Filament.all
 printer_users = PrinterUser.all
 
-Request.all.each do |request|
-  rand(1..5).times do |i|
-    Offer.create!(
-      request: request,
-      printer_user: printer_users[i % printer_users.size],
-      color: colors[i % colors.size],
-      filament: filaments[i % filaments.size],
-      price: rand(20.0..100.0).round(2),
-      target_date: Time.now + rand(5..15).days,
-      print_quality: [0.08, 0.12, 0.16, 0.2][i % 4]
-    )
-  end
-end
+Offer.create!(
+  request: Request.where(user: user1).first,
+  printer_user: printer_users.third,
+  color: colors.first,
+  filament: filaments.first,
+  price: rand(20.0..100.0).round(2),
+  target_date: Time.now + rand(5..15).days,
+  print_quality: [0.08, 0.12, 0.16, 0.2].first
+)
+
+Offer.create!(
+  request: Request.where(user: user1).second,
+  printer_user: printer_users.fourth,
+  color: colors.second,
+  filament: filaments.second,
+  price: rand(20.0..100.0).round(2),
+  target_date: Time.now + rand(5..15).days,
+  print_quality: [0.08, 0.12, 0.16, 0.2].first
+)
+
+Offer.create!(
+  request: Request.where(user: admin).first,
+  printer_user: printer_users.first,
+  color: colors.first,
+  filament: filaments.first,
+  price: rand(20.0..100.0).round(2),
+  target_date: Time.now + rand(5..15).days,
+  print_quality: [0.08, 0.12, 0.16, 0.2].first
+)
+
+Offer.create!(
+  request: Request.where(user: admin).first,
+  printer_user: printer_users.second,
+  color: colors.first,
+  filament: filaments.first,
+  price: rand(20.0..100.0).round(2),
+  target_date: Time.now + rand(5..15).days,
+  print_quality: [0.08, 0.12, 0.16, 0.2].first
+)
 
 
 

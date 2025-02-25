@@ -16,7 +16,7 @@
         <!-- Directly iterate through the native API structure -->
         <div *ngFor="let request of currentRequests" class="mb-6">
           <div class="request-header p-2 bg-gray-100 rounded">
-            <a style="color: black;" [routerLink]="['/requests/view/', request.id]">
+            <a style="color: black;" [routerLink]="activeTab === 'all' ? ['/requests/edit/', request.id] : ['/requests/view/', request.id]">
               <h2 class="text-xl">
                 <span class="font-bold">{{ request.name }}</span> •
                 {{ request.budget | currency }} •
@@ -28,7 +28,7 @@
           <p-table [value]="request.offers" dataKey="id">
             <ng-template pTemplate="header">
               <tr>
-                <th>Username</th>
+                <th *ngIf="activeTab == 'all'">Username</th>
                 <th>Printer</th>
                 <th>Filament</th>
                 <th>Color</th>
@@ -39,7 +39,7 @@
             </ng-template>
             <ng-template pTemplate="body" let-offer>
               <tr>
-                <td>{{ offer.printer_user.user.username }}</td>
+                <td *ngIf="activeTab == 'all'">{{ offer.printer_user.user.username }}</td>
                 <td>{{ offer.printer_user.printer.model }}</td>
                 <td>{{ offer.filament.name }}</td>
                 <td>{{ offer.color.name }}</td>

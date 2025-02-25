@@ -46,7 +46,17 @@ class Api::OfferController < AuthenticatedController
         grouped = resource.group_by(&:request)
         requests = grouped.map do |request_obj, offers|
           request_obj.as_json(
-            except: %i[user_id created_at updated_at]
+            except: %i[user_id created_at updated_at],
+            include: {
+              user: {
+                only: %i[id username],
+                include: {
+                  country: {
+                    only: %i[id name]
+                  }
+                }
+              }
+            }
           ).merge(
             offers: offers.as_json(
               except: %i[request_id printer_user_id created_at updated_at color_id filament_id],
