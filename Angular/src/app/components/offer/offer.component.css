@@ -209,3 +209,7 @@ h3 {
 button {
     margin-right: 10px;
 }
+
+.fixed-table {
+    table-layout: fixed;
+}

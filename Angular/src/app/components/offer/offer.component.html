@@ -25,10 +25,32 @@
             </a>
           </div>
 
-            <p-table [value]="request.offers" dataKey="id">
+          <p-table [value]="request.offers" dataKey="id" styleClass="fixed-table">
+            <ng-container *ngIf="activeTab === 'all'; else mineColGroup">
+              <ng-template pTemplate="colgroup">
+                <col style="width: 14.28%;" />
+                <col style="width: 14.28%;" />
+                <col style="width: 14.28%;" />
+                <col style="width: 14.28%;" />
+                <col style="width: 14.28%;" />
+                <col style="width: 14.28%;" />
+                <col style="width: 14.28%;" />
+              </ng-template>
+            </ng-container>
+            <ng-template #mineColGroup>
+              <ng-template pTemplate="colgroup">
+                <col style="width: 16.66%;" />
+                <col style="width: 16.66%;" />
+                <col style="width: 16.66%;" />
+                <col style="width: 16.66%;" />
+                <col style="width: 16.66%;" />
+                <col style="width: 16.66%;" />
+              </ng-template>
+            </ng-template>
+          
             <ng-template pTemplate="header">
               <tr>
-                <th *ngIf="activeTab == 'all'">Username</th>
+                <th *ngIf="activeTab === 'all'">Username</th>
                 <th>Printer</th>
                 <th>Filament</th>
                 <th>Color</th>
@@ -37,23 +59,31 @@
                 <th>Actions</th>
               </tr>
             </ng-template>
+          
             <ng-template pTemplate="body" let-offer>
               <tr>
-                <td *ngIf="activeTab == 'all'">{{ offer.printer_user.user.username }}</td>
+                <td *ngIf="activeTab === 'all'">{{ offer.printer_user.user.username }}</td>
                 <td>{{ offer.printer_user.printer.model }}</td>
                 <td>{{ offer.color.name }}</td>
                 <td>{{ offer.filament.name }}</td>
                 <td>{{ offer.price | currency }}</td>
                 <td>{{ offer.target_date | date:'mediumDate' }}</td>
                 <td>
-                  <button pButton type="button" icon="pi pi-pencil" title="Edit this offer" (click)="editOffer(offer)" *ngIf="activeTab === 'mine'"></button>
-                  <button pButton type="button" icon="pi pi-times" title="Cancel this offer" severity="danger" (click)="cancelOffer(offer, request)" *ngIf="activeTab === 'mine'"></button>
-                  <button pButton type="button" icon="pi pi-check" title="Accept this offer" severity="success" (click)="acceptOffer(offer)" *ngIf="activeTab === 'all'"></button>
-                  <button pButton type="button" icon="pi pi-times" title="Refuse this offer" severity="danger" (click)="refuseOffer(offer)" *ngIf="activeTab === 'all'"></button>
+                  <button pButton type="button" icon="pi pi-pencil" title="Edit this offer" 
+                          (click)="editOffer(offer)" *ngIf="activeTab === 'mine'"></button>
+                  <button pButton type="button" icon="pi pi-times" title="Cancel this offer" severity="danger" 
+                          (click)="cancelOffer(offer, request)" *ngIf="activeTab === 'mine'"></button>
+                  <button pButton type="button" icon="pi pi-check" title="Accept this offer" severity="success" 
+                          (click)="acceptOffer(offer)" *ngIf="activeTab === 'all'"></button>
+                  <button pButton type="button" icon="pi pi-times" title="Refuse this offer" severity="danger" 
+                          (click)="refuseOffer(offer)" *ngIf="activeTab === 'all'"></button>
                 </td>
               </tr>
             </ng-template>
           </p-table>
+          
+          
+          
         </div>
 
         <div *ngIf="activeTab == 'all' && !isOwningPrinter" class="empty-message" style="width: 100%; height: 100%;">
