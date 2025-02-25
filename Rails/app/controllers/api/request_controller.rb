@@ -33,13 +33,11 @@ class Api::RequestController < AuthenticatedController
   def update
     @request = Request.includes(:user, preset_requests: %i[color filament printer]).find(params[:id])
     
-    # Authorization check remains in the controller.
     if @request.user != current_user
       render json: { request: {}, errors: { request: ['You are not allowed to update this request'] } }, status: :forbidden
       return
     end
 
-    # Remove nested preset attributes if offers have already been made.
     update_params.delete(:preset_requests_attributes) if @request.has_offer_made?
 
     if @request.update(update_params)
@@ -130,16 +128,17 @@ class Api::RequestController < AuthenticatedController
   end
 
   def sort_requests(requests)
-    return requests unless params[:sortCategory].present? && params[:sort].present?
-
-    sort_column = {
-      'name' => 'requests.name',
-      'date' => 'target_date',
-      'budget' => 'budget',
-      'country' => 'users.country_id'
-    }.fetch(params[:sortCategory], 'created_at')
-    sort_direction = params[:sort] == 'asc' ? 'ASC' : 'DESC'
-    requests.order("#{sort_column} #{sort_direction}")
+    if params[:sortCategory].present? && params[:sort].present?
+      sort_column = {
+        'name' => 'requests.name',
+        'date' => 'target_date',
+        'budget' => 'budget',
+        'country' => 'users.country_id'
+      }.fetch(params[:sortCategory], 'created_at')
+      sort_direction = params[:sort] == 'asc' ? 'ASC' : 'DESC'
+      return requests.order("#{sort_column} #{sort_direction}")
+    end
+    requests.order("target_date ASC")
   end
 
   def index_params

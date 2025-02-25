@@ -18,11 +18,93 @@ import { PrinterUserModel } from '../models/printer-user.model';
 @Injectable({
     providedIn: 'root'
 })
-export class RequestService {
+export class OfferService {
     messageService: MessageService = inject(MessageService);
-    requests: RequestModel[] = [];
+    offers: OfferModel[] = [];
 
     constructor(private api: ApiRequestService) { }
+
+    getOffers(): Observable<OfferModel[]> {
+        return this.api.getRequest('api/offer', { type: 'all' }).pipe(
+            map((response: ApiResponseModel) => {
+                if (response.status === 200) {
+                    return (response.data as any)?.['offer'].map((offer: any) => {
+                        return new OfferModel(
+                            offer?.['id'],
+                            offer?.['request'],
+                            new PrinterUserModel(
+                                offer?.['printer_user']?.['id'],
+                                new UserModel(
+                                    offer?.['printer_user']?.['user']?.['id'],
+                                    offer?.['printer_user']?.['user']?.['username'],
+                                    offer?.['printer_user']?.['user']?.['country']?.['name']
+                                ),
+                                new PrinterModel(
+                                    offer?.['printer_user']?.['printer']?.['id'],
+                                    offer?.['printer_user']?.['printer']?.['model']
+                                ),
+                                new Date(offer?.['printer_user']?.['acquired_date'])
+                            ),
+                            new FilamentModel(
+                                offer?.['filament']?.['id'],
+                                offer?.['filament']?.['name']
+                            ),
+                            new ColorModel(
+                                offer?.['color']?.['id'],
+                                offer?.['color']?.['name']
+                            ),
+                            offer?.['price'],
+                            offer?.['print_quality'],
+                            offer?.['target_date']
+                        );
+                    });
+                }
+                return [];
+            })
+        );
+    }
+
+    getMyOffers(): Observable<OfferModel[]> {
+        return this.api.getRequest('api/offer', { type: 'mine' }).pipe(
+            map((response: ApiResponseModel) => {
+                if (response.status === 200) {
+                    console.log("Offer: ", response.data);
+                    return (response.data as any)?.['offer'].map((offer: any) => {
+                        return new OfferModel(
+                            offer?.['id'],
+                            offer?.['request'],
+                            new PrinterUserModel(
+                                offer?.['printer_user']?.['id'],
+                                new UserModel(
+                                    offer?.['printer_user']?.['user']?.['id'],
+                                    offer?.['printer_user']?.['user']?.['username'],
+                                    offer?.['printer_user']?.['user']?.['country']?.['name']
+                                ),
+                                new PrinterModel(
+                                    offer?.['printer_user']?.['printer']?.['id'],
+                                    offer?.['printer_user']?.['printer']?.['model']
+                                ),
+                                new Date(offer?.['printer_user']?.['acquired_date'])
+                            ),
+                            new FilamentModel(
+                                offer?.['filament']?.['id'],
+                                offer?.['filament']?.['name']
+                            ),
+                            new ColorModel(
+                                offer?.['color']?.['id'],
+                                offer?.['color']?.['name']
+                            ),
+                            offer?.['price'],
+                            offer?.['print_quality'],
+                            offer?.['target_date']
+                        );
+                    });
+
+                }
+                return [];
+            })
+        );
+    }
 
     getOfferById(id: number): Observable<OfferModel | null> {
         console.log("fetching info for offer ID: ", id);
@@ -69,50 +151,9 @@ export class RequestService {
         );
     }
 
-    fetchRequests(params: any): Observable<[RequestModel[], boolean]> {
-        return this.api.getRequest('api/request', params).pipe(
-            map((response: ApiResponseModel) => {
-                if (response.status === 200) {
-                    console.log("Requests response: ", response.data);
-                    this.requests = (response.data as any)?.['request'].map((request: any) => {
-                        const user = new UserModel(
-                            request?.['user']?.['id'],
-                            request?.['user']?.['username'],
-                            request?.['user']?.['country']?.['name']
-                        );
-
-                        const presets = (request?.['preset_requests'] as any[]).map((preset: any) => {
-                            return new PresetModel(
-                                preset?.['id'],
-                                preset?.['print_quality'],
-                                preset?.['color']?.['name'],
-                                preset?.['filament']?.['name'],
-                                preset?.['printer']?.['model']
-                            );
-                        });
-
-                        return new RequestModel(
-                            request?.['id'],
-                            request?.['name'],
-                            request?.['budget'],
-                            new Date(request?.['target_date']),
-                            request?.['comment'],
-                            request?.['stl_file_url'],
-                            presets,
-                            user,
-                            request?.['has_offer_made?'],
-                            request?.['has_offer_accepted?']
-                        );
-                    });
-                }
-                return [this.requests, response.data?.['has_printer']];
-            })
-        );
-    }
-
-    createRequest(request: FormData): Observable<ApiResponseModel> {
-        console.log("Creating request: ", request);
-        return this.api.postRequest('api/request', {}, request).pipe(
+    createOffer(offer: FormData): Observable<ApiResponseModel> {
+        console.log("Creating request: ", offer);
+        return this.api.postRequest('api/request', {}, offer).pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 201) {
                     this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Request created successfully' });
@@ -128,7 +169,7 @@ export class RequestService {
         );
     }
 
-    deleteRequest(id: number): Observable<ApiResponseModel> {
+    deleteOffer(id: number): Observable<ApiResponseModel> {
         return this.api.deleteRequest(`api/request/${id}`).pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
@@ -141,7 +182,7 @@ export class RequestService {
         );
     }
 
-    updateRequest(id: number, request: FormData): Observable<ApiResponseModel> {
+    updateOffer(id: number, request: FormData): Observable<ApiResponseModel> {
         return this.api.putRequest(`api/request/${id}`, {}, request).pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {

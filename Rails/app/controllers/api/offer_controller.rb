@@ -1,7 +1,7 @@
 class Api::OfferController < AuthenticatedController
     def index
         offers = Offer.all
-        render_offers(offers)
+        render_offers(filter_offers(offers))
     end
     def create
         offer = Offer.new(offer_params)
@@ -26,7 +26,7 @@ class Api::OfferController < AuthenticatedController
 
     def render_offers(resource, status: :ok)
         render json: {
-            offers: resource.as_json(
+            offer: resource.as_json(
                 except: %i[request_id printer_user_id created_at updated_at color_id filament_id],
                 include: {
                     color: {},
@@ -44,13 +44,25 @@ class Api::OfferController < AuthenticatedController
                         }
                     },
                     request: {
-                        only: %i[id name]
+                        except: %i[user_id created_at updated_at],
                     }
                 }
             ),
             errors: resource.respond_to?(:errors) ? resource.errors : {}
         }, status: status
     end
+
+    def filter_offers(offers)
+        case params[:type]
+        when 'all'
+          offers.left_joins(:order).where(orders: { id: nil })
+        when 'mine'
+          offers.joins(:printer_user).where(printer_users: { user_id: current_user.id })
+        else
+          []
+        end
+      end
+      
 
     def offer_params
         params.require(:offer).permit(:request_id, :printer_user_id, :color_id, :filament_id, :price, :status)
