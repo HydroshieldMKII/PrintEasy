@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { ImportsModule } from '../../../imports';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, ValidationErrors, AbstractControl } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
@@ -60,7 +60,7 @@ export class OrderComponent {
   CancelledStatus: OrderStatusModel[] = [];
   canCancel: boolean = false;
   canArrive: boolean = false;
-  consumer : boolean = false;
+  consumer: boolean = false;
   formVisible: boolean = false;
   isEdit: boolean = false;
   orderStatusForm: FormGroup;
@@ -77,7 +77,7 @@ export class OrderComponent {
     });
   }
 
-  refreshOrder() : void {
+  refreshOrder(): void {
     this.AcceptedStatus = [];
     this.PrintingStatus = [];
     this.PrintedStatus = [];
@@ -110,7 +110,7 @@ export class OrderComponent {
           }
         }
       }
-      
+
     });
   }
 
@@ -121,13 +121,13 @@ export class OrderComponent {
     console.log('Image:', file);
   }
 
-  Cancel() : void {
+  Cancel(): void {
     const cancelStatusData = new FormData();
 
     cancelStatusData.append('order_status[status_name]', 'Cancelled');
     cancelStatusData.append('order_status[order_id]', this.order?.id.toString() || '');
 
-    this.orderStatusService.createOrderStatus(cancelStatusData).subscribe((response : ApiResponseModel) => {
+    this.orderStatusService.createOrderStatus(cancelStatusData).subscribe((response: ApiResponseModel) => {
       console.log('Order status created:', response);
       if (response.status == 201) {
         this.refreshOrder();
@@ -135,13 +135,13 @@ export class OrderComponent {
     });
   }
 
-  Arrive() : void {
+  Arrive(): void {
     const arriveStatusData = new FormData();
 
     arriveStatusData.append('order_status[status_name]', 'Arrived');
     arriveStatusData.append('order_status[order_id]', this.order?.id.toString() || '');
 
-    this.orderStatusService.createOrderStatus(arriveStatusData).subscribe((response : ApiResponseModel) => {
+    this.orderStatusService.createOrderStatus(arriveStatusData).subscribe((response: ApiResponseModel) => {
       console.log('Order status created:', response.data.order_status);
       if (response.status == 201) {
         this.refreshOrder();
@@ -149,12 +149,12 @@ export class OrderComponent {
     });
   }
 
-  ShowOrderStatusForm() : void {
+  ShowOrderStatusForm(): void {
     this.formVisible = true;
   }
 
-  onSubmit() : void {
-    if (this.orderStatusForm.valid){
+  onSubmit(): void {
+    if (this.orderStatusForm.valid) {
       console.log('Order status data:', this.orderStatusForm.value);
 
       const orderStatusData = new FormData();
@@ -167,7 +167,7 @@ export class OrderComponent {
         orderStatusData.append('order_status[image]', this.orderStatusForm.value.image);
       }
       if (this.isEdit) {
-        this.orderStatusService.updateOrderStatus(this.currentlySelectedOrderStatusId, orderStatusData).subscribe((response : ApiResponseModel) => {
+        this.orderStatusService.updateOrderStatus(this.currentlySelectedOrderStatusId, orderStatusData).subscribe((response: ApiResponseModel) => {
           console.log('Order status updated:', response);
           if (response.status == 200) {
             this.refreshOrder();
@@ -176,8 +176,8 @@ export class OrderComponent {
             this.isEdit = false;
           }
         });
-      }else{
-        this.orderStatusService.createOrderStatus(orderStatusData).subscribe((response : ApiResponseModel) => {
+      } else {
+        this.orderStatusService.createOrderStatus(orderStatusData).subscribe((response: ApiResponseModel) => {
           console.log('Order status created:', response);
           if (response.status == 201) {
             this.refreshOrder();
@@ -189,7 +189,7 @@ export class OrderComponent {
     }
   }
 
-  sortStatus(status : OrderStatusModel) : void {
+  sortStatus(status: OrderStatusModel): void {
     switch (status.status_name) {
       case 'Accepted':
         this.AcceptedStatus.push(status);
@@ -213,13 +213,13 @@ export class OrderComponent {
 
   }
 
-  clearForm() : void {
+  clearForm(): void {
     this.orderStatusForm.reset();
     this.image_url = '';
   }
 
-  setForm() : void {
-    this.orderStatusService.getOrderStatus(this.currentlySelectedOrderStatusId).subscribe((response : ApiResponseModel) => {
+  setForm(): void {
+    this.orderStatusService.getOrderStatus(this.currentlySelectedOrderStatusId).subscribe((response: ApiResponseModel) => {
       console.log('Order status:', response);
       if (response.status != 200) {
         return;
@@ -233,8 +233,8 @@ export class OrderComponent {
     });
   }
 
-  DeleteOrderStatus() : void {
-    this.orderStatusService.deleteOrderStatus(this.currentlySelectedOrderStatusId).subscribe((response : ApiResponseModel) => {
+  DeleteOrderStatus(): void {
+    this.orderStatusService.deleteOrderStatus(this.currentlySelectedOrderStatusId).subscribe((response: ApiResponseModel) => {
       console.log('Order status deleted:', response);
       if (response.status != 200) {
         return;
@@ -243,7 +243,7 @@ export class OrderComponent {
     });
   }
 
-  setSelectedOrderStatus(orderStatusId : number) : void {
+  setSelectedOrderStatus(orderStatusId: number): void {
     this.currentlySelectedOrderStatusId = orderStatusId;
   }
 

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { OfferService } from '../../services/offer.service';
 import { MessageService } from 'primeng/api';
 import { Clipboard } from '@angular/cdk/clipboard';
@@ -8,7 +8,7 @@ import { ImportsModule } from '../../../imports';
 
 @Component({
   selector: 'app-offer',
-  imports: [ImportsModule, OfferModalComponent],
+  imports: [ImportsModule, OfferModalComponent, RouterLink],
   templateUrl: './offer.component.html',
   styleUrls: ['./offer.component.css']
 })
@@ -43,6 +43,7 @@ export class OffersComponent {
       });
     } else if (this.activeTab === 'mine') {
       this.offerService.getMyOffers().subscribe((requests: any[]) => {
+        console.log("requests:", requests);
         this.myOffers = requests;
       });
     }

@@ -16,11 +16,13 @@
         <!-- Directly iterate through the native API structure -->
         <div *ngFor="let request of currentRequests" class="mb-6">
           <div class="request-header p-2 bg-gray-100 rounded">
-            <h2 class="text-xl">
-              <span class="font-bold">{{ request.name }}</span> •
-              {{ request.budget | currency }} •
-              {{ request.target_date | date:'mediumDate' }}
-            </h2>
+            <a style="color: black;" [routerLink]="['/requests/view/', request.id]">
+              <h2 class="text-xl">
+                <span class="font-bold">{{ request.name }}</span> •
+                {{ request.budget | currency }} •
+                {{ request.targetDate | date:'mediumDate' }}
+              </h2>
+            </a>
           </div>
 
           <p-table [value]="request.offers" dataKey="id">

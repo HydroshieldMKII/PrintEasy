@@ -61,7 +61,9 @@ class Api::OfferController < AuthenticatedController
                             only: %i[id model]
                         }
                     }
-                }
+                },
+                color: {},
+                filament: {}
               }
             )
           )
