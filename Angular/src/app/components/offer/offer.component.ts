@@ -93,10 +93,10 @@ export class OffersComponent {
 
   confirmDelete(): void {
     if (this.offerToDelete !== null) {
-      this.offerService.deleteOffer(this.offerToDelete.id).subscribe(() => {
-        this.offers = (this.offers || []).filter(r => r.id !== this.offerToDelete?.id);
-        this.myOffers = (this.myOffers || []).filter(r => r.id !== this.offerToDelete?.id);
-      });
+      // this.offerService.deleteOffer(this.offerToDelete.id).subscribe(() => {
+      //   this.offers = (this.offers || []).filter(r => r.id !== this.offerToDelete?.id);
+      //   this.myOffers = (this.myOffers || []).filter(r => r.id !== this.offerToDelete?.id);
+      // });
     }
     this.deleteDialogVisible = false;
   }

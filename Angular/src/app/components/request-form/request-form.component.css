@@ -145,3 +145,74 @@ textarea {
     background-color: #f8d7da;
     border-left: 4px solid #f44336;
 }
+
+.custom-dialog .p-dialog-content {
+    padding: 1.5rem !important;
+}
+
+.custom-dialog h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.offer-form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 10px;
+}
+
+.p-button-sm {
+    padding: 0.5rem 1rem !important;
+}
+
+.offer-input {
+    margin-left: 10px;
+    width: auto;
+}
+
+h2 {
+    margin: 0;
+}
+
+.form-row {
+    display: flex;
+    gap: 1rem;
+    /* Space between elements */
+    align-items: center;
+}
+
+.form-group {
+    flex: 1;
+    /* Make both fields take equal width */
+    display: flex;
+    flex-direction: column;
+}
+
+.full-width {
+    width: 100%;
+    /* Ensures both elements stretch properly */
+}
+
+@media (max-width: 768px) {
+    p-calendar {
+        width: 100%;
+    }
+
+    .form-row {
+        flex-direction: column;
+    }
+
+    /* make filed take 100 width */
+    .form-group {
+        width: 100%;
+    }
+
+    .form-row .form-group {
+        margin-bottom: 0rem;
+    }
+
+    .form-row .form-group:last-child {
+        margin: 0;
+    }
+}

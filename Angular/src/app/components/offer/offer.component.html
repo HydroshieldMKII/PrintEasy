@@ -65,6 +65,12 @@
                     routerLink="/requests/view/{{ offer.request.id }}"
                     *ngIf="tab === 'mine'"
                   ></p-button>
+                  <p-button
+                  *ngIf="tab === 'mine'"
+                  icon="pi pi-trash"
+                  title="Delete all offers for this request"
+                  (onClick)="showDeleteDialog(offer)"
+                ></p-button>
                     <p-button
                     icon="pi pi-share-alt"
                     title="Share"
@@ -117,12 +123,14 @@
                             pButton
                             type="button"
                             icon="pi pi-pencil"
+                            title="Edit this offer"
                             (click)="editOffer(offer)"
                           ></button>
                           <button
                             pButton
                             type="button"
                             icon="pi pi-times"
+                            title="Cancel this offer"
                             (click)="cancelOffer(offer)"
                           ></button>
                           </div>

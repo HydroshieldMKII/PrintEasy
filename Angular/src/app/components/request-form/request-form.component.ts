@@ -35,6 +35,12 @@ export class RequestFormComponent implements OnInit {
   presetToDelete: any[] = [];
   todayDate = new Date().toISOString().substring(0, 10);
 
+  //offer form
+  offerDialogVisible: boolean = false;
+  printName: string = 'A cool print';
+
+  offerForm: FormGroup;
+
   request: any = {
     name: '',
     budget: '',
@@ -64,6 +70,16 @@ export class RequestFormComponent implements OnInit {
     private authService: AuthService
   ) {
     this.dateValidator = this.dateValidator.bind(this);
+
+    this.offerForm = this.fb.group({
+      preset: [null],
+      type: [null, Validators.required],
+      color: [null, Validators.required],
+      filament: [null, Validators.required],
+      printer: [null, Validators.required],
+      targetDate: [null, Validators.required],
+      price: [null, [Validators.required, Validators.min(0)]]
+    });
   }
 
   dateValidator(control: AbstractControl) {
@@ -327,6 +343,7 @@ export class RequestFormComponent implements OnInit {
 
   makeAnOffer(): void {
     console.log('Offer made:', this.request);
+    this.offerDialogVisible = true;
   }
 
   addPreset(): void {
@@ -369,5 +386,28 @@ export class RequestFormComponent implements OnInit {
     ).length > 1;
 
     return printerValid && filamentValid && colorValid && preset.printQuality && !isDuplicate;
+  }
+
+  openOfferModal(editMode = false, offerData: any = null) {
+    this.isEditMode = editMode;
+    this.offerDialogVisible = true;
+
+    if (editMode && offerData) {
+      this.offerForm.patchValue(offerData);
+    } else {
+      this.offerForm.reset();
+    }
+  }
+
+  submitOffer() {
+    if (this.offerForm.valid) {
+      console.log('Offer Submitted:', this.offerForm.value);
+      this.offerDialogVisible = false;
+    }
+  }
+
+  deleteOffer() {
+    console.log('Offer Deleted');
+    this.offerDialogVisible = false;
   }
 }
