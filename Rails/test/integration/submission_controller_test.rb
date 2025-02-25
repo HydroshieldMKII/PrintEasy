@@ -328,7 +328,7 @@ class Api::SubmissionControllerTest < ActionDispatch::IntegrationTest
       @parsed_response = JSON.parse(response.body)
     end
 
-    assert_equal ["Submission not found"], @parsed_response["errors"]["submission"]
+    assert_equal ["Couldn't find Submission with 'id'=9"], @parsed_response["errors"]["base"]
   end
 
   test "should not update submission with invalid id" do
@@ -342,7 +342,7 @@ class Api::SubmissionControllerTest < ActionDispatch::IntegrationTest
       @parsed_response = JSON.parse(response.body)
     end
 
-    assert_equal ["Submission not found"], @parsed_response["errors"]["submission"]
+    assert_equal ["Couldn't find Submission with 'id'=9"], @parsed_response["errors"]["base"]
   end
 
   test "should not update submission with invalid user" do
@@ -470,7 +470,7 @@ class Api::SubmissionControllerTest < ActionDispatch::IntegrationTest
       @parsed_response = JSON.parse(response.body)
     end
 
-    assert_equal ["param is missing or the value is empty: submission"], @parsed_response["errors"]["base"]
+    assert_equal ["param is missing or the value is empty or invalid: submission"], @parsed_response["errors"]["base"]
   end
 
   test "should not show submission without id" do
@@ -484,7 +484,7 @@ class Api::SubmissionControllerTest < ActionDispatch::IntegrationTest
       @parsed_response = JSON.parse(response.body)
     end
 
-    assert_equal ["Submission not found"], @parsed_response["errors"]["submission"]
+    assert_equal ["Couldn't find Submission with 'id'=9"], @parsed_response["errors"]["base"]
   end
 
   test "should not update submission without id" do
@@ -498,7 +498,7 @@ class Api::SubmissionControllerTest < ActionDispatch::IntegrationTest
       @parsed_response = JSON.parse(response.body)
     end
 
-    assert_equal ["Submission not found"], @parsed_response["errors"]["submission"]
+    assert_equal ["Couldn't find Submission with 'id'=9"], @parsed_response["errors"]["base"]
   end
 
   test "should not destroy submission without id" do
@@ -512,6 +512,6 @@ class Api::SubmissionControllerTest < ActionDispatch::IntegrationTest
       @parsed_response = JSON.parse(response.body)
     end
 
-    assert_equal ["Submission not found"], @parsed_response["errors"]["submission"]
+    assert_equal ["Couldn't find Submission with 'id'=9"], @parsed_response["errors"]["base"]
   end
 end

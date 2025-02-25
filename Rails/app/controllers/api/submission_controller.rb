@@ -48,10 +48,7 @@ class Api::SubmissionController < AuthenticatedController
     private
     
     def find_submission
-      @submission = Submission.find_by(id: params[:id])
-      if @submission.nil?
-        render json: { errors: { submission: ["Submission not found"] } }, status: :not_found
-      end
+      @submission = Submission.find(params[:id])
     end
   
     def submission_user

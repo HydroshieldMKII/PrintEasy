@@ -25,8 +25,8 @@ class UserSubmissionControllerTest < ActionDispatch::IntegrationTest
     assert_equal @parsed_response["submissions"][0]["submissions"][0]["description"], @contest.submissions[0].description
     assert_equal @parsed_response["submissions"][0]["submissions"][0]["created_at"], @contest.submissions[0].created_at.iso8601(3)
     assert_equal @parsed_response["submissions"][0]["submissions"][0]["updated_at"], @contest.submissions[0].updated_at.iso8601(3)
-    assert_equal @parsed_response["submissions"][0]["submissions"][0]["stl_url"].split("/").last,  @contest.submissions[0].files.last.filename.to_s
-    assert_equal @parsed_response["submissions"][0]["submissions"][0]["image_url"].split("/").last,  @contest.submissions[0].files.first.filename.to_s
+    assert_equal @parsed_response["submissions"][0]["submissions"][0]["stl_url"].split("/").last,  @contest.submissions[0].stl.filename.to_s
+    assert_equal @parsed_response["submissions"][0]["submissions"][0]["image_url"].split("/").last,  @contest.submissions[0].image.filename.to_s
   end
 
   test "should show submission" do
@@ -37,7 +37,7 @@ class UserSubmissionControllerTest < ActionDispatch::IntegrationTest
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
-    
+
     assert_equal @parsed_response["submission"]["id"], @submission.id
     assert_equal @parsed_response["submission"]["user_id"], @submission.user_id
     assert_equal @parsed_response["submission"]["contest_id"], @submission.contest_id
@@ -45,8 +45,8 @@ class UserSubmissionControllerTest < ActionDispatch::IntegrationTest
     assert_equal @parsed_response["submission"]["description"], @submission.description
     assert_equal @parsed_response["submission"]["created_at"], @submission.created_at.iso8601(3)
     assert_equal @parsed_response["submission"]["updated_at"], @submission.updated_at.iso8601(3)
-    assert_equal @parsed_response["submission"]["stl_url"].split("/").last, @submission.files.last.filename.to_s
-    assert_equal @parsed_response["submission"]["image_url"].split("/").last, @submission.files.first.filename.to_s
+    assert_equal @parsed_response["submission"]["stl_url"].split("/").last, @submission.stl.filename.to_s
+    assert_equal @parsed_response["submission"]["image_url"].split("/").last, @submission.image.filename.to_s
   end
 
   test "should return 404 for non-existent submission" do
