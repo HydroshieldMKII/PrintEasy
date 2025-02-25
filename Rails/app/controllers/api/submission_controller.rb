@@ -60,12 +60,12 @@ class Api::SubmissionController < AuthenticatedController
       unless current_user.id == @submission.user_id
         render json: { errors: {
           user: ["You are not authorized to perform this action"]
-        } }, status: :unauthorized
+        } }, status: :forbidden
       end
     end
   
     def submission_params
-      params.require(:submission).permit(:id, :contest_id, :name, :description, :created_at, :updated_at, files: [])
+      params.require(:submission).permit(:id, :contest_id, :name, :description, :created_at, :updated_at, :stl, :image)
     end
   end
   

@@ -34,25 +34,25 @@ third_image_attachment:
   blob: first_image_blob
 
 fourth_stl_file_attachment:
-  name: files
+  name: stl
   record_id: 1
   record_type: Submission
   blob: first_stl_file_blob
 
 fifth_stl_file_attachment:
-  name: files
+  name: stl
   record_id: 2
   record_type: Submission
   blob: first_stl_file_blob
 
 fourth_image_attachment:
-  name: files
+  name: image
   record_id: 1
   record_type: Submission
   blob: first_image_blob
 
 fifth_image_attachment:
-  name: files
+  name: image
   record_id: 2
   record_type: Submission
   blob: first_image_blob
