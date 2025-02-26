@@ -17,7 +17,7 @@ class Api::OfferController < AuthenticatedController
     def create
       offer = Offer.new(offer_params)
       if offer.save
-        render json: offer
+        render json: offer, status: :created
       else
         render json: { errors: offer.errors }, status: :unprocessable_entity
       end
