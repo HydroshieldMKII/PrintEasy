@@ -4,13 +4,9 @@
         [buttonProps]="{ severity: 'success', rounded: true }" (onClick)="newContest()" />
     }
     
-    <h2>3D DESIGN CONTEST</h2>
-    <p>
-        We regularly organize popular 3D design contests for valuable prizes
-        at <a href="http://printeasy.prod.system.shawinigan.info/login">PrintEasy.com</a>. Take part in
-        the currently running contest, create and upload your model and win.
-    </p>
-
+    <h2>{{ 'contest.title_page' | translate }}</h2>
+    <p [innerHTML]="'contest.description_page' | translate"></p>
+       
     <div class="search-container">
         <input type="text" pInputText [(ngModel)]="searchTerm" placeholder="Search by theme" />
         <button pButton pRipple icon="pi pi-filter" class="p-button-text"></button>
@@ -25,19 +21,19 @@
                     <h3 class="contest-theme">{{ contest.theme }} {{ contest.finished ? '(Ended)' : '' }}</h3>
                     <p class="contest-description">{{ contest.description ? (contest.description.length > 30 ? (contest.description | slice:0:30) + '...' : contest.description) : '' }}</p>
                     <p *ngIf="contest.finished && contest.winnerUser">
-                        <i class="pi pi-trophy"></i><span> Winner:</span> {{ contest.winnerUser.username }}
+                        <i class="pi pi-trophy"></i><span> {{ 'contest.winner' | translate }}:</span> {{ contest.winnerUser.username }}
                     </p>
                     <p *ngIf="!contest.finished || !contest.winnerUser">
-                        <i class="pi pi-users"></i><span> Submission limit:</span> {{ contest.submissionLimit }}
+                        <i class="pi pi-users"></i><span> {{ 'contest.submission_limit' | translate }}:</span> {{ contest.submissionLimit }}
                     </p>
   
-                    <p><i class="pi pi-calendar"></i><span> Starts:</span> {{ contest.startAt | date:'MMM d, y h:mm a' }}</p>
-                    <p><i class="pi pi-calendar-times"></i><span> Ends:</span> {{ contest.endAt ? (contest.endAt | date:'MMM d, y h:mm a') : 'N/A' }}</p>
+                    <p><i class="pi pi-calendar"></i><span> {{ 'contest.starts' | translate }}:</span> {{ contest.startAt | date:'MMM d, y h:mm a' }}</p>
+                    <p><i class="pi pi-calendar-times"></i><span> {{ 'contest.ends' | translate }}:</span> {{ contest.endAt ? (contest.endAt | date:'MMM d, y h:mm a') : 'N/A' }}</p>
                 </div>
             </div>
 
 
-            <button [routerLink]="['/contest', contest.id, 'submissions']" [queryParams]="getQueryParams(contest)" pButton label="Contest detail" class="p-button-outlined contest-detail-button"></button>
+            <button [routerLink]="['/contest', contest.id, 'submissions']" pButton label="{{ 'contest.button_contest_detail' | translate }}" class="p-button-outlined contest-detail-button"></button>
             
             @if (authService.currentUser?.isAdmin) {
             <div class="admin-buttons">
@@ -63,20 +59,19 @@
   <ng-template #header>
     <div class="inline-flex items-center justify-center gap-2">
       <i class="pi pi-exclamation-triangle text-red-500 text-2xl"></i>
-      <span class="font-bold">Confirm Delete</span>
+      <span class="font-bold">{{ 'contest.confirm_delete' | translate }}</span>
     </div>
   </ng-template>
   <span class="text-surface-500 dark:text-surface-400 block mb-4">
-    Are you sure you want to delete the contest?
-    This action cannot be undone.
+    {{ 'contest.confirm_delete_message' | translate }}
   </span>
   <ng-template #footer>
     <p-button
-      label="Cancel"
+      label="{{ 'global.cancel_button' | translate }}"	
       [text]="true"
       severity="secondary"
       (click)="deleteDialogVisible = false"
     />
-    <p-button label="Delete" severity="danger" (click)="confirmDelete()" />
+    <p-button label="{{ 'global.delete_button' | translate }}" severity="danger" (click)="confirmDelete()" />
   </ng-template>
 </p-dialog>

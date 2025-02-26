@@ -177,7 +177,7 @@
 
     .container-row {
         flex-direction: column;
-        gap: 0;
+        gap: 12px;
     }
 
     .image-preview {

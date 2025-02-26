@@ -23,3 +23,11 @@ submission_three: {
   name: Submission three,
   description: Submission three
 }
+
+submission_four: {
+  id: 4,
+  user_id: 1,
+  contest_id: 4,
+  name: Submission four,
+  description: Submission four
+}

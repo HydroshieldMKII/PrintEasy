@@ -17,7 +17,7 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
         
         assert_response :success
 
-        assert_equal 3, @parsed_response["contests"].count
+        assert_equal 5, @parsed_response["contests"].count
         
         assert_equal contests(:contest_one).id, @parsed_response["contests"][0]["id"]
         assert_equal contests(:contest_one).theme, @parsed_response["contests"][0]["theme"]
@@ -124,7 +124,7 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
         end
 
         assert_response :not_found
-        assert_equal ["Contest not found"], @parsed_response["errors"]["contest"]
+        assert_equal ["Couldn't find Contest with 'id'=0 [WHERE `contests`.`deleted_at` IS NULL]"], @parsed_response["errors"]["base"]
     end
 
     test "should not update contest -> contest not found" do
@@ -137,7 +137,7 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
         end
 
         assert_response :not_found
-        assert_equal ["Contest not found"], @parsed_response["errors"]["contest"]
+        assert_equal ["Couldn't find Contest with 'id'=0 [WHERE `contests`.`deleted_at` IS NULL]"], @parsed_response["errors"]["base"]
     end
 
     test "should not destroy contest -> contest not found" do
@@ -150,7 +150,7 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
         end
 
         assert_response :not_found
-        assert_equal ["Contest not found"], @parsed_response["errors"]["contest"]
+        assert_equal ["Couldn't find Contest with 'id'=0 [WHERE `contests`.`deleted_at` IS NULL]"], @parsed_response["errors"]["base"]
     end
     
     test "should not create contest -> no contest" do
@@ -338,7 +338,7 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
         end
 
         assert_response :not_found
-        assert_equal ["Contest not found"], @parsed_response["errors"]["contest"]
+        assert_equal ["Couldn't find Contest with 'id'=1 [WHERE `contests`.`deleted_at` IS NULL]"], @parsed_response["errors"]["base"]
     end
 
     test "should not update contest -> contest deleted" do
@@ -355,7 +355,7 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
         end
 
         assert_response :not_found
-        assert_equal ["Contest not found"], @parsed_response["errors"]["contest"]
+        assert_equal ["Couldn't find Contest with 'id'=1 [WHERE `contests`.`deleted_at` IS NULL]"], @parsed_response["errors"]["base"]
     end
 
     test "should not destroy contest -> contest deleted" do
@@ -372,7 +372,7 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
         end
 
         assert_response :not_found
-        assert_equal ["Contest not found"], @parsed_response["errors"]["contest"]
+        assert_equal ["Couldn't find Contest with 'id'=1 [WHERE `contests`.`deleted_at` IS NULL]"], @parsed_response["errors"]["base"]
     end
 
     test "should not create contest -> no start_at" do
@@ -461,5 +461,36 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
         assert_response :unprocessable_entity
 
         assert_equal ["is closed"], @parsed_response["errors"]["contest"]
+    end
+
+    test "index should return all contests expect deleted for admin user" do
+        assert_difference('Contest.count', 0) do
+            get api_contest_index_url
+        end
+
+        assert_nothing_raised do
+            @parsed_response = JSON.parse(response.body)
+        end
+
+        assert_response :success
+
+        assert_equal 5, @parsed_response["contests"].count
+    end
+
+    test "index should not return all contests expect deleted for non-admin user" do
+        sign_out users(:two)
+        sign_in users(:one)
+
+        assert_difference('Contest.count', 0) do
+            get api_contest_index_url
+        end
+
+        assert_nothing_raised do
+            @parsed_response = JSON.parse(response.body)
+        end
+
+        assert_response :success
+
+        assert_equal 3, @parsed_response["contests"].count
     end
 end

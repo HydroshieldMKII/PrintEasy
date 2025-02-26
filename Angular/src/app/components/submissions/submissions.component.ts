@@ -55,15 +55,9 @@ export class SubmissionsComponent {
     });
 
     this.route.params.subscribe(params => {
-      console.log('Params:', params);
       this.paramsId = params['id'];
     });
-
-    this.route.queryParams.subscribe(params => {
-      this.finished = params['finished'] ? params['finished'] : false;
-      this.winner_username = params['winner'] ? params['winner'] : '';
-    });
-
+    
     this.contestService.getContest(this.paramsId).subscribe((data) => {
       this.contest = data;
       if (this.contest?.endAt && this.contest?.startAt) {
@@ -188,8 +182,7 @@ export class SubmissionsComponent {
 
   showDialog(submission: SubmissionModel | null) {
     const userSubmission = this.submissions.filter(submission => submission.mine);
-    
-    if ((this.contest && userSubmission[0].submissions.length < this.contest.submissionLimit) && !this.finished) {
+    if ((this.contest && userSubmission[0].submissions.length < this.contest.submissionLimit) && !this.contest.finished) {
       this.isEdit = !!submission;
 
       this.submissionId = submission?.id || 0;
@@ -210,7 +203,7 @@ export class SubmissionsComponent {
       this.display = true;
     }
     else {
-      if (this.finished) {
+      if (this.contest?.finished) {
         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Contest is finished' });
       }
       else {

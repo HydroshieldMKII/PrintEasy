@@ -1,4 +1,5 @@
 import { Component, inject } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ContestModel } from '../../models/contest.model';
 import { Router, RouterLink } from '@angular/router';
 import { ContestService } from '../../services/contest.service';
@@ -16,7 +17,7 @@ import { MessageService } from 'primeng/api';
 @Component({
   selector: 'app-contest',
   standalone: true,
-  imports: [CardModule, ButtonModule, InputTextModule, FormsModule, CommonModule, SpeedDialModule, DialogModule, RouterLink],
+  imports: [CardModule, ButtonModule, InputTextModule, FormsModule, CommonModule, SpeedDialModule, DialogModule, RouterLink, TranslatePipe],
   templateUrl: './contest.component.html',
   styleUrls: ['./contest.component.css']
 })
@@ -68,16 +69,5 @@ export class ContestComponent {
   deleteContest(id: number) {
     this.id = id;
     this.deleteDialogVisible = true;
-  }
-
-  getQueryParams(contest: ContestModel) {
-    let queryParams: any = {};
-
-    if (contest.finished && contest.winnerUser) {
-      queryParams.winner = contest.winnerUser?.username;
-      queryParams.finished = contest.finished;
-    }
-
-    return queryParams;
   }
 }

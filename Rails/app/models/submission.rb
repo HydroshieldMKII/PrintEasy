@@ -1,4 +1,6 @@
 class Submission < ApplicationRecord
+  before_destroy :contest_finished?, if: -> { contest&.finished? }
+
   belongs_to :user
   belongs_to :contest
 
@@ -15,8 +17,9 @@ class Submission < ApplicationRecord
  
   validate :stl_must_be_valid
   validate :image_must_be_valid
-  validate :submissions_limit, on: :create
-  validate :contest_finished?, on: [:create, :update]
+  validate :submissions_limit, on: :create, if: -> { contest.present? && user.present? }
+  validate :contest_finished?, on: [:create, :update], if: -> { contest&.finished? }
+  validate :contest_started?, on: :create, if: -> { contest.present? }
 
   def stl_url
     stl && url_for(stl)
@@ -28,12 +31,15 @@ class Submission < ApplicationRecord
 
   private
   def contest_finished?
-    errors.add(:contest, "is closed") if contest&.finished?
+    errors.add(:contest, "is closed")
+    throw :abort
   end
 
-  def submissions_limit
-    return if contest.nil? || user.nil?
-  
+  def contest_started?
+    errors.add(:contest, "has not started yet") unless contest&.started?
+  end
+
+  def submissions_limit  
     user_submissions_for_contest = user.submissions.where(contest: contest).count
   
     if user_submissions_for_contest >= contest.submission_limit

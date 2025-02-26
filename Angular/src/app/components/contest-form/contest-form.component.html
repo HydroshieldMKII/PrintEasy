@@ -1,7 +1,6 @@
 <div class="contest-container">
   <div class="card">
     <h1> Créer un concours </h1>
-
     <form [formGroup]="contestForm" (ngSubmit)="onSubmit()">
       <div class="">
         <div class="container-row">
@@ -13,7 +12,15 @@
                   <input id="theme" pInputText formControlName="theme" type="text" />
                   <label for="theme" class="p-text-bold">Theme</label>
                 </p-floatlabel>
-                <p-message severity="error" variant="simple" size="small">The theme is required</p-message>
+                <p-message severity="error" variant="simple" size="small">
+                  @if (contestForm.get('theme')?.errors?.['required']) {
+                    Theme is required
+                   } @else if (contestForm.get('theme')?.errors?.['minlength']) {
+                    Theme is too short
+                   } @else if (contestForm.get('theme')?.errors?.['maxlength']) {
+                    Theme is too long
+                   }
+                </p-message>
               </div>
 
               <!-- Limite -->
@@ -46,7 +53,7 @@
                   </p-message>
                 </div>
 
-                <div class="mt-12">
+                <div class="">
                   <p-floatlabel variant="in">
                     <p-datepicker [hourFormat]="'24'" [showTime]="true" formControlName="endDate"
                       [showIcon]="true" inputId="buttondisplay" [showOnFocus]="false"
@@ -55,7 +62,7 @@
                   </p-floatlabel>
                 </div>
 
-                <div class="mt-12">
+                <div class="">
                   <p-floatlabel variant="in">
                     <p-inputnumber [style]="{'width': '400px'}" id="limit" formControlName="limit" [min]="1" [max]="30"
                       [showButtons]="true"></p-inputnumber>
@@ -68,7 +75,7 @@
             </div>
           </div>
 
-          <div class="mt-12">
+          <div class="">
             <div [class]="noImagePreview">
               <div *ngIf="imageUrl">
                 <img [src]="imageUrl" alt="" class="image-preview" />

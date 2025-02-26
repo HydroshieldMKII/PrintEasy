@@ -5,7 +5,6 @@ class Users::SessionsController < Devise::SessionsController
   def create
     self.resource = warden.authenticate!(auth_options)
     sign_in(resource_name, resource)
-    debugger
     render json: { user: current_user.as_json.merge(profile_picture_url: current_user.profile_picture_url, country_name: current_user.country.name), errors: {} }, status: 200
   end
 

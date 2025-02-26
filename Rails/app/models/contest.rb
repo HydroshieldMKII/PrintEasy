@@ -2,6 +2,9 @@ class Contest < ApplicationRecord
     # before_validation :set_start_at, on: [:create, :update]
 
     default_scope { where(deleted_at: nil) }
+    scope :active_for_user, ->(user) {
+        where("start_at <= ?", Time.now)
+    }
 
     has_many :submissions
 
@@ -22,6 +25,10 @@ class Contest < ApplicationRecord
         update(deleted_at: Time.now)
     end
 
+    def started?
+        start_at && start_at < Time.now
+    end
+
     def finished?
         end_at && end_at < Time.now
     end
@@ -31,7 +38,7 @@ class Contest < ApplicationRecord
     end
 
     def restore
-        update(delaeted_at: nil)
+        update(deleted_at: nil)
     end
 
     def deleted?

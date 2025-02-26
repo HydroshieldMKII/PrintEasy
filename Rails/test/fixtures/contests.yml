@@ -26,3 +26,21 @@ contest_three:
   deleted_at: null
   start_at: <%= -10.day.from_now %>
   end_at: <%= -5.days.from_now %>
+
+contest_four:
+  id: 4
+  theme: Contest4
+  description: MyString
+  submission_limit: 2
+  deleted_at: null
+  start_at: <%= -10.day.from_now %>
+  end_at: <%= 2.days.from_now %>
+
+contest_five:
+  id: 5
+  theme: Contest5
+  description: MyString
+  submission_limit: 0
+  deleted_at: null
+  start_at: <%= -10.day.from_now %>
+  end_at: <%= 2.days.from_now %>
