@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_25_151158) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_26_163921) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -74,10 +74,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_25_151158) do
     t.bigint "color_id", null: false
     t.bigint "filament_id", null: false
     t.float "price", null: false
-    t.date "target_date"
+    t.date "target_date", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.float "print_quality"
+    t.float "print_quality", null: false
+    t.datetime "cancelled_at"
     t.index ["color_id"], name: "index_offers_on_color_id"
     t.index ["filament_id"], name: "index_offers_on_filament_id"
     t.index ["printer_user_id"], name: "index_offers_on_printer_user_id"
@@ -104,7 +105,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_25_151158) do
     t.bigint "color_id", null: false
     t.bigint "filament_id", null: false
     t.bigint "printer_id", null: false
-    t.float "print_quality"
+    t.float "print_quality", null: false
     t.index ["color_id"], name: "index_preset_requests_on_color_id"
     t.index ["filament_id"], name: "index_preset_requests_on_filament_id"
     t.index ["printer_id"], name: "index_preset_requests_on_printer_id"
@@ -116,7 +117,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_25_151158) do
     t.bigint "color_id", null: false
     t.bigint "filament_id", null: false
     t.bigint "user_id", null: false
-    t.float "print_quality"
+    t.float "print_quality", null: false
     t.index ["color_id"], name: "index_presets_on_color_id"
     t.index ["filament_id"], name: "index_presets_on_filament_id"
     t.index ["user_id"], name: "index_presets_on_user_id"
@@ -137,9 +138,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_25_151158) do
   create_table "requests", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "name", limit: 30, null: false
-    t.float "budget"
+    t.float "budget", null: false
     t.string "comment", limit: 200
-    t.date "target_date"
+    t.date "target_date", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_requests_on_user_id"
@@ -178,7 +179,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_25_151158) do
     t.datetime "remember_created_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "username"
+    t.string "username", null: false
     t.bigint "country_id", null: false
     t.boolean "is_admin", default: false, null: false
     t.index ["country_id"], name: "index_users_on_country_id"

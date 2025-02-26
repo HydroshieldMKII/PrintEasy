@@ -42,17 +42,18 @@
 
         <div class="form-field">
           <p-floatlabel variant="in">
-            <label for="budget" class="block font-semibold">Budget</label>
-            <input
-              id="budget"
-              pInputText
+            <p-inputnumber
               formControlName="budget"
+              [min]="0"
+              [max]="10000"
+              [minFractionDigits]="2"
+              [maxFractionDigits]="2"
+              prefix="$"
               class="w-full"
-              type="number"
-              min="0"
-              max="10000"
-            />
+            ></p-inputnumber>
+            <label for="budget" class="block font-semibold">Budget</label>
           </p-floatlabel>
+          
 
           <p-message
             *ngIf="form.get('budget')?.errors?.['required'] && (form.get('budget')?.dirty || form.get('budget')?.touched)"
@@ -352,7 +353,7 @@
   </p-dialog>
 </div>
 
-<app-offer-modal *ngIf="offerModalVisible" [(offerModalVisible)]="offerModalVisible"></app-offer-modal>
+<app-offer-modal *ngIf="offerModalVisible" [(offerModalVisible)]="offerModalVisible" [requestIdToEdit]="id"></app-offer-modal>
 
 
 

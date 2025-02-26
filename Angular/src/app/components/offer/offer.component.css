@@ -205,3 +205,16 @@ h3 {
         height: 0px;
     }
 }
+
+button {
+    margin-right: 10px;
+}
+
+.fixed-table {
+    table-layout: fixed;
+}
+
+.disabled-row {
+    opacity: 0.5;
+    pointer-events: none;
+}

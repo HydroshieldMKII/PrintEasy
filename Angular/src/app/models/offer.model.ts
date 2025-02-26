@@ -12,6 +12,8 @@ export class OfferModel {
     price: number;
     printQuality: number;
     targetDate: Date;
+    cancelledAt?: Date | null;
+
 
     constructor(
         id: number,
@@ -21,7 +23,8 @@ export class OfferModel {
         filament: FilamentModel,
         price: number,
         print_quality: number,
-        target_date: Date
+        target_date: Date,
+        cancelled_at?: Date | null
     ) {
         this.id = id;
         this.request = request;
@@ -31,6 +34,7 @@ export class OfferModel {
         this.price = price;
         this.printQuality = print_quality;
         this.targetDate = target_date
+        this.cancelledAt = cancelled_at;
     }
 
     static fromAPI(data: any): OfferModel {
@@ -42,7 +46,8 @@ export class OfferModel {
             FilamentModel.fromAPI(data.filament),
             data.price,
             data.print_quality,
-            new Date(data.target_date)
+            new Date(data.target_date),
+            new Date(data.cancelled_at)
         );
     }
 }

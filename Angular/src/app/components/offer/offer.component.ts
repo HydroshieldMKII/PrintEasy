@@ -1,128 +1,151 @@
 import { Component } from '@angular/core';
-import { SelectItem } from 'primeng/api';
 import { Router, RouterLink } from '@angular/router';
-import { OfferModel } from '../../models/offer.model';
 import { OfferService } from '../../services/offer.service';
-import { ImportsModule } from '../../../imports';
 import { MessageService } from 'primeng/api';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { OfferModalComponent } from '../offer-modal/offer-modal.component';
+import { ImportsModule } from '../../../imports';
 
 @Component({
   selector: 'app-offer',
-  imports: [ImportsModule, RouterLink, OfferModalComponent],
+  imports: [ImportsModule, OfferModalComponent, RouterLink],
   templateUrl: './offer.component.html',
   styleUrls: ['./offer.component.css']
 })
 export class OffersComponent {
   activeTab: string = 'mine';
-  offers: OfferModel[] | null = null;
-  myOffers: OfferModel[] | null = null;
+  offers: any[] | null = null;  // "all" offers (received)
+  myOffers: any[] | null = null; // "my" pending offers
+  offerModalVisible: boolean = false;
+  offerIdToEdit: number | null = null;
+
+  refuseDialogVisible: boolean = false;
+  offerToRefuse: any | null = null;
 
   deleteDialogVisible: boolean = false;
-  offerToDelete: OfferModel | null = null;
-
+  offerToDelete: any | null = null;
+  requestToDelete: any | null = null;
   isOwningPrinter: boolean | null = null;
-  expandedRowKeys: { [key: number]: boolean } = {};
 
-  onTabChange(tab: string): void {
-    console.log('Tab changed:', tab);
-    this.activeTab = tab;
-    this.router.navigate([], { queryParams: { tab: this.activeTab }, queryParamsHandling: 'merge' });
-
-    if (this.activeTab === 'all' && !this.offers) {
-      this.offerService.getOffers().subscribe((offers: OfferModel[]) => {
-        this.offers = offers;
-      });
-    }
-    if (this.activeTab === 'mine' && !this.myOffers) {
-      this.offerService.getMyOffers().subscribe((offers: OfferModel[]) => {
-        this.myOffers = offers
-      });
-    }
-  }
-
-  get currentOffers(): OfferModel[] {
+  get currentRequests(): any[] {
     return this.activeTab === 'mine' ? this.myOffers || [] : this.offers || [];
   }
 
-  constructor(private offerService: OfferService, private router: Router, private messageService: MessageService, private clipboard: Clipboard) {
+  constructor(
+    private offerService: OfferService,
+    private router: Router,
+    private messageService: MessageService,
+    private clipboard: Clipboard
+  ) {
     const queryParams = this.router.parseUrl(this.router.url).queryParams;
-
-    // set tab
     this.activeTab = queryParams['tab'] || 'mine';
     this.router.navigate([], { queryParams: { tab: this.activeTab }, queryParamsHandling: 'merge' });
 
     if (this.activeTab === 'all') {
-      this.offerService.getOffers().subscribe((offers: OfferModel[]) => {
-        this.offers = offers;
+      this.offerService.getOffers().subscribe((requests: any[]) => {
+        this.offers = requests;
       });
     } else if (this.activeTab === 'mine') {
-      console.log('Getting my offers');
-      this.offerService.getMyOffers().subscribe((offers: OfferModel[]) => {
-        console.log('Got my offers:', offers);
-        this.myOffers = offers;
+      this.offerService.getMyOffers().subscribe((requests: any[]) => {
+        console.log("requests:", requests);
+        this.myOffers = requests;
       });
     }
   }
 
-
-  onRowExpand(event: any): void {
-    console.log("Expanding row:", event.data.id);
-    this.expandedRowKeys = {};  // Reset previous expanded rows
-    this.expandedRowKeys[event.data.id] = true;  // Expand only the clicked row
-  }
-
-  onRowCollapse(event: any): void {
-    console.log("Collapsing row:", event.data.id);
-    delete this.expandedRowKeys[event.data.id];  // Remove the collapsed row
-  }
-
-  isRowExpanded(rowId: number): boolean {
-    return !!this.expandedRowKeys[rowId];  // Check if this row is expanded
+  onTabChange(tab: string): void {
+    this.activeTab = tab;
+    this.router.navigate([], { queryParams: { tab: this.activeTab }, queryParamsHandling: 'merge' });
+    if (this.activeTab === 'all' && !this.offers) {
+      this.offerService.getOffers().subscribe((requests: any[]) => {
+        this.offers = requests;
+      });
+    }
+    if (this.activeTab === 'mine' && !this.myOffers) {
+      this.offerService.getMyOffers().subscribe((requests: any[]) => {
+        this.myOffers = requests;
+      });
+    }
   }
 
   downloadRequest(downloadUrl: string): void {
-    console.log('Download request:', downloadUrl);
     window.open(downloadUrl, '_blank');
   }
 
-  showDeleteDialog(request: OfferModel): void {
-    this.offerToDelete = request;
+  showDeleteDialog(offer: any): void {
+    this.offerToDelete = offer;
     this.deleteDialogVisible = true;
   }
 
   confirmDelete(): void {
-    if (this.offerToDelete !== null) {
-      // this.offerService.deleteOffer(this.offerToDelete.id).subscribe(() => {
-      //   this.offers = (this.offers || []).filter(r => r.id !== this.offerToDelete?.id);
-      //   this.myOffers = (this.myOffers || []).filter(r => r.id !== this.offerToDelete?.id);
-      // });
+    if (this.offerToDelete !== null && this.requestToDelete !== null) {
+      this.offerService.deleteOffer(this.offerToDelete.id).subscribe((response) => {
+        if (response.status === 200) {
+          const index = this.requestToDelete.offers.indexOf(this.offerToDelete);
+          if (index !== -1) {
+            this.requestToDelete.offers.splice(index, 1);
+          }
+        }
+
+        this.offerToDelete = null;
+        this.requestToDelete = null;
+      });
     }
     this.deleteDialogVisible = false;
   }
 
   copyToClipboard(text: string): void {
     const fullUrl = new URL(text, window.location.origin).href;
-    console.log('Copied to clipboard:', fullUrl);
     this.clipboard.copy(fullUrl);
     this.messageService.add({ severity: 'success', summary: 'Copied request to clipboard' });
   }
 
-  editOffer(offer: OfferModel): void {
-    console.log("editing id: ", offer.id)
+  editOffer(offer: any): void {
+    console.log("editing id:", offer.id);
+    this.offerIdToEdit = offer.id;
+    this.offerModalVisible = true;
   }
 
-  cancelOffer(offer: OfferModel) {
-    console.log("Canceling id: ", offer.id)
+  cancelOffer(offer: any, request: any): void {
+    console.log("Canceling:", offer);
+    this.offerToDelete = offer;
+    this.requestToDelete = request;
+    this.deleteDialogVisible = true;
   }
 
-  acceptOffer(offer: OfferModel) {
-    console.log("Accepting id: ", offer.id)
+  showAcceptOffer(offer: any): void {
+    console.log("Accepting id:", offer.id);
   }
 
-  refuseOffer(offer: OfferModel) {
-    console.log("Rejecting id: ", offer.id)
+  showRefuseOffer(offer: any): void {
+    console.log("Rejecting id:", offer.id);
+
+    this.offerToRefuse = offer;
+    this.refuseDialogVisible = true;
+  }
+
+  onOfferUpdated(offer: any): void {
+    console.log("Offer updated from offer list:", offer);
+    this.offerIdToEdit = null;
+    this.offerService.getMyOffers().subscribe((offers: any[]) => {
+      this.myOffers = offers;
+    });
+  }
+
+  confirmRefuse(): void {
+    this.offerService.refuseOffer(this.offerToRefuse.id).subscribe((response) => {
+      if (response.status === 200) {
+        this.offerToRefuse = null;
+        this.refuseDialogVisible = false;
+
+        this.offerService.getMyOffers().subscribe((offers: any[]) => {
+          this.myOffers = offers;
+        });
+
+        this.offerService.getOffers().subscribe((offers: any[]) => {
+          this.offers = offers;
+        });
+      }
+    });
   }
 }
-

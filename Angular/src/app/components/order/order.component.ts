@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { ImportsModule } from '../../../imports';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, ValidationErrors, AbstractControl } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
@@ -70,7 +70,7 @@ export class OrderComponent {
   CancelledStatus: OrderStatusModel[] = [];
   canCancel: boolean = false;
   canArrive: boolean = false;
-  consumer : boolean = false;
+  consumer: boolean = false;
   formVisible: boolean = false;
   isEdit: boolean = false;
   orderStatusForm: FormGroup;
@@ -105,12 +105,12 @@ export class OrderComponent {
     }
     if (this.order?.availableStatus.includes(statusName)) {
       return null;
-    }else{
+    } else {
       return { statusNameError: 'Invalid status' };
     }
   }
 
-  refreshOrder() : void {
+  refreshOrder(): void {
     this.AcceptedStatus = [];
     this.PrintingStatus = [];
     this.PrintedStatus = [];
@@ -145,7 +145,7 @@ export class OrderComponent {
             switch (status) {
               case 'Accepted':
                 this.statusActions.push({
-                  label: 'Accepted', 
+                  label: 'Accepted',
                   icon: 'pi pi-play',
                   style: { backgroundColor: "#ff0000", color: "#ff0000" },
                   styleClass: 'p-button-Accepted',
@@ -158,7 +158,7 @@ export class OrderComponent {
                 break;
               case 'Printing':
                 this.statusActions.push({
-                  label: 'Printing', 
+                  label: 'Printing',
                   icon: 'pi pi-print',
                   command: () => {
                     this.ShowOrderStatusForm();
@@ -168,7 +168,7 @@ export class OrderComponent {
                 break;
               case 'Printed':
                 this.statusActions.push({
-                  label: 'Printed', 
+                  label: 'Printed',
                   icon: 'pi pi-check-circle',
                   command: () => {
                     this.ShowOrderStatusForm();
@@ -178,7 +178,7 @@ export class OrderComponent {
                 break;
               case 'Shipped':
                 this.statusActions.push({
-                  label: 'Shipped', 
+                  label: 'Shipped',
                   icon: 'pi pi-send',
                   command: () => {
                     this.ShowOrderStatusForm();
@@ -188,7 +188,7 @@ export class OrderComponent {
                 break;
               case 'Arrived':
                 this.statusActions.push({
-                  label: 'Arrived', 
+                  label: 'Arrived',
                   icon: 'pi pi-home',
                   command: () => {
                     this.ShowOrderStatusForm();
@@ -198,7 +198,7 @@ export class OrderComponent {
                 break;
               case 'Cancelled':
                 this.statusActions.push({
-                  label: 'Cancelled', 
+                  label: 'Cancelled',
                   icon: 'pi pi-ban',
                   command: () => {
                     this.ShowOrderStatusForm();
@@ -211,7 +211,7 @@ export class OrderComponent {
           console.log('Status actions:', this.statusActions);
         }
       }
-      
+
     });
   }
 
@@ -222,13 +222,13 @@ export class OrderComponent {
     console.log('Image:', file);
   }
 
-  ShowOrderStatusForm() : void {
+  ShowOrderStatusForm(): void {
     this.clearForm();
     this.formVisible = true;
   }
 
-  onSubmit() : void {
-    if (this.orderStatusForm.valid){
+  onSubmit(): void {
+    if (this.orderStatusForm.valid) {
       console.log('Order status data:', this.orderStatusForm.value);
 
       const orderStatusData = new FormData();
@@ -241,7 +241,7 @@ export class OrderComponent {
         orderStatusData.append('order_status[image]', this.orderStatusForm.value.image);
       }
       if (this.isEdit) {
-        this.orderStatusService.updateOrderStatus(this.currentlySelectedOrderStatusId, orderStatusData).subscribe((response : ApiResponseModel) => {
+        this.orderStatusService.updateOrderStatus(this.currentlySelectedOrderStatusId, orderStatusData).subscribe((response: ApiResponseModel) => {
           console.log('Order status updated:', response);
           if (response.status == 200) {
             this.refreshOrder();
@@ -250,8 +250,8 @@ export class OrderComponent {
             this.isEdit = false;
           }
         });
-      }else{
-        this.orderStatusService.createOrderStatus(orderStatusData).subscribe((response : ApiResponseModel) => {
+      } else {
+        this.orderStatusService.createOrderStatus(orderStatusData).subscribe((response: ApiResponseModel) => {
           console.log('Order status created:', response);
           if (response.status == 201) {
             this.refreshOrder();
@@ -263,7 +263,7 @@ export class OrderComponent {
     }
   }
 
-  sortStatus(status : OrderStatusModel) : void {
+  sortStatus(status: OrderStatusModel): void {
     switch (status.statusName) {
       case 'Accepted':
         this.AcceptedStatus.push(status);
@@ -287,29 +287,29 @@ export class OrderComponent {
 
   }
 
-  clearForm() : void {
+  clearForm(): void {
     this.orderStatusForm.reset();
     this.isEdit = false;
     this.imageUrl = '';
   }
 
-  setForm() : void {
-    this.orderStatusService.getOrderStatus(this.currentlySelectedOrderStatusId).subscribe((response : ApiResponseModel) => {
+  setForm(): void {
+    this.orderStatusService.getOrderStatus(this.currentlySelectedOrderStatusId).subscribe((response: ApiResponseModel) => {
       console.log('Order status:', response);
       if (response.status != 200) {
         return;
       }
       const orderStatus = response.data.order_status;
       this.orderStatusForm.patchValue({ statusName: orderStatus.statusName });
-      this.orderStatusForm.patchValue({ comment: orderStatus.comment });  
+      this.orderStatusForm.patchValue({ comment: orderStatus.comment });
       this.imageUrl = orderStatus.imageUrl;
       this.isEdit = true;
       this.formVisible = true;
     });
   }
 
-  DeleteOrderStatus() : void {
-    this.orderStatusService.deleteOrderStatus(this.currentlySelectedOrderStatusId).subscribe((response : ApiResponseModel) => {
+  DeleteOrderStatus(): void {
+    this.orderStatusService.deleteOrderStatus(this.currentlySelectedOrderStatusId).subscribe((response: ApiResponseModel) => {
       console.log('Order status deleted:', response);
       if (response.status != 200) {
         return;
@@ -318,7 +318,7 @@ export class OrderComponent {
     });
   }
 
-  setSelectedOrderStatus(orderStatusId : number) : void {
+  setSelectedOrderStatus(orderStatusId: number): void {
     this.currentlySelectedOrderStatusId = orderStatusId;
   }
 

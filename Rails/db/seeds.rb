@@ -59,9 +59,10 @@ printers.each do |printer|
 end
 
 # Assign Printers to Users
-PrinterUser.create!(user: user1, printer: Printer.first, acquired_date: Time.now)
-PrinterUser.create!(user: user1, printer: Printer.second, acquired_date: Time.now - 1.year)
-PrinterUser.create!(user: admin, printer: Printer.third, acquired_date: Time.now - 2.years)
+5.times do |i|
+  PrinterUser.create!(user: user1, printer: Printer.find(i + 1), acquired_date: Time.now - i.years)
+  PrinterUser.create!(user: admin, printer: Printer.find(i + 6), acquired_date: Time.now - (i + 1).years)
+end
 
 # Create Colors
 colors = ["Red", "Blue", "Green", "Yellow", "Black", "White", "Orange", "Purple", "Pink", "Brown", "Gray"]
@@ -354,16 +355,22 @@ colors = Color.all
 filaments = Filament.all
 printer_users = PrinterUser.all
 
-Request.all.each do |request|
-  rand(1..5).times do |i|
+[admin, user1].each do |user|
+  user_requests = Request.where(user: user)
+  next if user_requests.empty?
+
+  10.times do
+    request = user_requests.sample
+    printer_user = PrinterUser.where.not(user: user).sample
+
     Offer.create!(
       request: request,
-      printer_user: printer_users[i % printer_users.size],
-      color: colors[i % colors.size],
-      filament: filaments[i % filaments.size],
+      printer_user: printer_user,
+      color: Color.all.sample,
+      filament: Filament.all.sample,
       price: rand(20.0..100.0).round(2),
       target_date: Time.now + rand(5..15).days,
-      print_quality: [0.08, 0.12, 0.16, 0.2][i % 4]
+      print_quality: [0.08, 0.12, 0.16, 0.2].sample
     )
   end
 end

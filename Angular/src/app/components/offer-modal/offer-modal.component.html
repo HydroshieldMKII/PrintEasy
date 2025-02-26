@@ -11,19 +11,18 @@
 >
   <ng-template #header>
     <h2 class="font-semibold">
-      {{ isEditMode ? 'Edit an offer for' : 'Submit an offer for' }} "{{ printName }}"
+      {{ offerIdToEdit ? 'Edit an offer' : 'Submit an offer for' }}
     </h2>
   </ng-template>
 
   <form [formGroup]="offerForm" (ngSubmit)="submitOffer()" class="space-y-4">
-    <!-- Grid Layout -->
     <div class="grid grid-cols-2 gap-4">
-      <!-- Left Section (Preset) -->
       <div class="flex">
         <h3 class="font-medium text-gray-700">Preset</h3>
         <div class="offer-form-field">
           <p-dropdown
           formControlName="preset"
+          [options]="presets"
           optionLabel="label"
           placeholder="Choose a quick preset"
           class="w-full"
@@ -33,6 +32,7 @@
         <div class="offer-form-field">
           <p-dropdown
           formControlName="color"
+          [options]="colors"
           optionLabel="label"
           placeholder="Select a color"
           class="w-full"
@@ -42,21 +42,46 @@
         <div class="offer-form-field">
               <p-dropdown
               formControlName="filament"
+              [options]="filaments"
               optionLabel="label"
               placeholder="Select a filament"
               class="w-full"
             ></p-dropdown>
-          </div>  
+        </div>  
+
+        <div class="offer-form-field">
+            <p-inputnumber 
+            formControlName="quality"
+            suffix="mm"
+            [showButtons]="true" 
+            buttonLayout="horizontal" 
+            inputId="horizontal" 
+            spinnerMode="horizontal"
+            placeholder="Quality"
+            [step]="0.04" 
+            mode="decimal"
+            [min]="0.01"
+            [max]="2">
+            <ng-template #incrementbuttonicon>
+              <span class="pi pi-plus"></span>
+            </ng-template>
+            <ng-template #decrementbuttonicon>
+              <span class="pi pi-minus"></span>
+            </ng-template>
+          </p-inputnumber>
+        </div>
       </div>
 
       <div class="flex space-y-3">
         <h3 class="font-medium text-gray-700">Print</h3>
         <p-dropdown
           formControlName="printer"
+          [options]="printers"
           optionLabel="label"
           placeholder="Choose your printer"
           class="w-full"
           [ngStyle]="{ 'margin-bottom': '10px' }"
+          appendTo="body"
         ></p-dropdown>
 
         <div class="form-row">
@@ -71,6 +96,7 @@
                   [showOnFocus]="false"
                   styleClass="date-picker-full-on-mobile"
                   dateFormat="yy-mm-dd"
+                  appendTo="body"
                 ></p-datepicker>
                 <label for="targetDate" class="block font-semibold">Target Date</label>
               </div>
@@ -78,18 +104,18 @@
           </div>
 
             <div class="form-group">
-            <p-floatlabel variant="in">
-              <input
-              id="price"
-              type="number"
-              pInputText
-              formControlName="price"
-              class="full-width"
-              min="0"
-              max="10000"
-              />
-              <label for="price">Price</label>
-            </p-floatlabel>
+              <p-floatlabel variant="in">
+                <p-inputnumber
+                  formControlName="price"
+                  [min]="0"
+                  [max]="10000"
+                  [minFractionDigits]="2"
+                  [maxFractionDigits]="2"
+                  prefix="$"
+                  [ngStyle]="{ width: '100%' }"
+                ></p-inputnumber>
+                <label for="price">Price</label>
+              </p-floatlabel>
             </div>
         </div>
       </div>
@@ -125,3 +151,4 @@
     </div>
   </form>
 </p-dialog>
+<p-toast></p-toast>

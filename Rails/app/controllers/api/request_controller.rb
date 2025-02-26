@@ -119,7 +119,7 @@ class Api::RequestController < AuthenticatedController
   def filter_requests(requests)
     case params[:filter]
     when 'owned-printer' 
-      requests.joins(:preset_requests).where(preset_requests: { printer_id: current_user.printer_users.pluck(:printer_id) }).distinct
+      requests.joins(:preset_requests).where(preset_requests: { printer_id: current_user.printer_user.pluck(:printer_id) }).distinct
     when 'country'
       requests.joins(:user).where(users: { country_id: current_user.country_id }).distinct
     else

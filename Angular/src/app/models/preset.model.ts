@@ -1,20 +1,20 @@
 import { ColorModel } from "./color.model";
 import { FilamentModel } from "./filament.model";
-import { PrinterModel } from "./printer.model";
+import { UserModel } from "./user.model";
 
 export class PresetModel {
     id: number;
     printQuality: number;
     color: ColorModel;
-    filamentType: FilamentModel;
-    printerModel: PrinterModel;
+    filament: FilamentModel;
+    user: UserModel;
 
-    constructor(id: number, printQuality: number, color: ColorModel, filamentType: FilamentModel, printerModel: PrinterModel) {
+    constructor(id: number, printQuality: number, color: ColorModel, filament: FilamentModel, user: UserModel) {
         this.id = id;
         this.printQuality = printQuality;
         this.color = color;
-        this.filamentType = filamentType;
-        this.printerModel = printerModel;
+        this.filament = filament;
+        this.user = user;
     }
 
     static fromAPI(data: any): PresetModel {
