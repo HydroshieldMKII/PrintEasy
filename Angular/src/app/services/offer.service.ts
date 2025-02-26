@@ -37,7 +37,7 @@ export class OfferService {
                             request?.['comment'],
                             new Date(request?.['target_date']),
                             (request?.['offers'] as any[]).map((offer: any) => {
-                                console.log("raw getOffer to create from: ", offer);
+                                // console.log("raw getOffer to create from: ", offer);
                                 return new OfferModel(
                                     offer?.['id'],
                                     offer?.['request'],
@@ -134,7 +134,7 @@ export class OfferService {
         return this.api.getRequest(`api/offer/${id}`).pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
-                    console.log("raw getOfferById to create from: ", response.data);
+                    // console.log("raw getOfferById to create from: ", response.data);
                     const offer = response.data?.['offer'];
 
                     const color = new ColorModel(
