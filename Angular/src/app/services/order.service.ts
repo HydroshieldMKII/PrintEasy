@@ -39,4 +39,13 @@ export class OrderService {
             })
         );
     }
+
+    createOrder(order: OrderModel): Observable<ApiResponseModel> {
+        return this.api.postRequest('api/order', {}, order).pipe(
+            map((response: ApiResponseModel) => {
+                response.data.order = OrderModel.fromAPI(response.data.order);
+                return response;
+            })
+        );
+    }
 }

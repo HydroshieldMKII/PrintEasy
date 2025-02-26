@@ -405,7 +405,6 @@ req_free.stl_file.attach(
 
 req_free.save
 
-# debugger
 
 # Create Orders
 Current.user = admin

@@ -1,5 +1,4 @@
 class Api::OrderController < AuthenticatedController
-  before_action :order_params, only: %i[create]
 
   def index
 
@@ -141,18 +140,11 @@ class Api::OrderController < AuthenticatedController
   end
 
   def create
-    @order = Order.new(order_params)
+    @order = Order.new(offer_id: params[:id])
     if @order.save
       render json: { order: @order.as_json(), errors: {} }, status: :created
     else
       render json: { errors: @order.errors.as_json }, status: :bad_request
     end
-  end
-  
-    
-  private
-
-  def order_params
-    params.require(:order).permit(:offer_id)
   end
 end

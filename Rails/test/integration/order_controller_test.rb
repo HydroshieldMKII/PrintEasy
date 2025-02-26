@@ -93,7 +93,7 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
 
   test "should not get create -> not signed in" do
     assert_difference('Order.count', 0) do
-      post api_order_index_path, params: { order: { offer_id: 1 } }, as: :json
+      post api_order_index_path, params: { id: 1  }, as: :json
     end
 
     assert_response :unauthorized
@@ -110,18 +110,19 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
       post api_order_index_path, as: :json
     end
 
-    assert_response :unprocessable_entity
+    assert_response :not_found
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
-    assert_equal ["param is missing or the value is empty or invalid: order"], @parsed_response["errors"]["base"]
+    assert_equal ["must exist"], @parsed_response["errors"]["offer"]
+    assert_equal ["can't be blank","Offer must exist"], @parsed_response["errors"]["offer_id"]
   end
 
   test "should not get create -> offer_id doesn't exist" do
     sign_in users(:one)
 
     assert_difference('Order.count', 0) do
-      post api_order_index_path, params: { order: { offer_id: 999 } }, as: :json
+      post api_order_index_path, params: { id: 999  }, as: :json
     end
 
     assert_response :bad_request
@@ -135,7 +136,7 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
     sign_in users(:one)
 
     assert_difference('Order.count', 0) do
-      post api_order_index_path, params: { order: { offer_id: 2 } }, as: :json
+      post api_order_index_path, params: { id: 2  }, as: :json
     end
 
     assert_response :bad_request
@@ -149,7 +150,7 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
     sign_in users(:one)
 
     assert_difference('Order.count', 0) do
-      post api_order_index_path, params: { order: { offer_id: 1 } }, as: :json
+      post api_order_index_path, params: { id: 1 }, as: :json
     end
 
     assert_response :bad_request
@@ -163,7 +164,7 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
     sign_in users(:one)
 
     assert_difference('Order.count', 1) do
-      post api_order_index_path, params: { order: { offer_id: 9 } }, as: :json
+      post api_order_index_path, params: { id: 9 }, as: :json
     end
 
     assert_response :created

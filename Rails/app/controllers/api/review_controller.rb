@@ -45,7 +45,6 @@ class Api::ReviewController < AuthenticatedController
   end
 
   def review_params
-    # debugger
     params.require(:review).permit(:rating, :description, :title, images: [])
   end
 end
