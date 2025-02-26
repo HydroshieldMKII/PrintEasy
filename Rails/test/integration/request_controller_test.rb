@@ -116,7 +116,7 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
       JSON.parse(response.body)
     end
 
-    assert_equal "Not Found", json_response['error']
+    assert_equal ["Couldn't find Request with 'id'=9999"], json_response['errors']['base']
   end
 
   ### CREATE ACTION ###
