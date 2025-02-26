@@ -9,6 +9,10 @@
 #   end
 
 puts "🌱 Seeding database..."
+ruby_image = File.open(Rails.root.join("db/seeds/files/ruby.jpg"))
+ruby_stl = File.open(Rails.root.join("db/seeds/files/RUBY13.stl"))
+red_skeleton = File.open(Rails.root.join("db/seeds/files/red_skeleton.jpg"))
+dragon = File.open(Rails.root.join("db/seeds/files/dragon.jpg"))
 # Create countries
 [
     { name: 'United States', id: 1 },
@@ -51,6 +55,22 @@ user1.profile_picture.attach(
   filename: "ruby.jpg",
   content_type: "image/jpg"
 )
+
+user2 = User.create!(
+  username: "bbb",
+  password: "bbbbbb",
+  password_confirmation: "bbbbbb",
+  country_id: 3,
+  is_admin: false
+)
+
+user2.profile_picture.attach(
+  io: File.open(Rails.root.join("db/seeds/files/ruby.jpg")),
+  filename: "ruby.jpg",
+  content_type: "image/jpg"
+)
+
+user2.save
 
 # Create Printers
 printers = ["Bambulab", "Anycubic", "Artillery", "Creality", "Elegoo", "Flashforge", "Monoprice", "Prusa", "Qidi", "Sindoh", "Ultimaker", "XYZprinting", "Zortrax"]
@@ -151,46 +171,50 @@ Request.all.each do |request|
 end
 
 # Create Contests
-contest1 = Contest.create(
+contest1 = Contest.new(
   theme: "Best 3D Printed Art",
   description: "Create and submit your best 3D printed designs.",
   submission_limit: 5,
-  start_at: Time.now,
+  start_at: Time.now + 1.days,
   end_at: Time.now + 30.days
 )
 
 contest1.image.attach(
-  io: File.open(Rails.root.join("db/seeds/files/DariusSlayJunior.jpg")),
-  filename: "DariusSlayJunior.jpg",
+  io: ruby_image,
+  filename: "ruby.jpg",
   content_type: "image/jpg"
 )
 contest1.save
 
-contest2 = Contest.create(
+contest2 = Contest.new(
   theme: "Best 3D Printed Toy",
   description: "Create and submit your best 3D printed toys.",
   submission_limit: 5,
   deleted_at: Time.now,
-  start_at: Time.now
+  start_at: Time.now + 1.days,
 )
 
+ruby_image.rewind
+
 contest2.image.attach(
-  io: File.open(Rails.root.join("db/seeds/files/DariusSlayJunior.jpg")),
-  filename: "DariusSlayJunior.jpg",
+  io: ruby_image,
+  filename: "ruby.jpg",
   content_type: "image/jpg"
 )
-contest2.save
+contest2.save!
 
 contest3 = Contest.create(
   theme: "Best 3D Printed Jewelry",
   description: "Create and submit your best 3D printed jewelry.",
   submission_limit: 5,
-  start_at: Time.now
+  start_at: Time.now + 2.days
 )
 
+ruby_image.rewind
+
 contest3.image.attach(
-  io: File.open(Rails.root.join("db/seeds/files/DariusSlayJunior.jpg")),
-  filename: "DariusSlayJunior.jpg",
+  io: ruby_image,
+  filename: "ruby.jpg",
   content_type: "image/jpg"
 )
 
@@ -201,13 +225,15 @@ contest4 = Contest.create(
   description: "Create and submit your best 3D printed home decor.",
   submission_limit: 5,
   deleted_at: Time.now,
-  start_at: Time.now,
+  start_at: Time.now + 5.days,
   end_at: Time.now + 30.days
 )
 
+ruby_image.rewind
+
 contest4.image.attach(
-  io: File.open(Rails.root.join("db/seeds/files/DariusSlayJunior.jpg")),
-  filename: "DariusSlayJunior.jpg",
+  io: ruby_image,
+  filename: "ruby.jpg",
   content_type: "image/jpg"
 )
 
@@ -216,13 +242,15 @@ contest4.save
 contest5 = Contest.create(
   theme: "Best 3D Printed Fashion",
   submission_limit: 5,
-  start_at: Time.now,
+  start_at: Time.now + 4.days,
   end_at: Time.now + 30.days
 )
 
+ruby_image.rewind
+
 contest5.image.attach(
-  io: File.open(Rails.root.join("db/seeds/files/DariusSlayJunior.jpg")),
-  filename: "DariusSlayJunior.jpg",
+  io: ruby_image,
+  filename: "ruby.jpg",
   content_type: "image/jpg"
 )
 
@@ -231,13 +259,15 @@ contest5.save
 contest6 = Contest.create(
   theme: "Best 3D Printed Gadgets",
   submission_limit: 5,
-  start_at: Time.now,
+  start_at: Time.now + 3.days,
   deleted_at: Time.now
 )
 
+ruby_image.rewind
+
 contest6.image.attach(
-  io: File.open(Rails.root.join("db/seeds/files/DariusSlayJunior.jpg")),
-  filename: "DariusSlayJunior.jpg",
+  io: ruby_image,
+  filename: "ruby.jpg",
   content_type: "image/jpg"
 )
 
@@ -246,12 +276,14 @@ contest6.save
 contest7 = Contest.create(
   theme: "Best 3D Printed Tools",
   submission_limit: 5,
-  start_at: Time.now,
+  start_at: Time.now + 1.days,
 )
 
+ruby_image.rewind
+
 contest7.image.attach(
-  io: File.open(Rails.root.join("db/seeds/files/DariusSlayJunior.jpg")),
-  filename: "DariusSlayJunior.jpg",
+  io: ruby_image,
+  filename: "ruby.jpg",
   content_type: "image/jpg"
 )
 
@@ -260,13 +292,15 @@ contest7.save
 contest8 = Contest.create(
   theme: "Best 3D Printed Medical Devices",
   submission_limit: 5,
-  start_at: Time.now,
+  start_at: Time.now + 2.days,
   end_at: Time.now + 30.days
 )
 
+ruby_image.rewind
+
 contest8.image.attach(
-  io: File.open(Rails.root.join("db/seeds/files/DariusSlayJunior.jpg")),
-  filename: "DariusSlayJunior.jpg",
+  io: ruby_image,
+  filename: "ruby.jpg",
   content_type: "image/jpg"
 )
 
@@ -276,13 +310,15 @@ contest9 = Contest.create(
   theme: "Best 3D Printed Automotive Parts",
   submission_limit: 5,
   start_at: Time.now,
-  deleted_at: Time.now,
+  deleted_at: Time.now + 1.days,
   end_at: Time.now + 30.days
 )
 
+ruby_image.rewind
+
 contest9.image.attach(
-  io: File.open(Rails.root.join("db/seeds/files/DariusSlayJunior.jpg")),
-  filename: "DariusSlayJunior.jpg",
+  io: ruby_image,
+  filename: "ruby.jpg",
   content_type: "image/jpg"
 )
 
@@ -293,13 +329,15 @@ contest9.save
     theme: "Contest #{i + 3}",
     description: "Description for contest #{i + 3}.",
     submission_limit: 5,
-    start_at: Time.now,
-    end_at: Time.now + 30.days
+    start_at: Time.now + i.days,
+    end_at: Time.now + 30.days + i.days
   )
 
+  ruby_image.rewind
+
   contest.image.attach(
-    io: File.open(Rails.root.join("db/seeds/files/DariusSlayJunior.jpg")),
-    filename: "DariusSlayJunior.jpg",
+    io: ruby_image,
+    filename: "ruby.jpg",
     content_type: "image/jpg"
   )
   contest.save
@@ -312,15 +350,15 @@ submission1 = Submission.create(
   contest: contest1
 )
 
-submission1.files.attach(
+submission1.stl.attach(
   io: File.open(Rails.root.join("db/seeds/files/RUBY13.stl")),
   filename: "RUBY13.stl",
   content_type: "application/sla"
 )
 
-submission1.files.attach(
-  io: File.open(Rails.root.join("db/seeds/files/DariusSlayJunior.jpg")),
-  filename: "DariusSlayJunior.jpg",
+submission1.image.attach(
+  io: red_skeleton,
+  filename: "red_skeleton.jpg",
   content_type: "image/jpg"
 )
 
@@ -333,12 +371,73 @@ submission2 = Submission.create(
   contest: contest1
 )
 
-submission2.files.attach(
-  io: File.open(Rails.root.join("db/seeds/files/RUBY13.stl")),
+ruby_stl.rewind
+
+submission2.stl.attach(
+  io: ruby_stl,
   filename: "RUBY13.stl",
   content_type: "application/sla"
 )
+
+submission2.image.attach(
+  io: dragon,
+  filename: "dragon.jpg",
+  content_type: "image/jpg"
+)
+
 submission2.save
+
+submission3 = Submission.create(
+  name: "3D Printed Toy",
+  description: "A toy model.",
+  user: admin,
+  contest: contest1
+)
+
+ruby_stl.rewind
+
+submission3.stl.attach(
+  io: ruby_stl,
+  filename: "RUBY13.stl",
+  content_type: "application/sla"
+)
+
+ruby_image.rewind
+
+submission3.image.attach(
+  io: ruby_image,
+  filename: "ruby.jpg",
+  content_type: "image/jpg"
+)
+
+submission3.save
+
+5.times do |i|
+  submission = Submission.create(
+    name: "Submission #{i + 1}",
+    description: "Description for submission #{i + 1}.",
+    user: user2,
+    contest: contest1
+  )
+
+  ruby_stl.rewind
+
+  submission.stl.attach(
+    io: ruby_stl,
+    filename: "RUBY13.stl",
+    content_type: "application/sla"
+  )
+
+  red_skeleton.rewind
+
+  submission.image.attach(
+    io: red_skeleton,
+    filename: "red_skeleton.jpg",
+    content_type: "image/jpg"
+  )
+
+  submission.save
+end
 
 # Likes for Submissions
 Like.create!(user: admin, submission: submission2)

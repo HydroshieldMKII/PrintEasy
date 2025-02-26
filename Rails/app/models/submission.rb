@@ -1,50 +1,72 @@
 class Submission < ApplicationRecord
+  before_destroy :contest_finished?, if: -> { contest&.finished? }
+
   belongs_to :user
   belongs_to :contest
 
-  has_many_attached :files
+  has_one_attached :stl
+  has_one_attached :image
+
   has_many :likes, dependent: :destroy
 
-  validates :name, presence: true, length: { maximum: 30 }
+  validates :name, presence: true, length: { minimum: 3, maximum: 30 }
   validates :description, length: { maximum: 200 }
-  validates :user, presence: true
   validates :contest, presence: true
-  validates :files, presence: true
-  validate :files_presence_and_format
+  validates :image, presence: true
+  validates :stl, presence: true
+ 
+  validate :stl_must_be_valid
+  validate :image_must_be_valid
+  validate :submissions_limit, on: :create, if: -> { contest.present? && user.present? }
+  validate :contest_finished?, on: [:create, :update], if: -> { contest&.finished? }
+  validate :contest_started?, on: :create, if: -> { contest.present? }
 
   def stl_url
-    files[0] && url_for(files[0])
+    stl && url_for(stl)
   end
 
   def image_url
-    files[1] && url_for(files[1])
+    image && url_for(image)
   end
 
   private
+  def contest_finished?
+    errors.add(:contest, "is closed")
+    throw :abort
+  end
+
+  def contest_started?
+    errors.add(:contest, "has not started yet") unless contest&.started?
+  end
+
+  def submissions_limit  
+    user_submissions_for_contest = user.submissions.where(contest: contest).count
+  
+    if user_submissions_for_contest >= contest.submission_limit
+      errors.add(:submission, "has reached the submission limit for this contest")
+    end
+  end
 
   def url_for(file)
     Rails.application.routes.url_helpers.rails_blob_url(file, only_path: true)
   end
 
-  def files_presence_and_format
-    if files.blank? || files.count < 1
-      errors.add(:files, "must have at least one attached file (STL)")
-    else
-      if files.count > 2
-        errors.add(:files, "must have at most two attached files")
-      end
-      
-      stl_file = files[0]
-      unless stl_file.blob.filename.to_s.downcase.end_with?('.stl')
-        errors.add(:files, "first file must be an STL file")
-      end
+  def stl_must_be_valid
+    return unless stl.attached?
 
-      if files.count > 1
-        image_file = files[1]
-        unless image_file.blob.filename.to_s.downcase.match?(/\.(jpg|jpeg|png)$/)
-          errors.add(:files, "second file must be an image (JPG, JPEG, or PNG)")
-        end
-      end
+    filename = stl.filename.to_s
+    extension = File.extname(filename)
+
+    unless extension.downcase == '.stl'
+      errors.add(:stl, 'must have .stl extension')
+    end
+  end
+
+  def image_must_be_valid
+    return unless image.attached?
+
+    unless image.content_type.in?(%w(image/png image/jpeg image/jpg))
+      errors.add(:image, "must be a PNG, JPG, or JPEG file")
     end
   end
 end

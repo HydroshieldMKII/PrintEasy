@@ -1,4 +1,18 @@
 {
+    "global": {
+        "save_button": "Enregistrer",
+        "cancel_button": "Annuler",
+        "delete_button": "Supprimer",
+        "edit_button": "Modifier",
+        "create_button": "Créer",
+        "close_button": "Fermer",
+        "back_button": "Retour",
+        "error": "Erreur",
+        "success": "Succès",
+        "warning": "Avertissement",
+        "info": "Information",
+        "confirm": "Confirmer"
+    },
     "login": {
         "title": "Connexion",
         "username": "Nom d'utilisateur",
@@ -25,5 +39,16 @@
         "select_country": "Sélectionnez un pays",
         "country": "Pays",
         "country_required": "Le pays est requis"
+    },
+    "contest": {
+        "title_page": "CONCOURS DE DESIGN 3D",
+        "description_page": "Nous organisons régulièrement des concours de design 3D populaires pour des prix précieux sur <a href=\"http://printeasy.prod.system.shawinigan.info/login\">PrintEasy.com</a>. Participez au concours en cours, créez et téléchargez votre modèle et gagnez.",
+        "winner": "Gagnant",
+        "submission_limit": "Limite de soumission",
+        "starts": "Commence",
+        "ends": "Se termine",
+        "confirm_delete": "Confirmer la suppression",
+        "confirm_delete_message": "Êtes-vous sûr de vouloir supprimer le concours ? Cette action ne peut pas être annulée.",
+        "button_contest_detail": "Détails du concours"
     }
 }

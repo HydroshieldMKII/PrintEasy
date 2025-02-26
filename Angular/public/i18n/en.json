@@ -1,4 +1,18 @@
 {
+    "global": {
+        "save_button": "Save",
+        "cancel_button": "Cancel",
+        "delete_button": "Delete",
+        "edit_button": "Edit",
+        "create_button": "Create",
+        "close_button": "Close",
+        "back_button": "Back",
+        "error": "Error",
+        "success": "Success",
+        "warning": "Warning",
+        "info": "Information",
+        "confirm": "Confirm"
+    },
     "login": {
         "title": "Login",
         "username": "Username",
@@ -25,5 +39,20 @@
         "select_country": "Select a country",
         "country": "Pays",
         "country_required": "Country is required"
+    },
+    "contest": {
+        "title_page": "3D DESIGN CONTEST",
+        "description_page": "We regularly organize popular 3D design contests for valuable prizes at <a href=\"http://printeasy.prod.system.shawinigan.info/login\">PrintEasy.com</a>. Take part in the currently running contest, create and upload your model and win.",
+        "winner": "Winner",
+        "submission_limit": "Submission limit",
+        "starts": "Starts",
+        "ends": "Ends",
+        "confirm_delete": "Confirm delete",
+        "confirm_delete_message": "Are you sure you want to delete the contest? This action cannot be undone.",
+        "button_contest_detail": "Contest details"
+    },
+    "contest_form": {
+        "title_form": "Create a contest",
+        "theme": "Theme"
     }
 }

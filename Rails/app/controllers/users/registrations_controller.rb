@@ -19,7 +19,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   def handle_successful_signup(resource)
     if resource.active_for_authentication?
       sign_up(resource_name, resource)
-      render json: { user: current_user, errors: {} }, status: :ok
+      render json: { user: current_user.as_json.merge(profile_picture_url: current_user.profile_picture_url), errors: {} }, status: 200
     else
       expire_data_after_sign_in!
       render json: { errors: resource.errors.as_json }, status: :unprocessable_entity

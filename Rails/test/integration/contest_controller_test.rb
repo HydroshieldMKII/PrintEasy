@@ -17,7 +17,7 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
         
         assert_response :success
 
-        assert_equal 2, @parsed_response["contests"].count
+        assert_equal 5, @parsed_response["contests"].count
         
         assert_equal contests(:contest_one).id, @parsed_response["contests"][0]["id"]
         assert_equal contests(:contest_one).theme, @parsed_response["contests"][0]["theme"]
@@ -124,7 +124,7 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
         end
 
         assert_response :not_found
-        assert_equal ["Contest not found"], @parsed_response["errors"]["contest"]
+        assert_equal ["Couldn't find Contest with 'id'=0 [WHERE `contests`.`deleted_at` IS NULL]"], @parsed_response["errors"]["base"]
     end
 
     test "should not update contest -> contest not found" do
@@ -137,7 +137,7 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
         end
 
         assert_response :not_found
-        assert_equal ["Contest not found"], @parsed_response["errors"]["contest"]
+        assert_equal ["Couldn't find Contest with 'id'=0 [WHERE `contests`.`deleted_at` IS NULL]"], @parsed_response["errors"]["base"]
     end
 
     test "should not destroy contest -> contest not found" do
@@ -150,7 +150,7 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
         end
 
         assert_response :not_found
-        assert_equal ["Contest not found"], @parsed_response["errors"]["contest"]
+        assert_equal ["Couldn't find Contest with 'id'=0 [WHERE `contests`.`deleted_at` IS NULL]"], @parsed_response["errors"]["base"]
     end
     
     test "should not create contest -> no contest" do
@@ -295,7 +295,7 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
         end
 
         assert_response :unprocessable_entity
-        assert_equal ["must be at least one day after start_at"], @parsed_response["errors"]["end_at"]
+        assert_equal ["must be before end_at"], @parsed_response["errors"]["start_at"]
     end
 
     test "should not update contest -> start_at in the past" do
@@ -321,7 +321,7 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
         end
 
         assert_response :unprocessable_entity
-        assert_equal ["must be at least one day after start_at"], @parsed_response["errors"]["end_at"]
+        assert_equal ["must be before end_at"], @parsed_response["errors"]["start_at"]
     end
 
     test "should not show contest if deleted -> contest found" do
@@ -338,7 +338,7 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
         end
 
         assert_response :not_found
-        assert_equal ["Contest not found"], @parsed_response["errors"]["contest"]
+        assert_equal ["Couldn't find Contest with 'id'=1 [WHERE `contests`.`deleted_at` IS NULL]"], @parsed_response["errors"]["base"]
     end
 
     test "should not update contest -> contest deleted" do
@@ -355,7 +355,7 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
         end
 
         assert_response :not_found
-        assert_equal ["Contest not found"], @parsed_response["errors"]["contest"]
+        assert_equal ["Couldn't find Contest with 'id'=1 [WHERE `contests`.`deleted_at` IS NULL]"], @parsed_response["errors"]["base"]
     end
 
     test "should not destroy contest -> contest deleted" do
@@ -372,7 +372,7 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
         end
 
         assert_response :not_found
-        assert_equal ["Contest not found"], @parsed_response["errors"]["contest"]
+        assert_equal ["Couldn't find Contest with 'id'=1 [WHERE `contests`.`deleted_at` IS NULL]"], @parsed_response["errors"]["base"]
     end
 
     test "should not create contest -> no start_at" do
@@ -385,7 +385,7 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
         end
 
         assert_response :unprocessable_entity
-        assert_equal ["can't be blank"], @parsed_response["errors"]["start_at"]
+        assert_equal ["can't be blank", "must be in the future"], @parsed_response["errors"]["start_at"]
     end
 
     test "should not update contest -> no start_at" do
@@ -398,7 +398,7 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
         end
 
         assert_response :unprocessable_entity
-        assert_equal ["can't be blank"], @parsed_response["errors"]["start_at"]
+        assert_equal ["can't be blank", "must be in the future", "must be before end_at"], @parsed_response["errors"]["start_at"]
     end
 
     test "should not create contest -> not admin" do
@@ -447,5 +447,50 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
 
         assert_response :unauthorized
         assert_equal ["You must be an admin to perform this action"], @parsed_response["errors"]["contest"]
+    end
+
+    test "should not update contest -> contest finished" do
+        assert_difference('Contest.count', 0) do
+            put api_contest_url(contests(:contest_one).id), params: { contest: { theme: "test", description: "test", submission_limit: 10, start_at: Time.now - 1.day, end_at: Time.now - 1.day, image: fixture_file_upload(Rails.root.join("test/fixtures/files/chicken_bagel.jpg"), 'image/jpg') } }
+        end
+
+        assert_nothing_raised do
+            @parsed_response = JSON.parse(response.body)
+        end
+
+        assert_response :unprocessable_entity
+
+        assert_equal ["is closed"], @parsed_response["errors"]["contest"]
+    end
+
+    test "index should return all contests expect deleted for admin user" do
+        assert_difference('Contest.count', 0) do
+            get api_contest_index_url
+        end
+
+        assert_nothing_raised do
+            @parsed_response = JSON.parse(response.body)
+        end
+
+        assert_response :success
+
+        assert_equal 5, @parsed_response["contests"].count
+    end
+
+    test "index should not return all contests expect deleted for non-admin user" do
+        sign_out users(:two)
+        sign_in users(:one)
+
+        assert_difference('Contest.count', 0) do
+            get api_contest_index_url
+        end
+
+        assert_nothing_raised do
+            @parsed_response = JSON.parse(response.body)
+        end
+
+        assert_response :success
+
+        assert_equal 3, @parsed_response["contests"].count
     end
 end
