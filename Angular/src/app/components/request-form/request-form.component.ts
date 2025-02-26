@@ -98,6 +98,33 @@ export class RequestFormComponent implements OnInit {
       this.router.navigate(['/requests']);
     }
 
+    if (this.isEditMode || this.isNewMode) {
+      console.log('Loading all presets for edit...');
+      this.presetService.getAllPrinters().subscribe((printers) => {
+        this.printers = printers.map((printer: PrinterModel) => ({
+          label: printer.model,
+          value: printer.model,
+          id: printer.id
+        }));
+      });
+
+      this.presetService.getAllFilaments().subscribe((filamentTypes) => {
+        this.filamentTypes = filamentTypes.map((filament: FilamentModel) => ({
+          label: filament.name,
+          value: filament.name,
+          id: filament.id
+        }));
+      });
+
+      this.presetService.getAllColors().subscribe((colors) => {
+        this.colors = colors.map((color: ColorModel) => ({
+          label: color.name,
+          value: color.name,
+          id: color.id
+        }));
+      });
+    }
+
     if (this.isEditMode || this.isViewMode) {
       if (this.id !== null) {
         this.requestService.getRequestById(this.id).subscribe((request) => {
@@ -134,31 +161,6 @@ export class RequestFormComponent implements OnInit {
             }));
 
             console.log('Printers detected:', this.printers);
-          } else {
-            console.log('Loading all presets for edit...');
-            this.presetService.getAllPrinters().subscribe((printers) => {
-              this.printers = printers.map((printer: PrinterModel) => ({
-                label: printer.model,
-                value: printer.model,
-                id: printer.id
-              }));
-            });
-
-            this.presetService.getAllFilaments().subscribe((filamentTypes) => {
-              this.filamentTypes = filamentTypes.map((filament: FilamentModel) => ({
-                label: filament.name,
-                value: filament.name,
-                id: filament.id
-              }));
-            });
-
-            this.presetService.getAllColors().subscribe((colors) => {
-              this.colors = colors.map((color: ColorModel) => ({
-                label: color.name,
-                value: color.name,
-                id: color.id
-              }));
-            });
           }
 
           if (this.isMine && this.isViewMode) {

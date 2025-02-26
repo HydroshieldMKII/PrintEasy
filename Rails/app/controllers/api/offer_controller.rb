@@ -71,7 +71,7 @@ class Api::OfferController < AuthenticatedController
       if valid && offer.destroy
         render json: { errors: {} }, status: :ok
       else
-        debugger
+        # debugger
         render json: { errors: { offer: offer.errors } }, status: :unprocessable_entity
       end
     end

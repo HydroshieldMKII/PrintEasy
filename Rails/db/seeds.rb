@@ -111,12 +111,6 @@ stl_file_path1 = Rails.root.join("db/seeds/files/RUBY13.stl")
     filename: "RUBY13.stl",
     content_type: "application/sla"
   )
-
-  req.stl_file.attach(
-    io: File.open(stl_file_path1),
-    filename: "RUBY13.stl",
-    content_type: "application/sla"
-  )
   req.save
 end
 
@@ -411,11 +405,15 @@ req_free.stl_file.attach(
 
 req_free.save
 
+# debugger
 
 # Create Orders
+Current.user = admin
 order1 = Order.create!(offer: Offer.first)
 order2 = Order.create!(offer: Offer.second)
 order3 = Order.create!(offer: Offer.third)
+
+Current.user = user1
 order4 = Order.create!(offer: Offer.last)
 
 rubyImage = File.open(Rails.root.join("db/seeds/files/ruby.jpg"))
