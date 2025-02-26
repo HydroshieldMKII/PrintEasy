@@ -132,16 +132,17 @@ export class OfferService {
         return this.api.getRequest(`api/offer/${id}`).pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
+                    console.log("raw getOfferById to create from: ", response.data);
                     const offer = response.data?.['offer'];
-
-                    const filament = new FilamentModel(
-                        offer?.['filament']?.['id'],
-                        offer?.['filament']?.['name']
-                    );
 
                     const color = new ColorModel(
                         offer?.['color']?.['id'],
                         offer?.['color']?.['name']
+                    );
+
+                    const filament = new FilamentModel(
+                        offer?.['filament']?.['id'],
+                        offer?.['filament']?.['name']
                     );
 
                     return new OfferModel(
@@ -160,8 +161,8 @@ export class OfferService {
                             ),
                             new Date(offer?.['printer_user']?.['acquired_date'])
                         ),
-                        filament,
                         color,
+                        filament,
                         offer?.['price'],
                         offer?.['print_quality'],
                         offer?.['target_date']
@@ -203,11 +204,11 @@ export class OfferService {
         );
     }
 
-    updateOffer(id: number, request: FormData): Observable<ApiResponseModel> {
-        return this.api.putRequest(`api/request/${id}`, {}, request).pipe(
+    updateOffer(id: number, offer: FormData): Observable<ApiResponseModel> {
+        return this.api.putRequest(`api/offer/${id}`, {}, offer).pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
-                    this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Request updated successfully' });
+                    this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Offer updated successfully' });
                 } else {
                     if (response.status === 422) {
                         for (const [key, value] of Object.entries(response.errors)) {

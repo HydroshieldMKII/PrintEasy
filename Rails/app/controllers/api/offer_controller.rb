@@ -1,7 +1,7 @@
 class Api::OfferController < AuthenticatedController
     def index
       offers = Offer.all
-      render_request_with_offers(filter_offers(offers))
+      render_offers(filter_offers(offers))
     end
   
     def show
@@ -11,7 +11,7 @@ class Api::OfferController < AuthenticatedController
         return
       end
   
-      render_request_with_offers(offer)
+      render_offers(offer)
     end
   
     def create
@@ -42,7 +42,27 @@ class Api::OfferController < AuthenticatedController
   
     private
   
-    def render_request_with_offers(resource, status: :ok)
+    def render_offers(resource, status: :ok)
+      if resource.is_a?(Offer)
+        render json: { offer: resource.as_json(
+          except: %i[request_id printer_user_id created_at updated_at color_id filament_id],
+          include: {
+            printer_user: {
+              only: %i[id],
+              include: {
+                user: {
+                  only: %i[id username]
+                },
+                printer: {
+                  only: %i[id model]
+                }
+              }
+            },
+            color: {},
+            filament: {}
+          }
+        ), errors: {} }, status: status
+      else
         grouped = resource.group_by(&:request)
         requests = grouped.map do |request_obj, offers|
           request_obj.as_json(
@@ -62,15 +82,15 @@ class Api::OfferController < AuthenticatedController
               except: %i[request_id printer_user_id created_at updated_at color_id filament_id],
               include: {
                 printer_user: {
-                    only: %i[id],
-                    include: {
-                        user: {
-                            only: %i[id username]
-                        },
-                        printer: {
-                            only: %i[id model]
-                        }
+                  only: %i[id],
+                  include: {
+                    user: {
+                      only: %i[id username]
+                    },
+                    printer: {
+                      only: %i[id model]
                     }
+                  }
                 },
                 color: {},
                 filament: {}
@@ -79,6 +99,7 @@ class Api::OfferController < AuthenticatedController
           )
         end
         render json: { requests: requests, errors: {} }, status: status
+      end
     end
   
     def filter_offers(offers)

@@ -14,16 +14,16 @@ import { ImportsModule } from '../../../imports';
 })
 export class OffersComponent {
   activeTab: string = 'mine';
-  // The API now returns a list of Request objects with nested offers
   offers: any[] | null = null;  // For "all" offers (received)
   myOffers: any[] | null = null; // For "my" pending offers
+  offerModalVisible: boolean = false;
+  offerIdToEdit: number | null = null;
 
   deleteDialogVisible: boolean = false;
   offerToDelete: any | null = null;
   requestToDelete: any | null = null;
   isOwningPrinter: boolean | null = null;
 
-  // Use the native API structure directly
   get currentRequests(): any[] {
     return this.activeTab === 'mine' ? this.myOffers || [] : this.offers || [];
   }
@@ -99,6 +99,8 @@ export class OffersComponent {
 
   editOffer(offer: any): void {
     console.log("editing id:", offer.id);
+    this.offerIdToEdit = offer.id;
+    this.offerModalVisible = true;
   }
 
   cancelOffer(offer: any, request: any): void {

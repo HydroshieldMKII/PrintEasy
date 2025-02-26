@@ -11,14 +11,12 @@
 >
   <ng-template #header>
     <h2 class="font-semibold">
-      {{ isEditMode ? 'Edit an offer for' : 'Submit an offer for' }} "{{ printName }}"
+      {{ offerIdToEdit ? 'Edit an offer' : 'Submit an offer for' }}
     </h2>
   </ng-template>
 
   <form [formGroup]="offerForm" (ngSubmit)="submitOffer()" class="space-y-4">
-    <!-- Grid Layout -->
     <div class="grid grid-cols-2 gap-4">
-      <!-- Left Section (Preset) -->
       <div class="flex">
         <h3 class="font-medium text-gray-700">Preset</h3>
         <div class="offer-form-field">
@@ -153,3 +151,4 @@
     </div>
   </form>
 </p-dialog>
+<p-toast></p-toast>

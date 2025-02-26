@@ -128,4 +128,4 @@
   </ng-template>
 </p-dialog>
 
-<app-offer-modal></app-offer-modal>
+<app-offer-modal *ngIf="offerModalVisible" [(offerModalVisible)]="offerModalVisible" [offerIdToEdit]="offerIdToEdit"></app-offer-modal>

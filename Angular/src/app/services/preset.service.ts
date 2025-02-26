@@ -21,15 +21,21 @@ export class PresetService {
     private cachedColors: ColorModel[] | null = null;
     private cachedFilaments: FilamentModel[] | null = null;
     private cachedPrinters: PrinterModel[] | null = null;
+    private cachedPrinterUsers: PrinterUserModel[] | null = null;
+    private cachedPresets: PresetModel[] | null = null;
 
     constructor(private api: ApiRequestService) { }
 
     getAllPresets(): Observable<PresetModel[]> {
+        if (this.cachedPresets) {
+            console.log("Returning cached presets");
+            return of(this.cachedPresets);
+        }
+
         return this.api.getRequest('api/preset').pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
-                    console.log("Fetched Presets:", response.data);
-                    return (response.data as any[]).map(item => ({
+                    this.cachedPresets = (response.data as any[]).map(item => ({
                         id: item.id,
                         printQuality: item.print_quality,
                         color: {
@@ -41,6 +47,7 @@ export class PresetService {
                             name: item.filament.name
                         }
                     } as PresetModel));
+                    return this.cachedPresets;
                 }
                 return [];
             })
@@ -84,16 +91,22 @@ export class PresetService {
     }
 
     getPrinterUsers(): Observable<PrinterUserModel[]> {
+        if (this.cachedPrinterUsers) {
+            console.log("Returning cached printer users");
+            return of(this.cachedPrinterUsers);
+        }
+
         return this.api.getRequest('api/printer_user').pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
                     console.log("Fetched Printer Users:", response.data);
-                    return (response.data as any[]).map(item => new PrinterUserModel(
+                    this.cachedPrinterUsers = (response.data as any[]).map(item => new PrinterUserModel(
                         item.id,
                         item.user,
                         item.printer,
                         new Date(item.acquired_date)
                     ));
+                    return this.cachedPrinterUsers;
                 }
                 return [];
             })

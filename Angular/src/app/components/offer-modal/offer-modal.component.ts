@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import { ImportsModule } from '../../../imports';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
@@ -8,6 +8,7 @@ import { PresetModel } from '../../models/preset.model';
 import { ColorModel } from '../../models/color.model';
 import { FilamentModel } from '../../models/filament.model';
 import { PrinterUserModel } from '../../models/printer-user.model';
+import { MessageService } from 'primeng/api';
 
 
 @Component({
@@ -16,11 +17,13 @@ import { PrinterUserModel } from '../../models/printer-user.model';
   templateUrl: './offer-modal.component.html',
   styleUrl: './offer-modal.component.css'
 })
-export class OfferModalComponent {
+export class OfferModalComponent implements OnChanges {
   @Input() offerModalVisible: boolean = false;
   @Input() requestIdToEdit: number | null = null;
+  @Input() offerIdToEdit: number | null = null;
 
   @Output() offerModalVisibleChange = new EventEmitter<boolean>();
+  @Output() offerUpdated = new EventEmitter<boolean>();
 
   isEditMode: boolean = false;
   printName: string = 'A cool print';
@@ -33,7 +36,7 @@ export class OfferModalComponent {
   colors: { label: string, value: string, id: number }[] = [];
   filaments: { label: string, value: string, id: number }[] = [];
 
-  constructor(private fb: FormBuilder, private presetService: PresetService, private offerService: OfferService) {
+  constructor(private fb: FormBuilder, private presetService: PresetService, private offerService: OfferService, private messageService: MessageService) {
     this.offerForm = this.fb.group({
       preset: [this.selectedPreset],
       color: [null, Validators.required],
@@ -74,7 +77,6 @@ export class OfferModalComponent {
     });
 
     this.presetService.getPrinterUsers().subscribe((printerUsers: PrinterUserModel[]) => {
-      console.log('Printer Users:', printerUsers);
       this.printers = printerUsers.map(printerUser => {
         const formattedDate = new Date(printerUser.aquired_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
         return { label: `${printerUser.printer.model} (${formattedDate})`, value: printerUser.printer.model, id: printerUser.id };
@@ -133,14 +135,16 @@ export class OfferModalComponent {
       const formValues = this.offerForm.value;
       const formData = new FormData();
 
-      if (!this.requestIdToEdit) {
-        console.error('Error: requestIdToEdit is not set.');
+      if (!this.requestIdToEdit && !this.offerIdToEdit) {
+        console.error('Error: requestIdToEdit or offerIdToEdit is not set.');
         return;
       } else {
         console.log('requestIdToEdit:', this.requestIdToEdit);
       }
 
-      formData.append('offer[request_id]', this.requestIdToEdit.toString());
+      if (this.requestIdToEdit) {
+        formData.append('offer[request_id]', this.requestIdToEdit.toString());
+      }
       formData.append('offer[printer_user_id]', formValues.printer.id.toString());
       formData.append('offer[color_id]', formValues.color.id.toString());
       formData.append('offer[filament_id]', formValues.filament.id.toString());
@@ -148,10 +152,19 @@ export class OfferModalComponent {
       formData.append('offer[print_quality]', formValues.quality.toString());
       formData.append('offer[target_date]', formValues.targetDate.toISOString());
 
-      this.offerService.createOffer(formData).subscribe(
+      let submitObs;
+      if (this.offerIdToEdit) {
+        formData.append('offer[id]', this.offerIdToEdit.toString());
+        submitObs = this.offerService.updateOffer(this.offerIdToEdit, formData);
+      } else {
+        submitObs = this.offerService.createOffer(formData);
+      }
+
+      submitObs.subscribe(
         response => {
           if (response.status === 200) {
             this.offerModalVisible = false;
+            this.offerModalVisibleChange.emit(false);
           } else {
             console.log('Error:', response);
           }
@@ -165,5 +178,26 @@ export class OfferModalComponent {
   deleteOffer() {
     console.log('Offer Deleted');
     this.offerModalVisible = false;
+  }
+
+  ngOnChanges() {
+    if (this.offerIdToEdit) {
+      this.offerService.getOfferById(this.offerIdToEdit).subscribe((offer: any) => {
+        console.log('Offer to edit:', offer);
+
+        const matchingPrinter = this.printers.find(p => p.id === offer.printer_user.id);
+        const matchingColor = this.colors.find(c => c.id === offer.color.id);
+        const matchingFilament = this.filaments.find(f => f.id === offer.filament.id);
+
+        this.offerForm.patchValue({
+          printer: matchingPrinter,
+          color: matchingColor,
+          filament: matchingFilament,
+          price: offer.price,
+          quality: offer.print_quality,
+          targetDate: new Date(offer.target_date)
+        });
+      });
+    }
   }
 }

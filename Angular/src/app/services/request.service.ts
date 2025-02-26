@@ -60,7 +60,6 @@ export class RequestService {
                         request?.['user']?.['country']?.['name']
                     );
 
-                    console.log("Fetched presets: ", request?.['preset_requests']);
                     const presets = (request?.['preset_requests'] as any[]).map((preset: any) => {
                         return new RequestPresetModel(
                             preset?.['id'],
