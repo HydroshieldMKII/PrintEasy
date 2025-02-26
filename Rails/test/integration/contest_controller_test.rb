@@ -17,7 +17,7 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
         
         assert_response :success
 
-        assert_equal 2, @parsed_response["contests"].count
+        assert_equal 3, @parsed_response["contests"].count
         
         assert_equal contests(:contest_one).id, @parsed_response["contests"][0]["id"]
         assert_equal contests(:contest_one).theme, @parsed_response["contests"][0]["theme"]
@@ -447,5 +447,19 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
 
         assert_response :unauthorized
         assert_equal ["You must be an admin to perform this action"], @parsed_response["errors"]["contest"]
+    end
+
+    test "should not update contest -> contest finished" do
+        assert_difference('Contest.count', 0) do
+            put api_contest_url(contests(:contest_one).id), params: { contest: { theme: "test", description: "test", submission_limit: 10, start_at: Time.now - 1.day, end_at: Time.now - 1.day, image: fixture_file_upload(Rails.root.join("test/fixtures/files/chicken_bagel.jpg"), 'image/jpg') } }
+        end
+
+        assert_nothing_raised do
+            @parsed_response = JSON.parse(response.body)
+        end
+
+        assert_response :unprocessable_entity
+
+        assert_equal ["is closed"], @parsed_response["errors"]["contest"]
     end
 end

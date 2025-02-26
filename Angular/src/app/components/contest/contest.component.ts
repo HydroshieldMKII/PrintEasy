@@ -11,6 +11,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SpeedDialModule } from 'primeng/speeddial';
 import { DialogModule } from 'primeng/dialog';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-contest',
@@ -23,6 +24,7 @@ export class ContestComponent {
   route = inject(Router);
   contestService = inject(ContestService);
   authService = inject(AuthService);
+  messageService = inject(MessageService);
 
   contests: ContestModel[] = [];
   id: number = 0;
@@ -47,9 +49,12 @@ export class ContestComponent {
     );
   }
 
-  editContest(id: number) {
-    console.log("Edit contest", id);
-    this.route.navigate(['/contest', id]);
+  editContest(contest: ContestModel) {
+    if (contest.finished) {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Cannot edit a finished contest' });
+    } else {
+      this.route.navigate(['/contest', contest.id]);
+    }
   }
 
   confirmDelete() {
@@ -63,5 +68,16 @@ export class ContestComponent {
   deleteContest(id: number) {
     this.id = id;
     this.deleteDialogVisible = true;
+  }
+
+  getQueryParams(contest: ContestModel) {
+    let queryParams: any = {};
+
+    if (contest.finished && contest.winnerUser) {
+      queryParams.winner = contest.winnerUser?.username;
+      queryParams.finished = contest.finished;
+    }
+
+    return queryParams;
   }
 }

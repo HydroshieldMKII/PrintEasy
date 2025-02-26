@@ -22,20 +22,26 @@
             <div class="contest-content">
                 <img [src]="contest.image" alt="Contest image" class="contest-image" loading="lazy" />
                 <div class="contest-details">
-                    <h3 class="contest-theme">{{ contest.theme }}</h3>
+                    <h3 class="contest-theme">{{ contest.theme }} {{ contest.finished ? '(Ended)' : '' }}</h3>
                     <p class="contest-description">{{ contest.description ? (contest.description.length > 30 ? (contest.description | slice:0:30) + '...' : contest.description) : '' }}</p>
-                    <p><i class="pi pi-users"></i><span> Submission limit:</span> {{ contest.submissionLimit }}</p>
+                    <p *ngIf="contest.finished && contest.winnerUser">
+                        <i class="pi pi-trophy"></i><span> Winner:</span> {{ contest.winnerUser.username }}
+                    </p>
+                    <p *ngIf="!contest.finished || !contest.winnerUser">
+                        <i class="pi pi-users"></i><span> Submission limit:</span> {{ contest.submissionLimit }}
+                    </p>
+  
                     <p><i class="pi pi-calendar"></i><span> Starts:</span> {{ contest.startAt | date:'MMM d, y h:mm a' }}</p>
                     <p><i class="pi pi-calendar-times"></i><span> Ends:</span> {{ contest.endAt ? (contest.endAt | date:'MMM d, y h:mm a') : 'N/A' }}</p>
                 </div>
             </div>
 
 
-            <button [routerLink]="['/contest', contest.id, 'submissions']" pButton label="Contest detail" class="p-button-outlined contest-detail-button"></button>
+            <button [routerLink]="['/contest', contest.id, 'submissions']" [queryParams]="getQueryParams(contest)" pButton label="Contest detail" class="p-button-outlined contest-detail-button"></button>
             
             @if (authService.currentUser?.isAdmin) {
             <div class="admin-buttons">
-                <button pButton icon="pi pi-pencil" class="p-button-text" (click)="editContest(contest.id)"></button>
+                <button pButton icon="pi pi-pencil" class="p-button-text" (click)="editContest(contest)"></button>
                 <button pButton icon="pi pi-trash" class="p-button-text p-button-danger"
                     (click)="deleteContest(contest.id)"></button>
             </div>

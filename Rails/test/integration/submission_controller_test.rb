@@ -55,7 +55,6 @@ class Api::SubmissionControllerTest < ActionDispatch::IntegrationTest
     assert_difference('Submission.count') do
       post api_submission_index_url, params: { submission: { contest_id: @contest.id, name: "New Submission", description: "New Description", stl: fixture_file_upload(@stl_file.filename.to_s, @stl_file.content_type), image: fixture_file_upload(@image_file.filename.to_s, @image_file.content_type) } }
     end
-
     assert_response :success
 
     assert_nothing_raised do
@@ -530,5 +529,30 @@ class Api::SubmissionControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should not create submission if contest is closed" do
+    assert_difference('Submission.count', 0) do
+      post api_submission_index_url, params: { submission: { contest_id: contests(:contest_three).id, name: "New Submission", description: "New Description", stl: fixture_file_upload(@stl_file.filename.to_s, @stl_file.content_type), image: fixture_file_upload(@image_file.filename.to_s, @image_file.content_type) } }
+    end
+
+    assert_response :unprocessable_entity
+
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+
+    assert_equal ["is closed"], @parsed_response["errors"]["contest"]
+  end
+
+  test "should not update submission if contest is closed" do
+    assert_difference('Submission.count', 0) do
+      patch api_submission_url(submissions(:submission_three)), params: { submission: { contest_id: contests(:contest_three).id, name: "Updated Submission", description: "Updated Description", stl: fixture_file_upload(@stl_file.filename.to_s, @stl_file.content_type), image: fixture_file_upload(@image_file.filename.to_s, @image_file.content_type) } }
+    end
+
+    assert_response :unprocessable_entity
+
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+
+    assert_equal ["is closed"], @parsed_response["errors"]["contest"]
   end
 end

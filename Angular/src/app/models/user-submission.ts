@@ -4,10 +4,12 @@ import { UserModel } from './user.model';
 export class UserSubmission {
     user: UserModel;
     submissions: SubmissionModel[];
+    mine: boolean;
 
-    constructor(user: UserModel, submissions: SubmissionModel[]) {
+    constructor(user: UserModel, submissions: SubmissionModel[], mine: boolean) {
         this.user = user;
         this.submissions = submissions;
+        this.mine = mine;
     }
 
     static fromApi(data: any): UserSubmission {
@@ -21,7 +23,8 @@ export class UserSubmission {
                 new Date(data?.['user']?.['created_at']),
                 data?.['user']?.['isAdmin']
             ),
-            data?.['submissions']?.map((submission: any) => SubmissionModel.fromApi(submission))
+            data?.['submissions']?.map((submission: any) => SubmissionModel.fromApi(submission)),
+            data?.['mine']
         );
     }
 }

@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ImportsModule } from '../../../imports';
+import { MessageService } from 'primeng/api';
 
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, ValidationErrors, AbstractControl } from '@angular/forms';
 import { StlModelViewerModule } from 'angular-stl-model-viewer';
@@ -24,6 +25,7 @@ export class SubmissionsComponent {
   submissionService: SubmissionService = inject(SubmissionService);
   contestService: ContestService = inject(ContestService);
   authService: AuthService = inject(AuthService);
+  messageService: MessageService = inject(MessageService);
 
   submissionForm: FormGroup;
   contest: ContestModel | null = null;
@@ -40,6 +42,8 @@ export class SubmissionsComponent {
   uploadedFile: any = null;
   uploadedFileBlob: any = null;
   isEdit: boolean = false;
+  finished: boolean = false;
+  winner_username: string = '';
   submissionId: number = 0;
 
   constructor(private route: ActivatedRoute, private router: Router, private fb: FormBuilder) {
@@ -51,8 +55,13 @@ export class SubmissionsComponent {
     });
 
     this.route.params.subscribe(params => {
+      console.log('Params:', params);
       this.paramsId = params['id'];
-      console.log('Params ID:', this.paramsId);
+    });
+
+    this.route.queryParams.subscribe(params => {
+      this.finished = params['finished'] ? params['finished'] : false;
+      this.winner_username = params['winner'] ? params['winner'] : '';
     });
 
     this.contestService.getContest(this.paramsId).subscribe((data) => {
@@ -82,12 +91,12 @@ export class SubmissionsComponent {
       return;
     }
     console.log('Form:', this.submissionForm.value);
-  
+
     const submissionForm = new FormData();
     submissionForm.append('submission[name]', this.submissionForm.value.name);
     submissionForm.append('submission[description]', this.submissionForm.value.description);
     submissionForm.append('submission[contest_id]', this.paramsId.toString());
-    
+
     if (this.submissionForm.value.stl) {
       submissionForm.append('submission[stl]', this.submissionForm.value.stl);
     }
@@ -95,11 +104,11 @@ export class SubmissionsComponent {
     if (this.submissionForm.value.image) {
       submissionForm.append('submission[image]', this.submissionForm.value.image);
     }
-  
+
     const submissionObservable = this.isEdit
       ? this.submissionService.updateSubmission(submissionForm, this.submissionId)
       : this.submissionService.createSubmission(submissionForm);
-  
+
     submissionObservable.subscribe(() => {
       this.display = false;
       this.submissionService.getSubmissions(this.paramsId).subscribe((data) => {
@@ -177,33 +186,36 @@ export class SubmissionsComponent {
     return null;
   }
 
-  async createFileFromUrl(url: string, filename: string): Promise<File> {
-    const response = await fetch(url);
-    const blob = await response.blob();
-    console.log('Blob:', blob);
-    const fileType = blob.type || 'image/jpeg'; // Détermine le type MIME
-
-    return new File([blob], filename, { type: fileType });
-  }
-
   showDialog(submission: SubmissionModel | null) {
-    this.isEdit = !!submission;
+    const userSubmission = this.submissions.filter(submission => submission.mine);
+    
+    if ((this.contest && userSubmission[0].submissions.length < this.contest.submissionLimit) && !this.finished) {
+      this.isEdit = !!submission;
 
-    this.submissionId = submission?.id || 0;
+      this.submissionId = submission?.id || 0;
 
-    this.submissionForm.patchValue({
-      name: submission?.name || '',
-      description: submission?.description || '',
-      image: null,
-      stl: null
-    });
+      this.submissionForm.patchValue({
+        name: submission?.name || '',
+        description: submission?.description || '',
+        image: null,
+        stl: null
+      });
 
-    this.stlUrl = submission?.stlUrl || '';
-    this.imageUrl = submission?.imageUrl || '';
+      this.stlUrl = submission?.stlUrl || '';
+      this.imageUrl = submission?.imageUrl || '';
 
-    this.noImagePreview = this.isEdit ? '' : 'image-preview-container';
-    this.noStlPreview = this.isEdit ? '' : 'image-preview-container';
+      this.noImagePreview = this.isEdit ? '' : 'image-preview-container';
+      this.noStlPreview = this.isEdit ? '' : 'image-preview-container';
 
-    this.display = true;
+      this.display = true;
+    }
+    else {
+      if (this.finished) {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Contest is finished' });
+      }
+      else {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Submission limit reached' });
+      }
+    }
   }
 }

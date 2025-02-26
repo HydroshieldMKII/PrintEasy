@@ -16,12 +16,18 @@ class Contest < ApplicationRecord
     validates :start_at, comparison: { less_than: :end_at, message: "must be before end_at" }, if: -> { end_at.present? }
     validates :image, presence: true
 
+    validate :contest_finished?, on: :update
+
     def soft_delete
         update(deleted_at: Time.now)
     end
 
     def finished?
         end_at && end_at < Time.now
+    end
+
+    def contest_finished?
+        errors.add(:contest, "is closed") if finished?
     end
 
     def restore

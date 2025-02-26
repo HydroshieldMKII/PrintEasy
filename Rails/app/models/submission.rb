@@ -16,6 +16,7 @@ class Submission < ApplicationRecord
   validate :stl_must_be_valid
   validate :image_must_be_valid
   validate :submissions_limit, on: :create
+  validate :contest_finished?, on: [:create, :update]
 
   def stl_url
     stl && url_for(stl)
@@ -26,12 +27,17 @@ class Submission < ApplicationRecord
   end
 
   private
-  
-  def submissions_limit
-    return if contest.nil?
+  def contest_finished?
+    errors.add(:contest, "is closed") if contest&.finished?
+  end
 
-    if user.submissions.count >= contest.submission_limit
-      errors.add(:submission, "has reached the submission limit")
+  def submissions_limit
+    return if contest.nil? || user.nil?
+  
+    user_submissions_for_contest = user.submissions.where(contest: contest).count
+  
+    if user_submissions_for_contest >= contest.submission_limit
+      errors.add(:submission, "has reached the submission limit for this contest")
     end
   end
 

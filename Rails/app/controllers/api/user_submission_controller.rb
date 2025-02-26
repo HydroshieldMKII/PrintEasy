@@ -1,19 +1,20 @@
 class Api::UserSubmissionController < ApplicationController
     def index
-        @contest = Contest.find(submission_params[:contest_id])
+      @contest = Contest.find(submission_params[:contest_id])
 
-        @submissions = @contest.submissions.includes(:likes, :user)
+      @submissions = @contest.submissions.includes(:likes, :user)
 
-        @users_with_submissions = @submissions.group_by(&:user).map do |user, user_submissions|
-          {
-            user: user.as_json,
-            submissions: user_submissions.as_json(include: :likes, methods: [:image_url, :stl_url])
-          }
-        end
+      @users_with_submissions = @submissions.group_by(&:user).map do |user, user_submissions|
+        {
+        user: user.as_json,
+        submissions: user_submissions.as_json(include: :likes, methods: [:image_url, :stl_url]),
+        mine: user == current_user
+        }
+      end
       
-        @users_with_submissions.sort_by! { |user| user[:username] }
+      @users_with_submissions.sort_by! { |user| user[:user]['username'] }
       
-        render json: { submissions: @users_with_submissions }, status: :ok
+      render json: { submissions: @users_with_submissions }, status: :ok
     end
 
     def show

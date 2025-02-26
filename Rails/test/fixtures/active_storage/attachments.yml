@@ -10,6 +10,12 @@ second_image_attachment:
   record_type: Contest
   blob: first_image_blob
 
+sixth_image_attachment:
+  name: image
+  record_id: 3
+  record_type: Contest
+  blob: first_image_blob
+
 first_stl_file_attachment:
   name: stl_file
   record_type: Request
@@ -45,6 +51,12 @@ fifth_stl_file_attachment:
   record_type: Submission
   blob: first_stl_file_blob
 
+sixth_stl_file_attachment:
+  name: stl
+  record_id: 3
+  record_type: Submission
+  blob: first_stl_file_blob
+
 fourth_image_attachment:
   name: image
   record_id: 1
@@ -54,5 +66,11 @@ fourth_image_attachment:
 fifth_image_attachment:
   name: image
   record_id: 2
+  record_type: Submission
+  blob: first_image_blob
+
+seventh_image_attachment:
+  name: image
+  record_id: 3
   record_type: Submission
   blob: first_image_blob
