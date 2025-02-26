@@ -2,6 +2,9 @@ class Contest < ApplicationRecord
     # before_validation :set_start_at, on: [:create, :update]
 
     default_scope { where(deleted_at: nil) }
+    scope :active_for_user, ->(user) {
+        where("start_at <= ?", Time.now)
+    }
 
     has_many :submissions
 
@@ -11,12 +14,27 @@ class Contest < ApplicationRecord
     validates :description, length: { maximum: 200 }
     validates :submission_limit, presence: true, numericality: { only_integer: true, greater_than: 0, less_than: 30 }
     validates :start_at, presence: true
+    validates :start_at, comparison: { greater_than: -> { Time.now }, message: "must be in the future" }, on: :create 
+    validates :start_at, comparison: { greater_than: -> { Time.now }, message: "must be in the future" }, on: :update, if: -> { will_save_change_to_attribute?(:start_at) }
+    validates :start_at, comparison: { less_than: :end_at, message: "must be before end_at" }, if: -> { end_at.present? }
     validates :image, presence: true
 
-    validate :past?, on: [:create, :update]
+    validate :contest_finished?, on: :update
 
     def soft_delete
         update(deleted_at: Time.now)
+    end
+
+    def started?
+        start_at && start_at < Time.now
+    end
+
+    def finished?
+        end_at && end_at < Time.now
+    end
+
+    def contest_finished?
+        errors.add(:contest, "is closed") if finished?
     end
 
     def restore
@@ -29,43 +47,5 @@ class Contest < ApplicationRecord
 
     def image_url
         image && Rails.application.routes.url_helpers.rails_blob_path(image, only_path: true)
-    end
-
-    private
-
-    # def set_start_at
-    #     if self.start_at.nil?
-    #         self.start_at = Time.now
-    #     end
-    # end
-
-    def start_at_has_changed?
-        if !self.start_at_was.nil? && !self.start_at.nil?
-            return self.start_at_was.change(sec: 0) != self.start_at.change(sec: 0)
-        end
-
-        return true
-    end
-
-    def end_at_has_changed?
-        if !self.end_at.nil? && !self.end_at_was.nil?
-            return self.end_at_was.change(sec: 0) != self.end_at.change(sec: 0)
-        end
-
-        return true
-    end
-
-    def past?
-        return if deleted_at_changed? || (!start_at_has_changed? && !end_at_has_changed?) || start_at.nil?
-
-        if self.start_at < Time.now.change(sec: 0)
-            errors.add(:start_at, "must be in the future")
-        end
-
-        if !self.end_at.nil?
-            if self.end_at < self.start_at + 1.day
-                errors.add(:end_at, "must be at least one day after start_at")
-            end
-        end
     end
 end
