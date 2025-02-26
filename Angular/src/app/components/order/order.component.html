@@ -129,7 +129,7 @@
                                             </div>
                                             <div class="three-dot-container" *ngIf="!consumer"> <!-- TODO: make dots dissapear when cancelled, Arrived  or shipped-->
                                                 <p-button [rounded]="true" [text]="true" icon="pi pi-ellipsis-v" (click)="menu.toggle($event); setSelectedOrderStatus(status.id)" />
-                                                <p-tieredmenu #menu [model]="editMenuItems" [popup]="true"></p-tieredmenu>
+                                                <p-menu #menu [model]="editMenuItems" [popup]="true"></p-menu>
                                             </div>
                                         </div>
                                         
@@ -165,7 +165,7 @@
                                             </div>
                                             <div class="three-dot-container" *ngIf="!consumer">
                                                 <p-button [rounded]="true" [text]="true" icon="pi pi-ellipsis-v" (click)="menu.toggle($event); setSelectedOrderStatus(status.id)" />
-                                                <p-tieredmenu #menu [model]="editMenuItems" [popup]="true"></p-tieredmenu>
+                                                <p-menu #menu [model]="editMenuItems" [popup]="true"></p-menu>
                                             </div>
                                         </div>
 
@@ -201,7 +201,7 @@
                                             </div>
                                             <div class="three-dot-container" *ngIf="!consumer">
                                                 <p-button [rounded]="true" [text]="true" icon="pi pi-ellipsis-v" (click)="menu.toggle($event); setSelectedOrderStatus(status.id)" />
-                                                <p-tieredmenu #menu [model]="editMenuItems" [popup]="true"></p-tieredmenu>
+                                                <p-menu #menu [model]="editMenuItems" [popup]="true"></p-menu>
                                             </div>
                                         </div>
                                         <div class="status-content-image" *ngIf="status.imageUrl">
@@ -236,7 +236,7 @@
                                             </div>
                                             <div class="three-dot-container" *ngIf="!consumer">
                                                 <p-button [rounded]="true" [text]="true" icon="pi pi-ellipsis-v" (click)="menu.toggle($event); setSelectedOrderStatus(status.id)" />
-                                                <p-tieredmenu #menu [model]="editMenuItems" [popup]="true"></p-tieredmenu>
+                                                <p-menu #menu [model]="editMenuItems" [popup]="true"></p-menu>
                                             </div>
                                         </div>
                                         <div class="status-content-image" *ngIf="status.imageUrl">

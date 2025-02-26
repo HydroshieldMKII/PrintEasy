@@ -38,7 +38,7 @@ class Order < ApplicationRecord
 
   def not_two_order_with_the_same_request
     # debugger
-    if request.offers.joins(:order).count > 1
+    if request.offers.joins(:order).count > 0
       errors.add(:offer_id, 'Request already has an order')
       return false
     end
