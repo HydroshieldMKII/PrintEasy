@@ -4,6 +4,7 @@ import { OnInit } from '@angular/core';
 import { BadgeModule } from 'primeng/badge';
 import { CommonModule } from '@angular/common';
 import { AuthService } from './services/authentication.service';
+import { JsonPipe } from '@angular/common';
 
 import {
   TranslateService,
@@ -29,7 +30,7 @@ import { AvatarModule } from 'primeng/avatar';
   imports: [
     RouterOutlet, Menubar, MenubarModule, ButtonModule,
     ToastModule, BadgeModule, CommonModule, InputTextModule,
-    Ripple, AvatarModule, Menu
+    Ripple, AvatarModule, Menu, JsonPipe
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'

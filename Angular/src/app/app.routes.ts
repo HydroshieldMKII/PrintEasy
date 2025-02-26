@@ -11,9 +11,7 @@ import { RequestFormComponent } from './components/request-form/request-form.com
 import { OffersComponent } from './components/offer/offer.component';
 import { OrderComponent } from './components/order/order.component';
 import { OrdersComponent } from './components/orders/orders.component';
-import { SubmissionComponent } from './components/submission/submission.component';
 import { SubmissionsComponent } from './components/submissions/submissions.component';
-import { SubmissionFormComponent } from './components/submission-form/submission-form.component';
 
 import { AuthenticationGuard } from './guards/authentication.guard';
 import { ContestGuard } from './guards/contest.guard';
@@ -90,21 +88,6 @@ export const routes: Routes = [
         path: 'contest/:id/submissions',
         component: SubmissionsComponent,
         title: 'Submissions',
-      }
-    ]
-  },
-  {
-    path: '', 
-    children: [
-      {
-        path: 'submission/new',
-        component: SubmissionFormComponent,
-        title: 'New Submission',
-      },
-      {
-        path: 'submission/:id',
-        component: SubmissionComponent,
-        title: 'Submission',
       }
     ]
   },
