@@ -117,4 +117,12 @@ export class OffersComponent {
   refuseOffer(offer: any): void {
     console.log("Rejecting id:", offer.id);
   }
+
+  onOfferUpdated(offer: any): void {
+    console.log("Offer updated from offer list:", offer);
+    this.offerIdToEdit = null;
+    this.offerService.getMyOffers().subscribe((offers: any[]) => {
+      this.myOffers = offers;
+    });
+  }
 }
