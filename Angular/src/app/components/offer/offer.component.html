@@ -61,13 +61,13 @@
             </ng-template>
           
             <ng-template pTemplate="body" let-offer>
-              <tr [ngClass]="{'disabled-row': offer.cancelled_at}">
-                <td *ngIf="activeTab === 'all'">{{ offer.printer_user.user.username }}</td>
-                <td>{{ offer.printer_user.printer.model }}</td>
-                <td>{{ offer.color.name }} / {{ offer.filament.name }} / {{ offer.print_quality }}mm</td>
+              <tr [ngClass]="{'disabled-row': offer.cancelledAt}">
+                <td *ngIf="activeTab === 'all'">{{ offer.printerUser.user.username }}</td>
+                <td>{{ offer.printerUser.printer.model }}</td>
+                <td>{{ offer.color.name }} / {{ offer.filament.name }} / {{ offer.printQuality }}mm</td>
                 <td>{{ offer.price === 0 ? 'Free' : (offer.price | currency) }}</td>
-                <td>{{ offer.target_date | date:'mediumDate' }}</td>
-                <td>{{ offer.cancelled_at ? 'Yes (' + (offer.cancelled_at | date:'mediumDate') + ')' : 'No' }}</td>
+                <td>{{ offer.targetDate | date:'mediumDate' }}</td>
+                <td>{{ offer.cancelledAt ? 'Yes (' + (offer.cancelledAt | date:'mediumDate') + ')' : 'No' }}</td>
                 <td>
                   <button pButton type="button" icon="pi pi-pencil" title="Edit this offer" 
                           (click)="editOffer(offer)" *ngIf="activeTab === 'mine'"></button>
@@ -120,7 +120,7 @@
     </div>
   </ng-template>
   <span class="text-surface-500 dark:text-surface-400 block mb-4">
-    Are you sure you want to cancel your offer for {{ requestToDelete?.name }} with your {{ offerToDelete?.printer_user.printer.model }}?
+    Are you sure you want to cancel your offer for {{ requestToDelete?.name }} with your {{ offerToDelete?.printerUser.printer.model }}?
     This action cannot be undone.
   </span>
   <ng-template #footer>
@@ -147,7 +147,7 @@
     </div>
   </ng-template>
   <span class="text-surface-500 dark:text-surface-400 block mb-4">
-    Are you sure you want to refuse the offer from {{ offerToRefuse?.printer_user.user.username }}?
+    Are you sure you want to refuse the offer from {{ offerToRefuse?.printerUser.user.username }}?
     This action cannot be undone.
   </span>
   <ng-template #footer>

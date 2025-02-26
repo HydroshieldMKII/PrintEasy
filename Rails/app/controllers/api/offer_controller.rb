@@ -51,23 +51,27 @@ class Api::OfferController < AuthenticatedController
   
     def destroy
       offer = Offer.find(params[:id])
-      valid = false
+      valid = true
 
       if offer.printer_user.user != current_user
+        valid = false
         offer.errors.add(:offer, 'You are not allowed to delete this offer')
       end
 
       if Order.find_by(offer_id: offer.id)
+        valid = false
         offer.errors.add(:offer, 'Offer already accepted. Cannot delete')
       end
 
       if offer.cancelled_at
+        valid = false
         offer.errors.add(:offer, 'Offer already rejected. Cannot delete')
       end
 
       if valid && offer.destroy
         render json: { errors: {} }, status: :ok
       else
+        debugger
         render json: { errors: { offer: offer.errors } }, status: :unprocessable_entity
       end
     end

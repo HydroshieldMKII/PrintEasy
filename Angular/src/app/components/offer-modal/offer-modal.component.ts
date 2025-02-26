@@ -78,7 +78,7 @@ export class OfferModalComponent implements OnChanges {
 
     this.presetService.getPrinterUsers().subscribe((printerUsers: PrinterUserModel[]) => {
       this.printers = printerUsers.map(printerUser => {
-        const formattedDate = new Date(printerUser.aquired_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        const formattedDate = new Date(printerUser.aquiredDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
         return { label: `${printerUser.printer.model} (${formattedDate})`, value: printerUser.printer.model, id: printerUser.id };
       });
     });
@@ -189,11 +189,11 @@ export class OfferModalComponent implements OnChanges {
       this.offerService.getOfferById(this.offerIdToEdit).subscribe((offer: any) => {
         console.log('Offer to edit:', offer);
 
-        const matchingPrinter = this.printers.find(p => p.id === offer.printer_user.id);
+        const matchingPrinter = this.printers.find(p => p.id === offer.printerUser.id);
         const matchingColor = this.colors.find(c => c.id === offer.color.id);
         const matchingFilament = this.filaments.find(f => f.id === offer.filament.id);
 
-        const dateFromBackend = new Date(offer.target_date);
+        const dateFromBackend = new Date(offer.targetDate);
         dateFromBackend.setMinutes(dateFromBackend.getMinutes() + dateFromBackend.getTimezoneOffset());
 
         this.offerForm.patchValue({
@@ -201,7 +201,7 @@ export class OfferModalComponent implements OnChanges {
           color: matchingColor,
           filament: matchingFilament,
           price: offer.price,
-          quality: offer.print_quality,
+          quality: offer.printQuality,
           targetDate: dateFromBackend
         });
       });

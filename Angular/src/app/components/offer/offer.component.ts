@@ -46,9 +46,9 @@ export class OffersComponent {
         this.offers = requests;
       });
     } else if (this.activeTab === 'mine') {
-      this.offerService.getMyOffers().subscribe((requests: any[]) => {
-        console.log("requests:", requests);
-        this.myOffers = requests;
+      this.offerService.getMyOffers().subscribe((offers: any[]) => {
+        console.log("offers:", offers);
+        this.myOffers = offers;
       });
     }
   }
@@ -84,7 +84,15 @@ export class OffersComponent {
           const index = this.requestToDelete.offers.indexOf(this.offerToDelete);
           if (index !== -1) {
             this.requestToDelete.offers.splice(index, 1);
+            if (this.requestToDelete.offers.length === 0) {
+              const requestIndex = this.currentRequests.indexOf(this.requestToDelete);
+              if (requestIndex !== -1) {
+                this.currentRequests.splice(requestIndex, 1);
+              }
+            }
           }
+        } else {
+          console.log("Error deleting offer:", response);
         }
 
         this.offerToDelete = null;

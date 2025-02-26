@@ -1,4 +1,5 @@
 import { RequestPresetModel } from './request-preset.model';
+import { PresetModel } from './preset.model';
 import { UserModel } from './user.model';
 
 export class RequestModel {
