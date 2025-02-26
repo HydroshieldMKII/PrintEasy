@@ -115,6 +115,7 @@ class Api::OrderController < AuthenticatedController
               }
             },
             review: {
+              methods: %i[image_urls],
               include: {
                 user: {
                   except: %i[created_at updated_at is_admin],

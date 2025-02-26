@@ -5,21 +5,23 @@ class Api::ReviewController < AuthenticatedController
 
   def show
     @review = Review.find(params[:id])
-    render json: { review: @review.as_json(except: %i[created_at updated_at], methods: %i[image_url]), errors: {} }, status: :ok
+    render json: { review: @review.as_json(except: %i[created_at updated_at], include: { user: { except: %i[created_at updated_at is_admin] } }, methods: %i[image_urls]), errors: {} }, status: :ok
   end
 
   def create
     @review = Review.new(review_params_create)
     if @review.save
-      render json: { review: @review.as_json(methods: %i[image_url]), errors: {} }, status: :created
+      render json: { review: @review.as_json(methods: %i[image_urls], include: { user: { except: %i[created_at updated_at is_admin] } }), errors: {} }, status: :created
     else
       render json: { errors: @review.errors.as_json }, status: :bad_request
     end
   end
 
   def update
+    # debugger
+    @review.images.attach(params[:review][:images]) if params[:review][:images].present?
     if @review.update(review_params)
-      render json: { review: @review.as_json(methods: %i[image_url]), errors: {} }, status: :ok
+      render json: { review: @review.as_json(methods: %i[image_urls], include: { user: { except: %i[created_at updated_at is_admin] } }), errors: {} }, status: :ok
     else
       render json: { errors: @review.errors.as_json }, status: :bad_request
     end
@@ -27,7 +29,7 @@ class Api::ReviewController < AuthenticatedController
 
   def destroy
     if @review.destroy!
-      render json: { review: @review.as_json(), errors: {} }, status: :ok
+      render json: { review: @review.as_json(methods: %i[image_urls], include: { user: { except: %i[created_at updated_at is_admin] } }), errors: {} }, status: :ok
     else
       render json: { errors: @review.errors.as_json }, status: :bad_request
     end
@@ -41,10 +43,10 @@ class Api::ReviewController < AuthenticatedController
   end
 
   def review_params_create
-    params.require(:review).permit(:rating, :description, :image, :order_id, :title)
+    params.require(:review).permit(:rating, :description, :images, :order_id, :title)
   end
 
   def review_params
-    params.require(:review).permit(:rating, :description, :image, :title)
+    params.require(:review).permit(:rating, :description, :images, :title)
   end
 end

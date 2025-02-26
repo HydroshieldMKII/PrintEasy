@@ -6,15 +6,17 @@ export class ReviewModel {
     description: string;
     rating: number;
     createdAt: Date;
-    user: UserModel;
+    user?: UserModel;
+    imageUrls: string[] = [];
 
-    constructor(id: number, rating: number, title: string, description: string, user: UserModel, created_at: Date) {
+    constructor(id: number, rating: number, title: string, description: string, created_at: Date, image_urls: string[] = [], user?: UserModel) {
         this.id = id;
         this.title = title;
         this.rating = rating;
         this.description = description;
         this.user = user;
         this.createdAt = created_at;
+        this.imageUrls = image_urls;
     }
 
     static fromAPI(data: any): ReviewModel | null {
@@ -26,8 +28,9 @@ export class ReviewModel {
             data.rating,
             data.title,
             data.description,
-            UserModel.fromAPI(data.user),
-            new Date(data.created_at)
+            new Date(data.created_at),
+            data.image_urls,
+            UserModel.fromAPI(data.user)
         );
     }
 }

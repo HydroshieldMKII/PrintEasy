@@ -403,13 +403,8 @@ order2 = Order.create!(offer: Offer.second)
 order3 = Order.create!(offer: Offer.third)
 order4 = Order.create!(offer: Offer.last)
 
-Review.create!(
-  order: order2,
-  user: user1,
-  title: "Durable and Precise",
-  description: "Prototype case fit perfectly, highly recommend!",
-  rating: 4
-)
+rubyImage = File.open(Rails.root.join("db/seeds/files/ruby.jpg"))
+dariusImage = File.open(Rails.root.join("db/seeds/files/DariusSlayJunior.jpg"))
 
 # Create Order Statuses
 status_accepted = Status.create!(name: "Accepted")
@@ -418,6 +413,7 @@ status_printed = Status.create!(name: "Printed")
 status_shipped = Status.create!(name: "Shipped")
 status_arrived = Status.create!(name: "Arrived")
 status_cancelled = Status.create!(name: "Cancelled")
+Current.user = user1
 
 OrderStatus.create!(order: order4, status: status_accepted, comment: "offer accepted, printing soon.")
 OrderStatus.create!(order: order3, status: status_accepted, comment: "offer accepted, printing soon.")
@@ -428,11 +424,29 @@ OrderStatus.create!(order: order2, status: status_shipped, comment: "Order shipp
 orderstatus1 = OrderStatus.create!(order: order1, status: status_accepted, comment: "offer accepted, printing soon.")
 OrderStatus.create!(order: order1, status: status_printing, comment: "Order started printing.")
 orderstatus1.image.attach(
-  io: File.open(Rails.root.join("db/seeds/files/ruby.jpg")),
+  io: rubyImage,
   filename: "ruby.jpg",
   content_type: "image/jpg"
 )
 orderstatus1.save
+  
+Current.user = admin 
+OrderStatus.create!(order: order2, status: status_arrived, comment: "Order arrived.")
+rubyImage.rewind
+dariusImage.rewind
+
+r1 = Review.create!(
+  order: order2,
+  user: admin,
+  title: "Durable and Precise",
+  description: "Prototype case fit perfectly, highly recommend!",
+  rating: 4
+)
+r1.images.attach([
+  { io: rubyImage, filename: "ruby.jpg", content_type: "image/jpg" },
+  { io: dariusImage, filename: "DariusSlayJunior.jpg", content_type: "image/jpg" }
+])
+r1.save
 
 
 puts "✅ Seeding complete!"
