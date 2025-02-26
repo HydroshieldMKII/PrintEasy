@@ -156,4 +156,31 @@
   </ng-template>
 </p-dialog>
 
+<!-- Accept Confirmation Dialog -->
+<p-dialog
+  [(visible)]="acceptDialogVisible"
+  [modal]="true"
+  [style]="{ width: '25rem' }"
+  dismissableMask="true"
+  closable="false"
+  blockScroll="true"
+  resizable="false"
+  draggable="false"
+>
+  <ng-template #header>
+    <div class="inline-flex items-center justify-center gap-2">
+      <i class="pi pi-check-circle text-green-500 text-2xl"></i>
+      <span class="font-bold">Confirm Accept</span>
+    </div>
+  </ng-template>
+  <span class="text-surface-500 dark:text-surface-400 block mb-4">
+    Are you sure you want to accept the offer from {{ offerToAccept?.printerUser.user.username }}?
+    This action cannot be undone.
+  </span>
+  <ng-template #footer>
+    <p-button label="No" severity="secondary" (click)="acceptDialogVisible = false" />
+    <p-button label="Yes" severity="success" (click)="confirmAccept()" />
+  </ng-template>
+</p-dialog>
+
 <app-offer-modal *ngIf="offerModalVisible" [(offerModalVisible)]="offerModalVisible" [offerIdToEdit]="offerIdToEdit" (offerUpdated)="onOfferUpdated($event)"></app-offer-modal>

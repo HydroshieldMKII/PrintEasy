@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { OfferService } from '../../services/offer.service';
+import { OrderService } from '../../services/order.service';
 import { MessageService } from 'primeng/api';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { OfferModalComponent } from '../offer-modal/offer-modal.component';
@@ -19,6 +20,9 @@ export class OffersComponent {
   offerModalVisible: boolean = false;
   offerIdToEdit: number | null = null;
 
+  acceptDialogVisible: boolean = false;
+  offerToAccept: any | null = null;
+
   refuseDialogVisible: boolean = false;
   offerToRefuse: any | null = null;
 
@@ -35,7 +39,8 @@ export class OffersComponent {
     private offerService: OfferService,
     private router: Router,
     private messageService: MessageService,
-    private clipboard: Clipboard
+    private clipboard: Clipboard,
+    private orderService: OrderService
   ) {
     const queryParams = this.router.parseUrl(this.router.url).queryParams;
     this.activeTab = queryParams['tab'] || 'mine';
@@ -122,7 +127,26 @@ export class OffersComponent {
   }
 
   showAcceptOffer(offer: any): void {
-    console.log("Accepting id:", offer.id);
+    this.offerToAccept = offer;
+    this.acceptDialogVisible = true;
+  }
+
+  confirmAccept(): void {
+    console.log("Accepting id:", this.offerToAccept.id);
+    this.orderService.createOrder(this.offerToAccept.id).subscribe((response) => {
+      if (response.status === 201) {
+        this.offerToAccept = null;
+        this.acceptDialogVisible = false;
+
+        this.offerService.getMyOffers().subscribe((offers: any[]) => {
+          this.myOffers = offers;
+        });
+
+        this.offerService.getOffers().subscribe((offers: any[]) => {
+          this.offers = offers;
+        });
+      }
+    });
   }
 
   showRefuseOffer(offer: any): void {

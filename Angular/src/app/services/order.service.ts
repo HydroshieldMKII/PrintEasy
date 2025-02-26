@@ -40,10 +40,11 @@ export class OrderService {
         );
     }
 
-    createOrder(order: OrderModel): Observable<ApiResponseModel> {
-        return this.api.postRequest('api/order', {}, order).pipe(
+    createOrder(id: number): Observable<ApiResponseModel> {
+        return this.api.postRequest('api/order', {}, { id: id }).pipe(
             map((response: ApiResponseModel) => {
-                response.data.order = OrderModel.fromAPI(response.data.order);
+                console.log("Create order response", response);
+                // response.data.order = OrderModel.fromAPI(response.data.order);
                 return response;
             })
         );
