@@ -116,7 +116,8 @@ export class OfferService {
                                     ),
                                     offer?.['price'],
                                     offer?.['print_quality'],
-                                    offer?.['target_date']
+                                    offer?.['target_date'],
+                                    offer?.['cancelled_at']
                                 );
                             }
                             )

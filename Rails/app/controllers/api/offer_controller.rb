@@ -25,7 +25,24 @@ class Api::OfferController < AuthenticatedController
   
     def update
       offer = Offer.find(params[:id])
-      if offer.update(offer_params)
+      valid = true
+
+      if offer.printer_user.user != current_user
+        valid = false
+        offer.errors.add(:offer, 'You are not allowed to update this offer')
+      end
+
+      if offer.cancelled_at
+        valid = false
+        offer.errors.add(:offer, 'Offer already rejected. Cannot update')
+      end
+
+      if Order.find_by(offer_id: offer.id)
+        valid = false
+        offer.errors.add(:offer, 'Offer already accepted. Cannot update')
+      end
+
+      if valid && offer.update(offer_params)
         render json: offer
       else
         render json: { errors: offer.errors }, status: :unprocessable_entity
@@ -33,7 +50,22 @@ class Api::OfferController < AuthenticatedController
     end
   
     def destroy
-      if Offer.find(params[:id]).destroy
+      offer = Offer.find(params[:id])
+      valid = false
+
+      if offer.printer_user.user != current_user
+        offer.errors.add(:offer, 'You are not allowed to delete this offer')
+      end
+
+      if Order.find_by(offer_id: offer.id)
+        offer.errors.add(:offer, 'Offer already accepted. Cannot delete')
+      end
+
+      if offer.cancelled_at
+        offer.errors.add(:offer, 'Offer already rejected. Cannot delete')
+      end
+
+      if valid && offer.destroy
         render json: { errors: {} }, status: :ok
       else
         render json: { errors: { offer: offer.errors } }, status: :unprocessable_entity

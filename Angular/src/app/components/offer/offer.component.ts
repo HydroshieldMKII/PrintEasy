@@ -137,6 +137,14 @@ export class OffersComponent {
       if (response.status === 200) {
         this.offerToRefuse = null;
         this.refuseDialogVisible = false;
+
+        this.offerService.getMyOffers().subscribe((offers: any[]) => {
+          this.myOffers = offers;
+        });
+
+        this.offerService.getOffers().subscribe((offers: any[]) => {
+          this.offers = offers;
+        });
       }
     });
   }

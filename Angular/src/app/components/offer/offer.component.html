@@ -55,19 +55,19 @@
                 <th>Preset</th>
                 <th>Price Offered</th>
                 <th>Offer Date</th>
-                <th>Cancelled</th>
+                <th>Rejected</th>
                 <th>Actions</th>
               </tr>
             </ng-template>
           
             <ng-template pTemplate="body" let-offer>
-              <tr>
+              <tr [ngClass]="{'disabled-row': offer.cancelled_at}">
                 <td *ngIf="activeTab === 'all'">{{ offer.printer_user.user.username }}</td>
                 <td>{{ offer.printer_user.printer.model }}</td>
                 <td>{{ offer.color.name }} / {{ offer.filament.name }} / {{ offer.print_quality }}mm</td>
                 <td>{{ offer.price === 0 ? 'Free' : (offer.price | currency) }}</td>
                 <td>{{ offer.target_date | date:'mediumDate' }}</td>
-                <td>{{ offer.cancelled_at ? 'Yes' : 'No' }}</td>
+                <td>{{ offer.cancelled_at ? 'Yes (' + (offer.cancelled_at | date:'mediumDate') + ')' : 'No' }}</td>
                 <td>
                   <button pButton type="button" icon="pi pi-pencil" title="Edit this offer" 
                           (click)="editOffer(offer)" *ngIf="activeTab === 'mine'"></button>
@@ -80,6 +80,7 @@
                 </td>
               </tr>
             </ng-template>
+            
           </p-table>
           
           
