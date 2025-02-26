@@ -52,10 +52,10 @@
               <tr>
                 <th *ngIf="activeTab === 'all'">Username</th>
                 <th>Printer</th>
-                <th>Filament</th>
-                <th>Color</th>
+                <th>Preset</th>
                 <th>Price Offered</th>
                 <th>Offer Date</th>
+                <th>Cancelled</th>
                 <th>Actions</th>
               </tr>
             </ng-template>
@@ -64,19 +64,19 @@
               <tr>
                 <td *ngIf="activeTab === 'all'">{{ offer.printer_user.user.username }}</td>
                 <td>{{ offer.printer_user.printer.model }}</td>
-                <td>{{ offer.color.name }}</td>
-                <td>{{ offer.filament.name }}</td>
-                <td>{{ offer.price | currency }}</td>
+                <td>{{ offer.color.name }} / {{ offer.filament.name }} / {{ offer.print_quality }}mm</td>
+                <td>{{ offer.price === 0 ? 'Free' : (offer.price | currency) }}</td>
                 <td>{{ offer.target_date | date:'mediumDate' }}</td>
+                <td>{{ offer.cancelled_at ? 'Yes' : 'No' }}</td>
                 <td>
                   <button pButton type="button" icon="pi pi-pencil" title="Edit this offer" 
                           (click)="editOffer(offer)" *ngIf="activeTab === 'mine'"></button>
                   <button pButton type="button" icon="pi pi-times" title="Cancel this offer" severity="danger" 
                           (click)="cancelOffer(offer, request)" *ngIf="activeTab === 'mine'"></button>
                   <button pButton type="button" icon="pi pi-check" title="Accept this offer" severity="success" 
-                          (click)="acceptOffer(offer)" *ngIf="activeTab === 'all'"></button>
+                          (click)="showAcceptOffer(offer)" *ngIf="activeTab === 'all'"></button>
                   <button pButton type="button" icon="pi pi-times" title="Refuse this offer" severity="danger" 
-                          (click)="refuseOffer(offer)" *ngIf="activeTab === 'all'"></button>
+                          (click)="showRefuseOffer(offer)" *ngIf="activeTab === 'all'"></button>
                 </td>
               </tr>
             </ng-template>
@@ -125,6 +125,33 @@
   <ng-template #footer>
     <p-button label="No"  severity="secondary" (click)="deleteDialogVisible = false"/>
     <p-button label="Yes" severity="danger" (click)="confirmDelete()" />
+  </ng-template>
+</p-dialog>
+
+<!-- Refuse Confirmation Dialog -->
+<p-dialog
+  [(visible)]="refuseDialogVisible"
+  [modal]="true"
+  [style]="{ width: '25rem' }"
+  dismissableMask="true"
+  closable="false"
+  blockScroll="true"
+  resizable="false"
+  draggable="false"
+>
+  <ng-template #header>
+    <div class="inline-flex items-center justify-center gap-2">
+      <i class="pi pi-exclamation-triangle text-red-500 text-2xl"></i>
+      <span class="font-bold">Confirm Refuse</span>
+    </div>
+  </ng-template>
+  <span class="text-surface-500 dark:text-surface-400 block mb-4">
+    Are you sure you want to refuse the offer from {{ offerToRefuse?.printer_user.user.username }}?
+    This action cannot be undone.
+  </span>
+  <ng-template #footer>
+    <p-button label="No" severity="secondary" (click)="refuseDialogVisible = false" />
+    <p-button label="Yes" severity="danger" (click)="confirmRefuse()" />
   </ng-template>
 </p-dialog>
 

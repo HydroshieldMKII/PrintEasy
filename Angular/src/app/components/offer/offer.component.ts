@@ -14,10 +14,13 @@ import { ImportsModule } from '../../../imports';
 })
 export class OffersComponent {
   activeTab: string = 'mine';
-  offers: any[] | null = null;  // For "all" offers (received)
-  myOffers: any[] | null = null; // For "my" pending offers
+  offers: any[] | null = null;  // "all" offers (received)
+  myOffers: any[] | null = null; // "my" pending offers
   offerModalVisible: boolean = false;
   offerIdToEdit: number | null = null;
+
+  refuseDialogVisible: boolean = false;
+  offerToRefuse: any | null = null;
 
   deleteDialogVisible: boolean = false;
   offerToDelete: any | null = null;
@@ -110,12 +113,15 @@ export class OffersComponent {
     this.deleteDialogVisible = true;
   }
 
-  acceptOffer(offer: any): void {
+  showAcceptOffer(offer: any): void {
     console.log("Accepting id:", offer.id);
   }
 
-  refuseOffer(offer: any): void {
+  showRefuseOffer(offer: any): void {
     console.log("Rejecting id:", offer.id);
+
+    this.offerToRefuse = offer;
+    this.refuseDialogVisible = true;
   }
 
   onOfferUpdated(offer: any): void {
@@ -123,6 +129,15 @@ export class OffersComponent {
     this.offerIdToEdit = null;
     this.offerService.getMyOffers().subscribe((offers: any[]) => {
       this.myOffers = offers;
+    });
+  }
+
+  confirmRefuse(): void {
+    this.offerService.refuseOffer(this.offerToRefuse.id).subscribe((response) => {
+      if (response.status === 200) {
+        this.offerToRefuse = null;
+        this.refuseDialogVisible = false;
+      }
     });
   }
 }

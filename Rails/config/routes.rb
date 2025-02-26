@@ -9,7 +9,11 @@ Rails.application.routes.draw do
     resources :printer_user
     resources :printer
     resources :request
-    resources :offer
+    resources :offer do
+      member do
+        put 'reject'
+      end
+    end
     resources :order_status
     resources :order
     resources :status

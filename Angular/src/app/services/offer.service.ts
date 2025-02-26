@@ -64,7 +64,8 @@ export class OfferService {
                                     ),
                                     offer?.['price'],
                                     offer?.['print_quality'],
-                                    offer?.['target_date']
+                                    offer?.['target_date'],
+                                    offer?.['cancelled_at']
                                 );
                             }
                             )
@@ -215,6 +216,19 @@ export class OfferService {
                             this.messageService.add({ severity: 'error', summary: 'Error', detail: `${key}: ${value}` });
                         }
                     }
+                }
+                return response;
+            })
+        );
+    }
+
+    refuseOffer(id: number): Observable<ApiResponseModel> {
+        return this.api.putRequest(`api/offer/${id}/reject`, {}).pipe(
+            map((response: ApiResponseModel) => {
+                if (response.status === 200) {
+                    this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Offer canceled successfully' });
+                } else {
+                    this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Offer cancelation failed' });
                 }
                 return response;
             })

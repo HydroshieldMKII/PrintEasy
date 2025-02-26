@@ -12,6 +12,8 @@ export class OfferModel {
     price: number;
     print_quality: number;
     target_date: Date;
+    cancelled_at?: Date | null;
+
 
     constructor(
         id: number,
@@ -21,7 +23,8 @@ export class OfferModel {
         filament: FilamentModel,
         price: number,
         print_quality: number,
-        target_date: Date
+        target_date: Date,
+        cancelled_at?: Date | null
     ) {
         this.id = id;
         this.request = request;
@@ -31,5 +34,6 @@ export class OfferModel {
         this.price = price;
         this.print_quality = print_quality;
         this.target_date = target_date
+        this.cancelled_at = cancelled_at;
     }
 }

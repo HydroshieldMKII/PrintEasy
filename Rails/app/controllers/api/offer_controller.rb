@@ -39,6 +39,28 @@ class Api::OfferController < AuthenticatedController
         render json: { errors: { offer: offer.errors } }, status: :unprocessable_entity
       end
     end
+
+    def reject
+      offer = Offer.find(params[:id])
+      valid = true
+
+      if offer.request.user != current_user
+        offer.errors.add(:offer, 'You are not allowed to reject this offer')
+        valid = false
+      end
+
+      if offer.cancelled_at
+        offer.errors.add(:offer, 'Offer already rejected')
+        valid = false
+      end
+
+      offer.cancelled_at = Time.now
+      if valid && offer.save
+        render json: offer
+      else
+        render json: { errors: offer.errors }, status: :unprocessable_entity
+      end
+    end
   
     private
   
