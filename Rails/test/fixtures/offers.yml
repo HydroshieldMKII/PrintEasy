@@ -112,8 +112,8 @@ eight: {
 
 nine: {
   id: 9,
-  request_id: 1,
-  printer_user_id: 2,
+  request_id: 2,
+  printer_user_id: 1,
   color_id: 1,
   filament_id: 1,
   price: 1.5,

@@ -1,10 +1,12 @@
 class Order < ApplicationRecord
   belongs_to :offer
   has_many :order_status
+  has_one :request, through: :offer
   has_one :review
   validates :offer_id, presence: true, uniqueness: true
   validate :offer_exists
   validate :not_the_same_user_for_offer_and_request
+  validate :not_two_order_with_the_same_request
   validate :user_owns_request
 
 
@@ -32,6 +34,14 @@ class Order < ApplicationRecord
       return false
     end
     return true
+  end
+
+  def not_two_order_with_the_same_request
+    # debugger
+    if request.offers.joins(:order).count > 1
+      errors.add(:offer_id, 'Request already has an order')
+      return false
+    end
   end
 
   def user_owns_request
