@@ -193,13 +193,16 @@ export class OfferModalComponent implements OnChanges {
         const matchingColor = this.colors.find(c => c.id === offer.color.id);
         const matchingFilament = this.filaments.find(f => f.id === offer.filament.id);
 
+        const dateFromBackend = new Date(offer.target_date);
+        dateFromBackend.setMinutes(dateFromBackend.getMinutes() + dateFromBackend.getTimezoneOffset());
+
         this.offerForm.patchValue({
           printer: matchingPrinter,
           color: matchingColor,
           filament: matchingFilament,
           price: offer.price,
           quality: offer.print_quality,
-          targetDate: new Date(offer.target_date)
+          targetDate: dateFromBackend
         });
       });
     }
