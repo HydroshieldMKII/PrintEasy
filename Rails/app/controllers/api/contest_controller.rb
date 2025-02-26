@@ -2,18 +2,28 @@ class Api::ContestController < ApplicationController
     before_action :is_admin?, only: [:create, :update, :destroy]
 
     def index
-        @contests = Contest.all
-        render json: {contests: @contests.as_json(methods: :image_url), errors: {}}, status: :ok
+        @contests = current_user.is_admin ? Contest.all : Contest.active_for_user(current_user)
+
+        contests_with_status = @contests.map do |contest|
+            contest_data = contest.as_json(methods: :image_url).merge(finished: contest.end_at.present? && contest.end_at < Time.current)
+            top_submission = contest.submissions.left_joins(:likes).group(:id).order('COUNT(likes.id) DESC, submissions.created_at ASC').first
+            contest_data[:winner_user] = top_submission ? top_submission.user.as_json : nil
+            contest_data
+        end
+        
+        contests_with_status.sort_by! { |contest| [contest[:finished] ? 1 : 0, contest[:start_at]] }
+
+        render json: {contests: contests_with_status, errors: {}}, status: :ok
     end
 
     def show
-        @contest = Contest.find(params[:id]) rescue nil
+        @contest = Contest.find(params[:id])
 
-        if @contest
-            render json: {contest: @contest.as_json(methods: :image_url), errors: {}}, status: :ok
-        else
-            render json: {errors: {contest: ["Contest not found"]} }, status: :not_found
-        end
+        contest_data = @contest.as_json(methods: :image_url).merge(finished: @contest.end_at.present? && @contest.end_at < Time.current)
+        top_submission = @contest.submissions.left_joins(:likes).group(:id).order('COUNT(likes.id) DESC, submissions.created_at ASC').first
+        contest_data[:winner_user] = top_submission ? top_submission.user.as_json : nil
+
+        render json: {contest: contest_data, errors: {}}, status: :ok
     end
 
     def create
@@ -27,28 +37,20 @@ class Api::ContestController < ApplicationController
     end
     
     def update
-        @contest = Contest.find(params[:id]) rescue nil
+        @contest = Contest.find(params[:id])
 
-        if !@contest.nil?
-            if @contest.update(contest_params)
-                render json: {contest: @contest.as_json(methods: :image_url), errors: {}}, status: :ok
-            else
-                render json: {errors: @contest.errors.as_json}, status: :unprocessable_entity
-            end
+        if @contest.update(contest_params)
+            render json: {contest: @contest.as_json(methods: :image_url), errors: {}}, status: :ok
         else
-            render json: {errors: {contest: ["Contest not found"]} }, status: :not_found
+            render json: {errors: @contest.errors.as_json}, status: :unprocessable_entity
         end
     end
     
     def destroy
-        @contest = Contest.find(params[:id]) rescue nil
+        @contest = Contest.find(params[:id])
 
-        if !@contest.nil?
-            @contest.soft_delete
-            render json: {contest: @contest, errors: {}}, status: :ok
-        else
-            render json: {errors: {contest: ["Contest not found"]} }, status: :not_found
-        end
+        @contest.soft_delete
+        render json: {contest: @contest, errors: {}}, status: :ok
     end
     
     private

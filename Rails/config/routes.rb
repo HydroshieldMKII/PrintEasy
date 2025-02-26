@@ -23,6 +23,7 @@ Rails.application.routes.draw do
     resources :filament
     resources :submission
     resources :preset
+    resources :user_submission, only: [:index, :show]
   end
 
   match '*url', to: "angular#index", via: :get

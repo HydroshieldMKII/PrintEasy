@@ -10,6 +10,24 @@ second_image_attachment:
   record_type: Contest
   blob: first_image_blob
 
+sixth_image_attachment:
+  name: image
+  record_id: 3
+  record_type: Contest
+  blob: first_image_blob
+
+ninth_image_attachment:
+  name: image
+  record_id: 4
+  record_type: Contest
+  blob: first_image_blob
+
+ten_image_attachment:
+  name: image
+  record_id: 5
+  record_type: Contest
+  blob: first_image_blob
+
 first_stl_file_attachment:
   name: stl_file
   record_type: Request
@@ -33,26 +51,50 @@ third_image_attachment:
   record: order_status_one (Order_status)
   blob: first_image_blob
 
-fourth_image_attachment:
-  name: files
-  record_id: 1
-  record_type: Submission
-  blob: first_image_blob
-
-fifth_image_attachment:
-  name: files
-  record_id: 2
-  record_type: Submission
-  blob: first_image_blob
-
 fourth_stl_file_attachment:
-  name: files
+  name: stl
   record_id: 1
   record_type: Submission
   blob: first_stl_file_blob
 
 fifth_stl_file_attachment:
-  name: files
+  name: stl
   record_id: 2
   record_type: Submission
   blob: first_stl_file_blob
+
+sixth_stl_file_attachment:
+  name: stl
+  record_id: 3
+  record_type: Submission
+  blob: first_stl_file_blob
+
+seventh_stl_file_attachment:
+  name: stl
+  record_id: 4
+  record_type: Submission
+  blob: first_stl_file_blob
+
+fourth_image_attachment:
+  name: image
+  record_id: 1
+  record_type: Submission
+  blob: first_image_blob
+
+fifth_image_attachment:
+  name: image
+  record_id: 2
+  record_type: Submission
+  blob: first_image_blob
+
+seventh_image_attachment:
+  name: image
+  record_id: 3
+  record_type: Submission
+  blob: first_image_blob
+
+eighth_image_attachment:
+  name: image
+  record_id: 4
+  record_type: Submission
+  blob: first_image_blob

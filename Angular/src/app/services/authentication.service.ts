@@ -28,7 +28,7 @@ export class AuthService {
         const storedCurrentUser = JSON.parse(localStorage.getItem(this.CURRENT_USER_KEY) ?? 'null');
         console.log('Stored current user:', storedCurrentUser);
         if (storedCurrentUser) {
-            this._currentUser = new UserModel(storedCurrentUser.id, storedCurrentUser.username, storedCurrentUser.country, storedCurrentUser.profile_picture_url, storedCurrentUser.createdAt, storedCurrentUser.isAdmin);
+            this._currentUser = new UserModel(storedCurrentUser.id, storedCurrentUser.username, storedCurrentUser.country, storedCurrentUser.profilePictureUrl, storedCurrentUser.createdAt, storedCurrentUser.isAdmin);
         }
     }
 
@@ -60,7 +60,7 @@ export class AuthService {
                         this.messageService.add({ severity: 'success', summary: 'Welcome', detail: 'You are now logged in!' });
                         const userData = (response.data as any)?.['user'];
                         console.log('User data:', userData);
-                        this.setCurrentUser(new UserModel(userData?.['id'], userData?.['username'], userData?.['country_id'], userData?.['profile_picture_url'], userData?.['created_at'], userData?.['is_admin']));
+                        this.setCurrentUser(new UserModel(userData?.['id'], userData?.['username'], userData?.['country_name'], userData?.['profile_picture_url'], userData?.['created_at'], userData?.['is_admin']));
                     }
                 }
                 return response;
@@ -85,7 +85,7 @@ export class AuthService {
                 if (response.status === 200) {
                     this.messageService.add({ severity: 'success', summary: 'Account created', detail: 'You are now ready to use the app!' });
                     const userData = (response.data as any)?.['user'];
-                    this.setCurrentUser(new UserModel(userData?.['id'], userData?.['username'], userData?.['country'], userData?.['created_at'], userData?.["profile_picture_url"], userData?.['is_admin']));
+                    this.setCurrentUser(new UserModel(userData?.['id'], userData?.['username'], userData?.['country_name'], userData?.['created_at'], userData?.["profile_picture_url"], userData?.['is_admin']));
                 }
                 return response;
             })

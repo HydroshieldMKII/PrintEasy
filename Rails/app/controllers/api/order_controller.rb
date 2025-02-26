@@ -142,6 +142,7 @@ class Api::OrderController < AuthenticatedController
   def create
     @order = Order.new(offer_id: params[:id])
     if @order.save
+      OrderStatus.create!(order_id: @order.id, status_name: 'Accepted')
       render json: { order: @order.as_json(), errors: {} }, status: :created
     else
       render json: { errors: @order.errors.as_json }, status: :bad_request

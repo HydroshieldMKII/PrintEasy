@@ -110,7 +110,7 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
       post api_order_index_path, as: :json
     end
 
-    assert_response :not_found
+    assert_response :bad_request
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
@@ -157,11 +157,25 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
-    assert_equal ["has already been taken"], @parsed_response["errors"]["offer_id"]
+    assert_equal ["has already been taken", "Request already has an order"], @parsed_response["errors"]["offer_id"]
+  end
+
+  test "should not create order -> request_id already used" do
+    sign_in users(:one)
+
+    assert_difference('Order.count', 0) do
+      post api_order_index_path, params: { id: 3 }, as: :json
+    end
+
+    assert_response :bad_request
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+    assert_equal ["has already been taken", "Request already has an order"], @parsed_response["errors"]["offer_id"]
   end
 
   test "should create order" do
-    sign_in users(:one)
+    sign_in users(:two)
 
     assert_difference('Order.count', 1) do
       post api_order_index_path, params: { id: 9 }, as: :json

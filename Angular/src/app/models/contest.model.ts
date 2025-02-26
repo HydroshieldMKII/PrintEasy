@@ -1,14 +1,18 @@
+import { UserModel } from './user.model';
+
 export class ContestModel {
     id: number;
     theme: string;
     description: string;
     submissionLimit: number;
-    deleteAt?: Date | null;
+    deleteAt: Date | null;
     startAt: Date;
     endAt: Date | null;
     image: string;
+    finished: boolean;
+    winnerUser: UserModel | null;
 
-    constructor(id: number, theme: string, description: string, submission_limit: number, start_at: Date, end_at: Date | null, image: string, deleted_at?: Date | null) {
+    constructor(id: number, theme: string, description: string, submission_limit: number, start_at: Date, end_at: Date | null, image: string, deleted_at: Date | null, finished: boolean, winnerUser: UserModel | null) {
         this.id = id;
         this.theme = theme;
         this.description = description;
@@ -17,6 +21,8 @@ export class ContestModel {
         this.endAt = end_at;
         this.deleteAt = deleted_at;
         this.image = image;
+        this.finished = finished;
+        this.winnerUser = winnerUser;
     }
 
     static fromApi(data: any): ContestModel {
@@ -28,7 +34,9 @@ export class ContestModel {
             data.start_at,
             data.end_at,
             data.image_url,
-            data.deleted_at
+            data.deleted_at,
+            data.finished,
+            data.winner_user ? UserModel.fromAPI(data.winner_user) : null
         );
     }
 
