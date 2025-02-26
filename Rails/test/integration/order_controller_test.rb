@@ -114,7 +114,7 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
-    assert_equal ["param is missing or the value is empty: order"], @parsed_response["errors"]["base"]
+    assert_equal ["param is missing or the value is empty or invalid: order"], @parsed_response["errors"]["base"]
   end
 
   test "should not get create -> offer_id doesn't exist" do
