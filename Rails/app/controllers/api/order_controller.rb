@@ -76,7 +76,6 @@ class Api::OrderController < AuthenticatedController
       if current_user == @order.printer
         available_status.delete('Arrived')
       end
-
       render json: {
         order: @order.as_json(
           except: %i[offer_id],

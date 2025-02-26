@@ -195,6 +195,10 @@ textarea {
     overflow-wrap: break-word;
 }
 
+::ng-deep .p-fileupload-basic {
+    justify-content: flex-start !important;
+}
+
 /* Mobile Responsive */
 @media (max-width: 768px) {
     .grid {

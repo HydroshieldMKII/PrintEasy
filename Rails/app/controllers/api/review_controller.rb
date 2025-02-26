@@ -18,8 +18,6 @@ class Api::ReviewController < AuthenticatedController
   end
 
   def update
-    # debugger
-    @review.images.attach(params[:review][:images]) if params[:review][:images].present?
     if @review.update(review_params)
       render json: { review: @review.as_json(methods: %i[image_urls], include: { user: { except: %i[created_at updated_at is_admin] } }), errors: {} }, status: :ok
     else
@@ -43,10 +41,11 @@ class Api::ReviewController < AuthenticatedController
   end
 
   def review_params_create
-    params.require(:review).permit(:rating, :description, :images, :order_id, :title)
+    params.require(:review).permit(:rating, :description, :order_id, :title, images: [])
   end
 
   def review_params
-    params.require(:review).permit(:rating, :description, :images, :title)
+    # debugger
+    params.require(:review).permit(:rating, :description, :title, images: [])
   end
 end

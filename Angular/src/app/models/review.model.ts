@@ -1,4 +1,5 @@
 import { UserModel } from './user.model';
+import { ImageAttachmentModel } from './image-attachment.model';
 
 export class ReviewModel {
     id: number;
@@ -7,9 +8,9 @@ export class ReviewModel {
     rating: number;
     createdAt: Date;
     user?: UserModel;
-    imageUrls: string[] = [];
+    imageUrls: ImageAttachmentModel[] = [];
 
-    constructor(id: number, rating: number, title: string, description: string, created_at: Date, image_urls: string[] = [], user?: UserModel) {
+    constructor(id: number, rating: number, title: string, description: string, created_at: Date, image_urls: ImageAttachmentModel[] = [], user?: UserModel) {
         this.id = id;
         this.title = title;
         this.rating = rating;
@@ -29,7 +30,7 @@ export class ReviewModel {
             data.title,
             data.description,
             new Date(data.created_at),
-            data.image_urls,
+            (data.image_urls ?? []).map((image: any) => ImageAttachmentModel.fromAPI(image)),
             UserModel.fromAPI(data.user)
         );
     }

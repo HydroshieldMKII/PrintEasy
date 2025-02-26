@@ -14,6 +14,7 @@ import { OrderStatusService } from '../../services/order-status.service';
 import { ApiResponseModel } from '../../models/api-response.model';
 import { AuthService } from '../../services/authentication.service';
 import { ReviewService } from '../../services/review.service';
+import { ImageAttachmentModel } from '../../models/image-attachment.model';
 
 @Component({
   selector: 'app-orders',
@@ -71,7 +72,7 @@ export class OrderComponent {
   ShippedStatus: OrderStatusModel[] = [];
   ArrivedStatus: OrderStatusModel[] = [];
   CancelledStatus: OrderStatusModel[] = [];
-  reviewImageUrls: string[] = [];
+  reviewImageUrls: ImageAttachmentModel[] = [];
   canCancel: boolean = false;
   canArrive: boolean = false;
   consumer : boolean = false;
@@ -133,6 +134,7 @@ export class OrderComponent {
     this.ArrivedStatus = [];
     this.CancelledStatus = [];
     this.statusActions = [];
+    this.reviewImageUrls = [];
     this.canCancel = false;
     this.canArrive = false;
     this.consumer = false;
@@ -249,12 +251,15 @@ export class OrderComponent {
 
   onReviewFileSelect(event: any) {
     const files = event.files;
-    let formFiles = [];
+    
     for (let file of files) {
-      this.reviewImageUrls.push(file["objectURL"].changingThisBreaksApplicationSecurity);
-      formFiles.push(file);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.reviewImageUrls.push(new ImageAttachmentModel(null, reader.result as string, file ));
+      }
+      reader.readAsDataURL(file);
     }
-    this.reviewForm.patchValue({ images: formFiles });
+    console.log('Review images:', this.reviewImageUrls);
   }
 
   ShowOrderStatusForm() : void {
@@ -331,9 +336,9 @@ export class OrderComponent {
       if (!this.isEditReview) {
         reviewData.append('review[order_id]', this.order?.id.toString() || '');
       }
-      if (this.reviewForm.value.images && this.reviewForm.value.images.length > 0) {
-        this.reviewForm.value.images.forEach((image : any) => {
-          reviewData.append('review[images][]', image);
+      if (this.reviewImageUrls.length > 0) {
+        this.reviewImageUrls.forEach((image : any) => {
+          reviewData.append('review[images][]', image.signedId ?? image.file);
         });
       }
       console.log('Review data:', reviewData);
@@ -471,6 +476,10 @@ export class OrderComponent {
         detail: 'Review deleted successfully'
       });
     });
+  }
+
+  deleteImage(url: string) : void {
+    this.reviewImageUrls = this.reviewImageUrls.filter((image : ImageAttachmentModel) => image.url != url);
   }
 
   setSelectedOrderStatus(orderStatusId : number) : void {

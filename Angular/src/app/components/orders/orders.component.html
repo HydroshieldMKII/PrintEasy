@@ -13,10 +13,14 @@
                                 Name
                             </th>
                             <th>
-                                Price
+                                <div class="right-cell">
+                                    Price
+                                </div>
                             </th>
                             <th>
-                                Status
+                                <div class="center-cell">
+                                    Status
+                                </div>
                             </th>
                             <th>
                                 Target Date
@@ -35,11 +39,17 @@
                     <ng-template #body let-order>
                         <tr>
                             <td>{{order.offer.request.name}}</td>
-                            <td>{{order.offer.price | currency}}</td>
                             <td>
-                                <span class="status-tag" [ngStyle]="{'background-color': statusColorRef[order.orderStatus.at(-1).statusName || 0]}">
-                                    <p class="w-full">{{order.orderStatus.at(-1).statusName}}</p>
-                                </span>
+                                <div class="right-cell">
+                                    {{order.offer.price | currency}}
+                                </div>
+                            </td>
+                            <td>
+                                <div class="center-cell">
+                                    <span class="status-tag" [ngStyle]="{'background-color': statusColorRef[order.orderStatus.at(-1).statusName || 0]}">
+                                        <p class="w-full">{{order.orderStatus.at(-1).statusName}}</p>
+                                    </span>
+                                </div>
                             </td>
                             <td>{{order.offer.targetDate | date:'fullDate'}}</td>
                             <td>
