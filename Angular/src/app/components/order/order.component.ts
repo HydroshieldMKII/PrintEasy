@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, ValidationErro
 import { DropdownModule } from 'primeng/dropdown';
 import { MenuItem } from 'primeng/api';
 import { StlModelViewerModule } from 'angular-stl-model-viewer';
+import { MessageService } from 'primeng/api';
 
 import { OrderModel } from '../../models/order.model';
 import { OrderStatusModel } from '../../models/order-status.model';
@@ -12,7 +13,8 @@ import { OrderService } from '../../services/order.service';
 import { OrderStatusService } from '../../services/order-status.service';
 import { ApiResponseModel } from '../../models/api-response.model';
 import { AuthService } from '../../services/authentication.service';
-
+import { ReviewService } from '../../services/review.service';
+import { ImageAttachmentModel } from '../../models/image-attachment.model';
 
 @Component({
   selector: 'app-orders',
@@ -25,6 +27,8 @@ export class OrderComponent {
   orderService: OrderService = inject(OrderService);
   orderStatusService: OrderStatusService = inject(OrderStatusService);
   private readonly auth = inject(AuthService)
+  messageService: MessageService = inject(MessageService);
+  reviewService: ReviewService = inject(ReviewService);
 
   order: OrderModel | null = null;
   currentStatus: OrderStatusModel | null = null;
@@ -50,14 +54,14 @@ export class OrderComponent {
       label: 'Edit',
       icon: 'pi pi-pencil',
       command: () => {
-        this.setForm();
+        this.setStatusForm();
       }
     },
     {
       label: 'Delete',
       icon: 'pi pi-trash',
       command: () => {
-        this.DeleteOrderStatus();
+        this.deleteStatusDialogVisible = true;
       }
     }
   ]
@@ -68,12 +72,17 @@ export class OrderComponent {
   ShippedStatus: OrderStatusModel[] = [];
   ArrivedStatus: OrderStatusModel[] = [];
   CancelledStatus: OrderStatusModel[] = [];
+  reviewImageUrls: ImageAttachmentModel[] = [];
   canCancel: boolean = false;
   canArrive: boolean = false;
   consumer: boolean = false;
   formVisible: boolean = false;
+  deleteStatusDialogVisible: boolean = false;
+  deleteReviewDialogVisible: boolean = false;
   isEdit: boolean = false;
+  isEditReview: boolean = false;
   orderStatusForm: FormGroup;
+  reviewForm: FormGroup;
   imageUrl: string = '';
   currentlySelectedOrderStatusId: number = -1
 
@@ -84,6 +93,13 @@ export class OrderComponent {
       statusName: ['', [Validators.required, this.statusNameValidator.bind(this)]],
       comment: ['', [Validators.minLength(5), Validators.maxLength(200)]],
       image: [null, this.imageValidator.bind(this)]
+    });
+
+    this.reviewForm = this.fb.group({
+      title: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(50)]],
+      rating: [1, [Validators.required, Validators.min(0), Validators.max(5)]],
+      description: ['', [Validators.minLength(5), Validators.maxLength(200)]],
+      images: [[]]
     });
   }
 
@@ -117,10 +133,13 @@ export class OrderComponent {
     this.ShippedStatus = [];
     this.ArrivedStatus = [];
     this.CancelledStatus = [];
+    this.statusActions = [];
+    this.reviewImageUrls = [];
     this.canCancel = false;
     this.canArrive = false;
     this.consumer = false;
     this.isEdit = false;
+    this.isEditReview = false;
 
     const orderId = Number(this.route.snapshot.params['id']);
     this.orderService.getOrder(orderId).subscribe((response: ApiResponseModel) => {
@@ -137,9 +156,20 @@ export class OrderComponent {
           }
           if (this.order.offer.request.user.id == this.auth.currentUser?.id) {
             this.consumer = true;
+          }else{
+            this.reviewForm.get('rating')?.disable();
+            this.reviewForm.get('title')?.disable();
+            this.reviewForm.get('description')?.disable();
           }
           for (let status of this.order.orderStatus) {
             this.sortStatus(status);
+          }
+          if (this.order.review){
+            this.isEditReview = true;
+            this.reviewImageUrls = this.order.review.imageUrls;
+            this.reviewForm.patchValue({ title: this.order.review.title });
+            this.reviewForm.patchValue({ rating: this.order.review.rating });
+            this.reviewForm.patchValue({ description: this.order.review.description });
           }
           for (let status of this.order.availableStatus) {
             switch (status) {
@@ -147,9 +177,6 @@ export class OrderComponent {
                 this.statusActions.push({
                   label: 'Accepted',
                   icon: 'pi pi-play',
-                  style: { backgroundColor: "#ff0000", color: "#ff0000" },
-                  styleClass: 'p-button-Accepted',
-                  iconStyle: { color: "#ff0000" },
                   command: () => {
                     this.ShowOrderStatusForm();
                     this.orderStatusForm.patchValue({ statusName: 'Accepted' });
@@ -222,13 +249,26 @@ export class OrderComponent {
     console.log('Image:', file);
   }
 
-  ShowOrderStatusForm(): void {
-    this.clearForm();
+  onReviewFileSelect(event: any) {
+    const files = event.files;
+    
+    for (let file of files) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.reviewImageUrls.push(new ImageAttachmentModel(null, reader.result as string, file ));
+      }
+      reader.readAsDataURL(file);
+    }
+    console.log('Review images:', this.reviewImageUrls);
+  }
+
+  ShowOrderStatusForm() : void {
+    this.clearStatusForm();
     this.formVisible = true;
   }
 
-  onSubmit(): void {
-    if (this.orderStatusForm.valid) {
+  onStatusSubmit() : void {
+    if (this.orderStatusForm.valid){
       console.log('Order status data:', this.orderStatusForm.value);
 
       const orderStatusData = new FormData();
@@ -245,18 +285,101 @@ export class OrderComponent {
           console.log('Order status updated:', response);
           if (response.status == 200) {
             this.refreshOrder();
-            this.clearForm();
+            this.clearStatusForm();
             this.formVisible = false;
             this.isEdit = false;
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Created',
+              detail: 'Order status updated successfully'
+            });
+          }else {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Failed to update order status'
+            });
           }
         });
-      } else {
-        this.orderStatusService.createOrderStatus(orderStatusData).subscribe((response: ApiResponseModel) => {
+      }else{
+        this.orderStatusService.createOrderStatus(orderStatusData).subscribe((response : ApiResponseModel) => {
           console.log('Order status created:', response);
           if (response.status == 201) {
             this.refreshOrder();
-            this.clearForm();
+            this.clearStatusForm();
             this.formVisible = false;
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Created',
+              detail: 'Order status created successfully'
+            });
+          }else{
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Failed to create order status'
+            });
+          }
+        });
+      }
+    }
+  }
+
+  onReviewSubmit() : void {
+    if (this.reviewForm.valid) {
+      console.log('Review data form:', this.reviewForm.value);
+
+      const reviewData = new FormData();
+      reviewData.append('review[title]', this.reviewForm.value.title);
+      reviewData.append('review[rating]', this.reviewForm.value.rating);
+      reviewData.append('review[description]', this.reviewForm.value.description);
+      if (!this.isEditReview) {
+        reviewData.append('review[order_id]', this.order?.id.toString() || '');
+      }
+      if (this.reviewImageUrls.length > 0) {
+        this.reviewImageUrls.forEach((image : any) => {
+          reviewData.append('review[images][]', image.signedId ?? image.file);
+        });
+      }
+      console.log('Review data:', reviewData);
+      if (this.isEditReview) {
+        this.reviewService.updateReview(this.order?.review?.id || -1, reviewData).subscribe((response : ApiResponseModel) => {
+          console.log('Review updated:', response);
+          if (response.status == 200) {
+            this.clearReviewForm();
+            this.refreshOrder();
+            this.deleteReviewDialogVisible = false;
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Created',
+              detail: 'Review updated successfully'
+            });
+          }else{
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Failed to update review'
+            });
+          }
+        });
+      }else{
+        this.reviewService.createReview(reviewData).subscribe((response : ApiResponseModel) => {
+          console.log('Review created:', response);
+          if (response.status == 201) {
+            this.clearReviewForm();
+            this.refreshOrder();
+            this.deleteReviewDialogVisible = false;
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Created',
+              detail: 'Review created successfully'
+            });
+          }else{
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Failed to create review'
+            });
           }
         });
       }
@@ -287,14 +410,19 @@ export class OrderComponent {
 
   }
 
-  clearForm(): void {
+  clearStatusForm() : void {
     this.orderStatusForm.reset();
     this.isEdit = false;
     this.imageUrl = '';
   }
 
-  setForm(): void {
-    this.orderStatusService.getOrderStatus(this.currentlySelectedOrderStatusId).subscribe((response: ApiResponseModel) => {
+  clearReviewForm() : void {
+    this.reviewForm.reset();
+    this.reviewImageUrls = [];
+  }
+
+  setStatusForm() : void {
+    this.orderStatusService.getOrderStatus(this.currentlySelectedOrderStatusId).subscribe((response : ApiResponseModel) => {
       console.log('Order status:', response);
       if (response.status != 200) {
         return;
@@ -312,16 +440,49 @@ export class OrderComponent {
     this.orderStatusService.deleteOrderStatus(this.currentlySelectedOrderStatusId).subscribe((response: ApiResponseModel) => {
       console.log('Order status deleted:', response);
       if (response.status != 200) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to delete order status'
+        });
         return;
       }
       this.refreshOrder();
+      this.deleteStatusDialogVisible = false;
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Deleted',
+        detail: 'Order status deleted successfully'
+      });
     });
+  }
+
+  DeleteReview() : void {
+    this.reviewService.deleteReview(this.order?.review?.id || -1).subscribe((response : ApiResponseModel) => {
+      console.log('Review deleted:', response);
+      if (response.status != 200) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to delete review'
+        });
+        return;
+      }
+      this.refreshOrder();
+      this.deleteReviewDialogVisible = false;
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Deleted',
+        detail: 'Review deleted successfully'
+      });
+    });
+  }
+
+  deleteImage(url: string) : void {
+    this.reviewImageUrls = this.reviewImageUrls.filter((image : ImageAttachmentModel) => image.url != url);
   }
 
   setSelectedOrderStatus(orderStatusId: number): void {
     this.currentlySelectedOrderStatusId = orderStatusId;
   }
-
-
-
 }

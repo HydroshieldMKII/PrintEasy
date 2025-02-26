@@ -44,26 +44,14 @@
               <p>STL preview here</p>
             </div>
             <div class="stl-viewer-container">
-                <stl-model-viewer style="width: 100%; height: 100%;" *ngIf="order?.offer?.request?.stlFileUrl" [stlModels]="[order?.offer?.request?.stlFileUrl ?? '']"></stl-model-viewer>
+                <stl-model-viewer *ngIf="order?.offer?.request?.stlFileUrl" [stlModels]="[order?.offer?.request?.stlFileUrl ?? '']"></stl-model-viewer>
             </div>
         </div>
     </div>
-
+    
     <p-dialog header="{{isEdit ? 'Edit Order Status' : 'New Order Status'}}" [modal]="true" [(visible)]="formVisible" [style]="{ width: '35rem', margin: '10px' }">
-        <form [formGroup]="orderStatusForm" (ngSubmit)="onSubmit()">
+        <form [formGroup]="orderStatusForm" (ngSubmit)="onStatusSubmit()">
             <div class="popup-form-container">
-                <p-floatlabel variant="in">
-                    <textarea
-                        pTextarea
-                        id="comment"
-                        formControlName="comment"
-                        rows="5"
-                        cols="30"
-                        style="resize: none"
-                        ></textarea>
-                    <label for="comment">Special comment about the status update</label>
-                </p-floatlabel>
-                <p-message severity="error">Comment has to be between 5 and 200 characters</p-message>
                 <p-dropdown 
                     formControlName="statusName" 
                     [options]="order?.availableStatus"
@@ -72,6 +60,19 @@
                     [style]="{width: '100%'}"
                     [disabled]="isEdit">
                 </p-dropdown>
+                <p-floatlabel variant="in">
+                    <textarea
+                        pTextarea
+                        id="comment"
+                        formControlName="comment"
+                        rows="5"
+                        cols="30"
+                        style="resize: none"
+                        >
+                    </textarea>
+                    <label for="comment">Special comment about the status update</label>
+                </p-floatlabel>
+                <p-message severity="error">Comment has to be between 5 and 200 characters</p-message>
                 <img src="{{imageUrl}}" alt="" class="image-preview" />
                 <div *ngIf="imageUrl == ''" class="image-placeholder">
                     <p>Image</p>
@@ -88,7 +89,7 @@
             </div>
             <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1rem;">
                 <p-button label="Cancel" icon="pi pi-times" severity="secondary" (click)="formVisible = false" severity="secondary"></p-button>
-                <p-button label="Save" icon="pi pi-save" [disabled]="orderStatusForm.invalid" (click)="onSubmit()" severity="success"></p-button>
+                <p-button label="Save" icon="pi pi-save" [disabled]="orderStatusForm.invalid" (click)="onStatusSubmit()" severity="success"></p-button>
             </div>
         </form>
     </p-dialog>
@@ -96,13 +97,13 @@
     <p-tabs value="0">
         <p-tablist>
             <p-tab value="0">Status</p-tab>
-            <p-tab value="1" disabled="true">Review</p-tab>
+            <p-tab value="1" disabled="{{currentStatus?.statusName != 'Arrived' && currentStatus?.statusName != 'Cancelled'}}">Review</p-tab>
         </p-tablist>
         <p-tabpanels>
             <p-tabpanel value="0">
 
                 <div style="width: 100%; display: flex; flex-direction: row; align-items: flex-start;">
-                    <p-speeddial *ngIf="statusActions.length > 0" showIcon="pi pi-pen-to-square" [model]="statusActions" direction="right" [style]="{'margin-left': '4px'}" [buttonProps]="{ severity: 'contrast'}" [tooltipOptions]="{ tooltipPosition: 'bottom' }" />
+                    <p-speeddial *ngIf="statusActions.length > 0" showIcon="pi pi-pen-to-square" class="p-actions-container" [model]="statusActions" direction="right" [style]="{'margin-left': '4px'}" [buttonProps]="{ severity: 'contrast'}" [tooltipOptions]="{ tooltipPosition: 'bottom' }" />
                 </div>
                 
                 <p-stepper [value]="1">
@@ -126,7 +127,7 @@
                                             <div class="status-content-date-container">
                                                 <p class="status-content-date">{{status.updatedAt | date:'medium'}}</p>
                                             </div>
-                                            <div class="three-dot-container" *ngIf="!consumer">
+                                            <div class="three-dot-container" *ngIf="!consumer"> <!-- TODO: make dots dissapear when cancelled, Arrived  or shipped-->
                                                 <p-button [rounded]="true" [text]="true" icon="pi pi-ellipsis-v" (click)="menu.toggle($event); setSelectedOrderStatus(status.id)" />
                                                 <p-tieredmenu #menu [model]="editMenuItems" [popup]="true"></p-tieredmenu>
                                             </div>
@@ -306,10 +307,133 @@
                 </p-stepper>
             </p-tabpanel>
             <p-tabpanel value="1">
-                <p>bonjour</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" style="margin-bottom: 5px;">
+                    <form class="" [formGroup]="reviewForm">
+                        <div style="margin-bottom: 2rem;">
+                            <p-floatlabel variant="in" floatLabel="always">
+                                <input
+                                type="text"
+                                formControlName="title"
+                                pInputText
+                                id="title"
+                                />
+                                <label for="title">Title</label>
+                            </p-floatlabel>
+                            <p-message severity="error">Title has to be between 5 and 50 characters</p-message>
+                        </div>
+
+                        <div style="margin-bottom: 2rem;">
+                            <p-floatlabel variant="in" floatLabel="always">
+                                <textarea
+                                pTextarea
+                                id="description"
+                                formControlName="description"
+                                rows="5"
+                                cols="30"
+                                style="resize: none"
+                                ></textarea>
+                                <label for="description">Description</label>
+                            </p-floatlabel>
+                            <p-message severity="error">Comment has to be between 5 and 200 characters</p-message>
+                        </div>
+
+                        <div *ngIf="consumer" style="margin-bottom: 2rem;">
+                            <p-fileUpload
+                                mode="basic"
+                                multiple="true"
+                                name="images"
+                                accept="image/*"
+                                chooseLabel="Upload Image"
+                                (onSelect)="onReviewFileSelect($event)"
+                                [style]="{'justify-content': 'flex-start'}">
+                            </p-fileUpload>
+                        </div>
+
+                        <p-rating
+                            formControlName="rating"
+                            [readonly]="false"
+                            [stars]="5"
+                            [style]="{ 'margin-bottom': '2rem' }"
+                        ></p-rating>
+
+                        <div *ngIf="consumer" style="display: flex; justify-content: flex-start; gap: 1rem; margin-top: 1rem;">
+                            <p-button label="Save" icon="pi pi-save" [disabled]="reviewForm.invalid" (click)="onReviewSubmit()" severity="success"></p-button>
+                            <p-button *ngIf="isEditReview" label="Delete" icon="pi pi-trash" (click)="deleteReviewDialogVisible = true" severity="danger"></p-button>
+                        </div>
+                    </form>
+                    <div class="flex-col gap-6">
+                        <p-galleria [value]="reviewImageUrls" [numVisible]="5" [showItemNavigators]="true" [showThumbnails]="false" [showIndicatorsOnItem]="true" [indicatorsPosition]="'bottom'" [showIndicators]="true" [containerStyle]="{'max-width': '100%', 'height': '400px'}">
+                            <ng-template #item let-image>
+                                <p-button *ngIf="consumer" icon="pi pi-trash" severity="danger" [style]="{'position': 'absolute', 'top': '0.5rem', 'left': '0.5rem'}" (onClick)="deleteImage(image.url)"></p-button>
+                                <img [src]="image.url" alt="" style="display:block;width:100%;object-fit:contain;height: 400px;">
+                            </ng-template>
+                        </p-galleria>
+                    </div>
+                </div>
             </p-tabpanel>
         </p-tabpanels>
     </p-tabs>
     
+    <p-dialog
+    [(visible)]="deleteStatusDialogVisible"
+    [modal]="true"
+    [style]="{ width: '25rem' }"
+    dismissableMask="true"
+    closable="false"
+    blockScroll="true"
+    resizable="false"
+    draggable="false"
+    >
+    <ng-template #header>
+        <div class="inline-flex items-center justify-center gap-2">
+        <i class="pi pi-exclamation-triangle text-red-500 text-2xl"></i>
+        <span style="margin-left: 5px;" class="font-bold">Confirm Delete</span>
+        </div>
+    </ng-template>
+    <span class="text-surface-500 dark:text-surface-400 block mb-4">
+        Are you sure you want to delete the status ?
+        This action cannot be undone.
+    </span>
+    <ng-template #footer>
+        <p-button
+        label="Cancel"
+        [text]="true"
+        severity="secondary"
+        (click)="deleteStatusDialogVisible = false"
+        />
+        <p-button label="Delete" severity="danger" (click)="DeleteOrderStatus()" />
+    </ng-template>
+    </p-dialog>
+
+    <p-dialog
+    [(visible)]="deleteReviewDialogVisible"
+    [modal]="true"
+    [style]="{ width: '25rem' }"
+    dismissableMask="true"
+    closable="false"
+    blockScroll="true"
+    resizable="false"
+    draggable="false"
+    >
+    <ng-template #header>
+        <div class="inline-flex items-center justify-center gap-2">
+        <i class="pi pi-exclamation-triangle text-red-500 text-2xl"></i>
+        <span style="margin-left: 5px;" class="font-bold">Confirm Delete</span>
+        </div>
+    </ng-template>
+    <span class="text-surface-500 dark:text-surface-400 block mb-4">
+        Are you sure you want to delete the review ?
+        This action cannot be undone.
+    </span>
+    <ng-template #footer>
+        <p-button
+        label="Cancel"
+        [text]="true"
+        severity="secondary"
+        (click)="deleteReviewDialogVisible = false"
+        />
+        <p-button label="Delete" severity="danger" (click)="DeleteReview()" />
+    </ng-template>
+    </p-dialog>
 
 </div>

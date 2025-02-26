@@ -15,13 +15,16 @@ export class ApiRequestService {
 
     getRequest(query: string, params?: { [key: string]: string }): Observable<ApiResponseModel> {
         return this.http.get<ApiResponseModel>(query, { params, observe: 'response' }).pipe(
-            map(response => new ApiResponseModel(
-                {
-                    status: response.status,
-                    errors: response.body?.errors ?? {}
-                },
-                response.body
-            )),
+            map(response => {
+                console.log('API Response:', response.body);
+                return new ApiResponseModel(
+                    {
+                        status: response.status,
+                        errors: response.body?.errors ?? {}
+                    },
+                    response.body
+                );
+            }),
             catchError((error: HttpErrorResponse) => {
                 return this.handleHttpError(error);
             })

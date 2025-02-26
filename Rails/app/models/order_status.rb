@@ -130,7 +130,7 @@ class OrderStatus < ApplicationRecord
   end
 
   def can_create_state()
-    last_state = self.order&.order_status&.order(created_at: :desc)&.first.status_name
+    last_state = self.order&.order_status&.order(created_at: :desc)&.first&.status_name
     if Current.user == self.order.consumer
       if ['Cancelled', 'Accepted', 'Printing', 'Printed', 'Shipped'].include?(self.status_name)
         if self.status_name == 'Cancelled'
@@ -157,6 +157,9 @@ class OrderStatus < ApplicationRecord
 
   def can_destroy?
     if ['Accepted', 'Cancelled', 'Arrived', 'Shipped'].include?(self.status_name)
+      if self.status_name == 'Accepted' && self.order.order_status.where(status_name: "Accepted").count > 1
+        return true
+      end
       raise CannotDestroyStatusError, "Cannot delete the status"
     end
     return true
