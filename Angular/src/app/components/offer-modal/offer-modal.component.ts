@@ -162,7 +162,7 @@ export class OfferModalComponent implements OnChanges {
 
       submitObs.subscribe(
         response => {
-          if (response.status === 200) {
+          if (response.status === 200 || response.status === 201) {
             if (this.offerIdToEdit) {
               this.offerUpdated.emit(true);
             }
