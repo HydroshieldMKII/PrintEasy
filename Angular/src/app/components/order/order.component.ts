@@ -148,6 +148,7 @@ export class OrderComponent {
         console.log('Order:', this.order);
         if (this.order) {
           this.currentStatus = this.order.orderStatus[this.order.orderStatus.length - 1];
+          console.log('Current status:', this.currentStatus);
           if (this.order.availableStatus.includes('Cancelled')) {
             this.canCancel = true;
           }

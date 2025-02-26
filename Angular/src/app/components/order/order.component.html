@@ -123,11 +123,11 @@
                             <ng-template #content>
                                 <div class="status-content-container-container">
                                     <div *ngFor="let status of AcceptedStatus" class="status-content-container">
-                                        <div class="status-content-header" [ngStyle]="{'margin-bottom': consumer ? '0px' : '-20px'}">
+                                        <div class="status-content-header" [ngStyle]="{'margin-bottom': consumer || ['Cancelled', 'Arrived', 'Shipped'].includes(currentStatus?.statusName ?? '') ? '0px' : '-20px'}">
                                             <div class="status-content-date-container">
                                                 <p class="status-content-date">{{status.updatedAt | date:'medium'}}</p>
                                             </div>
-                                            <div class="three-dot-container" *ngIf="!consumer"> <!-- TODO: make dots dissapear when cancelled, Arrived  or shipped-->
+                                            <div class="three-dot-container" *ngIf="!consumer && !['Cancelled', 'Arrived', 'Shipped'].includes(currentStatus?.statusName ?? '')">
                                                 <p-button [rounded]="true" [text]="true" icon="pi pi-ellipsis-v" (click)="menu.toggle($event); setSelectedOrderStatus(status.id)" />
                                                 <p-menu #menu [model]="editMenuItems" [popup]="true"></p-menu>
                                             </div>
@@ -159,11 +159,11 @@
                             <ng-template #content>
                                 <div class="status-content-container-container">
                                     <div *ngFor="let status of PrintingStatus" class="status-content-container">
-                                        <div class="status-content-header" [ngStyle]="{'margin-bottom': consumer ? '0px' : '-20px'}">
+                                        <div class="status-content-header" [ngStyle]="{'margin-bottom': consumer || ['Cancelled', 'Arrived', 'Shipped'].includes(currentStatus?.statusName ?? '') ? '0px' : '-20px'}">
                                             <div class="status-content-date-container">
                                                 <p class="status-content-date">{{status.updatedAt | date:'medium'}}</p>
                                             </div>
-                                            <div class="three-dot-container" *ngIf="!consumer">
+                                            <div class="three-dot-container" *ngIf="!consumer && !['Cancelled', 'Arrived', 'Shipped'].includes(currentStatus?.statusName ?? '')">
                                                 <p-button [rounded]="true" [text]="true" icon="pi pi-ellipsis-v" (click)="menu.toggle($event); setSelectedOrderStatus(status.id)" />
                                                 <p-menu #menu [model]="editMenuItems" [popup]="true"></p-menu>
                                             </div>
@@ -195,11 +195,11 @@
                             <ng-template #content>
                                 <div class="status-content-container-container">
                                     <div *ngFor="let status of PrintedStatus" class="status-content-container">
-                                        <div class="status-content-header" [ngStyle]="{'margin-bottom': consumer ? '0px' : '-20px'}">
+                                        <div class="status-content-header" [ngStyle]="{'margin-bottom': consumer || ['Cancelled', 'Arrived', 'Shipped'].includes(currentStatus?.statusName ?? '') ? '0px' : '-20px'}">
                                             <div class="status-content-date-container">
                                                 <p class="status-content-date">{{status.updatedAt | date:'medium'}}</p>
                                             </div>
-                                            <div class="three-dot-container" *ngIf="!consumer">
+                                            <div class="three-dot-container" *ngIf="!consumer && !['Cancelled', 'Arrived', 'Shipped'].includes(currentStatus?.statusName ?? '')">
                                                 <p-button [rounded]="true" [text]="true" icon="pi pi-ellipsis-v" (click)="menu.toggle($event); setSelectedOrderStatus(status.id)" />
                                                 <p-menu #menu [model]="editMenuItems" [popup]="true"></p-menu>
                                             </div>
@@ -230,11 +230,11 @@
                             <ng-template #content>
                                 <div class="status-content-container-container">
                                     <div *ngFor="let status of ShippedStatus" class="status-content-container">
-                                        <div class="status-content-header" [ngStyle]="{'margin-bottom': consumer ? '0px' : '-20px'}">
+                                        <div class="status-content-header" [ngStyle]="{'margin-bottom': consumer || ['Cancelled', 'Arrived', 'Shipped'].includes(currentStatus?.statusName ?? '') ? '0px' : '-20px'}">
                                             <div class="status-content-date-container">
                                                 <p class="status-content-date">{{status.updatedAt | date:'medium'}}</p>
                                             </div>
-                                            <div class="three-dot-container" *ngIf="!consumer">
+                                            <div class="three-dot-container" *ngIf="!consumer && !['Cancelled', 'Arrived', 'Shipped'].includes(currentStatus?.statusName ?? '')">
                                                 <p-button [rounded]="true" [text]="true" icon="pi pi-ellipsis-v" (click)="menu.toggle($event); setSelectedOrderStatus(status.id)" />
                                                 <p-menu #menu [model]="editMenuItems" [popup]="true"></p-menu>
                                             </div>

@@ -6,7 +6,7 @@
         </p-tablist>
         <p-tabpanels>
             <p-tabpanel [value]="'commands'">
-                <p-table [value]="myOrders" [tableStyle]="{'width': '100%'}">
+                <p-table *ngIf="myOrders.length > 0" [value]="myOrders" [tableStyle]="{'width': '100%'}">
                     <ng-template #header>
                         <tr>
                             <th>
@@ -76,9 +76,19 @@
                         </tr>
                     </ng-template>
                 </p-table>
+                <div
+                    *ngIf="myOrders.length == 0"
+                    class="empty-message"
+                    style="width: 100%; height: 100%;"
+                    >
+                    <i class="pi pi-inbox text-6xl text-gray-400"></i>
+                    <p class="text-xl font-semibold text-gray-500 mt-2">
+                        You dont have any orders pending!
+                    </p>
+                </div>
             </p-tabpanel>
             <p-tabpanel [value]="'contracts'">
-                <p-table [value]="makeOrders" [tableStyle]="{'width': '100%'}">
+                <p-table *ngIf="makeOrders.length > 0" [value]="makeOrders" [tableStyle]="{'width': '100%'}">
                     <ng-template #header>
                         <tr>
                             <th>
@@ -146,6 +156,16 @@
                         </tr>
                     </ng-template>
                 </p-table>
+                <div
+                    *ngIf="makeOrders.length == 0"
+                    class="empty-message"
+                    style="width: 100%; height: 100%;"
+                    >
+                    <i class="pi pi-inbox text-6xl text-gray-400"></i>
+                    <p class="text-xl font-semibold text-gray-500 mt-2">
+                        You dont have any contracts yet!
+                    </p>
+                </div>
             </p-tabpanel>
         </p-tabpanels>
     </p-tabs>
