@@ -359,18 +359,19 @@ printer_users = PrinterUser.all
   user_requests = Request.where(user: user)
   next if user_requests.empty?
 
-  10.times do
+  10.times do |i|
     request = user_requests.sample
     printer_user = PrinterUser.where.not(user: user).sample
+    print_qualities = [0.08, 0.12, 0.16, 0.2]
 
     Offer.create!(
       request: request,
       printer_user: printer_user,
-      color: Color.all.sample,
-      filament: Filament.all.sample,
-      price: rand(20.0..100.0).round(2),
-      target_date: Time.now + rand(5..15).days,
-      print_quality: [0.08, 0.12, 0.16, 0.2].sample
+      color: colors[i % colors.size],
+      filament: filaments[i % filaments.size],
+      price: (i + 1) * 10.0,
+      target_date: Time.now + (i + 5).days,
+      print_quality: print_qualities[i % print_qualities.size]
     )
   end
 end
