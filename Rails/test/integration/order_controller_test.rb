@@ -91,6 +91,89 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
     assert_equal ["Invalid login credentials"], @parsed_response["errors"]["connection"]
   end
 
+  test "should not get create -> not signed in" do
+    assert_difference('Order.count', 0) do
+      post api_order_index_path, params: { order: { offer_id: 1 } }, as: :json
+    end
+
+    assert_response :unauthorized
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+    assert_equal ["Invalid login credentials"], @parsed_response["errors"]["connection"]
+  end
+
+  test "should not get create -> offer_id missing" do
+    sign_in users(:one)
+
+    assert_difference('Order.count', 0) do
+      post api_order_index_path, as: :json
+    end
+
+    assert_response :unprocessable_entity
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+    assert_equal ["param is missing or the value is empty: order"], @parsed_response["errors"]["base"]
+  end
+
+  test "should not get create -> offer_id doesn't exist" do
+    sign_in users(:one)
+
+    assert_difference('Order.count', 0) do
+      post api_order_index_path, params: { order: { offer_id: 999 } }, as: :json
+    end
+
+    assert_response :bad_request
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+    assert_equal ["must exist"], @parsed_response["errors"]["offer"]
+  end
+
+  test "shouldn't create order -> user is not owner of request" do
+    sign_in users(:one)
+
+    assert_difference('Order.count', 0) do
+      post api_order_index_path, params: { order: { offer_id: 2 } }, as: :json
+    end
+
+    assert_response :bad_request
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+    assert_equal ["User is not owner of request"], @parsed_response["errors"]["offer_id"]
+  end
+
+  test "should not create order -> offer_id already used" do
+    sign_in users(:one)
+
+    assert_difference('Order.count', 0) do
+      post api_order_index_path, params: { order: { offer_id: 1 } }, as: :json
+    end
+
+    assert_response :bad_request
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+    assert_equal ["has already been taken"], @parsed_response["errors"]["offer_id"]
+  end
+
+  test "should create order" do
+    sign_in users(:one)
+
+    assert_difference('Order.count', 1) do
+      post api_order_index_path, params: { order: { offer_id: 9 } }, as: :json
+    end
+
+    assert_response :created
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+    assert_equal 9, @parsed_response["order"]["offer_id"]
+    assert_empty @parsed_response["errors"]
+  end
+
   private
   def testOrder(tested_order)
     assert_nil tested_order["offer_id"]

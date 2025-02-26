@@ -1,4 +1,6 @@
 class Api::OrderController < AuthenticatedController
+  before_action :order_params, only: %i[create]
+
   def index
 
     if params[:type] == 'printer'
@@ -136,5 +138,21 @@ class Api::OrderController < AuthenticatedController
     else
       render json: { errors: {order: ['You are not authorized to view this order']} }, status: :forbidden
     end
+  end
+
+  def create
+    @order = Order.new(order_params)
+    if @order.save
+      render json: { order: @order.as_json(), errors: {} }, status: :created
+    else
+      render json: { errors: @order.errors.as_json }, status: :bad_request
+    end
+  end
+  
+    
+  private
+
+  def order_params
+    params.require(:order).permit(:offer_id)
   end
 end
