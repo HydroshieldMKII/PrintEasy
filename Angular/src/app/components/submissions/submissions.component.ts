@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ViewEncapsulation, Renderer2 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ImportsModule } from '../../../imports';
@@ -46,7 +46,7 @@ export class SubmissionsComponent {
   winner_username: string = '';
   submissionId: number = 0;
 
-  constructor(private route: ActivatedRoute, private router: Router, private fb: FormBuilder) {
+  constructor(private route: ActivatedRoute, private router: Router, private fb: FormBuilder, private renderer: Renderer2) {
     this.submissionForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]],
       description: ['', [Validators.maxLength(200)]],
@@ -57,7 +57,7 @@ export class SubmissionsComponent {
     this.route.params.subscribe(params => {
       this.paramsId = params['id'];
     });
-    
+
     this.contestService.getContest(this.paramsId).subscribe((data) => {
       this.contest = data;
       if (this.contest?.endAt && this.contest?.startAt) {
@@ -80,7 +80,14 @@ export class SubmissionsComponent {
     ];
   }
 
-  async onSubmit() {
+  ngOnInit() {
+    const bootstrapLink = document.querySelector('link[href*="bootstrap"]');
+    if (bootstrapLink) {
+      this.renderer.removeChild(document.head, bootstrapLink);
+    }
+  }
+
+  onSubmit() {
     if (this.submissionForm.invalid) {
       return;
     }

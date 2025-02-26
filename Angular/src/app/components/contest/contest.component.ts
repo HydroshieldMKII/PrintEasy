@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, Renderer2 } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ContestModel } from '../../models/contest.model';
 import { Router, RouterLink } from '@angular/router';
@@ -31,7 +31,7 @@ export class ContestComponent {
   id: number = 0;
   deleteDialogVisible: boolean = false;
 
-  constructor() {
+  constructor(private renderer: Renderer2) {
     this.contestService.getContests().subscribe((response) => {
       console.log('Contests:', response);
       this.contests = response;
