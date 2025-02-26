@@ -2,22 +2,25 @@
 require 'test_helper'
 
 class OfferControllerTest < ActionDispatch::IntegrationTest
-    # setup do
-    #     @user = users(:one)
-    #     @other_user = users(:two)
-    #     @offer = offers(:one)
-    #     @offer.update(printer_user: printer_users(:one))
-    #     sign_in @user
-    # end
-
-    test "true" do
-        assert true
+    setup do
+        @user = users(:one)
+        @other_user = users(:two)
+        @offer = offers(:one)
+        @offer.update(printer_user: printer_users(:one))
+        sign_in @user
     end
 
-    # test "should get index" do
-    #     get api_offers_url
-    #     assert_response :success
-    # end
+    test "should get index" do
+        get api_offer_index_path
+        assert_response :success
+
+        json_response = assert_nothing_raised do
+            JSON.parse(response.body)
+        end
+
+        p json_response
+        # assert_equal Offer.count, json_response['offers'].length
+    end
 
     # test "should show offer" do
     #     get api_offer_url(@offer)

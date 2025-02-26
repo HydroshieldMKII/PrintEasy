@@ -161,18 +161,17 @@ class Api::OfferController < AuthenticatedController
   
     def filter_offers(offers)
       case params[:type]
-      when 'all' # Offers received
+      when 'all' # Offers received on my requests
         offers.where(request_id: current_user.requests.pluck(:id)).where.not(id: Order.pluck(:offer_id)).distinct
-      when 'mine' # Offers sent (pending)
+      when 'mine' # Offers sent to another user's requests
         offers.where(printer_user_id: current_user.printer_user.pluck(:id)).where.not(id: Order.pluck(:offer_id)).distinct
       else
-      []
+        []
       end
     end
   
     def offer_params
       params.require(:offer).permit(:request_id, :printer_user_id, :color_id, :filament_id, :price, :print_quality, :target_date)
     end
-    
   end
   
