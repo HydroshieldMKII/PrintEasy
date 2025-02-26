@@ -175,7 +175,7 @@ contest1 = Contest.new(
   theme: "Best 3D Printed Art",
   description: "Create and submit your best 3D printed designs.",
   submission_limit: 5,
-  start_at: Time.now + 1.days,
+  start_at: Time.now - 1.days,
   end_at: Time.now + 30.days
 )
 
@@ -184,14 +184,14 @@ contest1.image.attach(
   filename: "ruby.jpg",
   content_type: "image/jpg"
 )
-contest1.save
+contest1.save(validate: false)
 
 contest2 = Contest.new(
   theme: "Best 3D Printed Toy",
   description: "Create and submit your best 3D printed toys.",
   submission_limit: 5,
   deleted_at: Time.now,
-  start_at: Time.now + 1.days,
+  start_at: Time.now - 1.days,
 )
 
 ruby_image.rewind
@@ -201,13 +201,13 @@ contest2.image.attach(
   filename: "ruby.jpg",
   content_type: "image/jpg"
 )
-contest2.save!
+contest2.save(validate: false)
 
 contest3 = Contest.create(
   theme: "Best 3D Printed Jewelry",
   description: "Create and submit your best 3D printed jewelry.",
   submission_limit: 5,
-  start_at: Time.now + 2.days
+  start_at: Time.now - 2.days,
 )
 
 ruby_image.rewind
@@ -218,14 +218,14 @@ contest3.image.attach(
   content_type: "image/jpg"
 )
 
-contest3.save
+contest3.save(validate: false)
 
 contest4 = Contest.create(
   theme: "Best 3D Printed Home Decor",
   description: "Create and submit your best 3D printed home decor.",
   submission_limit: 5,
   deleted_at: Time.now,
-  start_at: Time.now + 5.days,
+  start_at: Time.now - 2.days,
   end_at: Time.now + 30.days
 )
 
@@ -237,12 +237,12 @@ contest4.image.attach(
   content_type: "image/jpg"
 )
 
-contest4.save
+contest4.save(validate: false)
 
 contest5 = Contest.create(
   theme: "Best 3D Printed Fashion",
   submission_limit: 5,
-  start_at: Time.now + 4.days,
+  start_at: Time.now - 5.days,
   end_at: Time.now + 30.days
 )
 
@@ -254,12 +254,12 @@ contest5.image.attach(
   content_type: "image/jpg"
 )
 
-contest5.save
+contest5.save(validate: false)
 
 contest6 = Contest.create(
   theme: "Best 3D Printed Gadgets",
   submission_limit: 5,
-  start_at: Time.now + 3.days,
+  start_at: Time.now - 10.days,
   deleted_at: Time.now
 )
 
@@ -271,12 +271,12 @@ contest6.image.attach(
   content_type: "image/jpg"
 )
 
-contest6.save
+contest6.save(validate: false)
 
 contest7 = Contest.create(
   theme: "Best 3D Printed Tools",
   submission_limit: 5,
-  start_at: Time.now + 1.days,
+  start_at: Time.now - 10.days,
 )
 
 ruby_image.rewind
@@ -287,12 +287,12 @@ contest7.image.attach(
   content_type: "image/jpg"
 )
 
-contest7.save
+contest7.save(validate: false)
 
 contest8 = Contest.create(
-  theme: "Best 3D Printed Medical Devices",
+  theme: "Best 3D Printed Medical",
   submission_limit: 5,
-  start_at: Time.now + 2.days,
+  start_at: Time.now - 15.days,
   end_at: Time.now + 30.days
 )
 
@@ -304,13 +304,13 @@ contest8.image.attach(
   content_type: "image/jpg"
 )
 
-contest8.save
+contest8.save(validate: false)
 
 contest9 = Contest.create(
-  theme: "Best 3D Printed Automotive Parts",
+  theme: "Best 3D Printed Automotive",
   submission_limit: 5,
-  start_at: Time.now,
-  deleted_at: Time.now + 1.days,
+  start_at: Time.now - 15.days,
+  deleted_at: Time.now,
   end_at: Time.now + 30.days
 )
 
@@ -322,7 +322,7 @@ contest9.image.attach(
   content_type: "image/jpg"
 )
 
-contest9.save
+contest9.save(validate: false)
 
 50.times do |i|
   contest = Contest.create(
@@ -343,7 +343,7 @@ contest9.save
   contest.save
 end
 # Create Submissions
-submission1 = Submission.create(
+submission1 = Submission.new(
   name: "3D Dragon",
   description: "A detailed dragon model.",
   user: admin,
@@ -364,7 +364,7 @@ submission1.image.attach(
 
 submission1.save
 
-submission2 = Submission.create(
+submission2 = Submission.new(
   name: "Space Shuttle",
   description: "NASA space shuttle model.",
   user: user1,
@@ -387,7 +387,7 @@ submission2.image.attach(
 
 submission2.save
 
-submission3 = Submission.create(
+submission3 = Submission.new(
   name: "3D Printed Toy",
   description: "A toy model.",
   user: admin,
@@ -413,7 +413,7 @@ submission3.image.attach(
 submission3.save
 
 5.times do |i|
-  submission = Submission.create(
+  submission = Submission.new(
     name: "Submission #{i + 1}",
     description: "Description for submission #{i + 1}.",
     user: user2,
@@ -439,9 +439,8 @@ submission3.save
   submission.save
 end
 
-# Likes for Submissions
-Like.create!(user: admin, submission: submission2)
 Like.create!(user: user1, submission: submission1)
+Like.create!(user: user1, submission: submission2)
 
 # Create Offers
 colors = Color.all
