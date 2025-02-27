@@ -17,6 +17,21 @@ module Api
       offer = Offer.new(offer_params)
       valid = true
 
+      if current_user.printer_user.empty?
+        valid = false
+        offer.errors.add(:offer, 'You need to have a printer to create an offer')
+      end
+
+      if current_user.printer_user.pluck(:id).exclude?(offer.printer_user_id)
+        valid = false
+        offer.errors.add(:offer, 'You are not allowed to create an offer on this printer')
+      end
+
+      if offer.request&.user_id == current_user.id
+        valid = false
+        offer.errors.add(:offer, 'You cannot create an offer on your own request')
+      end
+
       accepted_requests = Order.joins(:offer).pluck(:request_id).uniq
       if accepted_requests.include?(offer.request_id)
         valid = false

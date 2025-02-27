@@ -11,6 +11,10 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     @other_user = users(:two)
     @other_offer = offers(:three)
 
+    @other_user2 = users(:three)
+
+    @request = requests(:request_three)
+
     sign_in @user
   end
 
@@ -151,8 +155,8 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     assert_difference 'Offer.count' do
       post api_offer_index_url,
            params: { offer: { name: 'Test Offer', price: 1.5, target_date: '2026-01-01', comment: 'test comment',
-                              request_id: offers(:ten).request_id, printer_user_id: @offer2.printer_user_id,
-                              color_id: @offer2.color_id, filament_id: @offer2.filament_id, print_quality: 0.22 } }
+                              request_id: offers(:nine).request_id, printer_user_id: @user.printer_user.first.id,
+                              color_id: @offer2.color_id, filament_id: @offer.filament_id, print_quality: 0.22 } }
     end
 
     # Http code
@@ -163,13 +167,14 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
 
     # response content
     assert_not_nil json_response['offer']['id']
+    assert_equal 2, json_response['offer']['request_id']
+    assert_equal 1, json_response['offer']['printer_user_id']
+    assert_equal 2, json_response['offer']['color_id']
+    assert_equal 1, json_response['offer']['filament_id']
     assert_equal 1.5, json_response['offer']['price']
     assert_equal '2026-01-01', json_response['offer']['target_date']
     assert_equal 0.22, json_response['offer']['print_quality']
     assert_nil json_response['offer']['cancelled_at']
-    assert_equal 1, json_response['offer']['printer_user_id']
-    assert_equal 2, json_response['offer']['color_id']
-    assert_equal 2, json_response['offer']['filament_id']
     assert_empty json_response['errors']
   end
 
@@ -196,7 +201,7 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     assert_no_difference 'Offer.count' do
       post api_offer_index_url,
            params: { offer: { name: 'Te', price: -100.5, target_date: '1970-01-01', comment: '', request_id: -1,
-                              printer_user_id: -1, color_id: -1, filament_id: -1, print_quality: 1000.22, invalid: 'invalid' } }
+                              printer_user_id: 1, color_id: -1, filament_id: -1, print_quality: 1000.22, invalid: 'invalid' } }
     end
 
     # Http code
@@ -209,7 +214,6 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     assert_not_empty json_response['errors']
 
     assert_equal ['must exist', "can't be blank"], json_response['errors']['request']
-    assert_equal ['must exist', "can't be blank"], json_response['errors']['printer_user']
     assert_equal ['must exist', "can't be blank"], json_response['errors']['color']
     assert_equal ['must exist', "can't be blank"], json_response['errors']['filament']
     assert_equal ['must be less than or equal to 2'], json_response['errors']['print_quality']
@@ -239,9 +243,31 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should not create an offer on your request' do
+    # Database changes
+    assert_no_difference 'Offer.count' do
+      post api_offer_index_url,
+           params: { offer: { name: 'Test Offer', price: 1.5, target_date: '2026-01-01', comment: 'test comment',
+                              request_id: offers(:ten).request_id,
+                              printer_user_id: printer_users(:one).id,
+                              color_id: @offer.color_id, filament_id: @offer.filament_id, print_quality: 0.22 } }
+    end
+
+    # Http code
+    assert_response :unprocessable_entity
+
+    # Response format
+    json_response = assert_nothing_raised { JSON.parse(response.body) }
+
+    # response content
+    assert_not_empty json_response['errors']
+
+    assert_equal ['You cannot create an offer on your own request'], json_response['errors']['offer']
   end
 
   test 'should not create an offer if request is already accepted' do
+    sign_out @user
+    sign_in @other_user
+
     # Database changes
     assert_no_difference 'Offer.count' do
       post api_offer_index_url,
@@ -260,6 +286,77 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     assert_not_empty json_response['errors']
 
     assert_equal ['Request already accepted an offer. Cannot create'], json_response['errors']['offer']
+  end
+
+  test 'should not create offer if not logged in' do
+    sign_out @user
+
+    # Database changes
+    assert_no_difference 'Offer.count' do
+      post api_offer_index_url,
+           params: { offer: { name: 'Test Offer', price: 1.5, target_date: '2026-01-01', comment: 'test comment',
+                              request_id: @offer.request_id, printer_user_id: @offer.printer_user_id,
+                              color_id: @offer.color_id, filament_id: @offer.filament_id, print_quality: 0.22 } }
+    end
+
+    # Http code
+    assert_response :unauthorized
+
+    # Response format
+    json_response = assert_nothing_raised { JSON.parse(response.body) }
+
+    # response content
+    assert_not_empty json_response['errors']
+
+    assert_equal ['Invalid login credentials'], json_response['errors']['connection']
+  end
+
+  test 'should not create offer with someone elses printer' do
+    # Database changes
+    assert_no_difference 'Offer.count' do
+      post api_offer_index_url,
+           params: { offer: { name: 'Test Offer', price: 1.5, target_date: '2026-01-01', comment: 'test comment',
+                              request_id: @offer2.request_id, printer_user_id: @offer.printer_user_id,
+                              color_id: @offer.color_id, filament_id: @offer.filament_id, print_quality: 0.22 } }
+    end
+
+    # Http code
+    assert_response :unprocessable_entity
+
+    # Response format
+    json_response = assert_nothing_raised { JSON.parse(response.body) }
+
+    # response content
+
+    assert_not_empty json_response['errors']
+
+    assert_equal ['You are not allowed to create an offer on this printer'], json_response['errors']['offer']
+  end
+
+  test 'should not create offer if user dont have printer' do
+    sign_out @user
+    sign_in @other_user2
+
+    # Database changes
+    assert_no_difference 'Offer.count' do
+      post api_offer_index_url,
+           params: { offer: { name: 'Test Offer', price: 1.5, target_date: '2026-01-01', comment: 'test comment',
+                              request_id: @offer2.request_id,
+                              color_id: @offer.color_id, filament_id: @offer.filament_id, print_quality: 0.22 } }
+    end
+
+    # Http code
+    assert_response :unprocessable_entity
+
+    # Response format
+    json_response = assert_nothing_raised { JSON.parse(response.body) }
+
+    # response content
+
+    assert_not_empty json_response['errors']
+
+    assert_equal ['You need to have a printer to create an offer', 'You are not allowed to create an offer on this printer'],
+                 json_response['errors']['offer']
   end
 
   # SHOW
