@@ -1,14 +1,13 @@
 class Api::OfferController < AuthenticatedController
     rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
+    before_action :set_offer, only: %i[show update destroy]
 
     def index
-      offers = Offer.all
-      render_offers(filter_offers(offers))
+      render_offers(filter_offers(Offer.all))
     end
   
     def show
-      offer = current_user.offers.find(params[:id])
-      render_offers(offer)
+      render_offers(@offer)
     end
   
     def create
@@ -21,68 +20,63 @@ class Api::OfferController < AuthenticatedController
     end
   
     def update
-      offer = current_user.offers.find(params[:id])
       valid = true
 
-      if offer.printer_user.user != current_user
+      if @offer.printer_user.user != current_user
         valid = false
-        offer.errors.add(:offer, 'You are not allowed to update this offer')
+        @offer.errors.add(:offer, 'You are not allowed to update this offer')
       end
 
-      if offer.cancelled_at
+      if @offer.cancelled_at
         valid = false
-        offer.errors.add(:offer, 'Offer already rejected. Cannot update')
+        @offer.errors.add(:offer, 'Offer already rejected. Cannot update')
       end
 
-      if Order.find_by(offer_id: offer.id)
+      if Order.find_by(offer_id: @offer.id)
         valid = false
-        offer.errors.add(:offer, 'Offer already accepted. Cannot update')
+        @offer.errors.add(:offer, 'Offer already accepted. Cannot update')
       end
 
-      if valid && offer.update(offer_params)
-        render json: { offer: offer, errors: {} }, status: :ok
+      if valid && @offer.update(offer_params)
+        render json: { offer: @offer, errors: {} }, status: :ok
       else
-        render json: { errors: offer.errors }, status: :unprocessable_entity
+        render json: { errors: @offer.errors }, status: :unprocessable_entity
       end
     end
   
     def destroy
-      offer = current_user.offers.find(params[:id])
       valid = true
 
-      if offer.printer_user.user != current_user
+      if @offer.printer_user.user != current_user
         valid = false
-        offer.errors.add(:offer, 'You are not allowed to delete this offer')
+        @offer.errors.add(:offer, 'You are not allowed to delete this offer')
       end
 
-      if Order.find_by(offer_id: offer.id)
+      if Order.find_by(offer_id: @offer.id)
         valid = false
-        offer.errors.add(:offer, 'Offer already accepted. Cannot delete')
+        @offer.errors.add(:offer, 'Offer already accepted. Cannot delete')
       end
 
-      if offer.cancelled_at
+      if @offer.cancelled_at
         valid = false
-        offer.errors.add(:offer, 'Offer already rejected. Cannot delete')
+        @offer.errors.add(:offer, 'Offer already rejected. Cannot delete')
       end
 
-      if valid && offer.destroy
-        render json: { offer: offer, errors: {} }, status: :ok
+      if valid && @offer.destroy
+        render json: { offer: @offer, errors: {} }, status: :ok
       else
-        render json: { errors: { offer: offer.errors } }, status: :unprocessable_entity
+        render json: { errors: { offer: @offer.errors } }, status: :unprocessable_entity
       end
     end
 
     def reject
-      offer = Offer.find(params[:id])
+      offers_on_my_requests = Offer.where(request_id: current_user.requests.pluck(:id))
+      offer = offers_on_my_requests.find(params[:id])
+
       valid = true
 
       if offer.request.user != current_user
         offer.errors.add(:offer, 'You are not allowed to reject this offer')
-        valid = false
-      end
-
-      if Order.find_by(offer_id: offer.id)
-        offer.errors.add(:offer, 'Request already accepted. Cannot reject')
         valid = false
       end
 
@@ -91,9 +85,9 @@ class Api::OfferController < AuthenticatedController
         valid = false
       end
 
-      if valid
-        offer.update_column(:cancelled_at, Time.now)
-        render json: { offer: offer, errors: {} }, status: :ok
+      offer.cancelled_at = Time.now
+      if valid && offer.save
+        render json: offer
       else
         render json: { errors: offer.errors }, status: :unprocessable_entity
       end
@@ -181,6 +175,10 @@ class Api::OfferController < AuthenticatedController
 
     def record_not_found
       render json: { errors: { offer: 'Offer not found' } }, status: :not_found
+    end
+
+    def set_offer
+      @offer = current_user.offers.find(params[:id])
     end
   end
   

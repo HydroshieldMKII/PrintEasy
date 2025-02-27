@@ -15,6 +15,8 @@ class Offer < ApplicationRecord
   private
 
   def target_date_greater_than_today
-    errors.add(:target_date, 'must be greater than today') if target_date.present? && target_date <= Date.today
+    if target_date.present? && target_date <= Date.today && target_date_changed?
+      errors.add(:target_date, 'must be greater than today')
+    end
   end
 end

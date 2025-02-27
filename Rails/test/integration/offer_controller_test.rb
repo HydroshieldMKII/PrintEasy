@@ -402,9 +402,6 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     # CANCEL
 
     test "should cancel offer" do
-        sign_out @user
-        sign_in @other_user
-
         # Database changes
         assert_no_difference 'Offer.count' do
             put reject_api_offer_url(@offer2)
@@ -415,7 +412,6 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
 
         # Response format
         json_response = assert_nothing_raised { JSON.parse(response.body) }
-        p json_response
 
         # response content
         assert_equal 2, json_response['offer']['id']
@@ -430,5 +426,23 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
         assert_equal 0.22, json_response['offer']['print_quality']
         assert_not_nil json_response['offer']['cancelled_at']
         assert_empty json_response['errors']
+    end
+
+    test "should not cancel offer if not yours" do
+        # Database changes
+        assert_no_difference 'Offer.count' do
+            put reject_api_offer_url(@offer)
+        end
+
+        # Http code
+        assert_response :not_found
+
+        # Response format
+        json_response = assert_nothing_raised { JSON.parse(response.body) }
+
+        # response content
+        assert_not_empty json_response['errors']
+        
+        assert_equal "Offer not found", json_response['errors']['offer']
     end
 end
