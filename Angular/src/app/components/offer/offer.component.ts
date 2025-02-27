@@ -135,6 +135,7 @@ export class OffersComponent {
     console.log("Accepting id:", this.offerToAccept.id);
     this.orderService.createOrder(this.offerToAccept.id).subscribe((response) => {
       if (response.status === 201) {
+        this.messageService.add({ severity: 'success', summary: 'Order created!' });
         this.offerToAccept = null;
         this.acceptDialogVisible = false;
 

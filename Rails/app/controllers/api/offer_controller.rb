@@ -5,11 +5,7 @@ class Api::OfferController < AuthenticatedController
     end
   
     def show
-      offer = Offer.find(params[:id])
-      if offer.printer_user.user != current_user
-        render json: { offer: {}, errors: { offer: ['You are not allowed to view this offer'] } }, status: :forbidden
-        return
-      end
+      offer = current_user.offers.find(params[:id])
   
       render_offers(offer)
     end
@@ -17,7 +13,7 @@ class Api::OfferController < AuthenticatedController
     def create
       offer = Offer.new(offer_params)
       if offer.save
-        render json: offer, status: :created
+        render json: { offer: offer, errors: {} }, status: :created
       else
         render json: { errors: offer.errors }, status: :unprocessable_entity
       end
@@ -84,6 +80,11 @@ class Api::OfferController < AuthenticatedController
         valid = false
       end
 
+      if Order.find_by(offer_id: offer.id)
+        offer.errors.add(:offer, 'Request already accepted. Cannot reject')
+        valid = false
+      end
+
       if offer.cancelled_at
         offer.errors.add(:offer, 'Offer already rejected')
         valid = false
@@ -91,7 +92,7 @@ class Api::OfferController < AuthenticatedController
 
       offer.cancelled_at = Time.now
       if valid && offer.save
-        render json: offer
+        render json: offer, status: :ok
       else
         render json: { errors: offer.errors }, status: :unprocessable_entity
       end
@@ -162,6 +163,9 @@ class Api::OfferController < AuthenticatedController
     def filter_offers(offers)
       case params[:type]
       when 'all' # Offers received on my requests
+        # Filtrer les offres NE faisant PAS partie d'une request acceptée
+        accepted_requests = Order.joins(:offer).pluck(:request_id).uniq
+        offers = offers.where.not(id: Order.pluck(:offer_id)).where.not(request_id: accepted_requests)
         offers.where(request_id: current_user.requests.pluck(:id)).where.not(id: Order.pluck(:offer_id)).distinct
       when 'mine' # Offers sent to another user's requests
         offers.where(printer_user_id: current_user.printer_user.pluck(:id)).where.not(id: Order.pluck(:offer_id)).distinct

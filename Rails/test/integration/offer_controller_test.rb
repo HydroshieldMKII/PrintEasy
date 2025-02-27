@@ -1,77 +1,284 @@
-
 require 'test_helper'
 
 class OfferControllerTest < ActionDispatch::IntegrationTest
     setup do
         @user = users(:one)
-        @other_user = users(:two)
         @offer = offers(:one)
-        @offer.update(printer_user: printer_users(:one))
+        @offer2 = offers(:two)
+
+        @other_user = users(:two)
+        @other_offer = offers(:three)
+
         sign_in @user
     end
 
-    test "should get index" do
-        get api_offer_index_path
-        assert_response :success
-
-        json_response = assert_nothing_raised do
-            JSON.parse(response.body)
+    # INDEX
+    test "should get mine index" do
+        # Database changes
+        assert_no_difference 'Offer.count' do
+            get api_offer_index_url, params: { type: 'mine' }
         end
 
-        p json_response
-        # assert_equal Offer.count, json_response['offers'].length
+        # Http code
+        assert_response :success
+
+        # Response format
+        json_response = assert_nothing_raised { JSON.parse(response.body) }
+
+        # response content
+        assert_equal 2, json_response['requests'][0]['id']
+        assert_equal "Test Request 2", json_response['requests'][0]['name']
+        assert_equal 200.0, json_response['requests'][0]['budget']
+        assert_equal "Test Comments 2", json_response['requests'][0]['comment']
+        assert_equal "2021-12-31", json_response['requests'][0]['target_date']
+        assert_equal 2, json_response['requests'][0]['user']['id']
+        assert_equal "John Doe", json_response['requests'][0]['user']['username']
+        assert_equal 2, json_response['requests'][0]['user']['country']['id']
+        assert_equal "USA", json_response['requests'][0]['user']['country']['name']
+
+        assert_equal 2, json_response['requests'][0]['offers'][0]['id']
+        assert_equal 2.5, json_response['requests'][0]['offers'][0]['price']
+        assert_equal "2021-01-02", json_response['requests'][0]['offers'][0]['target_date']
+        assert_equal 0.22, json_response['requests'][0]['offers'][0]['print_quality']
+        assert_nil json_response['requests'][0]['offers'][0]['cancelled_at']
+        assert_equal 1, json_response['requests'][0]['offers'][0]['printer_user']['id']
+        assert_equal 1, json_response['requests'][0]['offers'][0]['printer_user']['user']['id']
+        assert_equal "James Bond", json_response['requests'][0]['offers'][0]['printer_user']['user']['username']
+        assert_equal 1, json_response['requests'][0]['offers'][0]['printer_user']['printer']['id']
+        assert_equal "Bambulab", json_response['requests'][0]['offers'][0]['printer_user']['printer']['model']
+        assert_equal 2, json_response['requests'][0]['offers'][0]['color']['id']
+        assert_equal "Red", json_response['requests'][0]['offers'][0]['color']['name']
+        assert_equal 2, json_response['requests'][0]['offers'][0]['filament']['id']
+        assert_equal "ABS", json_response['requests'][0]['offers'][0]['filament']['name']
+
+        assert_equal 9, json_response['requests'][0]['offers'][1]['id']
+        assert_equal 1.5, json_response['requests'][0]['offers'][1]['price']
+        assert_equal "2021-01-01", json_response['requests'][0]['offers'][1]['target_date']
+        assert_equal 0.22, json_response['requests'][0]['offers'][1]['print_quality']
+        assert_nil json_response['requests'][0]['offers'][1]['cancelled_at']
+        assert_equal 1, json_response['requests'][0]['offers'][1]['printer_user']['id']
+        assert_equal 1, json_response['requests'][0]['offers'][1]['printer_user']['user']['id']
+        assert_equal "James Bond", json_response['requests'][0]['offers'][1]['printer_user']['user']['username']
+        assert_equal 1, json_response['requests'][0]['offers'][1]['printer_user']['printer']['id']
+        assert_equal "Bambulab", json_response['requests'][0]['offers'][1]['printer_user']['printer']['model']
+        assert_equal 1, json_response['requests'][0]['offers'][1]['color']['id']
+        assert_equal "Blue", json_response['requests'][0]['offers'][1]['color']['name']
+        assert_equal 1, json_response['requests'][0]['offers'][1]['filament']['id']
+        assert_equal "PLA", json_response['requests'][0]['offers'][1]['filament']['name']
     end
 
-    # test "should show offer" do
-    #     get api_offer_url(@offer)
-    #     assert_response :success
-    # end
 
-    # test "should not show offer if not owner" do
-    #     sign_in @other_user
-    #     get api_offer_url(@offer)
-    #     assert_response :forbidden
-    # end
+    test "should get all index" do
+        sign_out @user
+        sign_in @other_user
+        # Database changes
+        assert_no_difference 'Offer.count' do
+            get api_offer_index_url, params: { type: 'all' }
+        end
 
-    # test "should create offer" do
-    #     assert_difference('Offer.count') do
-    #         post api_offers_url, params: { offer: { request_id: requests(:one).id, printer_user_id: printer_users(:one).id, price: 100, print_quality: 'high', target_date: '2023-12-31' } }
-    #     end
-    #     assert_response :success
-    # end
+        # Http code
+        assert_response :success
+        
+        # Response format
+        json_response = assert_nothing_raised { JSON.parse(response.body) }
 
-    # test "should update offer" do
-    #     patch api_offer_url(@offer), params: { offer: { price: 150 } }
-    #     assert_response :success
-    # end
+        # response content
+        assert_equal 2, json_response['requests'][0]['id']
+        assert_equal "Test Request 2", json_response['requests'][0]['name']
+        assert_equal 200.0, json_response['requests'][0]['budget']
+        assert_equal "Test Comments 2", json_response['requests'][0]['comment']
+        assert_equal "2021-12-31", json_response['requests'][0]['target_date']
+        assert_equal 2, json_response['requests'][0]['user']['id']
+        assert_equal "John Doe", json_response['requests'][0]['user']['username']
+        assert_equal 2, json_response['requests'][0]['user']['country']['id']
+        assert_equal "USA", json_response['requests'][0]['user']['country']['name']
 
-    # test "should not update offer if not owner" do
-    #     sign_in @other_user
-    #     patch api_offer_url(@offer), params: { offer: { price: 150 } }
-    #     assert_response :unprocessable_entity
-    # end
+        assert_equal 2, json_response['requests'][0]['offers'][0]['id']
+        assert_equal 2.5, json_response['requests'][0]['offers'][0]['price']
+        assert_equal "2021-01-02", json_response['requests'][0]['offers'][0]['target_date']
+        assert_equal 0.22, json_response['requests'][0]['offers'][0]['print_quality']
+        assert_nil json_response['requests'][0]['offers'][0]['cancelled_at']
+        assert_equal 1, json_response['requests'][0]['offers'][0]['printer_user']['id']
+        assert_equal 1, json_response['requests'][0]['offers'][0]['printer_user']['user']['id']
+        assert_equal "James Bond", json_response['requests'][0]['offers'][0]['printer_user']['user']['username']
+        assert_equal 1, json_response['requests'][0]['offers'][0]['printer_user']['printer']['id']
+        assert_equal "Bambulab", json_response['requests'][0]['offers'][0]['printer_user']['printer']['model']
+        assert_equal 2, json_response['requests'][0]['offers'][0]['color']['id']
+        assert_equal "Red", json_response['requests'][0]['offers'][0]['color']['name']
+        assert_equal 2, json_response['requests'][0]['offers'][0]['filament']['id']
+        assert_equal "ABS", json_response['requests'][0]['offers'][0]['filament']['name']
 
-    # test "should destroy offer" do
-    #     assert_difference('Offer.count', -1) do
-    #         delete api_offer_url(@offer)
-    #     end
-    #     assert_response :success
-    # end
+        assert_equal 9, json_response['requests'][0]['offers'][1]['id']
+        assert_equal 1.5, json_response['requests'][0]['offers'][1]['price']
+        assert_equal "2021-01-01", json_response['requests'][0]['offers'][1]['target_date']
+        assert_equal 0.22, json_response['requests'][0]['offers'][1]['print_quality']
+        assert_nil json_response['requests'][0]['offers'][1]['cancelled_at']
+        assert_equal 1, json_response['requests'][0]['offers'][1]['printer_user']['id']
+        assert_equal 1, json_response['requests'][0]['offers'][1]['printer_user']['user']['id']
+        assert_equal "James Bond", json_response['requests'][0]['offers'][1]['printer_user']['user']['username']
+        assert_equal 1, json_response['requests'][0]['offers'][1]['printer_user']['printer']['id']
+        assert_equal "Bambulab", json_response['requests'][0]['offers'][1]['printer_user']['printer']['model']
+        assert_equal 1, json_response['requests'][0]['offers'][1]['color']['id']
+        assert_equal "Blue", json_response['requests'][0]['offers'][1]['color']['name']
+        assert_equal 1, json_response['requests'][0]['offers'][1]['filament']['id']
+        assert_equal "PLA", json_response['requests'][0]['offers'][1]['filament']['name']
 
-    # test "should not destroy offer if not owner" do
-    #     sign_in @other_user
-    #     delete api_offer_url(@offer)
-    #     assert_response :unprocessable_entity
-    # end
+        assert_empty json_response['errors']
+    end
 
-    # test "should reject offer" do
-    #     post reject_api_offer_url(@offer)
-    #     assert_response :success
-    # end
+    test "index should return empty if unknown params" do
+        # Database changes
+        assert_no_difference 'Offer.count' do
+            get api_offer_index_url, params: { type: 'invalid' }
+        end
 
-    # test "should not reject offer if not owner" do
-    #     sign_in @other_user
-    #     post reject_api_offer_url(@offer)
-    #     assert_response :unprocessable_entity
-    # end
+        # Http code
+        assert_response :success
+
+        # Response format
+        json_response = assert_nothing_raised { JSON.parse(response.body) }
+
+        # response content
+        assert_equal [], json_response['requests']
+        assert_empty json_response['errors']
+    end
+
+    # CREATE
+
+    test "should create offer" do
+        # Database changes
+        assert_difference 'Offer.count' do
+            post api_offer_index_url , params: { offer: { name: "Test Offer", price: 1.5, target_date: "2026-01-01", comment: "test comment", request_id: @offer.request_id, printer_user_id: @offer2.printer_user_id, color_id: @offer2.color_id, filament_id: @offer2.filament_id, print_quality: 0.22 } }
+        end
+
+        # Http code
+        assert_response :success
+
+        # Response format
+        json_response = assert_nothing_raised { JSON.parse(response.body) }
+
+        # response content
+        assert_not_nil json_response['offer']['id']
+        assert_equal 1.5, json_response['offer']['price']
+        assert_equal "2026-01-01", json_response['offer']['target_date']
+        assert_equal 0.22, json_response['offer']['print_quality']
+        assert_nil json_response['offer']['cancelled_at']
+        assert_equal 1, json_response['offer']['printer_user_id']
+        assert_equal 2, json_response['offer']['color_id']
+        assert_equal 2, json_response['offer']['filament_id']
+        assert_empty json_response['errors']
+    end
+
+    test "should not create offer with base params" do
+        # Database changes
+        assert_no_difference 'Offer.count' do
+            post api_offer_index_url , params: { }
+        end
+
+        # Http code
+        assert_response :unprocessable_entity
+
+        # Response format
+        json_response = assert_nothing_raised { JSON.parse(response.body) }
+
+        # response content
+        assert_not_empty json_response['errors']
+        
+        assert_equal ["param is missing or the value is empty or invalid: offer"], json_response['errors']['base']
+    end
+
+    test "should not create with invlid params" do
+        # Database changes
+        assert_no_difference 'Offer.count' do
+            post api_offer_index_url , params: { offer: { name: "Te", price: -100.5, target_date: "1970-01-01", comment: "", request_id: -1, printer_user_id: -1, color_id: -1, filament_id: -1, print_quality: 1000.22, invalid: "invalid" } }
+        end
+
+        # Http code
+        assert_response :unprocessable_entity
+
+        # Response format
+        json_response = assert_nothing_raised { JSON.parse(response.body) }
+
+        # response content
+        assert_not_empty json_response['errors']
+        
+        assert_equal ["must exist", "can't be blank"], json_response['errors']['request']
+        assert_equal ["must exist", "can't be blank"], json_response['errors']['printer_user']
+        assert_equal ["must exist", "can't be blank"], json_response['errors']['color']
+        assert_equal ["must exist", "can't be blank"], json_response['errors']['filament']
+        assert_equal ["must be less than or equal to 2"], json_response['errors']['print_quality']
+        assert_equal ["must be greater than or equal to 0"], json_response['errors']['price']
+        assert_equal ["must be greater than 2025-02-26"], json_response['errors']['target_date']
+    end
+
+    test "should not create offer if duplicated" do
+        # Database changes
+        assert_no_difference 'Offer.count' do
+            post api_offer_index_url , params: { offer: { name: "Test Offer", price: 1.5, target_date: "2026-01-01", comment: "test comment", request_id: @offer2.request_id, printer_user_id: @offer2.printer_user_id, color_id: @offer2.color_id, filament_id: @offer2.filament_id, print_quality: 0.22 } }
+        end
+
+        # Http code
+        assert_response :unprocessable_entity
+
+        # Response format
+        json_response = assert_nothing_raised { JSON.parse(response.body) }
+        p json_response
+
+        # response content
+        assert_not_empty json_response['errors']
+        
+        assert_equal ["This offer already exists"], json_response['errors']['request']
+    end
+
+    # SHOW
+
+    test "should show offer" do
+        # Database changes
+        assert_no_difference 'Offer.count' do
+            get api_offer_url(@offer2)
+        end
+
+        # Http code
+        assert_response :success
+
+        # Response format
+        json_response = assert_nothing_raised { JSON.parse(response.body) }
+
+        # response content
+        assert_equal 2, json_response['offer']['id']
+        assert_equal 2.5, json_response['offer']['price']
+        assert_equal "2021-01-02", json_response['offer']['target_date']
+        assert_equal 0.22, json_response['offer']['print_quality']
+        assert_nil json_response['offer']['cancelled_at']
+        assert_equal 1, json_response['offer']['printer_user']['id']
+        assert_equal 1, json_response['offer']['printer_user']['user']['id']
+        assert_equal "James Bond", json_response['offer']['printer_user']['user']['username']
+        assert_equal 1, json_response['offer']['printer_user']['printer']['id']
+        assert_equal "Bambulab", json_response['offer']['printer_user']['printer']['model']
+        assert_equal 2, json_response['offer']['color']['id']
+        assert_equal "Red", json_response['offer']['color']['name']
+        assert_equal 2, json_response['offer']['filament']['id']
+        assert_equal "ABS", json_response['offer']['filament']['name']
+    end
+
+    test "should not show offer if not yours" do
+        # Database changes
+        assert_no_difference 'Offer.count' do
+            get api_offer_url(@offer)
+        end
+
+        # Http code
+        assert_response :not_found
+
+        # Response format
+        json_response = assert_nothing_raised { JSON.parse(response.body) }
+
+        # response content
+        assert_not_empty json_response['errors']
+        
+        assert_equal ["Couldn't find Offer"], json_response['errors']['base']
+    end
+
+
+
 end

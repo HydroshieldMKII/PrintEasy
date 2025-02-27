@@ -17,10 +17,11 @@
         <div *ngFor="let request of currentRequests" class="mb-6">
           <div class="request-header p-2 bg-gray-100 rounded">
             <a style="color: black;" [routerLink]="activeTab === 'all' ? ['/requests/edit/', request.id] : ['/requests/view/', request.id]">
-              <h2 class="text-xl">
-                <span class="font-bold">{{ request.name }}</span> •
-                {{ request.budget | currency }} •
-                {{ request.targetDate | date:'mediumDate' }}
+              <h2>
+                <span class="font-bold">{{ request.name }} •
+                  {{ request.budget | currency }} •
+                  {{ request.targetDate | date:'mediumDate' }}
+                </span>
               </h2>
             </a>
           </div>
@@ -55,7 +56,7 @@
                 <th>Preset</th>
                 <th>Price Offered</th>
                 <th>Offer Date</th>
-                <th>Rejected</th>
+                <th>Status</th>
                 <th>Actions</th>
               </tr>
             </ng-template>
@@ -67,7 +68,7 @@
                 <td>{{ offer.color.name }} / {{ offer.filament.name }} / {{ offer.printQuality }}mm</td>
                 <td>{{ offer.price === 0 ? 'Free' : (offer.price | currency) }}</td>
                 <td>{{ offer.targetDate | date:'mediumDate' }}</td>
-                <td>{{ offer.cancelledAt ? 'Yes (' + (offer.cancelledAt | date:'mediumDate') + ')' : 'No' }}</td>
+                <td>{{ offer.cancelledAt ? 'Rejected (' + (offer.cancelledAt | date:'mediumDate') + ')' : 'No response yet' }}</td>
                 <td>
                   <button pButton type="button" icon="pi pi-pencil" title="Edit this offer" 
                           (click)="editOffer(offer)" *ngIf="activeTab === 'mine'"></button>
@@ -175,7 +176,7 @@
   </ng-template>
   <span class="text-surface-500 dark:text-surface-400 block mb-4">
     Are you sure you want to accept the offer from {{ offerToAccept?.printerUser.user.username }}?
-    This action cannot be undone.
+    You can only accept one offer per request.
   </span>
   <ng-template #footer>
     <p-button label="No" severity="secondary" (click)="acceptDialogVisible = false" />
