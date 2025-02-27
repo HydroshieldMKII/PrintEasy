@@ -9,6 +9,7 @@ import { ApiRequestService } from './api.service';
 import { SubmissionModel } from '../models/submission.model';
 import { UserSubmission } from '../models/user-submission';
 import { UserContestSubmissionsModel } from '../models/user-contest-submissions.model';
+import { TranslateService } from '@ngx-translate/core';
 
 
 
@@ -17,6 +18,7 @@ import { UserContestSubmissionsModel } from '../models/user-contest-submissions.
 })
 export class SubmissionService {
   messageService: MessageService = inject(MessageService);
+  translateService: TranslateService = inject(TranslateService);
 
   constructor(private api: ApiRequestService) { }
 
@@ -28,7 +30,7 @@ export class SubmissionService {
           return response.data.submissions.map((submission: any) => UserSubmission.fromApi(submission));
         } else {
           console.log('error:', response.errors);
-          this.messageService.add({ severity: 'error', summary: 'Erreur', detail: 'Erreur lors de la récupération des soumissions' });
+          this.messageService.add({ severity: 'error', summary: this.translateService.instant('global.errors.summary_error'), detail: this.translateService.instant('global.errors.gets_error') });
           return [];
         }
       })
@@ -43,7 +45,7 @@ export class SubmissionService {
           return response.data.contests.map((data: any) => UserContestSubmissionsModel.fromApi(data));
         } else {
           console.log('error:', response.errors);
-          this.messageService.add({ severity: 'error', summary: 'Erreur', detail: 'Erreur lors de la récupération des soumissions' });
+          this.messageService.add({ severity: 'error', summary: this.translateService.instant('global.errors.summary_error'), detail: this.translateService.instant('global.errors.gets_error') });
           return [];
         }
       })
@@ -55,15 +57,15 @@ export class SubmissionService {
       map(response => {
         if (response.status === 201) {
           this.messageService.add({
-            severity: 'success', summary: 'Succès',
-            detail: 'Soumission créée avec succès'
+            severity: 'success', summary: this.translateService.instant('global.errors.summary_success'),
+            detail: this.translateService.instant('global.errors.created_success')
           });
         }
         else {
           console.log('error:', response.errors);
           this.messageService.add({
-            severity: 'error', summary: 'Erreur',
-            detail: 'Erreur lors de la création de la soumission'
+            severity: 'error', summary: this.translateService.instant('global.errors.summary_error'),
+            detail: this.translateService.instant('global.errors.created_error')
           });
         }
         return response;
@@ -77,15 +79,15 @@ export class SubmissionService {
       map(response => {
         if (response.status === 200) {
           this.messageService.add({
-            severity: 'success', summary: 'Succès',
-            detail: 'Soumission modifiée avec succès'
+            severity: 'success', summary: this.translateService.instant('global.errors.summary_success'),
+            detail: this.translateService.instant('global.errors.updated_success')
           });
         }
         else {
           console.log('error:', response.errors);
           this.messageService.add({
-            severity: 'error', summary: 'Erreur',
-            detail: 'Erreur lors de la modification de la soumission'
+            severity: 'error', summary: this.translateService.instant('global.errors.summary_error'),
+            detail: this.translateService.instant('global.errors.updated_error')
           });
         }
         return response;
@@ -99,15 +101,15 @@ export class SubmissionService {
       map(response => {
         if (response.status === 200) {
           this.messageService.add({
-            severity: 'success', summary: 'Succès',
-            detail: 'Soumission supprimée avec succès'
+            severity: 'success', summary: this.translateService.instant('global.errors.summary_success'),
+            detail: this.translateService.instant('global.errors.deleted_success')
           });
         }
         else {
           console.log('error:', response.errors);
           this.messageService.add({
-            severity: 'error', summary: 'Erreur',
-            detail: 'Erreur lors de la suppression de la soumission'
+            severity: 'error', summary: this.translateService.instant('global.errors.summary_error'),
+            detail: this.translateService.instant('global.errors.deleted_error')
           });
         }
         return response;

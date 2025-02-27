@@ -18,7 +18,11 @@
             "deleted_success": "Deleted successfully",
             "created_error": "Failed to create",
             "updated_error": "Failed to update",
-            "deleted_error": "Failed to delete"
+            "deleted_error": "Failed to delete",
+            "get_error": "Failed to get",
+            "gets_error": "Failed to get all",
+            "summary_error": "Error",
+            "summary_success": "Success"
         }
     },
     "login": {
