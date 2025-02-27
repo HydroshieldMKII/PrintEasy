@@ -147,14 +147,14 @@
 
         <div class="stl-actions flex gap-2 mt-4">
           <p-button
-            *ngIf="isViewMode"
+            *ngIf="isViewMode || isEditMode"
             label="Download file"
             icon="pi pi-download"
             class="p-button-outlined flex-1"
             (onClick)="downloadFile(request.stlFileUrl)"
           ></p-button>
           <p-fileUpload
-            *ngIf="(isEditMode || isNewMode) && !request.hasOffers"
+            *ngIf="(isEditMode && !request.hasOffers) || isNewMode"
             mode="basic"
             maxFileSize="10000000"
             invalidFileSizeMessageDetail="File size is too large. Max 10MB"
@@ -243,7 +243,7 @@
         </td>
         <td>
           <p-inputnumber 
-            [showButtons]="isEditMode || isNewMode" 
+            [showButtons]="(isEditMode && !request.hasOffers && !request.hasOfferAccepted) || isNewMode" 
             buttonLayout="horizontal" 
             spinnerMode="vertical" 
             inputId="vertical" 

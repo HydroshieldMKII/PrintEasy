@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import { ImportsModule } from '../../../imports';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, AbstractControl } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 import { DropdownModule } from 'primeng/dropdown';
 import { PresetService } from '../../services/preset.service';
@@ -39,15 +39,18 @@ export class OfferModalComponent implements OnChanges {
   filaments: { label: string, value: string, id: number }[] = [];
 
   constructor(private fb: FormBuilder, private presetService: PresetService, private offerService: OfferService, private messageService: MessageService) {
+    this.dateValidator = this.dateValidator.bind(this);
+
     this.offerForm = this.fb.group({
       preset: [this.selectedPreset],
       color: [null, Validators.required],
       filament: [null, Validators.required],
       quality: [null, [Validators.required, Validators.min(0.01), Validators.max(2)]],
       printer: [null, Validators.required],
-      targetDate: [null, Validators.required],
+      targetDate: [null, [Validators.required, this.dateValidator]],
       price: [null, [Validators.required, Validators.min(0), Validators.max(10000)]]
     });
+
 
     this.offerForm.get('preset')?.valueChanges.subscribe(selectedPreset => {
       if (selectedPreset) {
@@ -96,6 +99,20 @@ export class OfferModalComponent implements OnChanges {
         return { label: color.name, value: color.name, id: color.id };
       });
     });
+  }
+
+  dateValidator(control: AbstractControl) {
+    const selectedDate = new Date(control.value);
+    if (isNaN(selectedDate.getTime())) {
+      return { dateError: true };
+    }
+
+    const today = new Date();
+
+    if (selectedDate < today) {
+      return { dateError: true };
+    }
+    return null;
   }
 
   onPresetSelected(selectedPreset: any): void {

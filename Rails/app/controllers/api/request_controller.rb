@@ -13,8 +13,12 @@ class Api::RequestController < AuthenticatedController
 
   # GET /requests/:id
   def show
-    @request = Request.includes(:user, preset_requests: %i[color filament printer]).find(params[:id])
-    render_request(@request)
+    if current_user.printers.exists?
+      @request = Request.includes(:user, preset_requests: %i[color filament printer]).find(params[:id])
+      render_request(@request)
+    else
+      render json: { request: {}, errors: { request: ['You must have a printer to view request details'] } }, status: :unprocessable_entity
+    end
   end
 
   # POST /requests
@@ -70,16 +74,20 @@ class Api::RequestController < AuthenticatedController
   def fetch_requests
     case params[:type]
     when 'all'
-      accepted_requests = Request.joins(offers: { order: :order_status })
-                   .where(order_status: { status_name: 'Accepted' })
-    
-      requests = Request.includes(:user, preset_requests: %i[color filament printer])
-              .where.not(user: current_user)
-              .where.not(id: accepted_requests)
+      if current_user.printers.exists?
+        accepted_requests = Request.joins(offers: { order: :order_status })
+                    .where(order_status: { status_name: 'Accepted' })
+      
+        requests = Request.includes(:user, preset_requests: %i[color filament printer])
+                .where.not(user: current_user)
+                .where.not(id: accepted_requests)
+      else
+        requests = Request.none
+      end
     when 'mine'
       requests = current_user.requests.includes(:user, preset_requests: %i[color filament printer])
     else
-      return []
+      requests = Request.none
     end
   
     requests = requests.where("name LIKE ?", "%#{params[:search]}%") if params[:search].present?
