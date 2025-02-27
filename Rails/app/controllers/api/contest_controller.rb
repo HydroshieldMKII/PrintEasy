@@ -11,8 +11,6 @@ class Api::ContestController < ApplicationController
           contest_data
         end
 
-        debugger
-
         contests_with_status.sort_by! do |contest|
           [contest["finished?"] ? 1 : 0, contest["start_at"]]
         end
@@ -23,7 +21,7 @@ class Api::ContestController < ApplicationController
     def show
         @contest = Contest.find(params[:id])
 
-        contest_data = @contest.as_json(methods: :image_url).merge(finished: @contest.end_at.present? && @contest.end_at < Time.current)
+        contest_data = @contest.as_json(methods: [:image_url, :finished?])
         top_submission = @contest.submissions.left_joins(:likes).group(:id).order('COUNT(likes.id) DESC, submissions.created_at ASC').first
         contest_data[:winner_user] = top_submission ? top_submission.user.as_json : nil
 
