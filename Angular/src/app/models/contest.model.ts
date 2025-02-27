@@ -11,8 +11,9 @@ export class ContestModel {
     image: string;
     finished: boolean;
     winnerUser: UserModel | null;
+    started: boolean;
 
-    constructor(id: number, theme: string, description: string, submission_limit: number, start_at: Date, end_at: Date | null, image: string, deleted_at: Date | null, finished: boolean, winnerUser: UserModel | null) {
+    constructor(id: number, theme: string, description: string, submission_limit: number, start_at: Date, end_at: Date | null, image: string, deleted_at: Date | null, finished: boolean, winnerUser: UserModel | null, started: boolean) {
         this.id = id;
         this.theme = theme;
         this.description = description;
@@ -23,6 +24,7 @@ export class ContestModel {
         this.image = image;
         this.finished = finished;
         this.winnerUser = winnerUser;
+        this.started = started;
     }
 
     static fromApi(data: any): ContestModel {
@@ -36,7 +38,8 @@ export class ContestModel {
             data.image_url,
             data.deleted_at,
             data['finished?'],
-            data.winner_user ? UserModel.fromAPI(data.winner_user) : null
+            data.winner_user ? UserModel.fromAPI(data.winner_user) : null,
+            data['started?']
         );
     }
 

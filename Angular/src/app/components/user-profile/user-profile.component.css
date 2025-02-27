@@ -186,3 +186,9 @@ h2 {
     margin-left: 50px;
     font-style: italic;
 }
+
+@media (max-width: 768px) {
+    .carousel-mobile {
+        width: 100% !important;
+    }
+}   

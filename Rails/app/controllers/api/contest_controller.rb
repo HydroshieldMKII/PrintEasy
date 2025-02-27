@@ -7,7 +7,7 @@ module Api
     def index
       @contests = current_user.is_admin ? Contest.all : Contest.active_for_user(current_user)
       contests_with_status = @contests.map do |contest|
-        contest_data = contest.as_json(methods: %i[image_url finished?])
+        contest_data = contest.as_json(methods: %i[image_url finished? started?])
 
         top_submission = contest.submissions.left_joins(:likes).group(:id).order('COUNT(likes.id) DESC, submissions.created_at ASC').first
         contest_data[:winner_user] = top_submission&.user&.as_json
@@ -24,7 +24,7 @@ module Api
     def show
       @contest = Contest.find(params[:id])
 
-      contest_data = @contest.as_json(methods: %i[image_url finished?])
+      contest_data = @contest.as_json(methods: %i[image_url finished? started?])
       top_submission = @contest.submissions.left_joins(:likes).group(:id)
                                .order('COUNT(likes.id) DESC, submissions.created_at ASC').first
       contest_data[:winner_user] = top_submission&.user&.as_json

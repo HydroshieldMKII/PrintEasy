@@ -6,7 +6,7 @@ module Api
       @contests = Contest.joins(:submissions).where(submissions: { user_id: current_user.id }).distinct
 
       contests_with_submissions = @contests.map do |contest|
-        contest_data = contest.as_json(methods: %i[image_url finished?])
+        contest_data = contest.as_json(methods: %i[image_url finished? started?])
 
         if contest_data['finished?']
           top_submission = contest.submissions.left_joins(:likes)

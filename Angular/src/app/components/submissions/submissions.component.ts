@@ -1,6 +1,6 @@
 import { Component, inject, ViewEncapsulation, Renderer2 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TranslateParser, TranslatePipe } from '@ngx-translate/core';
+import { TranslateParser, TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { ImportsModule } from '../../../imports';
 import { MessageService } from 'primeng/api';
@@ -26,6 +26,7 @@ export class SubmissionsComponent {
   contestService: ContestService = inject(ContestService);
   authService: AuthService = inject(AuthService);
   messageService: MessageService = inject(MessageService);
+  translateService: TranslateService = inject(TranslateService);
 
   submissionForm: FormGroup;
   contest: ContestModel | null = null;
@@ -199,15 +200,21 @@ export class SubmissionsComponent {
     const hasNoSubmissions = userSubmissions.length === 0;
     const hasRemainingSlots = userSubmissions.length > 0 && userSubmissions[0].submissions.length < (this.contest?.submissionLimit ?? 0);
     const isContestFinished = this.contest?.finished;
+    const isContestStarted = this.contest?.started;
     const isEditMode = !!submission;
-  
+    
+    if (!isContestStarted) {
+      this.messageService.add({ severity: 'error', summary: this.translateService.instant('global.error'), detail: this.translateService.instant('submissions.contest_not_started') });
+      return;
+    }
+
     if (isContestFinished) {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Contest is finished' });
+      this.messageService.add({ severity: 'error', summary: this.translateService.instant('global.error'), detail: this.translateService.instant('submissions.contest_ended') });
       return;
     }
   
     if (!isEditMode && !hasNoSubmissions && !hasRemainingSlots) {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Submission limit reached' });
+      this.messageService.add({ severity: 'error', summary: this.translateService.instant('global.error'), detail: this.translateService.instant('submissions.submission_limit_reached') });
       return;
     }
   
