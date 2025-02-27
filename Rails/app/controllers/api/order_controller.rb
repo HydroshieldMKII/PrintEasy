@@ -74,10 +74,7 @@ module Api
 
       if current_user == @order.consumer || current_user == @order.printer
         available_status = @order.order_status.last.available_status
-        if current_user == @order.consumer && @order.order_status.last.status_name != 'Accepted'
-          available_status.delete('Cancelled')
-        end
-        available_status.delete('Arrived') if current_user == @order.printer
+        
         render json: {
           order: @order.as_json(
             except: %i[offer_id],

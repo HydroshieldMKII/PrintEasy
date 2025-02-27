@@ -21,7 +21,7 @@
             <div class="h-row">
                 <p>{{'order.current_status' | translate}}</p>
                 <span [ngStyle]="{'color': 'rgb(34, 34, 34)', 'background-color': statusColorRef[currentStatus?.statusName || 0], 'border-radius': '10px', 'height': '30px', 'padding': '7px', 'display': 'flex', 'flex-direction': 'row', 'align-items': 'center'}">
-                    <p>{{currentStatus?.statusName}}</p>
+                    <p>{{statusTranslations[currentStatus?.statusName ?? "Accepted"]}}</p>
                 </span>
             </div>
 

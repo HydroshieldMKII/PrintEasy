@@ -73,7 +73,16 @@ class OrderStatus < ApplicationRecord
       available.push(to) if from.include?(status_name)
     end
     available.flatten!
-    # available.delete('Cancelled')
+    if Current.user == consumer
+      available.delete('Cancelled') if status_name != 'Accepted'
+      available.delete('Accepted')
+      available.delete('Printing')
+      available.delete('Printed')
+      available.delete('Shipped')
+    elsif Current.user == printer
+      available.delete('Arrived')
+    end
+
     available
   end
 
