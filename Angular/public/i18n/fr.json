@@ -11,7 +11,15 @@
         "success": "Succès",
         "warning": "Avertissement",
         "info": "Information",
-        "confirm": "Confirmer"
+        "confirm": "Confirmer",
+        "errors": {
+            "created_success": "Créé avec succès",
+            "updated_success": "Mis à jour avec succès",
+            "deleted_success": "Supprimé avec succès",
+            "created_error": "Échec de la création",
+            "updated_error": "Échec de la mise à jour",
+            "deleted_error": "Échec de la suppression"
+        }
     },
     "login": {
         "title": "Connexion",
@@ -91,5 +99,60 @@
         "error_description_long": "La description doit contenir au plus 200 caractères",
         "error_image_required": "L'image est requise",
         "error_stl_required": "Le fichier STL est requis"
+    },
+    "orders": {
+        "commands_tab": "Commandes",
+        "contracts_tab": "Contrats",
+        "name_column": "Nom",
+        "price_column": "Prix",
+        "status_column": "Statut",
+        "target_date_column": "Date cible",
+        "consumer_column": "Consommateur",
+        "printer_column": "Imprimeur",
+        "rating_column": "Évaluation",
+        "actions_column": "Actions",
+        "no_review_message": "Pas d'avis",
+        "action_button_label": "Voir les détails",
+        "no_contract_message": "Vous n'avez aucun contrat en attente !",
+        "no_commands_message": "Vous n'avez aucune commande en attente !"
+    },
+    "order": {
+        "printer_owner": "Propriétaire de l'imprimante :",
+        "price": "Prix :",
+        "current_status": "Statut actuel :",
+        "target_date": "Date cible :",
+        "comment": "Commentaire",
+        "comment_error": "Le commentaire doit contenir entre 5 et 200 caractères",
+        "title_error": "Le titre doit contenir entre 5 et 50 caractères",
+        "verif_delete_review": "Êtes-vous sûr de vouloir supprimer l'avis ? Cette action ne peut pas être annulée.",
+        "verif_delete_order_status": "Êtes-vous sûr de vouloir supprimer le statut ? Cette action ne peut pas être annulée.",
+        "review": {
+            "tab": "Avis",
+            "title": "Titre",
+            "description": "Description"
+        },
+        "order_status": {
+            "new_title": "Nouveau statut de commande",
+            "update_title": "Modifier le statut de la commande",
+            "comment_label": "Commentaire spécial sur la mise à jour du statut",
+            "upload_button": "Téléverser l'image",
+            "status_label": "Status",
+            "empty_comments": {
+                "Accepted": "la commande a été acceptée.",
+                "Printing": "la commande est en cours d'impression.",
+                "Printed": "la commande a été imprimée.",
+                "Shipped": "la commande a été expédiée.",
+                "Arrived": "la commande est arrivée.",
+                "Cancelled": "la commande a été annulée."
+            }
+        }
+    },
+    "status": {
+        "Accepted": "Accepté",
+        "Printing": "Impression",
+        "Printed": "Imprimé",
+        "Shipped": "Expédié",
+        "Arrived": "Arrivé",
+        "Cancelled": "Annulé"
     }
 }

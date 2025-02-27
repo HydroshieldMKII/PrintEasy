@@ -58,7 +58,13 @@ class ReviewControllerTest < ActionDispatch::IntegrationTest
     sign_in users(:one)
     assert_difference('Review.count', 1) do
       post api_review_index_path,
-           params: { review: { order_id: 7, rating: 3, title: 'Review 1', description: 'This is the first review', user_id: 2 } }, as: :json
+           params: { review: {
+             order_id: 7,
+             rating: 3,
+             title: 'Review 1',
+             description: 'This is the first review',
+             user_id: 2
+           } }, as: :json
     end
 
     assert_response :created
@@ -221,7 +227,12 @@ class ReviewControllerTest < ActionDispatch::IntegrationTest
     sign_in users(:one)
     assert_difference('Review.count', 0) do
       post api_review_index_path,
-           params: { review: { order_id: 7, rating: 3, title: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', description: 'This is the first review' } }, as: :json
+           params: { review: {
+             order_id: 7,
+             rating: 3,
+             title: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+             description: 'This is the first review'
+           } }, as: :json
     end
 
     assert_response :bad_request
@@ -249,7 +260,13 @@ class ReviewControllerTest < ActionDispatch::IntegrationTest
     sign_in users(:one)
     assert_difference('Review.count', 0) do
       post api_review_index_path,
-           params: { review: { order_id: 7, rating: 3, title: 'Review 1', description: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' } }, as: :json
+           params: { review: {
+             order_id: 7,
+             rating: 3,
+             title: 'Review 1',
+             description: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+             aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+           } }, as: :json
     end
 
     assert_response :bad_request
@@ -293,7 +310,13 @@ class ReviewControllerTest < ActionDispatch::IntegrationTest
     sign_in users(:one)
     assert_difference('Review.count', 0) do
       patch api_review_url(1),
-            params: { review: { rating: 2, title: 'Review 2', description: 'This is the second review', order_id: 5, user_id: 2 } }, as: :json
+            params: { review: {
+              rating: 2,
+              title: 'Review 2',
+              description: 'This is the second review',
+              order_id: 5,
+              user_id: 2
+            } }, as: :json
     end
 
     assert_response :ok

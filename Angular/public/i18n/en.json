@@ -11,7 +11,15 @@
         "success": "Success",
         "warning": "Warning",
         "info": "Information",
-        "confirm": "Confirm"
+        "confirm": "Confirm",
+        "errors": {
+            "created_success": "Created successfully",
+            "updated_success": "Updated successfully",
+            "deleted_success": "Deleted successfully",
+            "created_error": "Failed to create",
+            "updated_error": "Failed to update",
+            "deleted_error": "Failed to delete"
+        }
     },
     "login": {
         "title": "Login",
@@ -91,5 +99,60 @@
         "error_description_long": "Description must be at most 200 characters long",
         "error_image_required": "Image is required",
         "error_stl_required": "STL file is required"
+    },
+    "orders": {
+        "commands_tab": "Commands",
+        "contracts_tab": "Contracts",
+        "name_column": "Name",
+        "price_column": "Price",
+        "status_column": "Status",
+        "target_date_column": "Target date",
+        "consumer_column": "Consumer",
+        "printer_column": "Printer",
+        "rating_column": "Rating",
+        "actions_column": "Actions",
+        "no_review_message": "No Review",
+        "action_button_label": "See Details",
+        "no_contract_message": "You dont have any contracts pending!",
+        "no_commands_message": "You dont have any commands pending!"
+    },
+    "order": {
+        "printer_owner": "Printer owner :",
+        "price": "Price :",
+        "current_status": "Current Status :",
+        "target_date": "Target Date :",
+        "comment": "Comment",
+        "comment_error": "Comment has to be between 5 and 200 characters",
+        "title_error": "Title has to be between 5 and 50 characters",
+        "verif_delete_review": "Are you sure you want to delete the review ? This action cannot be undone.",
+        "verif_delete_order_status": "Are you sure you want to delete the status ? This action cannot be undone.",
+        "review": {
+            "tab": "Review",
+            "title": "Title",
+            "description": "Description"
+        },
+        "order_status": {
+            "new_title": "New Order Status",
+            "update_title": "Edit Order Status",
+            "comment_label": "Special comment about the status update",
+            "status_label": "Status",
+            "upload_button": "Upload Image",
+            "empty_comments": {
+                "Accepted": "the order has been accepted.",
+                "Printing": "the order is being printed.",
+                "Printed": "the order has been printed.",
+                "Shipped": "the order has been shipped.",
+                "Arrived": "the order has arrived.",
+                "Cancelled": "the order has been cancelled."
+            }
+        }
+    },
+    "status": {
+        "Accepted": "Accepted",
+        "Printing": "Printing",
+        "Printed": "Printed",
+        "Shipped": "Shipped",
+        "Arrived": "Arrived",
+        "Cancelled": "Cancelled"
     }
 }

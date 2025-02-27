@@ -5,10 +5,10 @@ import { Router, RouterLink } from '@angular/router';
 import { OrderModel } from '../../models/order.model';
 import { OrderService } from '../../services/order.service';
 import { ApiResponseModel } from '../../models/api-response.model';
-
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 @Component({
   selector: 'app-orders',
-  imports: [ImportsModule, RouterLink],
+  imports: [ImportsModule, RouterLink, TranslatePipe],
   templateUrl: './orders.component.html',
   styleUrl: './orders.component.css'
 })

@@ -92,7 +92,11 @@ class OrderStatusControllerTest < ActionDispatch::IntegrationTest
   #   sign_in users(:two)
 
   #   assert_difference('OrderStatus.count', 0) do
-  #     post api_order_status_index_path, params: { order_id: 1, status_name: 'InvalidStatus', comment: "Order status one" }, as: :json
+  #     post api_order_status_index_path, params: {
+  #   order_id: 1,
+  #   status_name: 'InvalidStatus',
+  #   comment: "Order status one"
+  # }, as: :json
   #   end
 
   #   assert_response :bad_request

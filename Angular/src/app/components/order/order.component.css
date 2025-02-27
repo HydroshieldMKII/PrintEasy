@@ -199,6 +199,14 @@ textarea {
     justify-content: flex-start !important;
 }
 
+:host ::ng-deep .big-stars .p-rating-icon {
+    font-size: 10rem;
+}
+
+:host ::ng-deep .big-stars {
+    margin-bottom: 2rem;
+}
+
 /* Mobile Responsive */
 @media (max-width: 768px) {
     .grid {
