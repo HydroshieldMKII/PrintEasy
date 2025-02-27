@@ -1,12 +1,12 @@
 import { Component, inject, ViewEncapsulation, Renderer2 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { TranslateParser, TranslatePipe } from '@ngx-translate/core';
 
 import { ImportsModule } from '../../../imports';
 import { MessageService } from 'primeng/api';
 
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, ValidationErrors, AbstractControl } from '@angular/forms';
 import { StlModelViewerModule } from 'angular-stl-model-viewer';
-
 
 import { SubmissionService } from '../../services/submission.service';
 import { ContestService } from '../../services/contest.service';
@@ -17,7 +17,7 @@ import { UserSubmission } from '../../models/user-submission';
 
 @Component({
   selector: 'app-submissions',
-  imports: [ImportsModule, ReactiveFormsModule, StlModelViewerModule],
+  imports: [ImportsModule, ReactiveFormsModule, StlModelViewerModule, TranslatePipe],
   templateUrl: './submissions.component.html',
   styleUrl: './submissions.component.css'
 })
@@ -72,7 +72,7 @@ export class SubmissionsComponent {
 
     this.responsiveOptions = [
       {
-        breakpoint: '450px',
+        breakpoint: '575px',
         numVisible: 1,
         numScroll: 1
       }

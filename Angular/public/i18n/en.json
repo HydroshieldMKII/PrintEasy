@@ -53,6 +53,43 @@
     },
     "contest_form": {
         "title_form": "Create a contest",
-        "theme": "Theme"
+        "theme": "Theme",
+        "description": "Description",
+        "submission_limit": "Limit per user",
+        "start_date": "Start date",
+        "end_date": "End date",
+        "button_upload": "Upload",
+        "error_theme_required": "Theme is required",
+        "error_theme_short": "Theme must be at least 3 characters long",
+        "error_theme_long": "Theme must be at most 30 characters long",
+        "error_date_start_before_end": "Start date must be before the end date",
+        "error_date_24h_difference": "There must be a 24-hour difference from the end date",
+        "error_date_after_today": "The start date must be after the current date and time",
+        "error_description_long": "Description must be at most 200 characters long",
+        "error_start_at_required": "Start date is required",
+        "error_limit_required": "Submission limit is required",
+        "error_limit_min": "Submission limit must be at least 1",
+        "error_limit_max": "Submission limit must be at most 30"
+    },
+    "submissions": {
+        "title_page": "Contest theme:",
+        "submissions": "Submissions",
+        "submissions_per_user": "Submissions per user",
+        "ends": "Ends in",
+        "button_participate": "I want to participate",
+        "days": "days"
+    },
+    "submission_form": {
+        "title_form": "Participate in the contest",
+        "name": "Name",
+        "description": "Description",
+        "upload_image": "Upload image",
+        "upload_stl": "Upload STL",
+        "error_name_required": "Name is required",
+        "error_name_short": "Name must be at least 3 characters long",
+        "error_name_long": "Name must be at most 30 characters long",
+        "error_description_long": "Description must be at most 200 characters long",
+        "error_image_required": "Image is required",
+        "error_stl_required": "STL file is required"
     }
 }

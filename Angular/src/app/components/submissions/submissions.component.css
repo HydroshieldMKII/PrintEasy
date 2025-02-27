@@ -17,6 +17,10 @@ h2 {
     width: 300px;
 }
 
+:host ::ng-deep .error-message {
+    width: 400px;
+}
+
 .container-column {
     display: flex;
     flex-direction: column;
