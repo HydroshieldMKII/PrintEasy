@@ -380,10 +380,9 @@ export class RequestFormComponent implements OnInit, OnChanges {
   showOfferModal(preset?: any): void {
     this.offerModalVisible = true;
 
-    if (preset) {
-      console.log('Editing preset from form:', preset);
-      this.presetModalToEdit = preset;
-    }
+    console.log('Editing preset from form:', preset);
+    this.presetModalToEdit = preset;
+
   }
 
   hideOfferModal(): void {

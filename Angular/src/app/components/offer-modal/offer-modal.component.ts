@@ -34,7 +34,7 @@ export class OfferModalComponent implements OnChanges {
 
   selectedPreset: PresetModel | null = null;
   presets: { label: string, value: string, id: number }[] = [];
-  printers: { label: string, value: string, id: number }[] = [];
+  printers: { label: string, value: string, id: number, idPrinterUser: number }[] = [];
   filamentTypes: { label: string, value: string, id: number }[] = [];
   colors: { label: string, value: string, id: number }[] = [];
   filaments: { label: string, value: string, id: number }[] = [];
@@ -85,7 +85,7 @@ export class OfferModalComponent implements OnChanges {
     this.presetService.getPrinterUsers().subscribe((printerUsers: PrinterUserModel[]) => {
       this.printers = printerUsers.map(printerUser => {
         const formattedDate = new Date(printerUser.aquiredDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-        return { label: `${printerUser.printer.model} (${formattedDate})`, value: printerUser.printer.model, id: printerUser.id };
+        return { label: `${printerUser.printer.model} (${formattedDate})`, value: printerUser.printer.model, id: printerUser.printer.id, idPrinterUser: printerUser.id };
       });
     });
 
@@ -170,7 +170,8 @@ export class OfferModalComponent implements OnChanges {
       if (this.requestIdToEdit) {
         formData.append('offer[request_id]', this.requestIdToEdit.toString());
       }
-      formData.append('offer[printer_user_id]', formValues.printer.id.toString());
+      console.log('Form values:', formValues);
+      formData.append('offer[printer_user_id]', formValues.printer.idPrinterUser.toString());
       formData.append('offer[color_id]', formValues.color.id.toString());
       formData.append('offer[filament_id]', formValues.filament.id.toString());
       formData.append('offer[price]', formValues.price.toString());
@@ -218,7 +219,7 @@ export class OfferModalComponent implements OnChanges {
       this.colors = colors.map(color => ({ label: color.name, value: color.name, id: color.id }));
       this.printers = printers.map(printerUser => {
         const formattedDate = new Date(printerUser.aquiredDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-        return { label: `${printerUser.printer.model} (${formattedDate})`, value: printerUser.printer.model, id: printerUser.printer.id };
+        return { label: `${printerUser.printer.model} (${formattedDate})`, value: printerUser.printer.model, id: printerUser.printer.id, idPrinterUser: printerUser.id };
       });
       this.filaments = filaments.map(filament => ({ label: filament.name, value: filament.name, id: filament.id }));
 
@@ -227,12 +228,7 @@ export class OfferModalComponent implements OnChanges {
           console.log('Offer to edit:', offer);
           console.log('Printers:', this.printers);
 
-          let matchingPrinter = this.printers.find(p => p.id === offer.printerUser.printer.id);
-
-          if (!matchingPrinter) {
-            matchingPrinter = this.printers.find(p => p.id === offer.printerUser.id);
-          }
-
+          let matchingPrinter = this.printers.find(p => p.idPrinterUser === offer.printerUser.id);
           const matchingColor = this.colors.find(c => c.id === offer.color.id);
           const matchingFilament = this.filaments.find(f => f.id === offer.filament.id);
 
@@ -252,8 +248,6 @@ export class OfferModalComponent implements OnChanges {
 
       if (this.presetToEdit) {
         console.log('Preset to edit in modal:', this.presetToEdit);
-        console.log('Colors:', this.colors);
-        console.log('Filaments:', this.filaments);
         console.log('Printers:', this.printers);
         const matchingColor = this.colors.find(c => c.id === this.presetToEdit?.color.id);
         const matchingFilament = this.filaments.find(f => f.id === this.presetToEdit?.filamentType.id);
@@ -268,10 +262,8 @@ export class OfferModalComponent implements OnChanges {
       }
     });
 
-    console.log('OfferModalComponent: ngOnChanges');
-    console.log('OfferModalComponent: offerModalVisible:', this.offerModalVisible);
-    console.log('OfferModalComponent: requestIdToEdit:', this.requestIdToEdit);
-    console.log('OfferModalComponent: offerIdToEdit:', this.offerIdToEdit);
-    console.log('OfferModalComponent: presetToEdit:', this.presetToEdit);
+    if (!this.presetToEdit) {
+      this.offerForm.reset();
+    }
   }
 }

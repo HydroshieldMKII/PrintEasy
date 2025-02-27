@@ -270,15 +270,14 @@
           ></button>
         </td>
         <td *ngIf="isViewMode">
-          <button
-            pButton
-            pRipple
+          <p-button
             type="button"
             icon="pi pi-arrow-right"
-            class="p-button-rounded p-button-info"
+            variant="outlined"
+            severity="info"
             label="{{ 'requestForm.offer_preset' | translate }}"
             (click)="showOfferModal(preset)"
-          ></button>
+          ></p-button>
         </td>
       </tr>
     </ng-template>
@@ -290,7 +289,7 @@
       label="{{ 'requestForm.make_offer' | translate }}"
       icon="pi pi-money-bill"
       severity="info"
-      (click)="showOfferModal()"
+      (click)="showOfferModal(null)"
     ></p-button>
   </div>
 
