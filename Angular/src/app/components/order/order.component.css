@@ -199,8 +199,10 @@ textarea {
     justify-content: flex-start !important;
 }
 
-:host ::ng-deep .big-stars .p-rating-icon {
+:host ::ng-deep .big-stars svg {
     font-size: 10rem;
+    width: 30px;
+    height: 30px;
 }
 
 :host ::ng-deep .big-stars {

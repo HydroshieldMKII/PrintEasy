@@ -81,6 +81,7 @@ export class OrderComponent {
       }
     }
   ]
+  errors_type: { [key: string]: string } = {}
   statusActions: MenuItem[] = [];
   AcceptedStatus: OrderStatusModel[] = [];
   PrintingStatus: OrderStatusModel[] = [];
@@ -106,6 +107,7 @@ export class OrderComponent {
     this.getStatusTranslations();
     this.getStatusDefaultMessages();
     this.getEditMenuWithTranslations();
+    this.getTranslatedErrors();
 
     this.refreshOrder();
 
@@ -117,7 +119,7 @@ export class OrderComponent {
 
     this.reviewForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(50)]],
-      rating: [1, [Validators.required, Validators.min(0), Validators.max(5)]],
+      rating: [1, [Validators.min(0), Validators.max(5)]],
       description: ['', [Validators.minLength(5), Validators.maxLength(200)]],
       images: [[]]
     });
@@ -154,6 +156,12 @@ export class OrderComponent {
       this.statusTranslations['Shipped'] = translations['status.Shipped'];
       this.statusTranslations['Arrived'] = translations['status.Arrived'];
       this.statusTranslations['Cancelled'] = translations['status.Cancelled'];
+    });
+  }
+
+  getTranslatedErrors(): void {
+    this.translate.get(['global.errors']).subscribe((translations: any) => {
+      this.errors_type = translations['global.errors'];
     });
   }
 
@@ -345,13 +353,13 @@ export class OrderComponent {
             this.messageService.add({
               severity: 'success',
               summary: 'Created',
-              detail: 'Order status updated successfully'
+              detail: this.errors_type["updated_success"]
             });
           }else {
             this.messageService.add({
               severity: 'error',
               summary: 'Error',
-              detail: 'Failed to update order status'
+              detail: this.errors_type["updated_error"]
             });
           }
         });
@@ -365,13 +373,13 @@ export class OrderComponent {
             this.messageService.add({
               severity: 'success',
               summary: 'Created',
-              detail: 'Order status created successfully'
+              detail: this.errors_type["created_success"]
             });
           }else{
             this.messageService.add({
               severity: 'error',
               summary: 'Error',
-              detail: 'Failed to create order status'
+              detail: this.errors_type["created_error"]
             });
           }
         });
@@ -406,13 +414,13 @@ export class OrderComponent {
             this.messageService.add({
               severity: 'success',
               summary: 'Created',
-              detail: 'Review updated successfully'
+              detail: this.errors_type["updated_success"]
             });
           }else{
             this.messageService.add({
               severity: 'error',
               summary: 'Error',
-              detail: 'Failed to update review'
+              detail: this.errors_type["updated_error"]
             });
           }
         });
@@ -426,13 +434,13 @@ export class OrderComponent {
             this.messageService.add({
               severity: 'success',
               summary: 'Created',
-              detail: 'Review created successfully'
+              detail: this.errors_type["created_success"]
             });
           }else{
             this.messageService.add({
               severity: 'error',
               summary: 'Error',
-              detail: 'Failed to create review'
+              detail: this.errors_type["created_error"]
             });
           }
         });
@@ -497,7 +505,7 @@ export class OrderComponent {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'Failed to delete order status'
+          detail: this.errors_type["deleted_error"]
         });
         return;
       }
@@ -506,7 +514,7 @@ export class OrderComponent {
       this.messageService.add({
         severity: 'success',
         summary: 'Deleted',
-        detail: 'Order status deleted successfully'
+        detail: this.errors_type["deleted_success"]
       });
     });
   }
@@ -518,7 +526,7 @@ export class OrderComponent {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'Failed to delete review'
+          detail: this.errors_type["deleted_error"]
         });
         return;
       }
@@ -527,7 +535,7 @@ export class OrderComponent {
       this.messageService.add({
         severity: 'success',
         summary: 'Deleted',
-        detail: 'Review deleted successfully'
+        detail: this.errors_type["deleted_success"]
       });
     });
   }
