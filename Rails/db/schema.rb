@@ -48,12 +48,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_26_163921) do
     t.string "description", limit: 200
     t.integer "submission_limit", default: 1, null: false
     t.datetime "deleted_at"
-    t.datetime "start_at", null: false
+    t.datetime "start_at", precision: nil, null: false
     t.datetime "end_at"
   end
 
   create_table "countries", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
-    t.string "name"
+    t.string "name", null: false
   end
 
   create_table "filaments", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|

@@ -35,7 +35,7 @@ export class ContestModel {
             data.end_at,
             data.image_url,
             data.deleted_at,
-            data.finished,
+            data['finished?'],
             data.winner_user ? UserModel.fromAPI(data.winner_user) : null
         );
     }

@@ -175,8 +175,8 @@ contest1 = Contest.new(
   theme: "Best 3D Printed Art",
   description: "Create and submit your best 3D printed designs.",
   submission_limit: 5,
-  start_at: Time.now - 1.days,
-  end_at: Time.now + 30.days
+  start_at: Time.now - 10.days,
+  end_at: Time.now - 3.days
 )
 
 contest1.image.attach(
@@ -362,7 +362,7 @@ submission1.image.attach(
   content_type: "image/jpg"
 )
 
-submission1.save
+submission1.save(validate: false)
 
 submission2 = Submission.new(
   name: "Space Shuttle",
@@ -385,7 +385,7 @@ submission2.image.attach(
   content_type: "image/jpg"
 )
 
-submission2.save
+submission2.save(validate: false)
 
 submission3 = Submission.new(
   name: "3D Printed Toy",
@@ -436,7 +436,7 @@ submission3.save
     content_type: "image/jpg"
   )
 
-  submission.save
+  submission.save(validate: false)
 end
 
 Like.create!(user: user1, submission: submission1)

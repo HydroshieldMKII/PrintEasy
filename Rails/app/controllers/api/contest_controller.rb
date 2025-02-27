@@ -3,17 +3,21 @@ class Api::ContestController < ApplicationController
 
     def index
         @contests = current_user.is_admin ? Contest.all : Contest.active_for_user(current_user)
-
         contests_with_status = @contests.map do |contest|
-            contest_data = contest.as_json(methods: :image_url).merge(finished: contest.end_at.present? && contest.end_at < Time.current)
-            top_submission = contest.submissions.left_joins(:likes).group(:id).order('COUNT(likes.id) DESC, submissions.created_at ASC').first
-            contest_data[:winner_user] = top_submission ? top_submission.user.as_json : nil
-            contest_data
+          contest_data = contest.as_json(methods: [:image_url, :finished?])
+          
+          top_submission = contest.submissions.left_joins(:likes).group(:id).order('COUNT(likes.id) DESC, submissions.created_at ASC').first
+          contest_data[:winner_user] = top_submission ? top_submission.user.as_json : nil
+          contest_data
         end
-        
-        contests_with_status.sort_by! { |contest| [contest[:finished] ? 1 : 0, contest[:start_at]] }
 
-        render json: {contests: contests_with_status, errors: {}}, status: :ok
+        debugger
+
+        contests_with_status.sort_by! do |contest|
+          [contest["finished?"] ? 1 : 0, contest["start_at"]]
+        end
+
+        render json: { contests: contests_with_status, errors: {} }, status: :ok
     end
 
     def show
@@ -28,7 +32,7 @@ class Api::ContestController < ApplicationController
 
     def create
         @contest = Contest.new(contest_params)
-        
+
         if @contest.save
             render json: {contest: @contest.as_json(methods: :image_url), errors: {}}, status: :created
         else
