@@ -10,15 +10,15 @@
               <div class="">
                 <p-floatlabel variant="in">
                   <input id="theme" pInputText formControlName="theme" type="text" />
-                  <label for="theme" class="p-text-bold">Theme</label>
+                  <label for="theme" class="p-text-bold">{{ 'contest_form.theme' | translate }}</label>
                 </p-floatlabel>
                 <p-message severity="error" variant="simple" size="small">
                   @if (contestForm.get('theme')?.errors?.['required']) {
-                    Theme is required
+                    {{ 'contest_form.error_theme_required' | translate }}
                    } @else if (contestForm.get('theme')?.errors?.['minlength']) {
-                    Theme is too short
+                    {{ 'contest_form.error_theme_short' | translate }}
                    } @else if (contestForm.get('theme')?.errors?.['maxlength']) {
-                    Theme is too long
+                    {{ 'contest_form.error_theme_long' | translate }}
                    }
                 </p-message>
               </div>
@@ -33,9 +33,9 @@
                 <p-floatlabel variant="in">
                   <textarea class="description-textarea" id="description" pTextarea formControlName="description"
                     rows="4"></textarea>
-                  <label for="description" class="p-text-bold">Description</label>
+                  <label for="description" class="p-text-bold">{{ 'contest_form.description' | translate }}</label>
                 </p-floatlabel>
-                <p-message severity="error" variant="simple" size="small">The description is too long</p-message>
+                <p-message severity="error" variant="simple" size="small">{{ 'contest_form.error_description_long' | translate }}</p-message>
               </div>
 
               <!-- Date de début -->
@@ -45,10 +45,10 @@
                     <p-datepicker [hourFormat]="'24'" [showTime]="true" formControlName="startDate"
                       [showIcon]="true" inputId="buttondisplay" [showOnFocus]="false" dateFormat="yy-mm-dd"
                       [class]="startDatePicker" [style]="{width: '100%'}"></p-datepicker>
-                    <label for="startDate">Start date</label>
+                    <label for="startDate">{{ 'contest_form.start_date' | translate }}</label>
                   </p-floatlabel>
                   <p-message class="date-error" severity="error" variant="simple" size="small">
-                    {{ contestForm.errors?.['dateError'] ? contestForm.errors?.['dateError'] : 'Start date is required'
+                    {{ contestForm.errors?.['dateError'] ? contestForm.errors?.['dateError'] : 'contest_form.error_start_at_required' | translate
                     }}
                   </p-message>
                 </div>
@@ -58,7 +58,7 @@
                     <p-datepicker [hourFormat]="'24'" [showTime]="true" formControlName="endDate"
                       [showIcon]="true" inputId="buttondisplay" [showOnFocus]="false"
                       dateFormat="yy-mm-dd" [style]="{width: '100%'}"></p-datepicker>
-                    <label for="endDate" class="center-label">End date</label>
+                    <label for="endDate" class="center-label">{{ 'contest_form.end_date' | translate }}</label>
                   </p-floatlabel>
                 </div>
 
@@ -66,9 +66,17 @@
                   <p-floatlabel variant="in">
                     <p-inputnumber [style]="{'width': '400px'}" id="limit" formControlName="limit" [min]="1" [max]="30"
                       [showButtons]="true"></p-inputnumber>
-                    <label for="limit" class="p-text-bold">Limit</label>
+                    <label for="limit" class="p-text-bold">{{ 'contest_form.submission_limit' | translate }}</label>
                   </p-floatlabel>
-                  <p-message severity="error" variant="simple" size="small">Limit is required</p-message>
+                  <p-message severity="error" variant="simple" size="small">
+                    @if (contestForm.get('limit')?.errors?.['required']) {
+                      {{ 'contest_form.error_limit_required' | translate }}
+                     } @else if (contestForm.get('limit')?.errors?.['min']) {
+                      {{ 'contest_form.error_limit_min' | translate }}
+                     } @else if (contestForm.get('limit')?.errors?.['max']) {
+                      {{ 'contest_form.error_limit_max' | translate }}
+                     }
+                  </p-message>
                 </div>
               </div>
 
@@ -87,7 +95,7 @@
               <div class="fileUploadContainer center">
                 <!-- <label for="image" class="p-text-bold">Image</label> -->
                 <p-fileUpload mode="basic" name="image" accept="image/*" [maxFileSize]="1000000"
-                  (onSelect)="onFileSelect($event)" chooseLabel="Upload file"></p-fileUpload>
+                  (onSelect)="onFileSelect($event)" chooseLabel="{{ 'contest_form.button_upload' | translate }}" [auto]="true"></p-fileUpload>
               </div>
             </div>
           </div>
@@ -95,13 +103,13 @@
         <!-- Boutons -->
         <div class="mt-12">
           <div class="button-container">
-            <p-button label="Cancel" type="button" (click)="onCancel()" icon="pi pi-times"
+            <p-button label="{{ 'global.cancel_button' | translate }}" type="button" (click)="onCancel()" icon="pi pi-times"
               severity="secondary"></p-button>
             @if (isEdit) {
-            <p-button label="Delete" type="button" (click)="onDelete()" icon="pi pi-trash" severity="danger">
+            <p-button label="{{ 'global.delete_button' | translate }}" type="button" (click)="onDelete()" icon="pi pi-trash" severity="danger">
             </p-button>
             }
-            <p-button label="Save" [disabled]="!contestForm.valid" icon="pi pi-save" severity="success"
+            <p-button label="{{ 'global.save_button' | translate }}" [disabled]="!contestForm.valid" icon="pi pi-save" severity="success"
               (onClick)="onSubmit()"></p-button>
           </div>
         </div>

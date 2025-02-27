@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { map } from 'rxjs/operators';
+import { TranslateService } from '@ngx-translate/core';
 
 import { ApiResponseModel } from '../models/api-response.model';
 import { ContestModel } from '../models/contest.model';
@@ -12,6 +13,7 @@ import { ApiRequestService } from './api.service';
 })
 export class ContestService {
   messageService: MessageService = inject(MessageService);
+  translateService: TranslateService = inject(TranslateService);
 
   constructor(private api: ApiRequestService) { }
 
@@ -22,7 +24,7 @@ export class ContestService {
           return response.data.contests.map((contest: any) => ContestModel.fromApi(contest));
         } else {
           console.log('error:', response.errors);
-          this.messageService.add({ severity: 'error', summary: 'Erreur', detail: 'Erreur lors de la récupération des concours' });
+          this.messageService.add({ severity: 'error', summary: this.translateService.instant('global.errors.summary_error'), detail: this.translateService.instant('global.errors.gets_error') });
           return [];
         }
       })
@@ -36,7 +38,7 @@ export class ContestService {
           return ContestModel.fromApi(response.data.contest);
         } else {
           console.log('error:', response.errors);
-          this.messageService.add({ severity: 'error', summary: 'Erreur', detail: 'Erreur lors de la récupération du concours' });
+          this.messageService.add({ severity: 'error', summary: this.translateService.instant('global.errors.summary_error'), detail: this.translateService.instant('global.errors.get_error') });
           return null;
         }
       })
@@ -47,11 +49,11 @@ export class ContestService {
     return this.api.postRequest('api/contest', {}, contest).pipe(
       map(response => {
         if (response.status === 201) {
-          this.messageService.add({ severity: 'success', summary: 'Succès', detail: 'Concours créé avec succès' });
+          this.messageService.add({ severity: 'success', summary: this.translateService.instant('global.errors.summary_success'), detail: this.translateService.instant('global.errors.created_success') });
         }
         else {
           console.log('error:', response.errors);
-          this.messageService.add({ severity: 'error', summary: 'Erreur', detail: 'Erreur lors de la création du concours' });
+          this.messageService.add({ severity: 'error', summary: this.translateService.instant('global.errors.summary_error'), detail: this.translateService.instant('global.errors.created_error') });
         }
         return response;
       })
@@ -62,11 +64,11 @@ export class ContestService {
     return this.api.patchRequest(`api/contest/${id}`, {}, contest).pipe(
       map(response => {
         if (response.status === 200) {
-          this.messageService.add({ severity: 'success', summary: 'Succès', detail: 'Concours modifié avec succès' });
+          this.messageService.add({ severity: 'success', summary: this.translateService.instant('global.errors.summary_success'), detail: this.translateService.instant('global.errors.updated_success') });
         }
         else {
           console.log('error:', response.errors);
-          this.messageService.add({ severity: 'error', summary: 'Erreur', detail: 'Erreur lors de la modification du concours' });
+          this.messageService.add({ severity: 'error', summary: this.translateService.instant('global.errors.summary_error'), detail: this.translateService.instant('global.errors.updated_error') });
         }
         return response;
       })
@@ -77,12 +79,11 @@ export class ContestService {
     return this.api.deleteRequest(`api/contest/${id}`).pipe(
       map(response => {
         if (response.status === 200) {
-          this.messageService.add({ severity: 'success', summary: 'Succès',
-            detail: 'Concours supprimé avec succès' });
+          this.messageService.add({ severity: 'success', summary: this.translateService.instant('global.errors.summary_success'), detail: this.translateService.instant('global.errors.deleted_success') });
           }
           else {
             console.log('error:', response.errors);
-            this.messageService.add({ severity: 'error', summary: 'Erreur', detail: 'Erreur lors de la suppression du concours' });
+            this.messageService.add({ severity: 'error', summary: this.translateService.instant('global.errors.summary_error'), detail: this.translateService.instant('global.errors.deleted_error') });
           }
         return response;
       })

@@ -18,7 +18,11 @@
             "deleted_success": "Supprimé avec succès",
             "created_error": "Échec de la création",
             "updated_error": "Échec de la mise à jour",
-            "deleted_error": "Échec de la suppression"
+            "deleted_error": "Échec de la suppression",
+            "get_error": "Échec de la récupération",
+            "gets_error": "Échec de la récupération de tout",
+            "summary_error": "Erreur",
+            "summary_success": "Succès"
         }
     },
     "login": {
@@ -58,6 +62,47 @@
         "confirm_delete": "Confirmer la suppression",
         "confirm_delete_message": "Êtes-vous sûr de vouloir supprimer le concours ? Cette action ne peut pas être annulée.",
         "button_contest_detail": "Détails du concours"
+    },
+    "contest_form": {
+        "title_form": "Créer un concours",
+        "theme": "Thème",
+        "description": "Description",
+        "submission_limit": "Limite par utilisateur",
+        "start_date": "Date de début",
+        "end_date": "Date de fin",
+        "button_upload": "Téléverser",
+        "error_theme_required": "Le thème est requis",
+        "error_theme_short": "Le thème doit contenir au moins 3 caractères",
+        "error_theme_long": "Le thème doit contenir au plus 30 caractères",
+        "error_date_start_before_end": "La date de début doit être antérieure à la date de fin",
+        "error_date_24h_difference": "Il doit y avoir une différence de 24 heures",
+        "error_date_after_today": "La date de début doit être après la date et temps d'aujourd'hui",
+        "error_description_long": "La description doit contenir au plus 200 caractères",
+        "error_start_at_required": "La date de début est requise",
+        "error_limit_required": "La limite de soumission est requise",
+        "error_limit_min": "La limite de soumission doit être d'au moins 1",
+        "error_limit_max": "La limite de soumission doit être d'au plus 30"
+    },
+    "submissions": {
+        "title_page": "Thème du concours:",
+        "submissions": "Soumissions",
+        "submissions_per_user": "Soumissions par utilisateur",
+        "ends": "Se termine dans",
+        "button_participate": "Je veux participer",
+        "days": "jours"
+    },
+    "submission_form": {
+        "title_form": "Créer un concours",
+        "name": "Nom",
+        "description": "Description",
+        "upload_image": "Téléverser une image",
+        "upload_stl": "Téléverser un STL",
+        "error_name_required": "Le nom est requis",
+        "error_name_short": "Le nom doit contenir au moins 3 caractères",
+        "error_name_long": "Le nom doit contenir au plus 30 caractères",
+        "error_description_long": "La description doit contenir au plus 200 caractères",
+        "error_image_required": "L'image est requise",
+        "error_stl_required": "Le fichier STL est requis"
     },
     "orders": {
         "commands_tab": "Commandes",

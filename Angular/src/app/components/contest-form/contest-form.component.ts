@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, ValidationErrors, AbstractControl } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { ImportsModule } from '../../../imports';
 import { ContestModel } from '../../models/contest.model';
@@ -9,13 +10,14 @@ import { ContestService } from '../../services/contest.service';
 
 @Component({
   selector: 'app-contest-form',
-  imports: [ReactiveFormsModule, ImportsModule],
+  imports: [ReactiveFormsModule, ImportsModule, TranslatePipe],
   templateUrl: './contest-form.component.html',
   styleUrl: './contest-form.component.css'
 })
 export class ContestFormComponent {
   contestService: ContestService = inject(ContestService);
   router: Router = inject(Router);
+  translate: TranslateService = inject(TranslateService);
 
   contestForm: FormGroup;
   isEdit: boolean = false;
@@ -58,6 +60,8 @@ export class ContestFormComponent {
               startDate: new Date(contest.startAt),
               endDate: contest.endAt ? new Date(contest.endAt) : null
             });
+
+            console.log("ContestForm:", this.contestForm.value);
           }
         });
       }
@@ -88,18 +92,17 @@ export class ContestFormComponent {
     }
 
     if (endDateTime && startDateTime > endDateTime) {
-      this.startDatePicker = "ng-invalid ng-dirty";
-      return { dateError: 'Start date must be before the end date' };
+      return { dateError: this.translate.instant('contest_form.error_date_start_before_end') };
     }
 
     if (endDateTime && startDateTime + 24 * 60 * 60 * 1000 > endDateTime) {
       this.startDatePicker = "ng-invalid ng-dirty";
-      return { dateError: 'There must be a 24-hour difference from the end date' };
+      return { dateError: this.translate.instant('contest_form.error_date_24h_difference') };
     }
 
     if (startDateTime < new Date().getTime()) {
       this.startDatePicker = "ng-invalid ng-dirty";
-      return { dateError: 'The start date must be after the current date and time' };
+      return { dateError: this.translate.instant('contest_form.error_date_after_today') };
     }
 
     this.startDatePicker = "";
@@ -118,13 +121,13 @@ export class ContestFormComponent {
       console.log('Données du concours:', this.contestForm.value);
 
       const contestFormData = new FormData();
-
+      
       contestFormData.append('contest[theme]', this.contestForm.value.theme);
-      contestFormData.append('contest[description]', this.contestForm.value.description);
+      contestFormData.append('contest[description]', this.contestForm.value.description || '');
       contestFormData.append('contest[submission_limit]', this.contestForm.value.limit);
       contestFormData.append('contest[start_at]', this.contestForm.value.startDate);
       contestFormData.append('contest[end_at]', this.contestForm.value.endDate);
-
+      console.log('ContestFormData:', contestFormData);
       if (this.contestForm.value.image) {
         contestFormData.append('contest[image]', this.contestForm.value.image);
       }

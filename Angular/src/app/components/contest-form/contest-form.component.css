@@ -166,6 +166,10 @@
     margin-top: 12px;
 }
 
+::ng-deep .p-message {
+    max-width: 214px !important; 
+}
+
 @media (max-width: 768px) {
     .contest-container {
         padding: 10px;
@@ -200,4 +204,8 @@
         max-width: 100px;
         white-space: nowrap; 
     }
+
+    ::ng-deep .p-message {
+        max-width: 300px !important; 
+    }    
 }

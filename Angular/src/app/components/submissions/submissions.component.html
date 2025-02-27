@@ -1,26 +1,26 @@
 <div class="space-button">
     <div class="contest-container">
-        <h1 class="font-semibold">Contest theme:</h1>
+        <h1 class="font-semibold">{{ 'submissions.title_page' | translate }}</h1>
         <h1 class="">{{ contest?.theme }}</h1>
         <div class="container-row">
             <div>
                 <span>
                     <i class="pi pi-inbox"></i>
-                    {{ submissions.length }} Submissions
+                    {{ submissions.length }} {{ 'submissions.submissions' | translate }}
                 </span>
             </div>
 
             <div>
                 <span>
                     <i class="pi pi-hashtag"></i>
-                    {{ contest?.submissionLimit }} submissions per user
+                    {{ contest?.submissionLimit }} {{ 'submissions.submissions_per_user' | translate }}
                 </span>
             </div>
 
             <div *ngIf="contestDurationInDays">
                 <span>
                     <i class="pi pi-calendar"></i>
-                    Ends in {{ contestDurationInDays }} days
+                    {{ 'submissions.ends' | translate }} {{ contestDurationInDays }} {{ 'submissions.days' | translate }}
                 </span>
             </div>
         </div>
@@ -80,24 +80,38 @@
             </p-carousel>
         </div>
     </div>
-    <p-button (click)="showDialog(null)" severity="info" label="I want to participate"
+    <p-button (click)="showDialog(null)" severity="info" label="{{ 'submissions.button_participate' | translate }}"
         class="button-participate"></p-button>
 
-    <p-dialog header="Participate in the contest" [(visible)]="display" [modal]="true"
+    <p-dialog header="{{ 'submission_form.title_form' | translate }}" [(visible)]="display" [modal]="true"
         [style]="{'max-width': '1000px' }" class="responsive-dialog">
         <form [formGroup]="submissionForm">
             <div class="container-popup">
                 <div class="container-column w-full">
                     <p-floatlabel variant="in">
                         <input type="text" pInputText formControlName="name" class="w-full" />
-                        <label for="name">Name</label>
+                        <label for="name">{{ 'submission_form.name' | translate }}</label>
                     </p-floatlabel>
+
+                    <p-message severity="error" variant="simple" size="small">
+                        @if (submissionForm.get('name')?.errors?.['required']) {
+                          {{ 'submission_form.error_name_required' | translate }}
+                         } @else if (submissionForm.get('name')?.errors?.['minlength']) {
+                          {{ 'submission_form.error_name_short' | translate }}
+                         } @else if (submissionForm.get('name')?.errors?.['maxlength']) {
+                          {{ 'submission_form.error_name_long' | translate }}
+                         }
+                      </p-message>
 
                     <p-floatlabel variant="in">
                         <textarea class="description-textarea w-full" id="description" pTextarea
                             formControlName="description" rows="4"></textarea>
-                        <label for="description">Description</label>
+                        <label for="description">{{ 'submission_form.description' | translate }}</label>
                     </p-floatlabel>
+
+                    <p-message styleClass="error-message" severity="error" variant="simple" size="small">
+                       {{ 'submission_form.error_description_long' | translate }}
+                      </p-message>
 
                     <div class="container-row">
                         <div>
@@ -112,8 +126,8 @@
                             <div class="mt-25">
                                 <div class="fileUploadContainer center">
                                     <p-fileUpload mode="basic" name="image" accept=".stl" [maxFileSize]="1000000"
-                                        chooseLabel="Upload STL" (onSelect)="onUploadStl($event)"
-                                        (onError)="onFileUploadError($event)"></p-fileUpload>
+                                        chooseLabel="{{ 'submission_form.upload_stl' | translate }}" (onSelect)="onUploadStl($event)"
+                                        (onError)="onFileUploadError($event)" [auto]="true"></p-fileUpload>
                                 </div>
                             </div>
                         </div>
@@ -127,16 +141,16 @@
                             <div class="mt-25">
                                 <div class="fileUploadContainer center">
                                     <p-fileUpload mode="basic" name="image" accept="image/*" [maxFileSize]="1000000"
-                                        chooseLabel="Upload image" (onSelect)="onSelectImage($event)"
-                                        (onError)="onFileUploadError($event)"></p-fileUpload>
+                                        chooseLabel="{{ 'submission_form.upload_image' | translate }}" (onSelect)="onSelectImage($event)"
+                                        (onError)="onFileUploadError($event)" [auto]="true"></p-fileUpload>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="button-container">
-                        <p-button label="Cancel" type="button" icon="pi pi-times" severity="secondary"></p-button>
-                        <p-button size="large" label="Save" (onClick)="onSubmit()" [disabled]="!submissionForm.valid"
+                        <p-button label="{{ 'global.cancel_button' | translate }}" type="button" icon="pi pi-times" severity="secondary"></p-button>
+                        <p-button label="{{ 'global.save_button' | translate }}" (onClick)="onSubmit()" [disabled]="!submissionForm.valid"
                             icon="pi pi-save" severity="success"></p-button>
                     </div>
                 </div>
@@ -159,7 +173,7 @@
         This action cannot be undone.
     </span>
     <ng-template #footer>
-        <p-button label="Cancel" [text]="true" severity="secondary" (click)="deleteDialogVisible = false" />
-        <p-button label="Delete" severity="danger" (click)="confirmDelete()" />
+        <p-button label="{{ 'global.cancel_button' | translate}}" [text]="true" severity="secondary" (click)="deleteDialogVisible = false" />
+        <p-button label="{{ 'global.delete_button' | translate }}" severity="danger" (click)="confirmDelete()" />
     </ng-template>
 </p-dialog>
