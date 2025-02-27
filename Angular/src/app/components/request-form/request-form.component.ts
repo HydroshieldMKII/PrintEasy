@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormControl, Validators, AbstractControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ImportsModule } from '../../../imports';
@@ -24,7 +24,7 @@ import { TranslatePipe } from '@ngx-translate/core';
   templateUrl: './request-form.component.html',
   styleUrl: './request-form.component.css'
 })
-export class RequestFormComponent implements OnInit {
+export class RequestFormComponent implements OnInit, OnChanges {
   isEditMode = false;
   isNewMode = false;
   isViewMode = false;
@@ -388,5 +388,9 @@ export class RequestFormComponent implements OnInit {
 
   hideOfferModal(): void {
     this.offerModalVisible = false;
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log('Changes in request form:', changes);
   }
 }

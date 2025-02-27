@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, output } from '@angular/core';
 import { ImportsModule } from '../../../imports';
 import { FormGroup, FormBuilder, Validators, AbstractControl } from '@angular/forms';
 import { forkJoin } from 'rxjs';
@@ -147,6 +147,11 @@ export class OfferModalComponent implements OnChanges {
 
   closeModal(): void {
     this.offerModalVisible = false;
+    this.offerIdToEdit = null;
+    this.requestIdToEdit = null;
+    this.presetToEdit = null;
+
+    this.offerForm.reset();
     this.offerModalVisibleChange.emit(false);
   }
 
@@ -220,8 +225,14 @@ export class OfferModalComponent implements OnChanges {
       if (this.offerIdToEdit) {
         this.offerService.getOfferById(this.offerIdToEdit).subscribe((offer: any) => {
           console.log('Offer to edit:', offer);
+          console.log('Printers:', this.printers);
 
-          const matchingPrinter = this.printers.find(p => p.id === offer.printerUser.id);
+          let matchingPrinter = this.printers.find(p => p.id === offer.printerUser.printer.id);
+
+          if (!matchingPrinter) {
+            matchingPrinter = this.printers.find(p => p.id === offer.printerUser.id);
+          }
+
           const matchingColor = this.colors.find(c => c.id === offer.color.id);
           const matchingFilament = this.filaments.find(f => f.id === offer.filament.id);
 
@@ -256,5 +267,11 @@ export class OfferModalComponent implements OnChanges {
         });
       }
     });
+
+    console.log('OfferModalComponent: ngOnChanges');
+    console.log('OfferModalComponent: offerModalVisible:', this.offerModalVisible);
+    console.log('OfferModalComponent: requestIdToEdit:', this.requestIdToEdit);
+    console.log('OfferModalComponent: offerIdToEdit:', this.offerIdToEdit);
+    console.log('OfferModalComponent: presetToEdit:', this.presetToEdit);
   }
 }
