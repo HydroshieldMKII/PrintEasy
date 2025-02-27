@@ -6,10 +6,11 @@ import { RequestService } from '../../services/request.service';
 import { ImportsModule } from '../../../imports';
 import { MessageService } from 'primeng/api';
 import { Clipboard } from '@angular/cdk/clipboard';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-request',
-  imports: [ImportsModule, RouterLink],
+  imports: [ImportsModule, RouterLink, TranslatePipe],
   templateUrl: './request.component.html',
   styleUrls: ['./request.component.css']
 })

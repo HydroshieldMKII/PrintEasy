@@ -10,11 +10,12 @@ import { ColorModel } from '../../models/color.model';
 import { FilamentModel } from '../../models/filament.model';
 import { PrinterUserModel } from '../../models/printer-user.model';
 import { MessageService } from 'primeng/api';
+import { TranslatePipe } from '@ngx-translate/core';
 
 
 @Component({
   selector: 'app-offer-modal',
-  imports: [ImportsModule, DropdownModule],
+  imports: [ImportsModule, DropdownModule, TranslatePipe],
   templateUrl: './offer-modal.component.html',
   styleUrl: './offer-modal.component.css'
 })

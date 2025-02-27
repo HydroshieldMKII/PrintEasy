@@ -6,10 +6,11 @@ import { MessageService } from 'primeng/api';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { OfferModalComponent } from '../offer-modal/offer-modal.component';
 import { ImportsModule } from '../../../imports';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-offer',
-  imports: [ImportsModule, OfferModalComponent, RouterLink],
+  imports: [ImportsModule, OfferModalComponent, RouterLink, TranslatePipe],
   templateUrl: './offer.component.html',
   styleUrls: ['./offer.component.css']
 })

@@ -16,10 +16,11 @@ import { MessageService } from 'primeng/api';
 import { AuthService } from '../../services/authentication.service';
 import { RequestPresetModel } from '../../models/request-preset.model';
 import { OfferModalComponent } from '../offer-modal/offer-modal.component';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-request-form',
-  imports: [ImportsModule, DropdownModule, StlModelViewerModule, OfferModalComponent],
+  imports: [ImportsModule, DropdownModule, StlModelViewerModule, OfferModalComponent, TranslatePipe],
   templateUrl: './request-form.component.html',
   styleUrl: './request-form.component.css'
 })

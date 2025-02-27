@@ -1,8 +1,8 @@
 <div class="card p-4">
   <div class="flex justify-between items-center">
-    <h1 class="text-4xl font-bold">Requests</h1>
+    <h1 class="text-4xl font-bold">{{ 'request.title' | translate }}</h1>
     <p-button
-      label="Create a request"
+      label="{{ 'request.create_button' | translate }}"
       icon="pi pi-plus"
       routerLink="/requests/new"
     />
@@ -12,8 +12,8 @@
 
   <p-tabs [(value)]="activeTab">
     <p-tablist>
-      <p-tab value="all" (click)="onTabChange('all')">All Requests</p-tab>
-      <p-tab value="mine" (click)="onTabChange('mine')">My Requests</p-tab>
+      <p-tab value="all" (click)="onTabChange('all')">{{ 'request.tab_all' | translate }}</p-tab>
+      <p-tab value="mine" (click)="onTabChange('mine')">{{ 'request.tab_mine' | translate }}</p-tab>
     </p-tablist>
 
     <p-tabpanels>
@@ -21,13 +21,13 @@
         <div class="flex justify-between items-center my-3 ssf-container">
           <div class="flex gap-2 toggle-all">
             <p-button
-              label="Expand All"
+              label="{{ 'request.expand_all' | translate }}"
               icon="pi pi-plus"
               text
               (onClick)="expandAll()"
             />
             <p-button
-              label="Collapse All"
+              label="{{ 'request.collapse_all' | translate }}"
               icon="pi pi-minus"
               text
               (onClick)="collapseAll()"
@@ -44,7 +44,7 @@
                 variant="filled"
                 (onChange)="onFilterChange($event)"
               />
-              <label for="in_label">Filter by</label>
+              <label for="in_label">{{ 'request.filter_by' | translate }}</label>
             </p-floatlabel>
             <p-floatlabel variant="in">
               <p-select
@@ -56,7 +56,7 @@
                 variant="filled"
                 (onChange)="onSortChange($event)"
               />
-              <label for="in_label">Sort by</label>
+              <label for="in_label">{{ 'request.sort_by' | translate }}</label>
             </p-floatlabel>
             <form (ngSubmit)="onSearch()">
               <span class="p-input-icon-right">
@@ -64,7 +64,7 @@
                 <input
                   pInputText
                   type="text"
-                  placeholder="Search"
+                  placeholder="{{ 'request.search_placeholder' | translate }}"
                   [(ngModel)]="searchQuery"
                   name="searchQuery"
                   class="search-field"
@@ -75,7 +75,7 @@
                 pButton
                 type="submit"
                 icon="pi pi-search"
-                label="Search"
+                label="{{ 'request.search_button' | translate }}"
                 class="search-btn"
               ></button>
             </form>
@@ -96,17 +96,11 @@
           <ng-template #header>
             <tr>
               <th style="width: 5rem"></th>
-              <th >Name </th>
-              <th >
-                Budget
-              </th>
-              <th >
-                Target Date
-              </th>
-              <th >
-                Country
-              </th>
-              <th style="width: 4rem">Actions</th>
+              <th>{{ 'request.name' | translate }}</th>
+              <th>{{ 'request.budget' | translate }}</th>
+              <th>{{ 'request.target_date' | translate }}</th>
+              <th>{{ 'request.country' | translate }}</th>
+              <th style="width: 4rem">{{ 'request.actions' | translate }}</th>
             </tr>
           </ng-template>
 
@@ -119,43 +113,41 @@
                   [text]="true"
                   [rounded]="true"
                   [plain]="true"
-                  [icon]="
-                    expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'
-                  "
+                  [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
                 />
               </td>
               <td>{{ request.name }}</td>
-              <td>{{ request.budget == 0 ? "Free":request.budget | currency }}</td>
+              <td>{{ request.budget == 0 ? "Free" : request.budget | currency }}</td>
               <td>{{ request.targetDate | date }}</td>
               <td>{{ request.user.country }}</td>
               <td>
                 <div class="flex gap-2">
                   <p-button
                     icon="pi pi-arrow-right"
-                    title="See Details"
+                    title="{{ 'request.see_details' | translate }}"
                     routerLink="/requests/view/{{ request.id }}"
                     *ngIf="tab === 'all'"
                   ></p-button>
                   <p-button
                     *ngIf="tab === 'mine'"
                     icon="pi pi-pencil"
-                    title="Edit"
+                    title="{{ 'request.edit' | translate }}"
                     routerLink="/requests/edit/{{ request.id }}"
                     [disabled]="request.hasOfferAccepted"
                   ></p-button>
                   <p-button
                     *ngIf="tab === 'mine'"
                     icon="pi pi-trash"
-                    title="Delete"
+                    title="{{ 'request.delete' | translate }}"
                     (onClick)="showDeleteDialog(request)"
                     [disabled]="request.hasOfferAccepted"
                   ></p-button>
                   <a [href]="request.stlFileUrl" class="p-button" download style="text-decoration: none;"><i class="pi pi-download"></i></a>
                   <p-button
-                  icon="pi pi-share-alt"
-                  title="Share"
-                  (click)="copyToClipboard('requests/view/' + request.id)"
-                ></p-button>
+                    icon="pi pi-share-alt"
+                    title="{{ 'request.share' | translate }}"
+                    (click)="copyToClipboard('requests/view/' + request.id)"
+                  ></p-button>
                 </div>
               </td>
             </tr>
@@ -165,7 +157,7 @@
             <tr>
               <td colspan="7" style="background-color: #f5f5f5">
                 <div>
-                  <h3>Preset Details</h3>
+                  <h3>{{ 'request.preset_details' | translate }}</h3>
                   <p-table
                     *ngIf="request.presets.length > 0"
                     [value]="request.presets"
@@ -173,18 +165,10 @@
                   >
                     <ng-template #header>
                       <tr>
-                        <th>
-                          Printer Model
-                        </th>
-                        <th>
-                          Filament Type 
-                        </th>
-                        <th>
-                          Color
-                        </th>
-                        <th>
-                          Print Quality 
-                        </th>
+                        <th>{{ 'request.printer_model' | translate }}</th>
+                        <th>{{ 'request.filament_type' | translate }}</th>
+                        <th>{{ 'request.color' | translate }}</th>
+                        <th>{{ 'request.print_quality' | translate }}</th>
                       </tr>
                     </ng-template>
                     <ng-template #body let-preset>
@@ -202,7 +186,7 @@
                   >
                     <i class="pi pi-inbox text-4xl text-gray-400"></i>
                     <p class="text-lg font-semibold text-gray-500">
-                      No presets recommended. Any preset is welcomed!
+                      {{ 'request.no_presets' | translate }}
                     </p>
                   </div>
                 </div>
@@ -218,8 +202,7 @@
         >
           <i class="pi pi-inbox text-6xl text-gray-400"></i>
           <p class="text-xl font-semibold text-gray-500 mt-2" *ngIf="!isOwningPrinter">
-            You dont have a printer! Add one to see people's requests and
-            contribute to the community.
+            {{ 'request.no_printer' | translate }}
           </p>
         </div>
 
@@ -232,7 +215,7 @@
         >
           <i class="pi pi-inbox text-6xl text-gray-400"></i>
           <p class="text-xl font-semibold text-gray-500 mt-2">
-            Nothing to show here.
+            {{ 'request.nothing_to_show' | translate }}
           </p>
         </div>
       </p-tabpanel>
@@ -254,20 +237,23 @@
   <ng-template #header>
     <div class="inline-flex items-center justify-center gap-2">
       <i class="pi pi-exclamation-triangle text-red-500 text-2xl"></i>
-      <span class="font-bold">Confirm Delete</span>
+      <span class="font-bold">{{ 'request.confirm_delete' | translate }}</span>
     </div>
   </ng-template>
   <span class="text-surface-500 dark:text-surface-400 block mb-4">
-    Are you sure you want to delete the request "{{ requestToDelete?.name }}"?
-    This action cannot be undone.
+    {{ 'request.confirm_delete_message' | translate }}
   </span>
   <ng-template #footer>
     <p-button
-      label="Cancel"
+      label="{{ 'global.cancel_button' | translate }}"
       [text]="true"
       severity="secondary"
       (click)="deleteDialogVisible = false"
     />
-    <p-button label="Delete" severity="danger" (click)="confirmDelete()" />
+    <p-button 
+      label="{{ 'global.delete_button' | translate }}" 
+      severity="danger" 
+      (click)="confirmDelete()" 
+    />
   </ng-template>
 </p-dialog>
