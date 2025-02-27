@@ -66,7 +66,7 @@
                                 <p-button icon="pi pi-heart" severity="secondary" />
 
                                 <!-- Bouton Download -->
-                                <p-button icon="pi pi-download" severity="primary" />
+                                <a [href]="product.stlUrl" download ><p-button icon="pi pi-download" severity="primary" /></a>
 
                                 @if (authService.currentUser?.id === submission.user.id) {
                                 <p-button (click)="showDialog(product)" type="button" icon="pi pi-pencil"
