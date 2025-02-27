@@ -8,6 +8,8 @@ import { TabViewModule } from 'primeng/tabview';
 import { AuthService } from '../../services/authentication.service';
 import { SubmissionService } from '../../services/submission.service';
 import { UserContestSubmissionsModel } from '../../models/user-contest-submissions.model';
+import { ReviewModel } from '../../models/review.model';
+import { ReviewService } from '../../services/review.service';
 
 @Component({
   selector: 'app-user-profile',
@@ -18,12 +20,19 @@ import { UserContestSubmissionsModel } from '../../models/user-contest-submissio
 export class UserProfileComponent {
   readonly authService = inject(AuthService);
   readonly submissionService = inject(SubmissionService);
+  readonly reviewService = inject(ReviewService)
 
   userContestSubmissions: UserContestSubmissionsModel[] = [];
+  userReviews: ReviewModel[] = [];
 
   constructor(private renderer: Renderer2) {
     this.submissionService.getUserContestSubmissions().subscribe(submissions => {
       this.userContestSubmissions = submissions;
+    });
+
+    this.reviewService.getUserReviews().subscribe(response => {
+      this.userReviews = response.data.reviews
+      console.log(this.userReviews)
     });
   }
 

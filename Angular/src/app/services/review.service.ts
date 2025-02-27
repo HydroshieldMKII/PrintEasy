@@ -48,4 +48,13 @@ export class ReviewService {
             })
         );
     }
+
+    getUserReviews(): Observable<ApiResponseModel> {
+        return this.api.getRequest("/api/user_review").pipe(
+            map((response: ApiResponseModel) => {
+                response.data.reviews = response.data.reviews.map((review: ReviewModel) => ReviewModel.fromAPI(review));
+                return response;
+            })
+        );
+    }
 }
