@@ -6,7 +6,8 @@ module Users
     def create
       self.resource = warden.authenticate!(auth_options)
       sign_in(resource_name, resource)
-      render json: { user: current_user.as_json.merge(profile_picture_url: current_user.profile_picture_url, country_name: current_user.country.name), errors: {} },
+      render json: { user: current_user.as_json.merge(profile_picture_url: current_user.profile_picture_url,
+                                                      country_name: current_user.country.name), errors: {} },
              status: 200
     end
 

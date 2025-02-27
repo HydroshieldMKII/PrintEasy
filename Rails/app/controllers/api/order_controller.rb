@@ -4,9 +4,11 @@ module Api
   class OrderController < AuthenticatedController
     def index
       if params[:type] == 'printer'
-        @orders = Order.joins(offer: { printer_user: :user }).where(users: { id: current_user&.id }).order('offers.target_date DESC')
+        @orders = Order.joins(offer: { printer_user: :user })
+                       .where(users: { id: current_user&.id }).order('offers.target_date DESC')
       else
-        @orders = Order.joins(offer: { request: :user }).where(users: { id: current_user&.id }).order('offers.target_date DESC')
+        @orders = Order.joins(offer: { request: :user })
+                       .where(users: { id: current_user&.id }).order('offers.target_date DESC')
       end
 
       render json: {

@@ -151,7 +151,8 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     assert_difference 'Offer.count' do
       post api_offer_index_url,
            params: { offer: { name: 'Test Offer', price: 1.5, target_date: '2026-01-01', comment: 'test comment',
-                              request_id: offers(:ten).request_id, printer_user_id: @offer2.printer_user_id, color_id: @offer2.color_id, filament_id: @offer2.filament_id, print_quality: 0.22 } }
+                              request_id: offers(:ten).request_id, printer_user_id: @offer2.printer_user_id,
+                              color_id: @offer2.color_id, filament_id: @offer2.filament_id, print_quality: 0.22 } }
     end
 
     # Http code
@@ -221,7 +222,8 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     assert_no_difference 'Offer.count' do
       post api_offer_index_url,
            params: { offer: { name: 'Test Offer', price: 1.5, target_date: '2026-01-01', comment: 'test comment',
-                              request_id: @offer2.request_id, printer_user_id: @offer2.printer_user_id, color_id: @offer2.color_id, filament_id: @offer2.filament_id, print_quality: 0.22 } }
+                              request_id: @offer2.request_id, printer_user_id: @offer2.printer_user_id,
+                              color_id: @offer2.color_id, filament_id: @offer2.filament_id, print_quality: 0.22 } }
     end
 
     # Http code
@@ -244,7 +246,8 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     assert_no_difference 'Offer.count' do
       post api_offer_index_url,
            params: { offer: { name: 'Test Offer', price: 1.5, target_date: '2026-01-01', comment: 'test comment',
-                              request_id: @offer.request_id, printer_user_id: @offer.printer_user_id, color_id: @offer.color_id, filament_id: @offer.filament_id, print_quality: 0.22 } }
+                              request_id: @offer.request_id, printer_user_id: @offer.printer_user_id,
+                              color_id: @offer.color_id, filament_id: @offer.filament_id, print_quality: 0.22 } }
     end
 
     # Http code
@@ -315,7 +318,8 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     assert_no_difference 'Offer.count' do
       patch api_offer_url(@offer2),
             params: { offer: { price: 1.5, target_date: '2026-01-01', print_quality: 0.22,
-                               printer_user_id: @offer2.printer_user_id, color_id: @offer2.color_id, filament_id: @offer2.filament_id } }
+                               printer_user_id: @offer2.printer_user_id, color_id: @offer2.color_id,
+                               filament_id: @offer2.filament_id } }
     end
 
     # Http code
@@ -340,8 +344,8 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     # Database changes
     assert_no_difference 'Offer.count' do
       patch api_offer_url(@offer2),
-            params: { offer: { price: -100.5, target_date: '1970-01-01', print_quality: 1000.22, printer_user_id: -1, color_id: -1,
-                               filament_id: -1 } }
+            params: { offer: { price: -100.5, target_date: '1970-01-01', print_quality: 1000.22,
+                               printer_user_id: -1, color_id: -1, filament_id: -1 } }
     end
 
     # Http code
@@ -369,7 +373,8 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     assert_no_difference 'Offer.count' do
       patch api_offer_url(@offer2),
             params: { offer: { price: 1.5, target_date: '2026-01-01', print_quality: 0.22,
-                               printer_user_id: @offer2.printer_user_id, color_id: @offer2.color_id, filament_id: @offer2.filament_id } }
+                               printer_user_id: @offer2.printer_user_id, color_id: @offer2.color_id,
+                               filament_id: @offer2.filament_id } }
     end
 
     # Http code

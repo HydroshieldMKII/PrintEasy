@@ -25,7 +25,8 @@ module Api
       @contest = Contest.find(params[:id])
 
       contest_data = @contest.as_json(methods: %i[image_url finished?])
-      top_submission = @contest.submissions.left_joins(:likes).group(:id).order('COUNT(likes.id) DESC, submissions.created_at ASC').first
+      top_submission = @contest.submissions.left_joins(:likes).group(:id)
+                               .order('COUNT(likes.id) DESC, submissions.created_at ASC').first
       contest_data[:winner_user] = top_submission&.user&.as_json
 
       render json: { contest: contest_data, errors: {} }, status: :ok
