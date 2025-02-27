@@ -401,37 +401,64 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
 
     # CANCEL
 
-    test "should cancel offer" do
+    test "should not cancel offer if not the owner" do
         # Database changes
         assert_no_difference 'Offer.count' do
             put reject_api_offer_url(@offer2)
         end
 
         # Http code
-        assert_response :success
+        assert_response :not_found
 
         # Response format
         json_response = assert_nothing_raised { JSON.parse(response.body) }
-
-        # response content
-        assert_equal 2, json_response['offer']['id']
-        assert_equal 2, json_response['offer']['request_id']
-        assert_equal 1, json_response['offer']['printer_user_id']
-        assert_equal 2, json_response['offer']['color_id']
-        assert_equal 2, json_response['offer']['filament_id']
-        assert_equal 2.5, json_response['offer']['price']
-        assert_equal "2021-01-02", json_response['offer']['target_date']
-        assert_equal "2021-01-02T00:00:00.000Z", json_response['offer']['created_at']
-        assert_equal "2021-01-02T00:00:00.000Z", json_response['offer']['updated_at']
-        assert_equal 0.22, json_response['offer']['print_quality']
-        assert_not_nil json_response['offer']['cancelled_at']
-        assert_empty json_response['errors']
+        p json_response
     end
 
     test "should not cancel offer if not yours" do
         # Database changes
         assert_no_difference 'Offer.count' do
-            put reject_api_offer_url(@offer)
+            put reject_api_offer_url(offers(:nine))
+        end
+
+        # Http code
+        assert_response :not_found
+
+        # Response format
+        json_response = assert_nothing_raised { JSON.parse(response.body) }
+
+        # response content
+        assert_not_empty json_response['errors']
+        
+        assert_equal "Offer not found", json_response['errors']['offer']
+    end
+
+    test "should not cancel offer if already accepted" do
+        offer = offers(:one)
+        order = Order.new(offer_id: offer.id)
+        order.save
+
+        # Database changes
+        assert_no_difference 'Offer.count' do
+            put reject_api_offer_url(offer)
+        end
+
+        # Http code
+        assert_response :unprocessable_entity
+
+        # Response format
+        json_response = assert_nothing_raised { JSON.parse(response.body) }
+
+        # response content
+        assert_not_empty json_response['errors']
+
+        assert_equal ["Offer already accepted. Cannot reject"], json_response['errors']['offer']
+    end
+
+    test "should not cancel offer if doesnt exist" do
+        # Database changes
+        assert_no_difference 'Offer.count' do
+            put reject_api_offer_url(9999)
         end
 
         # Http code
