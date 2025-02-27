@@ -188,9 +188,17 @@ export class RequestService {
         return this.api.deleteRequest(`api/request/${id}`).pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
-                    this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Request deleted successfully' });
+                    this.messageService.add({
+                        severity: 'success',
+                        summary: this.translate.instant('global.success'),
+                        detail: this.translate.instant('request.delete_success')
+                    });
                 } else {
-                    this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Request deletion failed' });
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: this.translate.instant('global.error'),
+                        detail: this.translate.instant('request.delete_error')
+                    });
                 }
                 return response;
             })
@@ -201,13 +209,19 @@ export class RequestService {
         return this.api.putRequest(`api/request/${id}`, {}, request).pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
-                    this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Request updated successfully' });
+                    this.messageService.add({
+                        severity: 'success',
+                        summary: this.translate.instant('global.success'),
+                        detail: this.translate.instant('requestForm.update_success')
+                    });
                 } else {
-                    if (response.status === 422) {
-                        for (const [key, value] of Object.entries(response.errors)) {
-                            this.messageService.add({ severity: 'error', summary: 'Error', detail: `${key}: ${value}` });
-                        }
-                    }
+                    console.log("Request update failed: ", response);
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: this.translate.instant('global.error'),
+                        detail: this.translate.instant('requestForm.update_error')
+                    });
+
                 }
                 return response;
             })

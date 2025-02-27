@@ -206,13 +206,19 @@ export class OfferService {
         return this.api.postRequest('api/offer', {}, offer).pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 201) {
-                    this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Offer created successfully' });
+                    this.messageService.add({
+                        severity: 'success',
+                        summary: this.translate.instant('global.success'),
+                        detail: this.translate.instant('offer.created')
+                    });
                 } else {
-                    if (response.status === 422) {
-                        for (const [key, value] of Object.entries(response.errors)) {
-                            this.messageService.add({ severity: 'error', summary: 'Error', detail: `${key}: ${value}` });
-                        }
-                    }
+                    console.log("Error: ", response);
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: this.translate.instant('global.error'),
+                        detail: this.translate.instant('offer.error_create')
+                    });
+
                 }
                 return response;
             })
@@ -223,9 +229,17 @@ export class OfferService {
         return this.api.deleteRequest(`api/offer/${id}`).pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
-                    this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Offer deleted successfully' });
+                    this.messageService.add({
+                        severity: 'success',
+                        summary: this.translate.instant('global.success'),
+                        detail: this.translate.instant('offer.deleted')
+                    });
                 } else {
-                    this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Offer deletion failed' });
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: this.translate.instant('global.error'),
+                        detail: this.translate.instant('offer.error_delete')
+                    });
                 }
                 return response;
             })
@@ -236,12 +250,25 @@ export class OfferService {
         return this.api.putRequest(`api/offer/${id}`, {}, offer).pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
-                    this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Offer updated successfully' });
+                    this.messageService.add({
+                        severity: 'success',
+                        summary: this.translate.instant('global.success'),
+                        detail: this.translate.instant('offer.updated')
+                    });
                 } else {
-                    if (response.status === 422) {
-                        for (const [key, value] of Object.entries(response.errors)) {
-                            this.messageService.add({ severity: 'error', summary: 'Error', detail: `${key}: ${value}` });
-                        }
+                    console.log("Error: ", response);
+                    if (response.status === 422 && response.errors['request'] == 'This offer already exists') {
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: this.translate.instant('global.error'),
+                            detail: this.translate.instant('offer.error_already_exists')
+                        });
+                    } else {
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: this.translate.instant('global.error'),
+                            detail: this.translate.instant('offer.error_update')
+                        });
                     }
                 }
                 return response;
@@ -253,10 +280,18 @@ export class OfferService {
         return this.api.putRequest(`api/offer/${id}/reject`, {}).pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
-                    this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Offer canceled successfully' });
+                    this.messageService.add({
+                        severity: 'success',
+                        summary: this.translate.instant('global.success'),
+                        detail: this.translate.instant('offer.refuse_success')
+                    });
                 } else {
                     console.log("Error: ", response);
-                    this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Offer cancelation failed' });
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: this.translate.instant('global.error'),
+                        detail: this.translate.instant('offer.refuse_error')
+                    });
                 }
                 return response;
             })

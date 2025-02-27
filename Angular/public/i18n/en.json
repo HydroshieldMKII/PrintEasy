@@ -84,7 +84,9 @@
         "no_printer": "You don't have a printer! Add one to see people's requests and contribute to the community.",
         "nothing_to_show": "Nothing to show here.",
         "confirm_delete": "Confirm Delete",
-        "confirm_delete_message": "Are you sure you want to delete the request? This action cannot be undone."
+        "confirm_delete_message": "Are you sure you want to delete the request? This action cannot be undone.",
+        "delete_success": "Request deleted successfully",
+        "delete_error": "Request deletion failed"
     },
     "requestForm": {
         "edit_request": "Edit Request",
@@ -122,7 +124,15 @@
         "delete": "Delete",
         "save": "Save",
         "confirm_delete": "Confirm Delete",
-        "confirm_delete_message": "Are you sure you want to delete the request? This action cannot be undone."
+        "confirm_delete_message": "Are you sure you want to delete the request? This action cannot be undone.",
+        "update_success": "Request updated successfully",
+        "update_error": "Request update failed",
+        "created": "Success!",
+        "created_message": "Request created successfully!",
+        "error": "Error!",
+        "error_message": "An unexpected error occurred. Please try again later.",
+        "invalid_preset": "Invalid preset",
+        "invalid_preset_message": "Please select all options for the preset and ensure they are unique"
     },
     "offer": {
         "title": "Offers",
@@ -151,7 +161,17 @@
         "confirm_accept_message": "Are you sure you want to accept the offer? You can only accept one offer per request.",
         "yes": "Yes",
         "no": "No",
-        "error_already_exists": "You already submitted an offer with the same preset"
+        "error_already_exists": "You already submitted an offer with the same preset",
+        "created": "Offer created successfully",
+        "deleted": "Offer deleted successfully",
+        "updated": "Offer updated successfully",
+        "error_create": "Offer creation failed",
+        "error_delete": "Offer deletion failed",
+        "error_update": "Offer update failed",
+        "refuse_success": "Offer refused successfully",
+        "refuse_error": "Offer refusal failed",
+        "accept_success": "Offer accepted successfully",
+        "accept_error": "Offer acceptance failed"
     },
     "offerForm": {
         "preset": "Preset",
