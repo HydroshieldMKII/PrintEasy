@@ -1,6 +1,6 @@
 <div class="card p-6">
   <h1>
-    {{ isEditMode ? "Edit Request" : "Request Details" }}
+    {{ isEditMode ? ('requestForm.edit_request' | translate) : ('requestForm.request_details' | translate) }}
   </h1>
 
   <!-- Use *ngIf to avoid rendering before form is defined -->
@@ -18,7 +18,7 @@
               minlength="3"
               maxlength="30"
             />
-            <label for="name">Name</label>
+            <label for="name">{{ 'requestForm.name' | translate }}</label>
           </p-floatlabel>
 
           <p-message
@@ -27,7 +27,7 @@
             variant="simple"
             size="small"
           >
-            Name is required
+            {{ 'requestForm.name_required' | translate }}
           </p-message>
 
           <p-message
@@ -36,7 +36,7 @@
             variant="simple"
             size="small"
           >
-            Name must be at least 3 characters long
+            {{ 'requestForm.name_min_length' | translate }}
           </p-message>
         </div>
 
@@ -51,7 +51,7 @@
               prefix="$"
               class="w-full"
             ></p-inputnumber>
-            <label for="budget" class="block font-semibold">Budget</label>
+            <label for="budget" class="block font-semibold">{{ 'requestForm.budget' | translate }}</label>
           </p-floatlabel>
           
 
@@ -61,7 +61,7 @@
             variant="simple"
             size="small"
           >
-            Budget is required
+            {{ 'requestForm.budget_required' | translate }}
           </p-message>
           <p-message
             *ngIf="!form.get('budget')?.errors?.['required'] && form.get('budget')?.errors?.['min'] && (form.get('budget')?.dirty || form.get('budget')?.touched)"
@@ -69,7 +69,7 @@
             variant="simple"
             size="small"
           >
-            Budget must be at least 0
+            {{ 'requestForm.budget_min' | translate }}
           </p-message>
           <p-message
             *ngIf="!form.get('budget')?.errors?.['required'] && form.get('budget')?.errors?.['max'] && (form.get('budget')?.dirty || form.get('budget')?.touched)"
@@ -77,7 +77,7 @@
             variant="simple"
             size="small"
           >
-            Budget must be at most 10000
+            {{ 'requestForm.budget_max' | translate }}
           </p-message>
         </div>
 
@@ -90,7 +90,7 @@
             cols="30"
             maxlength="200"
           ></textarea>
-          <label for="comment">Special comment about the request</label>
+          <label for="comment">{{ 'requestForm.comment' | translate }}</label>
         </p-floatlabel>
 
         <div class="form-field">
@@ -105,16 +105,16 @@
                 styleClass="date-picker-full-on-mobile"
                 dateFormat="yy-mm-dd"
               ></p-datepicker>
-              <label for="targetDate" class="block font-semibold">Target Date</label>
+              <label for="targetDate" class="block font-semibold">{{ 'requestForm.target_date' | translate }}</label>
             </div>
           </p-floatlabel>
-          <p-message
+            <p-message
             *ngIf="form.get('targetDate')?.errors?.['required'] && (form.get('targetDate')?.dirty || form.get('targetDate')?.touched)"
             severity="error"
             variant="simple"
             size="small"
           >
-            Target Date is required
+            {{ 'requestForm.target_date_required' | translate }}
           </p-message>
           <p-message
             *ngIf="!form.get('targetDate')?.errors?.['required'] && form.get('targetDate')?.errors?.['dateError'] && (form.get('targetDate')?.dirty || form.get('targetDate')?.touched)"
@@ -122,7 +122,7 @@
             variant="simple"
             size="small"
           >
-            Target Date should be later than today
+            {{ 'requestForm.target_date_future' | translate }}
           </p-message>
         </div>
       </div>
@@ -133,7 +133,7 @@
           <p-message
             *ngIf="!request.stlFileUrl && !uploadedFileBlob"
             severity="warn"
-            text="No STL file uploaded"
+            text="{{ 'requestForm.no_stl_file' | translate }}"
           ></p-message>
           <stl-model-viewer
             *ngIf="!uploadedFileBlob && (isEditMode || isViewMode) && request.stlFileUrl"
@@ -146,23 +146,27 @@
         </div>
 
         <div class="stl-actions flex gap-2 mt-4">
-          <p-button
-            *ngIf="isViewMode || isEditMode"
-            label="Download file"
-            icon="pi pi-download"
-            class="p-button-outlined flex-1"
-            (onClick)="downloadFile(request.stlFileUrl)"
-          ></p-button>
+            <a
+              pButton
+              *ngIf="isViewMode && request.stlFileUrl"
+              [href]="request.stlFileUrl"
+              download
+              label="{{ 'requestForm.download_file' | translate }}"
+              icon="pi pi-download"
+              class="p-button"
+              style="text-decoration: none;"
+            ></a>
           <p-fileUpload
             *ngIf="(isEditMode && !request.hasOffers) || isNewMode"
+            [auto]="true"
             mode="basic"
             maxFileSize="10000000"
-            invalidFileSizeMessageDetail="File size is too large. Max 10MB"
-            invalidFileTypeMessageDetail="File type is not supported. Please upload a .stl file"
+            invalidFileSizeMessageDetail="{{ 'requestForm.file_size_error' | translate }}"
+            invalidFileTypeMessageDetail="{{ 'requestForm.file_type_error' | translate }}"
             customUpload="false"
             (onSelect)="onFileUpload($event)"
             accept=".stl"
-            chooseLabel="Upload file"
+            chooseLabel="{{ 'requestForm.upload_file' | translate }}"
             class="flex-1"
           ></p-fileUpload>
         </div>
@@ -172,18 +176,18 @@
     <!-- Presets Section -->
     <div class="flex justify-between items-center mt-6">
       <h3 class="text-lg font-semibold self-center mr-2">
-        {{ request.presets.length }} Preset(s) recommended
+        {{ request.presets.length }} {{ 'requestForm.presets_count' | translate }}
       </h3>
       <p-button
         id="add-preset"
         *ngIf="(isEditMode || isNewMode) && !request.hasOffers"
-        label="Add preset"
+        label="{{ 'requestForm.add_preset' | translate }}"
         [link]="true"
         icon="pi pi-plus"
         (click)="addPreset()"
       ></p-button>
       <p *ngIf="isEditMode && request.hasOffers" style="color: red;">
-        You can't edit the presets and file. Offers have been made.
+        {{ 'requestForm.cannot_edit_presets' | translate }}
       </p>
     </div>
 
@@ -199,11 +203,11 @@
   >
     <ng-template #header>
       <tr>
-        <th>Printer</th>
-        <th>Filament Type</th>
-        <th>Color</th>
-        <th>Print Quality (mm)</th>
-        <th style="width: 25%;">Action(s)</th>
+        <th>{{ 'requestForm.printer' | translate }}</th>
+        <th>{{ 'requestForm.filament_type' | translate }}</th>
+        <th>{{ 'requestForm.color' | translate }}</th>
+        <th>{{ 'requestForm.print_quality' | translate }}</th>
+        <th style="width: 25%;">{{ 'requestForm.actions' | translate }}</th>
       </tr>
     </ng-template>
     <ng-template #body let-preset let-ri="rowIndex">
@@ -214,7 +218,7 @@
             [options]="printers"
             optionLabel="label"
             optionValue="value"
-            placeholder="Select Printer"
+            placeholder="{{ 'requestForm.select_printer' | translate }}"
             [disabled]="isViewMode || request.hasOffers"
             appendTo="body"
           ></p-dropdown>
@@ -225,7 +229,7 @@
             [options]="filamentTypes"
             optionLabel="label"
             optionValue="value"
-            placeholder="Select Filament"
+            placeholder="{{ 'requestForm.select_filament' | translate }}"
             [disabled]="isViewMode || request.hasOffers"
             appendTo="body"
           ></p-dropdown>
@@ -236,7 +240,7 @@
             [options]="colors"
             optionLabel="label"
             optionValue="value"
-            placeholder="Select Color"
+            placeholder="{{ 'requestForm.select_color' | translate }}"
             [disabled]="isViewMode || request.hasOffers"
             appendTo="body"
           ></p-dropdown>
@@ -269,15 +273,14 @@
           ></button>
         </td>
         <td *ngIf="isViewMode">
-          <button
-            pButton
-            pRipple
+          <p-button
             type="button"
             icon="pi pi-arrow-right"
-            class="p-button-rounded p-button-info"
-            label="Offer this preset"
+            variant="outlined"
+            severity="info"
+            label="{{ 'requestForm.offer_preset' | translate }}"
             (click)="showOfferModal(preset)"
-          ></button>
+          ></p-button>
         </td>
       </tr>
     </ng-template>
@@ -286,40 +289,40 @@
   <div class="flex justify-end mt-6 gap-3 edit-actions" *ngIf="isViewMode">
     <p-button
       type="button"
-      label="Make an offer"
+      label="{{ 'requestForm.make_offer' | translate }}"
       icon="pi pi-money-bill"
       severity="info"
-      (click)="showOfferModal()"
+      (click)="showOfferModal(null)"
     ></p-button>
   </div>
 
-      <!-- Action Buttons -->
-      <div class="flex justify-end mt-6 gap-3 edit-actions" *ngIf="isEditMode || isNewMode">
-        <p-button
-          type="button"
-          label="Cancel"
-          icon="pi pi-times"
-          severity="secondary"
-          (click)="isEditMode ? cancelEdit() : cancelNew()"
-        ></p-button>
-        <p-button
-          *ngIf="isEditMode"
-          type="button"
-          label="Delete"
-          icon="pi pi-trash"
-          severity="danger"
-          (click)="showDeleteDialog(request)"
-          [disabled]="request.hasOfferAccepted"
-        ></p-button>
-        <p-button
-          (onClick)="submitRequest()"
-          label="Save"
-          icon="pi pi-save"
-          severity="success"
-          id="save-button"
-          [disabled]="form.invalid || (isNewMode && !uploadedFile) || request.hasOfferAccepted"
-        ></p-button>
-      </div>
+  <!-- Action Buttons -->
+  <div class="flex justify-end mt-6 gap-3 edit-actions" *ngIf="isEditMode || isNewMode">
+    <p-button
+      type="button"
+      label="{{ 'requestForm.cancel' | translate }}"
+      icon="pi pi-times"
+      severity="secondary"
+      (click)="isEditMode ? cancelEdit() : cancelNew()"
+    ></p-button>
+    <p-button
+      *ngIf="isEditMode"
+      type="button"
+      label="{{ 'requestForm.delete' | translate }}"
+      icon="pi pi-trash"
+      severity="danger"
+      (click)="showDeleteDialog(request)"
+      [disabled]="request.hasOfferAccepted"
+    ></p-button>
+    <p-button
+      (onClick)="submitRequest()"
+      label="{{ 'requestForm.save' | translate }}"
+      icon="pi pi-save"
+      severity="success"
+      id="save-button"
+      [disabled]="form.invalid || (isNewMode && !uploadedFile) || request.hasOfferAccepted"
+    ></p-button>
+  </div>
 
   <!-- Delete Confirmation Dialog -->
   <p-dialog
@@ -335,27 +338,26 @@
     <ng-template #header>
       <div class="inline-flex items-center justify-center gap-2">
         <i class="pi pi-exclamation-triangle text-red-500 text-2xl"></i>
-        <span class="font-bold">Confirm Delete</span>
+        <span class="font-bold">{{ 'requestForm.confirm_delete' | translate }}</span>
       </div>
     </ng-template>
     <span class="text-surface-500 dark:text-surface-400 block mb-4">
-      Are you sure you want to delete the request "{{ requestToDelete?.name }}"?
-      This action cannot be undone.
+      {{ 'requestForm.confirm_delete_message' | translate }}
     </span>
     <ng-template #footer>
       <p-button
-        label="Cancel"
+        label="{{ 'requestForm.cancel' | translate }}"
         [text]="true"
         severity="secondary"
         (click)="deleteDialogVisible = false"
       ></p-button>
-      <p-button label="Delete" severity="danger" (click)="confirmDelete()"></p-button>
+      <p-button 
+        label="{{ 'requestForm.delete' | translate }}" 
+        severity="danger" 
+        (click)="confirmDelete()" 
+      ></p-button>
     </ng-template>
   </p-dialog>
 </div>
 
 <app-offer-modal *ngIf="offerModalVisible" [(offerModalVisible)]="offerModalVisible" [requestIdToEdit]="id" [presetToEdit]="presetModalToEdit"></app-offer-modal>
-
-
-
-

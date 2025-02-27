@@ -6,10 +6,12 @@ import { MessageService } from 'primeng/api';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { OfferModalComponent } from '../offer-modal/offer-modal.component';
 import { ImportsModule } from '../../../imports';
+import { TranslatePipe } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-offer',
-  imports: [ImportsModule, OfferModalComponent, RouterLink],
+  imports: [ImportsModule, OfferModalComponent, RouterLink, TranslatePipe],
   templateUrl: './offer.component.html',
   styleUrls: ['./offer.component.css']
 })
@@ -40,7 +42,8 @@ export class OffersComponent {
     private router: Router,
     private messageService: MessageService,
     private clipboard: Clipboard,
-    private orderService: OrderService
+    private orderService: OrderService,
+    private translate: TranslateService
   ) {
     const queryParams = this.router.parseUrl(this.router.url).queryParams;
     this.activeTab = queryParams['tab'] || 'mine';
@@ -135,7 +138,7 @@ export class OffersComponent {
     console.log("Accepting id:", this.offerToAccept.id);
     this.orderService.createOrder(this.offerToAccept.id).subscribe((response) => {
       if (response.status === 201) {
-        this.messageService.add({ severity: 'success', summary: 'Order created!' });
+        this.messageService.add({ severity: 'success', summary: this.translate.instant('global.success'), detail: this.translate.instant('offer.accept_success') });
         this.offerToAccept = null;
         this.acceptDialogVisible = false;
 
@@ -146,6 +149,8 @@ export class OffersComponent {
         this.offerService.getOffers().subscribe((offers: any[]) => {
           this.offers = offers;
         });
+      } else {
+        this.messageService.add({ severity: 'error', summary: this.translate.instant('global.error'), detail: this.translate.instant('offer.accept_error') });
       }
     });
   }

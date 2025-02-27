@@ -11,20 +11,20 @@
 >
   <ng-template #header>
     <h2 class="font-semibold">
-      {{ offerIdToEdit ? 'Edit an offer' : 'Submit an offer' }}
+      {{ offerIdToEdit ? ('offerModal.edit_offer' | translate) : ('offerModal.submit_offer' | translate) }}
     </h2>
   </ng-template>
 
   <form [formGroup]="offerForm" (ngSubmit)="submitOffer()" class="space-y-4">
     <div class="grid grid-cols-2 gap-4">
       <div class="flex">
-        <h3 class="font-medium text-gray-700">Preset</h3>
+        <h3 class="font-medium text-gray-700">{{ 'offerForm.preset' | translate }}</h3>
         <div class="offer-form-field">
           <p-dropdown
           formControlName="preset"
           [options]="presets"
           optionLabel="label"
-          placeholder="Choose a quick preset"
+          [placeholder]="'offerForm.choose_preset' | translate"
           class="w-full"
         ></p-dropdown>
         </div>
@@ -34,7 +34,7 @@
           formControlName="color"
           [options]="colors"
           optionLabel="label"
-          placeholder="Select a color"
+          [placeholder]="'offerForm.select_color' | translate"
           class="w-full"
         ></p-dropdown>
         </div>
@@ -44,7 +44,7 @@
               formControlName="filament"
               [options]="filaments"
               optionLabel="label"
-              placeholder="Select a filament"
+              [placeholder]="'offerForm.select_filament' | translate"
               class="w-full"
             ></p-dropdown>
         </div>  
@@ -57,7 +57,7 @@
               buttonLayout="horizontal" 
               inputId="horizontal" 
               spinnerMode="horizontal"
-              placeholder="Quality"
+              [placeholder]="'offerForm.quality' | translate"
               [step]="0.04" 
               mode="decimal"
               [min]="0.01"
@@ -73,12 +73,12 @@
       </div>
 
       <div class="flex space-y-3">
-        <h3 class="font-medium text-gray-700">Print</h3>
+        <h3 class="font-medium text-gray-700">{{ 'offerForm.print' | translate }}</h3>
         <p-dropdown
           formControlName="printer"
           [options]="printers"
           optionLabel="label"
-          placeholder="Choose your printer"
+          [placeholder]="'offerForm.choose_printer' | translate"
           class="w-full"
           [ngStyle]="{ 'margin-bottom': '10px' }"
           appendTo="body"
@@ -98,7 +98,7 @@
                   dateFormat="yy-mm-dd"
                   appendTo="body"
                 ></p-datepicker>
-                <label for="targetDate" class="block font-semibold">Target Date</label>
+                <label for="targetDate" class="block font-semibold">{{ 'offerForm.target_date' | translate }}</label>
               </div>
             </p-floatlabel>
 
@@ -108,7 +108,7 @@
             variant="simple"
             size="small"
           >
-            Target Date is required
+            {{ 'offerForm.target_date_required' | translate }}
           </p-message>
           <p-message
             *ngIf="!offerForm.get('targetDate')?.errors?.['required'] && offerForm.get('targetDate')?.errors?.['dateError'] && (offerForm.get('targetDate')?.dirty || offerForm.get('targetDate')?.touched)"
@@ -116,7 +116,7 @@
             variant="simple"
             size="small"
           >
-            Target Date should be later than today
+            {{ 'offerForm.target_date_future' | translate }}
           </p-message>
           </div>
 
@@ -131,7 +131,7 @@
                   prefix="$"
                   [ngStyle]="{ width: '100%' }"
                 ></p-inputnumber>
-                <label for="price">Price</label>
+                <label for="price">{{ 'offerForm.price' | translate }}</label>
               </p-floatlabel>
 
               <p-message
@@ -140,7 +140,7 @@
               variant="simple"
               size="small"
             >
-              Price is required
+              {{ 'offerForm.price_required' | translate }}
             </p-message>
 
             <p-message
@@ -149,7 +149,7 @@
               variant="simple"
               size="small"
             >
-              Price should be greater than 0
+              {{ 'offerForm.price_min' | translate }}
             </p-message>
 
             <p-message
@@ -158,7 +158,7 @@
               variant="simple"
               size="small"
             >
-              Price should be less than 10000
+              {{ 'offerForm.price_max' | translate }}
             </p-message>
 
             </div>
@@ -170,7 +170,7 @@
     <div class="flex justify-end gap-3 pt-4">
       <p-button
         *ngIf="isEditMode"
-        label="Delete"
+        [label]="'offerForm.delete' | translate"
         icon="pi pi-trash"
         severity="danger"
         class="p-button-sm"
@@ -178,7 +178,7 @@
       ></p-button>
 
       <p-button
-        label="Cancel"
+        [label]="'offerForm.cancel' | translate"
         icon="pi pi-times"
         severity="secondary"
         class="p-button-sm"
@@ -187,7 +187,7 @@
 
       <p-button
         type="submit"
-        label="Submit"
+        [label]="'offerForm.submit' | translate"
         icon="pi pi-check"
         severity="success"
         class="p-button-sm"

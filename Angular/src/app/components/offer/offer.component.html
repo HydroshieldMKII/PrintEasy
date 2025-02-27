@@ -1,14 +1,14 @@
 <div class="card p-4">
   <div class="flex justify-between items-center">
-    <h1 class="text-4xl font-bold">Offers</h1>
+    <h1 class="text-4xl font-bold">{{ 'offer.title' | translate }}</h1>
   </div>
 
   <p-toast></p-toast>
 
   <p-tabs [(value)]="activeTab">
     <p-tablist>
-      <p-tab value="all" (click)="onTabChange('all')">Offer received</p-tab>
-      <p-tab value="mine" (click)="onTabChange('mine')">My pending offer</p-tab>
+      <p-tab value="all" (click)="onTabChange('all')">{{ 'offer.tab_received' | translate }}</p-tab>
+      <p-tab value="mine" (click)="onTabChange('mine')">{{ 'offer.tab_pending' | translate }}</p-tab>
     </p-tablist>
 
     <p-tabpanels>
@@ -16,9 +16,9 @@
         <!-- Directly iterate through the native API structure -->
         <div *ngFor="let request of currentRequests" class="mb-6">
           <div class="request-header p-2 bg-gray-100 rounded">
-            <a style="color: black;" [routerLink]="activeTab === 'all' ? ['/requests/edit/', request.id] : ['/requests/view/', request.id]">
+            <a style="color: black;">
               <h2>
-                <span class="font-bold">{{ request.name }} •
+                <span class="font-bold" style="text-decoration: underline; cursor: pointer;" [routerLink]="activeTab === 'all' ? ['/requests/edit/', request.id] : ['/requests/view/', request.id]">{{ request.name }} •
                   {{ request.budget | currency }} •
                   {{ request.targetDate | date:'mediumDate' }}
                 </span>
@@ -51,13 +51,13 @@
           
             <ng-template pTemplate="header">
               <tr>
-                <th *ngIf="activeTab === 'all'">Username</th>
-                <th>Printer</th>
-                <th>Preset</th>
-                <th>Price Offered</th>
-                <th>Offer Date</th>
-                <th>Status</th>
-                <th>Actions</th>
+                <th *ngIf="activeTab === 'all'">{{ 'offer.username' | translate }}</th>
+                <th>{{ 'offer.printer' | translate }}</th>
+                <th>{{ 'offer.preset' | translate }}</th>
+                <th>{{ 'offer.price_offered' | translate }}</th>
+                <th>{{ 'offer.offer_date' | translate }}</th>
+                <th>{{ 'offer.status' | translate }}</th>
+                <th>{{ 'offer.actions' | translate }}</th>
               </tr>
             </ng-template>
           
@@ -66,25 +66,23 @@
                 <td *ngIf="activeTab === 'all'">{{ offer.printerUser.user.username }}</td>
                 <td>{{ offer.printerUser.printer.model }}</td>
                 <td>{{ offer.color.name }} / {{ offer.filament.name }} / {{ offer.printQuality }}mm</td>
-                <td>{{ offer.price === 0 ? 'Free' : (offer.price | currency) }}</td>
+                <td>{{ offer.price === 0 ? ('offer.free' | translate) : (offer.price | currency) }}</td>
                 <td>{{ offer.targetDate | date:'mediumDate' }}</td>
-                <td>{{ offer.cancelledAt ? 'Rejected (' + (offer.cancelledAt | date:'mediumDate') + ')' : 'No response yet' }}</td>
+                <td>{{ offer.cancelledAt ? ('offer.rejected' | translate) + ' (' + (offer.cancelledAt | date:'mediumDate') + ')' : ('offer.no_response' | translate) }}</td>
                 <td>
-                  <button pButton type="button" icon="pi pi-pencil" title="Edit this offer" 
+                  <button pButton type="button" icon="pi pi-pencil" [title]="'offer.edit_offer' | translate" 
                           (click)="editOffer(offer)" *ngIf="activeTab === 'mine'"></button>
-                  <button pButton type="button" icon="pi pi-times" title="Cancel this offer" severity="danger" 
+                  <button pButton type="button" icon="pi pi-times" [title]="'offer.cancel_offer' | translate" severity="danger" 
                           (click)="cancelOffer(offer, request)" *ngIf="activeTab === 'mine'"></button>
-                  <button pButton type="button" icon="pi pi-check" title="Accept this offer" severity="success" 
+                  <button pButton type="button" icon="pi pi-check" [title]="'offer.accept_offer' | translate" severity="success" 
                           (click)="showAcceptOffer(offer)" *ngIf="activeTab === 'all'"></button>
-                  <button pButton type="button" icon="pi pi-times" title="Refuse this offer" severity="danger" 
+                  <button pButton type="button" icon="pi pi-times" [title]="'offer.refuse_offer' | translate" severity="danger" 
                           (click)="showRefuseOffer(offer)" *ngIf="activeTab === 'all'"></button>
                 </td>
               </tr>
             </ng-template>
             
           </p-table>
-          
-          
           
         </div>
 
@@ -95,7 +93,7 @@
         <div *ngIf="(currentRequests.length === 0)" class="empty-message">
           <i class="pi pi-inbox text-6xl text-gray-400"></i>
           <p class="text-xl font-semibold text-gray-500 mt-2">
-            Nothing to show here.
+            {{ 'offer.nothing_to_show' | translate }}
           </p>
         </div>
       </p-tabpanel>
@@ -117,16 +115,15 @@
   <ng-template #header>
     <div class="inline-flex items-center justify-center gap-2">
       <i class="pi pi-exclamation-triangle text-red-500 text-2xl"></i>
-      <span class="font-bold">Confirm Cancel</span>
+      <span class="font-bold">{{ 'offer.confirm_cancel' | translate }}</span>
     </div>
   </ng-template>
   <span class="text-surface-500 dark:text-surface-400 block mb-4">
-    Are you sure you want to cancel your offer for {{ requestToDelete?.name }} with your {{ offerToDelete?.printerUser.printer.model }}?
-    This action cannot be undone.
+    {{ 'offer.confirm_cancel_message' | translate }}
   </span>
   <ng-template #footer>
-    <p-button label="No"  severity="secondary" (click)="deleteDialogVisible = false"/>
-    <p-button label="Yes" severity="danger" (click)="confirmDelete()" />
+    <p-button [label]="'offer.no' | translate" severity="secondary" (click)="deleteDialogVisible = false"/>
+    <p-button [label]="'offer.yes' | translate" severity="danger" (click)="confirmDelete()" />
   </ng-template>
 </p-dialog>
 
@@ -144,16 +141,15 @@
   <ng-template #header>
     <div class="inline-flex items-center justify-center gap-2">
       <i class="pi pi-exclamation-triangle text-red-500 text-2xl"></i>
-      <span class="font-bold">Confirm Refuse</span>
+      <span class="font-bold">{{ 'offer.confirm_refuse' | translate }}</span>
     </div>
   </ng-template>
   <span class="text-surface-500 dark:text-surface-400 block mb-4">
-    Are you sure you want to refuse the offer from {{ offerToRefuse?.printerUser.user.username }}?
-    This action cannot be undone.
+    {{ 'offer.confirm_refuse_message' | translate }}
   </span>
   <ng-template #footer>
-    <p-button label="No" severity="secondary" (click)="refuseDialogVisible = false" />
-    <p-button label="Yes" severity="danger" (click)="confirmRefuse()" />
+    <p-button [label]="'offer.no' | translate" severity="secondary" (click)="refuseDialogVisible = false" />
+    <p-button [label]="'offer.yes' | translate" severity="danger" (click)="confirmRefuse()" />
   </ng-template>
 </p-dialog>
 
@@ -171,16 +167,15 @@
   <ng-template #header>
     <div class="inline-flex items-center justify-center gap-2">
       <i class="pi pi-check-circle text-green-500 text-2xl"></i>
-      <span class="font-bold">Confirm Accept</span>
+      <span class="font-bold">{{ 'offer.confirm_accept' | translate }}</span>
     </div>
   </ng-template>
   <span class="text-surface-500 dark:text-surface-400 block mb-4">
-    Are you sure you want to accept the offer from {{ offerToAccept?.printerUser.user.username }}?
-    You can only accept one offer per request.
+    {{ 'offer.confirm_accept_message' | translate }}
   </span>
   <ng-template #footer>
-    <p-button label="No" severity="secondary" (click)="acceptDialogVisible = false" />
-    <p-button label="Yes" severity="success" (click)="confirmAccept()" />
+    <p-button [label]="'offer.no' | translate" severity="secondary" (click)="acceptDialogVisible = false" />
+    <p-button [label]="'offer.yes' | translate" severity="success" (click)="confirmAccept()" />
   </ng-template>
 </p-dialog>
 

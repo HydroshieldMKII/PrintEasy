@@ -4,6 +4,9 @@ module Api
   class OfferController < AuthenticatedController
     rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
     before_action :set_offer, only: %i[show update destroy]
+    before_action :check_printer_ownership, only: %i[create]
+    before_action :validate_user_owns_printer_user, only: %i[create]
+    before_action :validate_not_own_request, only: %i[create]
 
     def index
       render_offers(filter_offers(Offer.all))
@@ -15,15 +18,8 @@ module Api
 
     def create
       offer = Offer.new(offer_params)
-      valid = true
 
-      accepted_requests = Order.joins(:offer).pluck(:request_id).uniq
-      if accepted_requests.include?(offer.request_id)
-        valid = false
-        offer.errors.add(:offer, 'Request already accepted an offer. Cannot create')
-      end
-
-      if valid && offer.save
+      if offer.save
         render json: { offer: offer, errors: {} }, status: :created
       else
         render json: { errors: offer.errors }, status: :unprocessable_entity
@@ -31,24 +27,7 @@ module Api
     end
 
     def update
-      valid = true
-
-      if @offer.printer_user.user != current_user
-        valid = false
-        @offer.errors.add(:offer, 'You are not allowed to update this offer')
-      end
-
-      if @offer.cancelled_at
-        valid = false
-        @offer.errors.add(:offer, 'Offer already rejected. Cannot update')
-      end
-
-      if Order.find_by(offer_id: @offer.id)
-        valid = false
-        @offer.errors.add(:offer, 'Offer already accepted. Cannot update')
-      end
-
-      if valid && @offer.update(offer_params)
+      if @offer.update(offer_params)
         render json: { offer: @offer, errors: {} }, status: :ok
       else
         render json: { errors: @offer.errors }, status: :unprocessable_entity
@@ -56,24 +35,7 @@ module Api
     end
 
     def destroy
-      valid = true
-
-      if @offer.printer_user.user != current_user
-        valid = false
-        @offer.errors.add(:offer, 'You are not allowed to delete this offer')
-      end
-
-      if Order.find_by(offer_id: @offer.id)
-        valid = false
-        @offer.errors.add(:offer, 'Offer already accepted. Cannot delete')
-      end
-
-      if @offer.cancelled_at
-        valid = false
-        @offer.errors.add(:offer, 'Offer already rejected. Cannot delete')
-      end
-
-      if valid && @offer.destroy
+      if @offer.destroy
         render json: { offer: @offer, errors: {} }, status: :ok
       else
         render json: { errors: { offer: @offer.errors } }, status: :unprocessable_entity
@@ -101,14 +63,42 @@ module Api
         valid = false
       end
 
-      if valid && offer.update(cancelled_at: Time.now)
-        render json: offer
+      if valid && offer.reject!
+        render json: { offer: offer, errors: {} }, status: :ok
       else
         render json: { errors: offer.errors }, status: :unprocessable_entity
       end
     end
 
     private
+
+    def check_printer_ownership
+      return if current_user.printer_user.exists?
+
+      offer = Offer.new
+      offer.errors.add(:offer, 'You need to have a printer to create an offer')
+      render json: { errors: offer.errors }, status: :unprocessable_entity
+    end
+
+    def validate_user_owns_printer_user
+      return if params[:offer].blank? || params[:offer][:printer_user_id].blank?
+      return if current_user.printer_user.pluck(:id).include?(params[:offer][:printer_user_id].to_i)
+
+      offer = Offer.new
+      offer.errors.add(:offer, 'You are not allowed to create an offer on this printer')
+      render json: { errors: offer.errors }, status: :unprocessable_entity
+    end
+
+    def validate_not_own_request
+      return if params[:offer].blank? || params[:offer][:request_id].blank?
+
+      request = Request.find_by(id: params[:offer][:request_id])
+      return if request.nil? || request.user_id != current_user.id
+
+      offer = Offer.new
+      offer.errors.add(:offer, 'You cannot create an offer on your own request')
+      render json: { errors: offer.errors }, status: :unprocessable_entity
+    end
 
     def render_offers(resource, status: :ok)
       if resource.is_a?(Offer)
@@ -171,11 +161,12 @@ module Api
     end
 
     def filter_offers(offers)
+      # Filtrer les offres NE faisant PAS partie d'une request acceptée
+      accepted_requests = Order.joins(:offer).pluck(:request_id).uniq
+      offers = offers.where.not(id: Order.pluck(:offer_id)).where.not(request_id: accepted_requests)
+
       case params[:type]
       when 'all' # Offers received on my requests
-        # Filtrer les offres NE faisant PAS partie d'une request acceptée
-        accepted_requests = Order.joins(:offer).pluck(:request_id).uniq
-        offers = offers.where.not(id: Order.pluck(:offer_id)).where.not(request_id: accepted_requests)
         offers.where(request_id: current_user.requests.pluck(:id)).where.not(id: Order.pluck(:offer_id)).distinct
       when 'mine' # Offers sent to another user's requests
         offers.where(printer_user_id: current_user.printer_user.pluck(:id)).where.not(id: Order.pluck(:offer_id)).distinct

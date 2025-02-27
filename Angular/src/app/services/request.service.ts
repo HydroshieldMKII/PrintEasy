@@ -12,6 +12,7 @@ import { ApiResponseModel } from '../models/api-response.model';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { MessageService } from 'primeng/api';
+import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({
     providedIn: 'root'
@@ -20,7 +21,34 @@ export class RequestService {
     messageService: MessageService = inject(MessageService);
     requests: RequestModel[] = [];
 
-    constructor(private api: ApiRequestService) { }
+    // Mapping IDs to translation keys
+    private filamentMap: Record<number, string> = {
+        1: 'petg',
+        2: 'tpu',
+        3: 'nylon',
+        4: 'wood',
+        5: 'metal',
+        6: 'carbon_fiber'
+    };
+
+    private colorMap: Record<number, string> = {
+        1: 'red',
+        2: 'blue',
+        3: 'green',
+        4: 'yellow',
+        5: 'black',
+        6: 'white',
+        7: 'orange',
+        8: 'purple',
+        9: 'pink',
+        10: 'brown',
+        11: 'gray'
+    };
+
+    constructor(
+        private api: ApiRequestService,
+        private translate: TranslateService
+    ) { }
 
     filter(filterParams: string, sortCategory: string, orderParams: string, searchParams: string, type: string): Observable<[RequestModel[], boolean]> {
         const params: any = {};
@@ -64,8 +92,14 @@ export class RequestService {
                         return new RequestPresetModel(
                             preset?.['id'],
                             preset?.['print_quality'],
-                            new ColorModel(preset?.['color']?.['id'], preset?.['color']?.['name']),
-                            new FilamentModel(preset?.['filament']?.['id'], preset?.['filament']?.['name']),
+                            new ColorModel(
+                                preset?.['color']?.['id'],
+                                this.translateColor(preset?.['color']?.['id'])
+                            ),
+                            new FilamentModel(
+                                preset?.['filament']?.['id'],
+                                this.translateFilament(preset?.['filament']?.['id'])
+                            ),
                             new PrinterModel(preset?.['printer']?.['id'], preset?.['printer']?.['model'])
                         );
                     });
@@ -104,8 +138,14 @@ export class RequestService {
                             return new RequestPresetModel(
                                 preset?.['id'],
                                 preset?.['print_quality'],
-                                preset?.['color']?.['name'],
-                                preset?.['filament']?.['name'],
+                                new ColorModel(
+                                    preset?.['color']?.['id'],
+                                    this.translateColor(preset?.['color']?.['id'])
+                                ),
+                                new FilamentModel(
+                                    preset?.['filament']?.['id'],
+                                    this.translateFilament(preset?.['filament']?.['id'])
+                                ),
                                 preset?.['printer']?.['model']
                             );
                         });
@@ -134,13 +174,10 @@ export class RequestService {
         return this.api.postRequest('api/request', {}, request).pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 201) {
-                    this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Request created successfully' });
+                    this.messageService.add({ severity: 'success', summary: this.translate.instant('requestForm.created'), detail: this.translate.instant('requestForm.created_message') });
                 } else {
-                    if (response.status === 422) {
-                        for (const [key, value] of Object.entries(response.errors)) {
-                            this.messageService.add({ severity: 'error', summary: 'Error', detail: `${key}: ${value}` });
-                        }
-                    }
+                    console.log("Request creation failed: ", response);
+                    this.messageService.add({ severity: 'error', summary: this.translate.instant('requestForm.error'), detail: this.translate.instant('requestForm.error_message') });
                 }
                 return response;
             })
@@ -151,9 +188,17 @@ export class RequestService {
         return this.api.deleteRequest(`api/request/${id}`).pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
-                    this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Request deleted successfully' });
+                    this.messageService.add({
+                        severity: 'success',
+                        summary: this.translate.instant('global.success'),
+                        detail: this.translate.instant('request.delete_success')
+                    });
                 } else {
-                    this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Request deletion failed' });
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: this.translate.instant('global.error'),
+                        detail: this.translate.instant('request.delete_error')
+                    });
                 }
                 return response;
             })
@@ -161,20 +206,37 @@ export class RequestService {
     }
 
     updateRequest(id: number, request: FormData): Observable<ApiResponseModel> {
-        let message: string = '';
         return this.api.putRequest(`api/request/${id}`, {}, request).pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
-                    this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Request updated successfully' });
+                    this.messageService.add({
+                        severity: 'success',
+                        summary: this.translate.instant('global.success'),
+                        detail: this.translate.instant('requestForm.update_success')
+                    });
                 } else {
-                    if (response.status === 422) {
-                        for (const [key, value] of Object.entries(response.errors)) {
-                            this.messageService.add({ severity: 'error', summary: 'Error', detail: `${key}: ${value}` });
-                        }
-                    }
+                    console.log("Request update failed: ", response);
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: this.translate.instant('global.error'),
+                        detail: this.translate.instant('requestForm.update_error')
+                    });
+
                 }
                 return response;
             })
         );
+    }
+
+    // Helper function to translate a filament by ID
+    private translateFilament(id: number): string {
+        const key = this.filamentMap[id];
+        return key ? this.translate.instant(`materials.${key}`) : `Unknown Filament (${id})`;
+    }
+
+    // Helper function to translate a color by ID
+    private translateColor(id: number): string {
+        const key = this.colorMap[id];
+        return key ? this.translate.instant(`colors.${key}`) : `Unknown Color (${id})`;
     }
 }

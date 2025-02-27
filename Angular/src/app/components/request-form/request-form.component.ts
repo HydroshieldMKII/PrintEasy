@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormControl, Validators, AbstractControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ImportsModule } from '../../../imports';
@@ -16,14 +16,16 @@ import { MessageService } from 'primeng/api';
 import { AuthService } from '../../services/authentication.service';
 import { RequestPresetModel } from '../../models/request-preset.model';
 import { OfferModalComponent } from '../offer-modal/offer-modal.component';
+import { TranslatePipe } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-request-form',
-  imports: [ImportsModule, DropdownModule, StlModelViewerModule, OfferModalComponent],
+  imports: [ImportsModule, DropdownModule, StlModelViewerModule, OfferModalComponent, TranslatePipe],
   templateUrl: './request-form.component.html',
   styleUrl: './request-form.component.css'
 })
-export class RequestFormComponent implements OnInit {
+export class RequestFormComponent implements OnInit, OnChanges {
   isEditMode = false;
   isNewMode = false;
   isViewMode = false;
@@ -64,7 +66,8 @@ export class RequestFormComponent implements OnInit {
     private presetService: PresetService,
     private fb: FormBuilder,
     private messageService: MessageService,
-    private authService: AuthService
+    private authService: AuthService,
+    private translate: TranslateService
   ) {
     this.dateValidator = this.dateValidator.bind(this);
   }
@@ -138,7 +141,7 @@ export class RequestFormComponent implements OnInit {
           }
 
           if (this.isViewMode) {
-            console.log('Loading presets locally...');
+            console.log('Loading only preset info...');
             this.colors = this.request.presets.map((preset: RequestPresetModel) => ({
               label: preset.color.name,
               value: preset.color.name,
@@ -211,6 +214,7 @@ export class RequestFormComponent implements OnInit {
   }
 
   onFileUpload(event: FileSelectEvent): void {
+    console.log('File uploaded:', event);
     const file = event.files[0];
     this.uploadedFile = file;
     const reader = new FileReader();
@@ -250,8 +254,8 @@ export class RequestFormComponent implements OnInit {
     if (!this.appendPresets(formData)) {
       this.messageService.add({
         severity: 'error',
-        summary: 'Error',
-        detail: 'Invalid or duplicated preset information. Please clear or complete your recommended presets.'
+        summary: this.translate.instant('requestForm.invalid_preset'),
+        detail: this.translate.instant('requestForm.invalid_preset_message')
       });
       return;
     }
@@ -379,13 +383,16 @@ export class RequestFormComponent implements OnInit {
   showOfferModal(preset?: any): void {
     this.offerModalVisible = true;
 
-    if (preset) {
-      console.log('Editing preset from form:', preset);
-      this.presetModalToEdit = preset;
-    }
+    console.log('Editing preset from form:', preset);
+    this.presetModalToEdit = preset;
+
   }
 
   hideOfferModal(): void {
     this.offerModalVisible = false;
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log('Changes in request form:', changes);
   }
 }
