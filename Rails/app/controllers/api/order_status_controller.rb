@@ -8,11 +8,16 @@ module Api
 
     def show
       if current_user == @order_status.consumer || current_user == @order_status.printer
-        render json: { order_status: @order_status.as_json(except: %i[created_at updated_at], methods: %i[image_url]), errors: {} },
-               status: :ok
+        render json: {
+          order_status: @order_status.as_json(except: %i[created_at updated_at], methods: %i[image_url]),
+          errors: {}
+        }, status: :ok
       else
-        render json: { errors: { order_status: ['You are not authorized to view this order status'] } },
-               status: :forbidden
+        render json: {
+          errors: {
+            order_status: ['You are not authorized to view this order status']
+          }
+        }, status: :forbidden
       end
     end
 

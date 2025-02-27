@@ -8,15 +8,23 @@ module Api
 
     def show
       @review = Review.find(params[:id])
-      render json: { review: @review.as_json(except: %i[created_at updated_at], include: { user: { except: %i[created_at updated_at is_admin] } }, methods: %i[image_urls]), errors: {} },
-             status: :ok
+      render json: {
+        review: @review.as_json(
+          except: %i[created_at updated_at],
+          include: { user: { except: %i[created_at updated_at is_admin] } },
+          methods: %i[image_urls]
+        ),
+        errors: {}
+      }, status: :ok
     end
 
     def create
       @review = Review.new(review_params_create)
       if @review.save
-        render json: { review: @review.as_json(methods: %i[image_urls], include: { user: { except: %i[created_at updated_at is_admin] } }), errors: {} },
-               status: :created
+        render json: {
+          review: @review.as_json(methods: %i[image_urls], include: { user: { except: %i[created_at updated_at is_admin] } }),
+          errors: {}
+        }, status: :created
       else
         render json: { errors: @review.errors.as_json }, status: :bad_request
       end
@@ -24,8 +32,10 @@ module Api
 
     def update
       if @review.update(review_params)
-        render json: { review: @review.as_json(methods: %i[image_urls], include: { user: { except: %i[created_at updated_at is_admin] } }), errors: {} },
-               status: :ok
+        render json: {
+          review: @review.as_json(methods: %i[image_urls], include: { user: { except: %i[created_at updated_at is_admin] } }),
+          errors: {}
+        }, status: :ok
       else
         render json: { errors: @review.errors.as_json }, status: :bad_request
       end
@@ -33,8 +43,10 @@ module Api
 
     def destroy
       if @review.destroy!
-        render json: { review: @review.as_json(methods: %i[image_urls], include: { user: { except: %i[created_at updated_at is_admin] } }), errors: {} },
-               status: :ok
+        render json: {
+          review: @review.as_json(methods: %i[image_urls], include: { user: { except: %i[created_at updated_at is_admin] } }),
+          errors: {}
+        }, status: :ok
       else
         render json: { errors: @review.errors.as_json }, status: :bad_request
       end
