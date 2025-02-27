@@ -355,7 +355,7 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
 
     assert_not_empty json_response['errors']
 
-    assert_equal ['You need to have a printer to create an offer', 'You are not allowed to create an offer on this printer'],
+    assert_equal ['You need to have a printer to create an offer'],
                  json_response['errors']['offer']
   end
 
@@ -539,21 +539,51 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
 
   # CANCEL
 
-  test 'should cancel offer successfully' do
+  test 'should cancel offer' do
     sign_out @user
     sign_in @other_user
 
     # Database changes
     assert_no_difference 'Offer.count' do
-      put reject_api_offer_url(offers(:two))
+      put reject_api_offer_url(@offer2)
     end
 
-    # Expect a success response
+    # Http code
     assert_response :success
 
-    json_response = JSON.parse(response.body)
-    # Verify that the offer now has a cancellation timestamp
-    assert_not_nil json_response['cancelled_at']
+    # Response format
+    json_response = assert_nothing_raised { JSON.parse(response.body) }
+
+    # response content
+    assert_equal 2, json_response['offer']['id']
+    assert_equal 2, json_response['offer']['request_id']
+    assert_equal 1, json_response['offer']['printer_user_id']
+    assert_equal 2, json_response['offer']['color_id']
+    assert_equal 2, json_response['offer']['filament_id']
+    assert_equal 2.5, json_response['offer']['price']
+    assert_equal '2021-01-02', json_response['offer']['target_date']
+  end
+
+  test 'should not cancel offer if already rejected' do
+    sign_in @other_user
+    put reject_api_offer_url(@offer2)
+
+    sign_in @other_user
+
+    # Database changes
+    assert_no_difference 'Offer.count' do
+      put reject_api_offer_url(@offer2)
+    end
+
+    # Http code
+    assert_response :unprocessable_entity
+
+    # Response format
+    json_response = assert_nothing_raised { JSON.parse(response.body) }
+
+    # response content
+    assert_not_empty json_response['errors']
+    assert_equal ['Offer already rejected. Cannot update'], json_response['errors']['offer']
   end
 
   test 'should not cancel offer if not yours' do

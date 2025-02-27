@@ -14,7 +14,8 @@ one: {
   target_date: 2022-01-01,
   created_at: 2021-01-01,
   updated_at: 2021-01-01,
-  print_quality: 0.22
+  print_quality: 0.22,
+  cancelled_at: null
 }
 # column: value
 #
@@ -28,7 +29,8 @@ two: {
   target_date: 2021-01-02,
   created_at: 2021-01-02,
   updated_at: 2021-01-02,
-  print_quality: 0.22
+  print_quality: 0.22,
+  cancelled_at: null
 }
 # column: value
 
@@ -42,7 +44,8 @@ three: {
   target_date: 2021-01-01,
   created_at: 2021-01-01,
   updated_at: 2021-01-01,
-  print_quality: 0.22
+  print_quality: 0.22,
+  cancelled_at: null
 }
 
 four: {
@@ -55,7 +58,8 @@ four: {
   target_date: 2021-01-01,
   created_at: 2021-01-01,
   updated_at: 2021-01-01,
-  print_quality: 0.22
+  print_quality: 0.22,
+  cancelled_at: null
 }
 
 five: {
@@ -68,7 +72,8 @@ five: {
   target_date: 2021-01-01,
   created_at: 2021-01-01,
   updated_at: 2021-01-01,
-  print_quality: 0.22
+  print_quality: 0.22,
+  cancelled_at: null
 }
 
 six: {
@@ -81,7 +86,8 @@ six: {
   target_date: 2021-01-01,
   created_at: 2021-01-01,
   updated_at: 2021-01-01,
-  print_quality: 0.22
+  print_quality: 0.22,
+  cancelled_at: null
 }
 
 seven: {
@@ -94,7 +100,8 @@ seven: {
   target_date: 2021-01-01,
   created_at: 2021-01-01,
   updated_at: 2021-01-01,
-  print_quality: 0.22
+  print_quality: 0.22,
+  cancelled_at: null
 }
 
 eight: {
@@ -107,7 +114,8 @@ eight: {
   target_date: 2021-01-01,
   created_at: 2021-01-01,
   updated_at: 2021-01-01,
-  print_quality: 0.22
+  print_quality: 0.22,
+  cancelled_at: null
 }
 
 nine: {
@@ -120,7 +128,8 @@ nine: {
   target_date: 2021-01-01,
   created_at: 2021-01-01,
   updated_at: 2021-01-01,
-  print_quality: 0.22
+  print_quality: 0.22,
+  cancelled_at: null
 }
 
 ten: {
@@ -133,5 +142,6 @@ ten: {
   target_date: 2021-01-01,
   created_at: 2021-01-01,
   updated_at: 2021-01-01,
-  print_quality: 0.22
+  print_quality: 0.22,
+  cancelled_at: null
 }
