@@ -33,6 +33,7 @@ export class RequestFormComponent implements OnInit {
   uploadedFileBlob: any = null;
   deleteDialogVisible: boolean = false;
   offerModalVisible: boolean = false;
+  presetModalToEdit: any = null;
   requestToDelete: RequestModel | null = null;
   presetToDelete: any[] = [];
   todayDate = new Date().toISOString().substring(0, 10);
@@ -375,8 +376,13 @@ export class RequestFormComponent implements OnInit {
     return printerValid && filamentValid && colorValid && preset.printQuality && !isDuplicate;
   }
 
-  showOfferModal(): void {
+  showOfferModal(preset?: any): void {
     this.offerModalVisible = true;
+
+    if (preset) {
+      console.log('Editing preset from form:', preset);
+      this.presetModalToEdit = preset;
+    }
   }
 
   hideOfferModal(): void {

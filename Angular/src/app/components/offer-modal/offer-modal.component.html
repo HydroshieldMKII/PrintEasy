@@ -51,17 +51,17 @@
 
         <div class="offer-form-field">
             <p-inputnumber 
-            formControlName="quality"
-            suffix="mm"
-            [showButtons]="true" 
-            buttonLayout="horizontal" 
-            inputId="horizontal" 
-            spinnerMode="horizontal"
-            placeholder="Quality"
-            [step]="0.04" 
-            mode="decimal"
-            [min]="0.01"
-            [max]="2">
+              formControlName="quality"
+              suffix="mm"
+              [showButtons]="true" 
+              buttonLayout="horizontal" 
+              inputId="horizontal" 
+              spinnerMode="horizontal"
+              placeholder="Quality"
+              [step]="0.04" 
+              mode="decimal"
+              [min]="0.01"
+              [max]="2">
             <ng-template #incrementbuttonicon>
               <span class="pi pi-plus"></span>
             </ng-template>
@@ -101,6 +101,23 @@
                 <label for="targetDate" class="block font-semibold">Target Date</label>
               </div>
             </p-floatlabel>
+
+            <p-message
+            *ngIf="offerForm.get('targetDate')?.errors?.['required'] && (offerForm.get('targetDate')?.dirty || offerForm.get('targetDate')?.touched)"
+            severity="error"
+            variant="simple"
+            size="small"
+          >
+            Target Date is required
+          </p-message>
+          <p-message
+            *ngIf="!offerForm.get('targetDate')?.errors?.['required'] && offerForm.get('targetDate')?.errors?.['dateError'] && (offerForm.get('targetDate')?.dirty || offerForm.get('targetDate')?.touched)"
+            severity="error"
+            variant="simple"
+            size="small"
+          >
+            Target Date should be later than today
+          </p-message>
           </div>
 
             <div class="form-group">
@@ -116,6 +133,34 @@
                 ></p-inputnumber>
                 <label for="price">Price</label>
               </p-floatlabel>
+
+              <p-message
+              *ngIf="offerForm.get('price')?.errors?.['required'] && (offerForm.get('price')?.dirty || offerForm.get('price')?.touched)"
+              severity="error"
+              variant="simple"
+              size="small"
+            >
+              Price is required
+            </p-message>
+
+            <p-message
+              *ngIf="!offerForm.get('price')?.errors?.['required'] && offerForm.get('price')?.errors?.['min'] && (offerForm.get('price')?.dirty || offerForm.get('price')?.touched)"
+              severity="error"
+              variant="simple"
+              size="small"
+            >
+              Price should be greater than 0
+            </p-message>
+
+            <p-message
+              *ngIf="!offerForm.get('price')?.errors?.['required'] && offerForm.get('price')?.errors?.['max'] && (offerForm.get('price')?.dirty || offerForm.get('price')?.touched)"
+              severity="error"
+              variant="simple"
+              size="small"
+            >
+              Price should be less than 10000
+            </p-message>
+
             </div>
         </div>
       </div>

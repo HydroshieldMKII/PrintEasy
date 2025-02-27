@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import { ImportsModule } from '../../../imports';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, AbstractControl } from '@angular/forms';
+import { forkJoin } from 'rxjs';
 import { DropdownModule } from 'primeng/dropdown';
 import { PresetService } from '../../services/preset.service';
 import { OfferService } from '../../services/offer.service';
@@ -21,6 +22,7 @@ export class OfferModalComponent implements OnChanges {
   @Input() offerModalVisible: boolean = false;
   @Input() requestIdToEdit: number | null = null;
   @Input() offerIdToEdit: number | null = null;
+  @Input() presetToEdit: any | null = null;
 
   @Output() offerModalVisibleChange = new EventEmitter<boolean>();
   @Output() offerUpdated = new EventEmitter<boolean>();
@@ -37,15 +39,18 @@ export class OfferModalComponent implements OnChanges {
   filaments: { label: string, value: string, id: number }[] = [];
 
   constructor(private fb: FormBuilder, private presetService: PresetService, private offerService: OfferService, private messageService: MessageService) {
+    this.dateValidator = this.dateValidator.bind(this);
+
     this.offerForm = this.fb.group({
       preset: [this.selectedPreset],
       color: [null, Validators.required],
       filament: [null, Validators.required],
       quality: [null, [Validators.required, Validators.min(0.01), Validators.max(2)]],
       printer: [null, Validators.required],
-      targetDate: [null, Validators.required],
+      targetDate: [null, [Validators.required, this.dateValidator]],
       price: [null, [Validators.required, Validators.min(0), Validators.max(10000)]]
     });
+
 
     this.offerForm.get('preset')?.valueChanges.subscribe(selectedPreset => {
       if (selectedPreset) {
@@ -94,6 +99,20 @@ export class OfferModalComponent implements OnChanges {
         return { label: color.name, value: color.name, id: color.id };
       });
     });
+  }
+
+  dateValidator(control: AbstractControl) {
+    const selectedDate = new Date(control.value);
+    if (isNaN(selectedDate.getTime())) {
+      return { dateError: true };
+    }
+
+    const today = new Date();
+
+    if (selectedDate < today) {
+      return { dateError: true };
+    }
+    return null;
   }
 
   onPresetSelected(selectedPreset: any): void {
@@ -185,26 +204,56 @@ export class OfferModalComponent implements OnChanges {
   }
 
   ngOnChanges() {
-    if (this.offerIdToEdit) {
-      this.offerService.getOfferById(this.offerIdToEdit).subscribe((offer: any) => {
-        console.log('Offer to edit:', offer);
+    forkJoin({
+      colors: this.presetService.getAllColors(),
+      printers: this.presetService.getPrinterUsers(),
+      filaments: this.presetService.getAllFilaments()
+    }).subscribe(({ colors, printers, filaments }) => {
+      this.colors = colors.map(color => ({ label: color.name, value: color.name, id: color.id }));
+      this.printers = printers.map(printerUser => {
+        const formattedDate = new Date(printerUser.aquiredDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        return { label: `${printerUser.printer.model} (${formattedDate})`, value: printerUser.printer.model, id: printerUser.printer.id };
+      });
+      this.filaments = filaments.map(filament => ({ label: filament.name, value: filament.name, id: filament.id }));
 
-        const matchingPrinter = this.printers.find(p => p.id === offer.printerUser.id);
-        const matchingColor = this.colors.find(c => c.id === offer.color.id);
-        const matchingFilament = this.filaments.find(f => f.id === offer.filament.id);
+      if (this.offerIdToEdit) {
+        this.offerService.getOfferById(this.offerIdToEdit).subscribe((offer: any) => {
+          console.log('Offer to edit:', offer);
 
-        const dateFromBackend = new Date(offer.targetDate);
-        dateFromBackend.setMinutes(dateFromBackend.getMinutes() + dateFromBackend.getTimezoneOffset());
+          const matchingPrinter = this.printers.find(p => p.id === offer.printerUser.id);
+          const matchingColor = this.colors.find(c => c.id === offer.color.id);
+          const matchingFilament = this.filaments.find(f => f.id === offer.filament.id);
+
+          const dateFromBackend = new Date(offer.targetDate);
+          dateFromBackend.setMinutes(dateFromBackend.getMinutes() + dateFromBackend.getTimezoneOffset());
+
+          this.offerForm.patchValue({
+            printer: matchingPrinter,
+            color: matchingColor,
+            filament: matchingFilament,
+            price: offer.price,
+            quality: offer.printQuality,
+            targetDate: dateFromBackend
+          });
+        });
+      }
+
+      if (this.presetToEdit) {
+        console.log('Preset to edit in modal:', this.presetToEdit);
+        console.log('Colors:', this.colors);
+        console.log('Filaments:', this.filaments);
+        console.log('Printers:', this.printers);
+        const matchingColor = this.colors.find(c => c.id === this.presetToEdit?.color.id);
+        const matchingFilament = this.filaments.find(f => f.id === this.presetToEdit?.filamentType.id);
+        const matchingPrinter = this.printers.find(p => p.id === this.presetToEdit?.printerModel.id);
 
         this.offerForm.patchValue({
-          printer: matchingPrinter,
           color: matchingColor,
           filament: matchingFilament,
-          price: offer.price,
-          quality: offer.printQuality,
-          targetDate: dateFromBackend
+          quality: this.presetToEdit.printQuality,
+          printer: matchingPrinter
         });
-      });
-    }
+      }
+    });
   }
 }

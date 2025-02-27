@@ -85,7 +85,7 @@
         <hr />
 
         <p-table
-          *ngIf="currentRequests.length > 0 && isOwningPrinter || activeTab == 'mine'"
+          *ngIf="currentRequests.length > 0"
           [value]="currentRequests"
           dataKey="id"
           [tableStyle]="{ 'min-width': '60rem' }"
@@ -226,7 +226,7 @@
         <div
           *ngIf="
             (isOwningPrinter && currentRequests.length === 0) ||
-            (activeTab == 'my' && currentRequests.length === 0)
+            (activeTab == 'mine' && currentRequests.length === 0)
           "
           class="empty-message"
         >

@@ -229,6 +229,7 @@ export class OfferService {
                 if (response.status === 200) {
                     this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Offer canceled successfully' });
                 } else {
+                    console.log("Error: ", response);
                     this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Offer cancelation failed' });
                 }
                 return response;
