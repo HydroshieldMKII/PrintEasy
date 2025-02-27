@@ -1,8 +1,10 @@
-class Api::StatusController < ApplicationController
+# frozen_string_literal: true
 
-  def index
-    @statuses = Status.all
-    render json: { statuses: @statuses.as_json(except: %i[created_at updated_at]) }, status: :ok
+module Api
+  class StatusController < ApplicationController
+    def index
+      @statuses = Status.all
+      render json: { statuses: @statuses.as_json(except: %i[created_at updated_at]) }, status: :ok
+    end
   end
-  
 end

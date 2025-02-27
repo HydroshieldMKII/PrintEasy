@@ -1,15 +1,18 @@
-class Api::OfferController < AuthenticatedController
+# frozen_string_literal: true
+
+module Api
+  class OfferController < AuthenticatedController
     rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
     before_action :set_offer, only: %i[show update destroy]
 
     def index
       render_offers(filter_offers(Offer.all))
     end
-  
+
     def show
       render_offers(@offer)
     end
-  
+
     def create
       offer = Offer.new(offer_params)
       valid = true
@@ -20,14 +23,13 @@ class Api::OfferController < AuthenticatedController
         offer.errors.add(:offer, 'Request already accepted an offer. Cannot create')
       end
 
-
       if valid && offer.save
         render json: { offer: offer, errors: {} }, status: :created
       else
         render json: { errors: offer.errors }, status: :unprocessable_entity
       end
     end
-  
+
     def update
       valid = true
 
@@ -52,7 +54,7 @@ class Api::OfferController < AuthenticatedController
         render json: { errors: @offer.errors }, status: :unprocessable_entity
       end
     end
-  
+
     def destroy
       valid = true
 
@@ -105,9 +107,9 @@ class Api::OfferController < AuthenticatedController
         render json: { errors: offer.errors }, status: :unprocessable_entity
       end
     end
-  
+
     private
-  
+
     def render_offers(resource, status: :ok)
       if resource.is_a?(Offer)
         render json: { offer: resource.as_json(
@@ -167,7 +169,7 @@ class Api::OfferController < AuthenticatedController
         render json: { requests: requests, errors: {} }, status: status
       end
     end
-  
+
     def filter_offers(offers)
       case params[:type]
       when 'all' # Offers received on my requests
@@ -181,9 +183,10 @@ class Api::OfferController < AuthenticatedController
         []
       end
     end
-  
+
     def offer_params
-      params.require(:offer).permit(:request_id, :printer_user_id, :color_id, :filament_id, :price, :print_quality, :target_date)
+      params.require(:offer).permit(:request_id, :printer_user_id, :color_id, :filament_id, :price, :print_quality,
+                                    :target_date)
     end
 
     def record_not_found
@@ -194,4 +197,4 @@ class Api::OfferController < AuthenticatedController
       @offer = current_user.offers.find(params[:id])
     end
   end
-  
+end

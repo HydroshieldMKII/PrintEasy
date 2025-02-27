@@ -1,13 +1,17 @@
-class Api::PrinterUserController < AuthenticatedController
+# frozen_string_literal: true
+
+module Api
+  class PrinterUserController < AuthenticatedController
     def index
-        @printer_users = PrinterUser.where(user_id: current_user.id)
-        render json: @printer_users.as_json({
-            except: %i[user_id printer_id],
-            include: {
-                printer: {
-                    only: %i[id model]
-            }
-        }
-    })
+      @printer_users = PrinterUser.where(user_id: current_user.id)
+      render json: @printer_users.as_json({
+                                            except: %i[user_id printer_id],
+                                            include: {
+                                              printer: {
+                                                only: %i[id model]
+                                              }
+                                            }
+                                          })
     end
+  end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # This file should ensure the existence of records required to run the application in every environment (production,
 # development, test). The code here should be idempotent so that it can be executed at any point in every environment.
 # The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
@@ -8,72 +10,73 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
-puts "🌱 Seeding database..."
-ruby_image = File.open(Rails.root.join("db/seeds/files/ruby.jpg"))
-ruby_stl = File.open(Rails.root.join("db/seeds/files/RUBY13.stl"))
-red_skeleton = File.open(Rails.root.join("db/seeds/files/red_skeleton.jpg"))
-dragon = File.open(Rails.root.join("db/seeds/files/dragon.jpg"))
+puts '🌱 Seeding database...'
+ruby_image = File.open(Rails.root.join('db/seeds/files/ruby.jpg'))
+ruby_stl = File.open(Rails.root.join('db/seeds/files/RUBY13.stl'))
+red_skeleton = File.open(Rails.root.join('db/seeds/files/red_skeleton.jpg'))
+dragon = File.open(Rails.root.join('db/seeds/files/dragon.jpg'))
 # Create countries
 [
-    { name: 'United States', id: 1 },
-    { name: 'Canada', id: 2 },
-    { name: 'France', id: 3 },
-    { name: 'Germany', id: 4 },
-    { name: 'Italy', id: 5 },
-    { name: 'Spain', id: 6 },
-    { name: 'United Kingdom', id: 7 },
-    { name: 'Australia', id: 8 },
-    { name: 'Brazil', id: 9 },
-    { name: 'China', id: 10 },
-    { name: 'India', id: 11 },
-    { name: 'Japan', id: 12 },
-    { name: 'Mexico', id: 13 },
-    { name: 'Russia', id: 14 },
-    { name: 'South Africa', id: 15 }
+  { name: 'United States', id: 1 },
+  { name: 'Canada', id: 2 },
+  { name: 'France', id: 3 },
+  { name: 'Germany', id: 4 },
+  { name: 'Italy', id: 5 },
+  { name: 'Spain', id: 6 },
+  { name: 'United Kingdom', id: 7 },
+  { name: 'Australia', id: 8 },
+  { name: 'Brazil', id: 9 },
+  { name: 'China', id: 10 },
+  { name: 'India', id: 11 },
+  { name: 'Japan', id: 12 },
+  { name: 'Mexico', id: 13 },
+  { name: 'Russia', id: 14 },
+  { name: 'South Africa', id: 15 }
 ].each do |country|
-    Country.create!(name: country[:name], )
+  Country.create!(name: country[:name])
 end
 
 # Create Users
 admin = User.create!(
-  username: "aaadmin",
-  password: "aaaaaa",
-  password_confirmation: "aaaaaa",
+  username: 'aaadmin',
+  password: 'aaaaaa',
+  password_confirmation: 'aaaaaa',
   country_id: 1,
   is_admin: true
 )
 
 user1 = User.create!(
-  username: "aaa",
-  password: "aaaaaa",
-  password_confirmation: "aaaaaa",
+  username: 'aaa',
+  password: 'aaaaaa',
+  password_confirmation: 'aaaaaa',
   country_id: 2,
   is_admin: false
 )
 user1.profile_picture.attach(
-  io: File.open(Rails.root.join("db/seeds/files/ruby.jpg")),
-  filename: "ruby.jpg",
-  content_type: "image/jpg"
+  io: File.open(Rails.root.join('db/seeds/files/ruby.jpg')),
+  filename: 'ruby.jpg',
+  content_type: 'image/jpg'
 )
 
 user2 = User.create!(
-  username: "bbb",
-  password: "bbbbbb",
-  password_confirmation: "bbbbbb",
+  username: 'bbb',
+  password: 'bbbbbb',
+  password_confirmation: 'bbbbbb',
   country_id: 3,
   is_admin: false
 )
 
 user2.profile_picture.attach(
-  io: File.open(Rails.root.join("db/seeds/files/ruby.jpg")),
-  filename: "ruby.jpg",
-  content_type: "image/jpg"
+  io: File.open(Rails.root.join('db/seeds/files/ruby.jpg')),
+  filename: 'ruby.jpg',
+  content_type: 'image/jpg'
 )
 
 user2.save
 
 # Create Printers
-printers = ["Bambulab", "Anycubic", "Artillery", "Creality", "Elegoo", "Flashforge", "Monoprice", "Prusa", "Qidi", "Sindoh", "Ultimaker", "XYZprinting", "Zortrax"]
+printers = %w[Bambulab Anycubic Artillery Creality Elegoo Flashforge Monoprice Prusa Qidi
+              Sindoh Ultimaker XYZprinting Zortrax]
 printers.each do |printer|
   Printer.create!(model: printer)
 end
@@ -85,36 +88,37 @@ end
 end
 
 # Create Colors
-colors = ["Red", "Blue", "Green", "Yellow", "Black", "White", "Orange", "Purple", "Pink", "Brown", "Gray"]
+colors = %w[Red Blue Green Yellow Black White Orange Purple Pink Brown Gray]
 colors.each do |color|
   Color.create!(name: color)
 end
 
 # Create Filaments
-filaments = ["PETG", "TPU", "Nylon", "Wood", "Metal", "Carbon Fiber"]
+filaments = ['PETG', 'TPU', 'Nylon', 'Wood', 'Metal', 'Carbon Fiber']
 filaments.each do |filament|
   Filament.create!(name: filament)
 end
 
 # Create Presets
 presets = [
-  { color: Color.find_by(name: "Red"), filament: Filament.find_by(name: "PETG"), user: admin, print_quality: 0.08 },
-  { color: Color.find_by(name: "Blue"), filament: Filament.find_by(name: "TPU"), user: user1, print_quality: 0.12 },
-  { color: Color.find_by(name: "Green"), filament: Filament.find_by(name: "Nylon"), user: admin, print_quality: 0.16 },
-  { color: Color.find_by(name: "Yellow"), filament: Filament.find_by(name: "Wood"), user: user1, print_quality: 0.2 },
-  { color: Color.find_by(name: "Black"), filament: Filament.find_by(name: "Metal"), user: admin, print_quality: 0.08 },
-  { color: Color.find_by(name: "White"), filament: Filament.find_by(name: "Carbon Fiber"), user: user1, print_quality: 0.12 },
-  { color: Color.find_by(name: "Orange"), filament: Filament.find_by(name: "PETG"), user: admin, print_quality: 0.16 },
-  { color: Color.find_by(name: "Purple"), filament: Filament.find_by(name: "TPU"), user: user1, print_quality: 0.2 },
-  { color: Color.find_by(name: "Pink"), filament: Filament.find_by(name: "Nylon"), user: admin, print_quality: 0.08 },
-  { color: Color.find_by(name: "Brown"), filament: Filament.find_by(name: "Wood"), user: user1, print_quality: 0.12 }
+  { color: Color.find_by(name: 'Red'), filament: Filament.find_by(name: 'PETG'), user: admin, print_quality: 0.08 },
+  { color: Color.find_by(name: 'Blue'), filament: Filament.find_by(name: 'TPU'), user: user1, print_quality: 0.12 },
+  { color: Color.find_by(name: 'Green'), filament: Filament.find_by(name: 'Nylon'), user: admin, print_quality: 0.16 },
+  { color: Color.find_by(name: 'Yellow'), filament: Filament.find_by(name: 'Wood'), user: user1, print_quality: 0.2 },
+  { color: Color.find_by(name: 'Black'), filament: Filament.find_by(name: 'Metal'), user: admin, print_quality: 0.08 },
+  { color: Color.find_by(name: 'White'), filament: Filament.find_by(name: 'Carbon Fiber'), user: user1,
+    print_quality: 0.12 },
+  { color: Color.find_by(name: 'Orange'), filament: Filament.find_by(name: 'PETG'), user: admin, print_quality: 0.16 },
+  { color: Color.find_by(name: 'Purple'), filament: Filament.find_by(name: 'TPU'), user: user1, print_quality: 0.2 },
+  { color: Color.find_by(name: 'Pink'), filament: Filament.find_by(name: 'Nylon'), user: admin, print_quality: 0.08 },
+  { color: Color.find_by(name: 'Brown'), filament: Filament.find_by(name: 'Wood'), user: user1, print_quality: 0.12 }
 ]
 
 presets.each do |preset|
   Preset.create!(preset)
 end
 
-stl_file_path1 = Rails.root.join("db/seeds/files/RUBY13.stl")
+stl_file_path1 = Rails.root.join('db/seeds/files/RUBY13.stl')
 
 5.times do |i|
   req = Request.create(
@@ -128,8 +132,8 @@ stl_file_path1 = Rails.root.join("db/seeds/files/RUBY13.stl")
   # Attach STL file to request
   req.stl_file.attach(
     io: File.open(stl_file_path1),
-    filename: "RUBY13.stl",
-    content_type: "application/sla"
+    filename: 'RUBY13.stl',
+    content_type: 'application/sla'
   )
   req.save
 end
@@ -146,8 +150,8 @@ end
   # Attach STL file to request
   req.stl_file.attach(
     io: File.open(stl_file_path1),
-    filename: "RUBY13.stl",
-    content_type: "application/sla"
+    filename: 'RUBY13.stl',
+    content_type: 'application/sla'
   )
   req.save
 end
@@ -172,8 +176,8 @@ end
 
 # Create Contests
 contest1 = Contest.new(
-  theme: "Best 3D Printed Art",
-  description: "Create and submit your best 3D printed designs.",
+  theme: 'Best 3D Printed Art',
+  description: 'Create and submit your best 3D printed designs.',
   submission_limit: 5,
   start_at: Time.now - 10.days,
   end_at: Time.now - 3.days
@@ -181,48 +185,48 @@ contest1 = Contest.new(
 
 contest1.image.attach(
   io: ruby_image,
-  filename: "ruby.jpg",
-  content_type: "image/jpg"
+  filename: 'ruby.jpg',
+  content_type: 'image/jpg'
 )
 contest1.save(validate: false)
 
 contest2 = Contest.new(
-  theme: "Best 3D Printed Toy",
-  description: "Create and submit your best 3D printed toys.",
+  theme: 'Best 3D Printed Toy',
+  description: 'Create and submit your best 3D printed toys.',
   submission_limit: 5,
   deleted_at: Time.now,
-  start_at: Time.now - 1.days,
+  start_at: Time.now - 1.days
 )
 
 ruby_image.rewind
 
 contest2.image.attach(
   io: ruby_image,
-  filename: "ruby.jpg",
-  content_type: "image/jpg"
+  filename: 'ruby.jpg',
+  content_type: 'image/jpg'
 )
 contest2.save(validate: false)
 
 contest3 = Contest.create(
-  theme: "Best 3D Printed Jewelry",
-  description: "Create and submit your best 3D printed jewelry.",
+  theme: 'Best 3D Printed Jewelry',
+  description: 'Create and submit your best 3D printed jewelry.',
   submission_limit: 5,
-  start_at: Time.now - 2.days,
+  start_at: Time.now - 2.days
 )
 
 ruby_image.rewind
 
 contest3.image.attach(
   io: ruby_image,
-  filename: "ruby.jpg",
-  content_type: "image/jpg"
+  filename: 'ruby.jpg',
+  content_type: 'image/jpg'
 )
 
 contest3.save(validate: false)
 
 contest4 = Contest.create(
-  theme: "Best 3D Printed Home Decor",
-  description: "Create and submit your best 3D printed home decor.",
+  theme: 'Best 3D Printed Home Decor',
+  description: 'Create and submit your best 3D printed home decor.',
   submission_limit: 5,
   deleted_at: Time.now,
   start_at: Time.now - 2.days,
@@ -233,14 +237,14 @@ ruby_image.rewind
 
 contest4.image.attach(
   io: ruby_image,
-  filename: "ruby.jpg",
-  content_type: "image/jpg"
+  filename: 'ruby.jpg',
+  content_type: 'image/jpg'
 )
 
 contest4.save(validate: false)
 
 contest5 = Contest.create(
-  theme: "Best 3D Printed Fashion",
+  theme: 'Best 3D Printed Fashion',
   submission_limit: 5,
   start_at: Time.now - 5.days,
   end_at: Time.now + 30.days
@@ -250,14 +254,14 @@ ruby_image.rewind
 
 contest5.image.attach(
   io: ruby_image,
-  filename: "ruby.jpg",
-  content_type: "image/jpg"
+  filename: 'ruby.jpg',
+  content_type: 'image/jpg'
 )
 
 contest5.save(validate: false)
 
 contest6 = Contest.create(
-  theme: "Best 3D Printed Gadgets",
+  theme: 'Best 3D Printed Gadgets',
   submission_limit: 5,
   start_at: Time.now - 10.days,
   deleted_at: Time.now
@@ -267,30 +271,30 @@ ruby_image.rewind
 
 contest6.image.attach(
   io: ruby_image,
-  filename: "ruby.jpg",
-  content_type: "image/jpg"
+  filename: 'ruby.jpg',
+  content_type: 'image/jpg'
 )
 
 contest6.save(validate: false)
 
 contest7 = Contest.create(
-  theme: "Best 3D Printed Tools",
+  theme: 'Best 3D Printed Tools',
   submission_limit: 5,
-  start_at: Time.now - 10.days,
+  start_at: Time.now - 10.days
 )
 
 ruby_image.rewind
 
 contest7.image.attach(
   io: ruby_image,
-  filename: "ruby.jpg",
-  content_type: "image/jpg"
+  filename: 'ruby.jpg',
+  content_type: 'image/jpg'
 )
 
 contest7.save(validate: false)
 
 contest8 = Contest.create(
-  theme: "Best 3D Printed Medical",
+  theme: 'Best 3D Printed Medical',
   submission_limit: 5,
   start_at: Time.now - 15.days,
   end_at: Time.now + 30.days
@@ -300,14 +304,14 @@ ruby_image.rewind
 
 contest8.image.attach(
   io: ruby_image,
-  filename: "ruby.jpg",
-  content_type: "image/jpg"
+  filename: 'ruby.jpg',
+  content_type: 'image/jpg'
 )
 
 contest8.save(validate: false)
 
 contest9 = Contest.create(
-  theme: "Best 3D Printed Automotive",
+  theme: 'Best 3D Printed Automotive',
   submission_limit: 5,
   start_at: Time.now - 15.days,
   deleted_at: Time.now,
@@ -318,8 +322,8 @@ ruby_image.rewind
 
 contest9.image.attach(
   io: ruby_image,
-  filename: "ruby.jpg",
-  content_type: "image/jpg"
+  filename: 'ruby.jpg',
+  content_type: 'image/jpg'
 )
 
 contest9.save(validate: false)
@@ -337,36 +341,36 @@ contest9.save(validate: false)
 
   contest.image.attach(
     io: ruby_image,
-    filename: "ruby.jpg",
-    content_type: "image/jpg"
+    filename: 'ruby.jpg',
+    content_type: 'image/jpg'
   )
   contest.save
 end
 # Create Submissions
 submission1 = Submission.new(
-  name: "3D Dragon",
-  description: "A detailed dragon model.",
+  name: '3D Dragon',
+  description: 'A detailed dragon model.',
   user: admin,
   contest: contest1
 )
 
 submission1.stl.attach(
-  io: File.open(Rails.root.join("db/seeds/files/RUBY13.stl")),
-  filename: "RUBY13.stl",
-  content_type: "application/sla"
+  io: File.open(Rails.root.join('db/seeds/files/RUBY13.stl')),
+  filename: 'RUBY13.stl',
+  content_type: 'application/sla'
 )
 
 submission1.image.attach(
   io: red_skeleton,
-  filename: "red_skeleton.jpg",
-  content_type: "image/jpg"
+  filename: 'red_skeleton.jpg',
+  content_type: 'image/jpg'
 )
 
 submission1.save(validate: false)
 
 submission2 = Submission.new(
-  name: "Space Shuttle",
-  description: "NASA space shuttle model.",
+  name: 'Space Shuttle',
+  description: 'NASA space shuttle model.',
   user: user1,
   contest: contest1
 )
@@ -375,21 +379,21 @@ ruby_stl.rewind
 
 submission2.stl.attach(
   io: ruby_stl,
-  filename: "RUBY13.stl",
-  content_type: "application/sla"
+  filename: 'RUBY13.stl',
+  content_type: 'application/sla'
 )
 
 submission2.image.attach(
   io: dragon,
-  filename: "dragon.jpg",
-  content_type: "image/jpg"
+  filename: 'dragon.jpg',
+  content_type: 'image/jpg'
 )
 
 submission2.save(validate: false)
 
 submission3 = Submission.new(
-  name: "3D Printed Toy",
-  description: "A toy model.",
+  name: '3D Printed Toy',
+  description: 'A toy model.',
   user: admin,
   contest: contest1
 )
@@ -398,16 +402,16 @@ ruby_stl.rewind
 
 submission3.stl.attach(
   io: ruby_stl,
-  filename: "RUBY13.stl",
-  content_type: "application/sla"
+  filename: 'RUBY13.stl',
+  content_type: 'application/sla'
 )
 
 ruby_image.rewind
 
 submission3.image.attach(
   io: ruby_image,
-  filename: "ruby.jpg",
-  content_type: "image/jpg"
+  filename: 'ruby.jpg',
+  content_type: 'image/jpg'
 )
 
 submission3.save
@@ -424,16 +428,16 @@ submission3.save
 
   submission.stl.attach(
     io: ruby_stl,
-    filename: "RUBY13.stl",
-    content_type: "application/sla"
+    filename: 'RUBY13.stl',
+    content_type: 'application/sla'
   )
 
   red_skeleton.rewind
 
   submission.image.attach(
     io: red_skeleton,
-    filename: "red_skeleton.jpg",
-    content_type: "image/jpg"
+    filename: 'red_skeleton.jpg',
+    content_type: 'image/jpg'
   )
 
   submission.save(validate: false)
@@ -445,7 +449,7 @@ Like.create!(user: user1, submission: submission2)
 # Create Offers
 colors = Color.all
 filaments = Filament.all
-printer_users = PrinterUser.all
+PrinterUser.all
 
 [admin, user1].each do |user|
   user_requests = Request.where(user: user)
@@ -468,41 +472,38 @@ printer_users = PrinterUser.all
   end
 end
 
-
-
-#Request without offers
+# Request without offers
 req_no_offer = Request.create(
   user: user1,
-  name: "Request without offers",
+  name: 'Request without offers',
   budget: 100.00,
-  comment: "This request has no offers.",
+  comment: 'This request has no offers.',
   target_date: Time.now + 10.days
 )
 
 req_no_offer.stl_file.attach(
   io: File.open(stl_file_path1),
-  filename: "RUBY13.stl",
-  content_type: "application/sla"
+  filename: 'RUBY13.stl',
+  content_type: 'application/sla'
 )
 req_no_offer.save
 
-#Request 0$ budget
+# Request 0$ budget
 req_free = Request.create(
   user: user1,
-  name: "Request with 0$ budget",
+  name: 'Request with 0$ budget',
   budget: 0.00,
-  comment: "This request has 0$ budget.",
+  comment: 'This request has 0$ budget.',
   target_date: Time.now + 10.days
 )
 
 req_free.stl_file.attach(
   io: File.open(stl_file_path1),
-  filename: "RUBY13.stl",
-  content_type: "application/sla"
+  filename: 'RUBY13.stl',
+  content_type: 'application/sla'
 )
 
 req_free.save
-
 
 # Create Orders
 Current.user = admin
@@ -513,52 +514,51 @@ order3 = Order.create!(offer: Offer.third)
 Current.user = user1
 order4 = Order.create!(offer: Offer.last)
 
-rubyImage = File.open(Rails.root.join("db/seeds/files/ruby.jpg"))
-dariusImage = File.open(Rails.root.join("db/seeds/files/DariusSlayJunior.jpg"))
+rubyImage = File.open(Rails.root.join('db/seeds/files/ruby.jpg'))
+dariusImage = File.open(Rails.root.join('db/seeds/files/DariusSlayJunior.jpg'))
 
 # Create Order Statuses
-status_accepted = Status.create!(name: "Accepted")
-status_printing = Status.create!(name: "Printing")
-status_printed = Status.create!(name: "Printed")
-status_shipped = Status.create!(name: "Shipped")
-status_arrived = Status.create!(name: "Arrived")
-status_cancelled = Status.create!(name: "Cancelled")
+status_accepted = Status.create!(name: 'Accepted')
+status_printing = Status.create!(name: 'Printing')
+status_printed = Status.create!(name: 'Printed')
+status_shipped = Status.create!(name: 'Shipped')
+status_arrived = Status.create!(name: 'Arrived')
+Status.create!(name: 'Cancelled')
 Current.user = user1
 
-OrderStatus.create!(order: order4, status: status_accepted, comment: "offer accepted, printing soon.")
-OrderStatus.create!(order: order3, status: status_accepted, comment: "offer accepted, printing soon.")
-OrderStatus.create!(order: order2, status: status_accepted, comment: "offer accepted, printing soon.")
-OrderStatus.create!(order: order2, status: status_printing, comment: "Order started printing.")
-OrderStatus.create!(order: order2, status: status_printed, comment: "Order printed.")
-OrderStatus.create!(order: order2, status: status_shipped, comment: "Order shipped.")
-orderstatus1 = OrderStatus.create!(order: order1, status: status_accepted, comment: "offer accepted, printing soon.")
-OrderStatus.create!(order: order1, status: status_printing, comment: "Order started printing.")
+OrderStatus.create!(order: order4, status: status_accepted, comment: 'offer accepted, printing soon.')
+OrderStatus.create!(order: order3, status: status_accepted, comment: 'offer accepted, printing soon.')
+OrderStatus.create!(order: order2, status: status_accepted, comment: 'offer accepted, printing soon.')
+OrderStatus.create!(order: order2, status: status_printing, comment: 'Order started printing.')
+OrderStatus.create!(order: order2, status: status_printed, comment: 'Order printed.')
+OrderStatus.create!(order: order2, status: status_shipped, comment: 'Order shipped.')
+orderstatus1 = OrderStatus.create!(order: order1, status: status_accepted, comment: 'offer accepted, printing soon.')
+OrderStatus.create!(order: order1, status: status_printing, comment: 'Order started printing.')
 orderstatus1.image.attach(
   io: rubyImage,
-  filename: "ruby.jpg",
-  content_type: "image/jpg"
+  filename: 'ruby.jpg',
+  content_type: 'image/jpg'
 )
 orderstatus1.save
-  
-Current.user = admin 
-OrderStatus.create!(order: order2, status: status_arrived, comment: "Order arrived.")
+
+Current.user = admin
+OrderStatus.create!(order: order2, status: status_arrived, comment: 'Order arrived.')
 rubyImage.rewind
 dariusImage.rewind
 
 r1 = Review.create!(
   order: order2,
   user: admin,
-  title: "Durable and Precise",
-  description: "Prototype case fit perfectly, highly recommend!",
+  title: 'Durable and Precise',
+  description: 'Prototype case fit perfectly, highly recommend!',
   rating: 4
 )
 r1.images.attach([
-  { io: rubyImage, filename: "ruby.jpg", content_type: "image/jpg" },
-  { io: dariusImage, filename: "DariusSlayJunior.jpg", content_type: "image/jpg" }
-])
+                   { io: rubyImage, filename: 'ruby.jpg', content_type: 'image/jpg' },
+                   { io: dariusImage, filename: 'DariusSlayJunior.jpg', content_type: 'image/jpg' }
+                 ])
 r1.save
 
-
-puts "✅ Seeding complete!"
+puts '✅ Seeding complete!'
 
 # rails db:drop; rails db:create; rails db:migrate; rails db:seed

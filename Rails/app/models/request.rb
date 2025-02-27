@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Request < ApplicationRecord
   belongs_to :user
   has_many :offers, dependent: :destroy
@@ -8,7 +10,7 @@ class Request < ApplicationRecord
   validates :name, presence: true, length: { in: 3..30 }
   validates :budget, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 10_000 }
   validates :comment, length: { maximum: 200 }
-  
+
   has_one_attached :stl_file
 
   # Create validations
@@ -18,11 +20,11 @@ class Request < ApplicationRecord
   # Update validations
   validate :target_date_cannot_be_in_the_past_on_update, on: :update
   validate :cannot_update_if_offer_accepted, on: :update
-  
+
   validate :stl_file_must_have_stl_extension
   validate :unique_preset_requests
 
-  # Helper 
+  # Helper
   def stl_file_url
     Rails.application.routes.url_helpers.rails_blob_url(stl_file, only_path: true)
   end
@@ -41,24 +43,25 @@ class Request < ApplicationRecord
   private
 
   def target_date_cannot_be_in_the_past_on_update
-    if target_date_changed? && target_date < Date.today #https://api.rubyonrails.org/v7.1/classes/ActiveModel/Dirty.html
-      errors.add(:target_date, 'must be greater than today')
-    end
+    return unless target_date_changed? && target_date < Date.today # https://api.rubyonrails.org/v7.1/classes/ActiveModel/Dirty.html
+
+    errors.add(:target_date, 'must be greater than today')
   end
 
   def stl_file_must_have_stl_extension
     return unless stl_file.attached?
+
     filename = stl_file.filename.to_s
     extension = File.extname(filename)
-    unless extension.downcase == '.stl'
-      errors.add(:stl_file, 'must have .stl extension')
-    end
+    return if extension.downcase == '.stl'
+
+    errors.add(:stl_file, 'must have .stl extension')
   end
 
   def cannot_update_if_offer_accepted
-    if has_offer_accepted?
-      errors.add(:base, 'Cannot update request with accepted offers')
-    end
+    return unless has_offer_accepted?
+
+    errors.add(:base, 'Cannot update request with accepted offers')
   end
 
   def unique_preset_requests

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class User < ApplicationRecord
   belongs_to :country
   has_many :presets, dependent: :destroy
@@ -13,7 +15,7 @@ class User < ApplicationRecord
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
-         
+
   validates :username, presence: true, uniqueness: true
   validates :password_confirmation, presence: true
   validates :country_id, presence: true
@@ -27,6 +29,9 @@ class User < ApplicationRecord
   end
 
   def profile_picture_url
-    Rails.application.routes.url_helpers.rails_blob_url(self.profile_picture, only_path: true) if self.profile_picture.attached?
+    return unless profile_picture.attached?
+
+    Rails.application.routes.url_helpers.rails_blob_url(profile_picture,
+                                                        only_path: true)
   end
 end

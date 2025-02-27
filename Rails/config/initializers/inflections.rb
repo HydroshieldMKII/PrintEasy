@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Be sure to restart your server when you modify this file.
 
 # Add new inflection rules using the following format. Inflections
@@ -8,7 +10,7 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   # inflect.singular /^(ox)en/i, "\\1"
   # inflect.irregular "person", "people"
   # inflect.uncountable %w( fish sheep )
-    inflect.uncountable %w( status order_status )
+  inflect.uncountable %w[status order_status]
 end
 
 # These inflection rules are supported but not enabled by default:

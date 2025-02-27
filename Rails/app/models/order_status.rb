@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class OrderStatus < ApplicationRecord
   belongs_to :status, foreign_key: :status_name, primary_key: :name
   belongs_to :order
@@ -10,7 +12,7 @@ class OrderStatus < ApplicationRecord
   validates :order_id, presence: true
   validate :order_id_exists, on: :create
   validate :user_can_create_status
-  validate :user_can_modify, on: [:destroy, :update]
+  validate :user_can_modify, on: %i[destroy update]
   validate :can_create_state, on: :create
   validate :can_transition, on: :create
   validate :state_valid?
@@ -20,8 +22,7 @@ class OrderStatus < ApplicationRecord
 
   StateMachines::Machine.ignore_method_conflicts = true
 
-  state_machine :status_name, :initial => lambda { |order_status| order_status.status_name || 'Accepted' } do
-
+  state_machine :status_name, initial: ->(order_status) { order_status.status_name || 'Accepted' } do
     event :reaccept do
       transition 'Accepted' => 'Accepted'
     end
@@ -51,16 +52,16 @@ class OrderStatus < ApplicationRecord
     end
 
     event :cancel do
-      transition ['Accepted', 'Printing', 'Printed'] => 'Cancelled'
+      transition %w[Accepted Printing Printed] => 'Cancelled'
     end
   end
 
   def consumer
-    self.order.offer.request.user
+    order.offer.request.user
   end
 
   def printer
-    self.order.offer.printer_user.user
+    order.offer.printer_user.user
   end
 
   def available_status
@@ -69,17 +70,15 @@ class OrderStatus < ApplicationRecord
     events.each do |event|
       from = event.branches[0].state_requirements[0][:from].values
       to = event.branches[0].state_requirements[0][:to].values
-      if from.include?(self.status_name)
-        available.push(to)
-      end
+      available.push(to) if from.include?(status_name)
     end
     available.flatten!
     # available.delete('Cancelled')
-    return available
+    available
   end
 
   def image_url
-    Rails.application.routes.url_helpers.rails_blob_url(self.image, only_path: true) if self.image.attached?
+    Rails.application.routes.url_helpers.rails_blob_url(image, only_path: true) if image.attached?
   end
 
   class CannotDestroyStatusError < StandardError; end
@@ -87,96 +86,91 @@ class OrderStatus < ApplicationRecord
 
   private
 
-  def can_transition()
+  def can_transition
     events = self.class.state_machine.events
-    last_state = self.order&.order_status&.order(created_at: :desc)&.first
-    if !last_state.nil?
+    last_state = order&.order_status&.order(created_at: :desc)&.first
+    unless last_state.nil?
       events.each do |event|
         from = event.branches[0].state_requirements[0][:from].values
         to = event.branches[0].state_requirements[0][:to].values
-        if from.include?(last_state.status_name) && to.include?(self.status_name)
-          return true
-        end
+        return true if from.include?(last_state.status_name) && to.include?(status_name)
       end
 
-      errors.add(:status_name, "Invalid transition from #{last_state.status_name} to #{self.status_name}")
+      errors.add(:status_name, "Invalid transition from #{last_state.status_name} to #{status_name}")
       return false
     end
-    return true
+    true
   end
 
-  def user_can_create_status()
-    if self.order.printer == Current.user || self.order.consumer == Current.user
-      return true
-    end
-    errors.add(:order_status, "You are not authorized to create a new status for this order")
-    return false
+  def user_can_create_status
+    return true if order.printer == Current.user || order.consumer == Current.user
+
+    errors.add(:order_status, 'You are not authorized to create a new status for this order')
+    false
   end
 
-  def user_can_modify()
-    if self.order.printer == Current.user
-      return true
-    end
-    errors.add(:order_status, "You are not authorized to delete this status")
-    return false
+  def user_can_modify
+    return true if order.printer == Current.user
+
+    errors.add(:order_status, 'You are not authorized to delete this status')
+    false
   end
 
   def order_id_exists
-    if Order.find_by(id: self.order_id).nil?
-      errors.add(:order_id, "Order does not exist")
+    if Order.find_by(id: order_id).nil?
+      errors.add(:order_id, 'Order does not exist')
       throw(:abort)
     end
-    return true
+    true
   end
 
-  def can_create_state()
-    last_state = self.order&.order_status&.order(created_at: :desc)&.first&.status_name
-    if Current.user == self.order.consumer
-      if ['Cancelled', 'Accepted', 'Printing', 'Printed', 'Shipped'].include?(self.status_name)
-        if self.status_name == 'Cancelled'
+  def can_create_state
+    last_state = order&.order_status&.order(created_at: :desc)&.first&.status_name
+    if Current.user == order.consumer
+      if %w[Cancelled Accepted Printing Printed Shipped].include?(status_name)
+        if status_name == 'Cancelled'
           if last_state != 'Accepted'
-            errors.add(:order_status, "Invalid transition from #{last_state} to #{self.status_name}")
+            errors.add(:order_status, "Invalid transition from #{last_state} to #{status_name}")
             return false
           end
         else
-          if last_state == nil
-            return true
-          end
-          errors.add(:order_status, "Invalid transition from #{last_state} to #{self.status_name}")
+          return true if last_state.nil?
+
+          errors.add(:order_status, "Invalid transition from #{last_state} to #{status_name}")
           return false
         end
       end
-    elsif Current.user == self.order.printer
-      if self.status_name == 'Arrived'
+    elsif Current.user == order.printer
+      if status_name == 'Arrived'
         errors.add(:order_status, "Invalid transition from #{last_state} to Arrived")
         return false
       end
     end
-    return true
+    true
   end
 
   def can_destroy?
-    if ['Accepted', 'Cancelled', 'Arrived', 'Shipped'].include?(self.status_name)
-      if self.status_name == 'Accepted' && self.order.order_status.where(status_name: "Accepted").count > 1
-        return true
-      end
-      raise CannotDestroyStatusError, "Cannot delete the status"
+    if %w[Accepted Cancelled Arrived Shipped].include?(status_name)
+      return true if status_name == 'Accepted' && order.order_status.where(status_name: 'Accepted').count > 1
+
+      raise CannotDestroyStatusError, 'Cannot delete the status'
     end
-    return true
+    true
   end
 
   def is_frozen?
-    last_state = self.order&.order_status&.order(created_at: :desc)&.first
-    if ['Cancelled', 'Arrived', 'Shipped'].include?(last_state.status_name)
-      raise OrderStatusFrozenError, "Cannot change status of a frozen order"
+    last_state = order&.order_status&.order(created_at: :desc)&.first
+    if %w[Cancelled Arrived Shipped].include?(last_state.status_name)
+      raise OrderStatusFrozenError, 'Cannot change status of a frozen order'
     end
-    return true
+
+    true
   end
 
   def state_valid?
     states = self.class.state_machine.states.map(&:name)
-    if !states.include?(self.status_name)
-      errors.add(:status_name, "Invalid status")
-    end
+    return if states.include?(status_name)
+
+    errors.add(:status_name, 'Invalid status')
   end
 end

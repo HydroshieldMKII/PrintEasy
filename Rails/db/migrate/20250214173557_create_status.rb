@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateStatus < ActiveRecord::Migration[7.1]
   def change
     create_table :status, id: false, primary_key: :name do |t|

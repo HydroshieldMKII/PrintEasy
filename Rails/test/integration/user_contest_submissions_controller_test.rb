@@ -1,4 +1,6 @@
-require "test_helper"
+# frozen_string_literal: true
+
+require 'test_helper'
 
 class UserContestSubmissionsControllerTest < ActionDispatch::IntegrationTest
   # test "the truth" do
@@ -10,7 +12,7 @@ class UserContestSubmissionsControllerTest < ActionDispatch::IntegrationTest
     sign_in @user
   end
 
-  test "should get index" do
+  test 'should get index' do
     assert_difference('Contest.count', 0) do
       get api_user_contest_submissions_url
     end
@@ -21,12 +23,12 @@ class UserContestSubmissionsControllerTest < ActionDispatch::IntegrationTest
       @parsed_response = JSON.parse(response.body)
     end
 
-    assert_equal 3, @parsed_response["contests"].length
+    assert_equal 3, @parsed_response['contests'].length
   end
 
-  test "should return 404 for non-existent user" do
+  test 'should return 404 for non-existent user' do
     sign_out @user
-    
+
     assert_difference('Contest.count', 0) do
       get api_user_contest_submissions_url
     end
@@ -37,6 +39,6 @@ class UserContestSubmissionsControllerTest < ActionDispatch::IntegrationTest
       @parsed_response = JSON.parse(response.body)
     end
 
-    assert_equal ["Invalid login credentials"], @parsed_response["errors"]["connection"]
+    assert_equal ['Invalid login credentials'], @parsed_response['errors']['connection']
   end
 end

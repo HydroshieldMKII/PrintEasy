@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Like < ApplicationRecord
   belongs_to :user
   belongs_to :submission
@@ -10,7 +12,7 @@ class Like < ApplicationRecord
 
   def self.unlike(user, submission)
     like = Like.find_by(user: user, submission: submission)
-    like.destroy if like
+    like&.destroy
   end
 
   def self.liked?(user, submission)

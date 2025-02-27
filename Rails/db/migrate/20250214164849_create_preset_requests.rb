@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreatePresetRequests < ActiveRecord::Migration[7.1]
   def change
     create_table :preset_requests do |t|

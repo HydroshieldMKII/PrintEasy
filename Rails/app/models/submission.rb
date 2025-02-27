@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Submission < ApplicationRecord
   before_destroy :contest_finished?, if: -> { contest&.finished? }
 
@@ -14,11 +16,11 @@ class Submission < ApplicationRecord
   validates :contest, presence: true
   validates :image, presence: true
   validates :stl, presence: true
- 
+
   validate :stl_must_be_valid
   validate :image_must_be_valid
   validate :submissions_limit, on: :create, if: -> { contest.present? && user.present? }
-  validate :contest_finished?, on: [:create, :update], if: -> { contest&.finished? }
+  validate :contest_finished?, on: %i[create update], if: -> { contest&.finished? }
   validate :contest_started?, on: :create, if: -> { contest.present? }
 
   def stl_url
@@ -30,21 +32,22 @@ class Submission < ApplicationRecord
   end
 
   private
+
   def contest_finished?
-    errors.add(:contest, "is closed")
+    errors.add(:contest, 'is closed')
     throw :abort
   end
 
   def contest_started?
-    errors.add(:contest, "has not started yet") unless contest&.started?
+    errors.add(:contest, 'has not started yet') unless contest&.started?
   end
 
-  def submissions_limit  
+  def submissions_limit
     user_submissions_for_contest = user.submissions.where(contest: contest).count
-  
-    if user_submissions_for_contest >= contest.submission_limit
-      errors.add(:submission, "has reached the submission limit for this contest")
-    end
+
+    return unless user_submissions_for_contest >= contest.submission_limit
+
+    errors.add(:submission, 'has reached the submission limit for this contest')
   end
 
   def url_for(file)
@@ -57,16 +60,16 @@ class Submission < ApplicationRecord
     filename = stl.filename.to_s
     extension = File.extname(filename)
 
-    unless extension.downcase == '.stl'
-      errors.add(:stl, 'must have .stl extension')
-    end
+    return if extension.downcase == '.stl'
+
+    errors.add(:stl, 'must have .stl extension')
   end
 
   def image_must_be_valid
     return unless image.attached?
 
-    unless image.content_type.in?(%w(image/png image/jpeg image/jpg))
-      errors.add(:image, "must be a PNG, JPG, or JPEG file")
-    end
+    return if image.content_type.in?(%w[image/png image/jpeg image/jpg])
+
+    errors.add(:image, 'must be a PNG, JPG, or JPEG file')
   end
 end
