@@ -6,6 +6,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { MenuItem } from 'primeng/api';
 import { StlModelViewerModule } from 'angular-stl-model-viewer';
 import { MessageService } from 'primeng/api';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 import { OrderModel } from '../../models/order.model';
 import { OrderStatusModel } from '../../models/order-status.model';
@@ -16,9 +17,14 @@ import { AuthService } from '../../services/authentication.service';
 import { ReviewService } from '../../services/review.service';
 import { ImageAttachmentModel } from '../../models/image-attachment.model';
 
+interface StatusChoice {
+  name: string;
+  value: string;
+}
+
 @Component({
   selector: 'app-orders',
-  imports: [ImportsModule, DropdownModule, ReactiveFormsModule, StlModelViewerModule],
+  imports: [ImportsModule, DropdownModule, ReactiveFormsModule, StlModelViewerModule, TranslatePipe],
   templateUrl: './order.component.html',
   styleUrl: './order.component.css'
 })
@@ -29,10 +35,19 @@ export class OrderComponent {
   private readonly auth = inject(AuthService)
   messageService: MessageService = inject(MessageService);
   reviewService: ReviewService = inject(ReviewService);
+  translate: TranslateService = inject(TranslateService);
 
   order: OrderModel | null = null;
   currentStatus: OrderStatusModel | null = null;
   orderName: string = '';
+  statusTranslations: { [key: string]: string } = {
+    'Accepted': 'Accepted',
+    'Printing': 'Printing',
+    'Printed': 'Printed',
+    'Shipped': 'Shipped',
+    'Arrived': 'Arrived',
+    'Cancelled': 'Cancelled'
+  }
   statusColorRef: { [key: string]: string } = {
     'Accepted': '#c5c5c5',
     'Printing': '#fa6bff',
@@ -49,6 +64,7 @@ export class OrderComponent {
     'Arrived': 'the order has arrived.',
     'Cancelled': 'the order has been cancelled.'
   }
+  availableStatuses: StatusChoice[] = []
   editMenuItems: MenuItem[] = [
     {
       label: 'Edit',
@@ -87,6 +103,10 @@ export class OrderComponent {
   currentlySelectedOrderStatusId: number = -1
 
   constructor(private fb: FormBuilder) {
+    this.getStatusTranslations();
+    this.getStatusDefaultMessages();
+    this.getEditMenuWithTranslations();
+
     this.refreshOrder();
 
     this.orderStatusForm = this.fb.group({
@@ -126,6 +146,35 @@ export class OrderComponent {
     }
   }
 
+  getStatusTranslations(): void {
+    this.translate.get(['status.Accepted', 'status.Printing', 'status.Printed', 'status.Shipped', 'status.Arrived', 'status.Cancelled']).subscribe((translations: any) => {
+      this.statusTranslations['Accepted'] = translations['status.Accepted'];
+      this.statusTranslations['Printing'] = translations['status.Printing'];
+      this.statusTranslations['Printed'] = translations['status.Printed'];
+      this.statusTranslations['Shipped'] = translations['status.Shipped'];
+      this.statusTranslations['Arrived'] = translations['status.Arrived'];
+      this.statusTranslations['Cancelled'] = translations['status.Cancelled'];
+    });
+  }
+
+  getStatusDefaultMessages(): void {
+    this.translate.get(['order.order_status.empty_comments.Accepted', 'order.order_status.empty_comments.Printing', 'order.order_status.empty_comments.Printed', 'order.order_status.empty_comments.Shipped', 'order.order_status.empty_comments.Arrived', 'order.order_status.empty_comments.Cancelled']).subscribe((translations: any) => {
+      this.statusDefaultCommentRef['Accepted'] = translations['order.order_status.empty_comments.Accepted'];
+      this.statusDefaultCommentRef['Printing'] = translations['order.order_status.empty_comments.Printing'];
+      this.statusDefaultCommentRef['Printed'] = translations['order.order_status.empty_comments.Printed'];
+      this.statusDefaultCommentRef['Shipped'] = translations['order.order_status.empty_comments.Shipped'];
+      this.statusDefaultCommentRef['Arrived'] = translations['order.order_status.empty_comments.Arrived'];
+      this.statusDefaultCommentRef['Cancelled'] = translations['order.order_status.empty_comments.Cancelled'];
+    });
+  }
+
+  getEditMenuWithTranslations(): void {
+    this.translate.get(['global.edit_button', 'global.delete_button']).subscribe((translations: any) => {
+      this.editMenuItems[0].label = translations['global.edit_button'];
+      this.editMenuItems[1].label = translations['global.delete_button'];
+    });
+  }
+
   refreshOrder(): void {
     this.AcceptedStatus = [];
     this.PrintingStatus = [];
@@ -135,6 +184,7 @@ export class OrderComponent {
     this.CancelledStatus = [];
     this.statusActions = [];
     this.reviewImageUrls = [];
+    this.availableStatuses = [];
     this.canCancel = false;
     this.canArrive = false;
     this.consumer = false;
@@ -176,7 +226,7 @@ export class OrderComponent {
             switch (status) {
               case 'Accepted':
                 this.statusActions.push({
-                  label: 'Accepted',
+                  label: this.statusTranslations['Accepted'],
                   icon: 'pi pi-play',
                   command: () => {
                     this.ShowOrderStatusForm();
@@ -186,7 +236,7 @@ export class OrderComponent {
                 break;
               case 'Printing':
                 this.statusActions.push({
-                  label: 'Printing',
+                  label: this.statusTranslations['Printing'],
                   icon: 'pi pi-print',
                   command: () => {
                     this.ShowOrderStatusForm();
@@ -196,7 +246,7 @@ export class OrderComponent {
                 break;
               case 'Printed':
                 this.statusActions.push({
-                  label: 'Printed',
+                  label: this.statusTranslations['Printed'],
                   icon: 'pi pi-check-circle',
                   command: () => {
                     this.ShowOrderStatusForm();
@@ -206,7 +256,7 @@ export class OrderComponent {
                 break;
               case 'Shipped':
                 this.statusActions.push({
-                  label: 'Shipped',
+                  label: this.statusTranslations['Shipped'],
                   icon: 'pi pi-send',
                   command: () => {
                     this.ShowOrderStatusForm();
@@ -216,7 +266,7 @@ export class OrderComponent {
                 break;
               case 'Arrived':
                 this.statusActions.push({
-                  label: 'Arrived',
+                  label: this.statusTranslations['Arrived'],
                   icon: 'pi pi-home',
                   command: () => {
                     this.ShowOrderStatusForm();
@@ -226,7 +276,7 @@ export class OrderComponent {
                 break;
               case 'Cancelled':
                 this.statusActions.push({
-                  label: 'Cancelled',
+                  label: this.statusTranslations['Cancelled'],
                   icon: 'pi pi-ban',
                   command: () => {
                     this.ShowOrderStatusForm();
@@ -236,7 +286,10 @@ export class OrderComponent {
                 break;
             }
           }
-          console.log('Status actions:', this.statusActions);
+          this.order.availableStatus.forEach((status: string) => {
+            this.availableStatuses.push({ name: this.statusTranslations[status], value: status });
+          });
+          console.log('Available statuses:', this.availableStatuses);
         }
       }
 

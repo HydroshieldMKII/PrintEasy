@@ -1,8 +1,8 @@
 <div>
     <p-tabs [value]="tab">
         <p-tablist>
-            <p-tab [value]="'commands'" (click)="openCommands()">Commands</p-tab>
-            <p-tab [value]="'contracts'" (click)="openContracts()">Contracts</p-tab>
+            <p-tab [value]="'commands'" (click)="openCommands()">{{'orders.commands_tab' | translate}}</p-tab>
+            <p-tab [value]="'contracts'" (click)="openContracts()">{{'orders.contracts_tab' | translate}}</p-tab>
         </p-tablist>
         <p-tabpanels>
             <p-tabpanel [value]="'commands'">
@@ -10,29 +10,29 @@
                     <ng-template #header>
                         <tr>
                             <th>
-                                Name
+                                {{'orders.name_column' | translate}}
                             </th>
                             <th>
                                 <div class="right-cell">
-                                    Price
+                                    {{'orders.price_column' | translate}}
                                 </div>
                             </th>
                             <th>
                                 <div class="center-cell">
-                                    Status
+                                    {{'orders.status_column' | translate}}
                                 </div>
                             </th>
                             <th>
-                                Target Date
+                                {{'orders.target_date_column' | translate}}
                             </th>
                             <th>
-                                Printer
+                                {{'orders.printer_column' | translate}}
                             </th>
                             <th>
-                                Rating
+                                {{'orders.rating_column' | translate}}
                             </th>
                             <th>
-                                Actions
+                                {{'orders.actions_column' | translate}}
                             </th>
                         </tr>
                     </ng-template>
@@ -47,7 +47,7 @@
                             <td>
                                 <div class="center-cell">
                                     <span class="status-tag" [ngStyle]="{'background-color': statusColorRef[order.orderStatus.at(-1).statusName || 0]}">
-                                        <p class="w-full">{{order.orderStatus.at(-1).statusName}}</p>
+                                        <p class="w-full">{{"status." + order.orderStatus.at(-1).statusName | translate}}</p>
                                     </span>
                                 </div>
                             </td>
@@ -64,12 +64,12 @@
                                     <p>{{order.review?.rating}}</p>
                                     <i class="pi pi-star-fill"></i>
                                 </div>
-                                <p *ngIf="!order.review">No Review</p>
+                                <p *ngIf="!order.review">{{'orders.no_review_message' | translate}}</p>
                             </td>
                             <td>
                                 <p-button
                                     icon="pi pi-arrow-right"
-                                    title="See Details"
+                                    title="{{'orders.action_button_label' | translate}}"
                                     routerLink="/orders/view/{{ order.id }}"
                                 ></p-button>
                             </td>
@@ -83,7 +83,7 @@
                     >
                     <i class="pi pi-inbox text-6xl text-gray-400"></i>
                     <p class="text-xl font-semibold text-gray-500 mt-2">
-                        You dont have any orders pending!
+                        {{'orders.no_commands_message' | translate}}
                     </p>
                 </div>
             </p-tabpanel>
@@ -92,27 +92,27 @@
                     <ng-template #header>
                         <tr>
                             <th>
-                                Name
+                                {{'orders.name_column' | translate}}
                             </th>
                             <th>
                                 <div class="right-cell">
-                                    Price
+                                    {{'orders.price_column' | translate}}
                                 </div>
                             </th>
                             <th class="center-cell">
-                                Status
+                                {{'orders.status_column' | translate}}
                             </th>
                             <th>
-                                Target Date
+                                {{'orders.target_date_column' | translate}}
                             </th>
                             <th>
-                                Consumer
+                                {{'orders.consumer_column' | translate}}
                             </th>
                             <th>
-                                Rating
+                                {{'orders.rating_column' | translate}}
                             </th>
                             <th>
-                                Actions
+                                {{'orders.actions_column' | translate}}
                             </th>
                         </tr>
                     </ng-template>
@@ -127,7 +127,7 @@
                             <td>
                                 <div class="center-cell">
                                     <span class="status-tag" [ngStyle]="{'background-color': statusColorRef[order.orderStatus.at(-1).statusName || 0]}">
-                                        <p class="w-full">{{order.orderStatus.at(-1).statusName}}</p>
+                                        <p class="w-full">{{"status." + order.orderStatus.at(-1).statusName | translate}}</p>
                                     </span>
                                 </div>
                             </td>
@@ -144,12 +144,12 @@
                                     <p>{{order.review?.rating}}</p>
                                     <i class="pi pi-star-fill"></i>
                                 </div>
-                                <p *ngIf="!order.review">No Review</p>
+                                <p *ngIf="!order.review">{{'orders.no_review_message' | translate}}</p>
                             </td>
                             <td>
                                 <p-button
                                     icon="pi pi-arrow-right"
-                                    title="See Details"
+                                    title="{{'orders.action_button_label' | translate}}"
                                     routerLink="/orders/view/{{ order.id }}"
                                 ></p-button>
                             </td>
@@ -163,7 +163,7 @@
                     >
                     <i class="pi pi-inbox text-6xl text-gray-400"></i>
                     <p class="text-xl font-semibold text-gray-500 mt-2">
-                        You dont have any contracts yet!
+                        {{'orders.no_contracts_message' | translate}}
                     </p>
                 </div>
             </p-tabpanel>

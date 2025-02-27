@@ -6,7 +6,7 @@
             <p class="h1c">{{order?.offer?.request?.name}}</p>
             
             <div class="h-row">
-                <p>Printer Owner :</p>
+                <p>{{'order.printer_owner' | translate}}</p>
                 <div style="display: flex; flex-direction: row; gap: 10px;">
                     <p-avatar label="" size="large" shape="circle" image="{{order?.offer?.printerUser?.user?.profilePictureUrl}}"></p-avatar>
                     <p class="h3c">{{order?.offer?.printerUser?.user?.username}}</p>
@@ -14,24 +14,24 @@
             </div>
 
             <div class="h-row">
-                <p>Price :</p>
+                <p>{{'order.price' | translate}}</p>
                 <p class="h3c">{{order?.offer?.price | currency}}</p>
             </div>
 
             <div class="h-row">
-                <p>Current Status :</p>
+                <p>{{'order.current_status' | translate}}</p>
                 <span [ngStyle]="{'color': 'rgb(34, 34, 34)', 'background-color': statusColorRef[currentStatus?.statusName || 0], 'border-radius': '10px', 'height': '30px', 'padding': '7px', 'display': 'flex', 'flex-direction': 'row', 'align-items': 'center'}">
                     <p>{{currentStatus?.statusName}}</p>
                 </span>
             </div>
 
             <div class="h-row">
-                <p>Target Date :</p>
+                <p>{{'order.target_date' | translate}}</p>
                 <p class="h3c">{{order?.offer?.targetDate | date:'fullDate'}}</p>
             </div>
 
             <div style="margin-bottom: 1.5rem;">
-                <p-fieldset legend="Comment" class="comment-container">
+                <p-fieldset legend="{{'order.comment' | translate}}" class="comment-container">
                     <p class="m-0" class="comment">
                         {{order?.offer?.request?.comment}}
                     </p>
@@ -49,17 +49,19 @@
         </div>
     </div>
     
-    <p-dialog header="{{isEdit ? 'Edit Order Status' : 'New Order Status'}}" [modal]="true" [(visible)]="formVisible" [style]="{ width: '35rem', margin: '10px' }">
+    <p-dialog header="{{isEdit ? ('order.order_status.update_title' | translate) : ('order.order_status.new_title' | translate)}}" [modal]="true" [(visible)]="formVisible" [style]="{ width: '35rem', margin: '10px' }">
         <form [formGroup]="orderStatusForm" (ngSubmit)="onStatusSubmit()">
             <div class="popup-form-container">
                 <p-dropdown 
                     formControlName="statusName" 
-                    [options]="order?.availableStatus"
-                    placeholder="{{isEdit ? orderStatusForm.value.statusName : 'Select a status'}}"
-                    appendTo="body"
+                    [options]="availableStatuses"
+                    optionLabel="name"
+                    optionValue="value"
+                    placeholder="{{'order.order_status.status_label' | translate}}"
                     [style]="{width: '100%'}"
                     [disabled]="isEdit">
                 </p-dropdown>
+
                 <p-floatlabel variant="in">
                     <textarea
                         pTextarea
@@ -70,9 +72,9 @@
                         style="resize: none"
                         >
                     </textarea>
-                    <label for="comment">Special comment about the status update</label>
+                    <label for="comment">{{'order.order_status.comment_label' | translate}}</label>
                 </p-floatlabel>
-                <p-message severity="error">Comment has to be between 5 and 200 characters</p-message>
+                <p-message severity="error">{{'order.comment_error' | translate}}</p-message>
                 <img src="{{imageUrl}}" alt="" class="image-preview" />
                 <div *ngIf="imageUrl == ''" class="image-placeholder">
                     <p>Image</p>
@@ -82,14 +84,14 @@
                         mode="basic"
                         name="image"
                         accept="image/*"
-                        chooseLabel="Upload Image"
+                        chooseLabel="{{'order.order_status.upload_button' | translate}}"
                         (onSelect)="onFileSelect($event)">
                     </p-fileUpload>
                 </div>
             </div>
             <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1rem;">
-                <p-button label="Cancel" icon="pi pi-times" severity="secondary" (click)="formVisible = false" severity="secondary"></p-button>
-                <p-button label="Save" icon="pi pi-save" [disabled]="orderStatusForm.invalid" (click)="onStatusSubmit()" severity="success"></p-button>
+                <p-button label="{{'global.cancel_button' | translate}}" icon="pi pi-times" severity="secondary" (click)="formVisible = false" severity="secondary"></p-button>
+                <p-button label="{{'global.save_button' | translate}}" icon="pi pi-save" [disabled]="orderStatusForm.invalid" (click)="onStatusSubmit()" severity="success"></p-button>
             </div>
         </form>
     </p-dialog>
@@ -97,7 +99,7 @@
     <p-tabs value="0">
         <p-tablist>
             <p-tab value="0">Status</p-tab>
-            <p-tab value="1" disabled="{{currentStatus?.statusName != 'Arrived' && currentStatus?.statusName != 'Cancelled'}}">Review</p-tab>
+            <p-tab value="1" disabled="{{currentStatus?.statusName != 'Arrived' && currentStatus?.statusName != 'Cancelled'}}">{{'order.review.tab' | translate}}</p-tab>
         </p-tablist>
         <p-tabpanels>
             <p-tabpanel value="0">
@@ -115,7 +117,7 @@
                                     <div class="status-header-circle" [ngStyle]="{'background-color': statusColorRef['Accepted']}" >
                                         <i class="pi pi-play status-header-circle-icon"></i>
                                     </div>
-                                    <p>Accepted</p>
+                                    <p>{{'status.Accepted' | translate}}</p>
                                 </div>
                             </ng-template>
                         </p-step>
@@ -151,7 +153,7 @@
                                     <div class="status-header-circle" [ngStyle]="{'background-color': statusColorRef['Printing']}">  <!-- put color here -->
                                         <i class="pi pi-print status-header-circle-icon"></i>
                                     </div>
-                                    <p>Printing</p>
+                                    <p>{{'status.Printing' | translate}}</p>
                                 </div>
                             </ng-template>
                         </p-step>
@@ -187,7 +189,7 @@
                                     <div class="status-header-circle" [ngStyle]="{'background-color': statusColorRef['Printed']}">  <!-- put color here -->
                                         <i class="pi pi-check-circle status-header-circle-icon"></i>
                                     </div>
-                                    <p>Printed</p>
+                                    <p>{{'status.Printed' | translate}}</p>
                                 </div>
                             </ng-template>
                         </p-step>
@@ -222,7 +224,7 @@
                                     <div class="status-header-circle" [ngStyle]="{'background-color': statusColorRef['Shipped']}">  <!-- put color here -->
                                         <i class="pi pi-send status-header-circle-icon"></i>
                                     </div>
-                                    <p>Shipped</p>
+                                    <p>{{'status.Shipped' | translate}}</p>
                                 </div>
                             </ng-template>
                         </p-step>
@@ -257,7 +259,7 @@
                                     <div class="status-header-circle" [ngStyle]="{'background-color': statusColorRef['Arrived']}">  <!-- put color here -->
                                         <i class="pi pi-home status-header-circle-icon"></i>
                                     </div>
-                                    <p>Arrived</p>
+                                    <p>{{'status.Arrived' | translate}}</p>
                                 </div>
                             </ng-template>
                         </p-step>
@@ -284,7 +286,7 @@
                                     <div class="status-header-circle" [ngStyle]="{'background-color': statusColorRef['Cancelled']}">  <!-- put color here -->
                                         <i class="pi pi-ban status-header-circle-icon"></i>
                                     </div>
-                                    <p>Cancelled</p>
+                                    <p>{{'status.Cancelled' | translate}}</p>
                                 </div>
                             </ng-template>
                         </p-step>
@@ -317,9 +319,9 @@
                                 pInputText
                                 id="title"
                                 />
-                                <label for="title">Title</label>
+                                <label for="title">{{'order.review.title' | translate}}</label>
                             </p-floatlabel>
-                            <p-message severity="error">Title has to be between 5 and 50 characters</p-message>
+                            <p-message severity="error">{{'order.title_error' | translate}}</p-message>
                         </div>
 
                         <div style="margin-bottom: 2rem;">
@@ -332,9 +334,9 @@
                                 cols="30"
                                 style="resize: none"
                                 ></textarea>
-                                <label for="description">Description</label>
+                                <label for="description">{{'order.review.description' | translate}}</label>
                             </p-floatlabel>
-                            <p-message severity="error">Comment has to be between 5 and 200 characters</p-message>
+                            <p-message severity="error">{{'order.comment_error' | translate}}</p-message>
                         </div>
 
                         <div *ngIf="consumer" style="margin-bottom: 2rem;">
@@ -343,22 +345,23 @@
                                 multiple="true"
                                 name="images"
                                 accept="image/*"
-                                chooseLabel="Upload Image"
+                                chooseLabel="{{'order.order_status.upload_button' | translate}}"
                                 (onSelect)="onReviewFileSelect($event)"
                                 [style]="{'justify-content': 'flex-start'}">
                             </p-fileUpload>
                         </div>
 
-                        <p-rating
+                        <!-- TODO: make bigger -->
+                        <p-rating 
                             formControlName="rating"
                             [readonly]="false"
                             [stars]="5"
-                            [style]="{ 'margin-bottom': '2rem' }"
+                            class="big-stars"
                         ></p-rating>
 
                         <div *ngIf="consumer" style="display: flex; justify-content: flex-start; gap: 1rem; margin-top: 1rem;">
-                            <p-button label="Save" icon="pi pi-save" [disabled]="reviewForm.invalid" (click)="onReviewSubmit()" severity="success"></p-button>
-                            <p-button *ngIf="isEditReview" label="Delete" icon="pi pi-trash" (click)="deleteReviewDialogVisible = true" severity="danger"></p-button>
+                            <p-button label="{{'global.save_button' | translate}}" icon="pi pi-save" [disabled]="reviewForm.invalid" (click)="onReviewSubmit()" severity="success"></p-button>
+                            <p-button *ngIf="isEditReview" label="{{'global.delete_button' | translate}}" icon="pi pi-trash" (click)="deleteReviewDialogVisible = true" severity="danger"></p-button>
                         </div>
                     </form>
                     <div class="flex-col gap-6">
@@ -391,17 +394,16 @@
         </div>
     </ng-template>
     <span class="text-surface-500 dark:text-surface-400 block mb-4">
-        Are you sure you want to delete the status ?
-        This action cannot be undone.
+        {{'order.verif_delete_order_status' | translate}}
     </span>
     <ng-template #footer>
         <p-button
-        label="Cancel"
+        label="{{'global.cancel_button' | translate}}"
         [text]="true"
         severity="secondary"
         (click)="deleteStatusDialogVisible = false"
         />
-        <p-button label="Delete" severity="danger" (click)="DeleteOrderStatus()" />
+        <p-button label="{{'global.delete_button' | translate}}" severity="danger" (click)="DeleteOrderStatus()" />
     </ng-template>
     </p-dialog>
 
@@ -422,17 +424,16 @@
         </div>
     </ng-template>
     <span class="text-surface-500 dark:text-surface-400 block mb-4">
-        Are you sure you want to delete the review ?
-        This action cannot be undone.
+        {{'order.verif_delete_review' | translate}}
     </span>
     <ng-template #footer>
         <p-button
-        label="Cancel"
+        label="{{'global.cancel_button' | translate}}"
         [text]="true"
         severity="secondary"
         (click)="deleteReviewDialogVisible = false"
         />
-        <p-button label="Delete" severity="danger" (click)="DeleteReview()" />
+        <p-button label="{{'global.delete_button' | translate}}" severity="danger" (click)="DeleteReview()" />
     </ng-template>
     </p-dialog>
 
