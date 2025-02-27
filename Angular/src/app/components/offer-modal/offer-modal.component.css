@@ -179,7 +179,7 @@ h2 {
     display: flex;
     gap: 1rem;
     /* Space between elements */
-    align-items: center;
+    align-items: start;
 }
 
 .form-group {

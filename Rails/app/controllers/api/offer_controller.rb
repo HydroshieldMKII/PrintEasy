@@ -171,11 +171,12 @@ module Api
     end
 
     def filter_offers(offers)
+      # Filtrer les offres NE faisant PAS partie d'une request acceptée
+      accepted_requests = Order.joins(:offer).pluck(:request_id).uniq
+      offers = offers.where.not(id: Order.pluck(:offer_id)).where.not(request_id: accepted_requests)
+
       case params[:type]
       when 'all' # Offers received on my requests
-        # Filtrer les offres NE faisant PAS partie d'une request acceptée
-        accepted_requests = Order.joins(:offer).pluck(:request_id).uniq
-        offers = offers.where.not(id: Order.pluck(:offer_id)).where.not(request_id: accepted_requests)
         offers.where(request_id: current_user.requests.pluck(:id)).where.not(id: Order.pluck(:offer_id)).distinct
       when 'mine' # Offers sent to another user's requests
         offers.where(printer_user_id: current_user.printer_user.pluck(:id)).where.not(id: Order.pluck(:offer_id)).distinct

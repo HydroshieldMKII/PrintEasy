@@ -108,7 +108,8 @@
               <label for="targetDate" class="block font-semibold">{{ 'requestForm.target_date' | translate }}</label>
             </div>
           </p-floatlabel>
-          <p-message
+          <div>
+            <p-message
             *ngIf="form.get('targetDate')?.errors?.['required'] && (form.get('targetDate')?.dirty || form.get('targetDate')?.touched)"
             severity="error"
             variant="simple"
@@ -124,6 +125,7 @@
           >
             {{ 'requestForm.target_date_future' | translate }}
           </p-message>
+          </div>
         </div>
       </div>
 
@@ -147,7 +149,7 @@
 
         <div class="stl-actions flex gap-2 mt-4">
           <p-button
-            *ngIf="isViewMode || isEditMode"
+            *ngIf="isViewMode"
             label="{{ 'requestForm.download_file' | translate }}"
             icon="pi pi-download"
             class="p-button-outlined flex-1"

@@ -212,6 +212,7 @@ export class RequestFormComponent implements OnInit, OnChanges {
   }
 
   onFileUpload(event: FileSelectEvent): void {
+    console.log('File uploaded:', event);
     const file = event.files[0];
     this.uploadedFile = file;
     const reader = new FileReader();

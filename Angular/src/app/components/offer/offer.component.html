@@ -16,9 +16,9 @@
         <!-- Directly iterate through the native API structure -->
         <div *ngFor="let request of currentRequests" class="mb-6">
           <div class="request-header p-2 bg-gray-100 rounded">
-            <a style="color: black;" [routerLink]="activeTab === 'all' ? ['/requests/edit/', request.id] : ['/requests/view/', request.id]">
+            <a style="color: black;">
               <h2>
-                <span class="font-bold">{{ request.name }} •
+                <span class="font-bold" style="text-decoration: underline; cursor: pointer;" [routerLink]="activeTab === 'all' ? ['/requests/edit/', request.id] : ['/requests/view/', request.id]">{{ request.name }} •
                   {{ request.budget | currency }} •
                   {{ request.targetDate | date:'mediumDate' }}
                 </span>
