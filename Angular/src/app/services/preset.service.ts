@@ -10,6 +10,7 @@ import { ApiResponseModel } from '../models/api-response.model';
 import { map, Observable, of } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { PrinterUserModel } from '../models/printer-user.model';
+import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({
     providedIn: 'root'
@@ -24,7 +25,31 @@ export class PresetService {
     private cachedPrinterUsers: PrinterUserModel[] | null = null;
     private cachedPresets: PresetModel[] | null = null;
 
-    constructor(private api: ApiRequestService) { }
+    // Mapping for translation keys
+    private filamentMap: Record<number, string> = {
+        1: 'petg',
+        2: 'tpu',
+        3: 'nylon',
+        4: 'wood',
+        5: 'metal',
+        6: 'carbon_fiber'
+    };
+
+    private colorMap: Record<number, string> = {
+        1: 'red',
+        2: 'blue',
+        3: 'green',
+        4: 'yellow',
+        5: 'black',
+        6: 'white',
+        7: 'orange',
+        8: 'purple',
+        9: 'pink',
+        10: 'brown',
+        11: 'gray'
+    };
+
+    constructor(private api: ApiRequestService, private translate: TranslateService) { }
 
     getAllPresets(): Observable<PresetModel[]> {
         if (this.cachedPresets) {
@@ -35,16 +60,17 @@ export class PresetService {
         return this.api.getRequest('api/preset').pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
+                    console.log("Fetched Presets:", response.data);
                     this.cachedPresets = (response.data as any[]).map(item => ({
                         id: item.id,
                         printQuality: item.print_quality,
                         color: {
                             id: item.color.id,
-                            name: item.color.name
+                            name: this.translateColor(item.color.id)
                         },
                         filament: {
                             id: item.filament.id,
-                            name: item.filament.name
+                            name: this.translateFilament(item.filament.id)
                         }
                     } as PresetModel));
                     return this.cachedPresets;
@@ -64,7 +90,10 @@ export class PresetService {
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
                     console.log("Fetched Colors:", response.data);
-                    this.cachedColors = response.data as ColorModel[];
+                    this.cachedColors = (response.data as ColorModel[]).map(color => ({
+                        ...color,
+                        name: this.translateColor(color.id)
+                    }));
                     return this.cachedColors;
                 }
                 return [];
@@ -82,7 +111,10 @@ export class PresetService {
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
                     console.log("Fetched Filaments:", response.data);
-                    this.cachedFilaments = response.data as FilamentModel[];
+                    this.cachedFilaments = (response.data as FilamentModel[]).map(filament => ({
+                        ...filament,
+                        name: this.translateFilament(filament.id)
+                    }));
                     return this.cachedFilaments;
                 }
                 return [];
@@ -129,5 +161,15 @@ export class PresetService {
                 return [];
             })
         );
+    }
+
+    private translateFilament(id: number): string {
+        const key = this.filamentMap[id];
+        return key ? this.translate.instant(`materials.${key}`) : `Unknown Filament (${id})`;
+    }
+
+    private translateColor(id: number): string {
+        const key = this.colorMap[id];
+        return key ? this.translate.instant(`colors.${key}`) : `Unknown Color (${id})`;
     }
 }

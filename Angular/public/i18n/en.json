@@ -174,5 +174,26 @@
     "offerModal": {
         "edit_offer": "Edit an offer",
         "submit_offer": "Submit an offer"
+    },
+    "materials": {
+        "petg": "PETG",
+        "tpu": "TPU",
+        "nylon": "Nylon",
+        "wood": "Wood",
+        "metal": "Metal",
+        "carbon_fiber": "Carbon Fiber"
+    },
+    "colors": {
+        "red": "Red",
+        "blue": "Blue",
+        "green": "Green",
+        "yellow": "Yellow",
+        "black": "Black",
+        "white": "White",
+        "orange": "Orange",
+        "purple": "Purple",
+        "pink": "Pink",
+        "brown": "Brown",
+        "gray": "Gray"
     }
 }

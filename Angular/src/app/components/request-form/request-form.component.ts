@@ -139,7 +139,7 @@ export class RequestFormComponent implements OnInit {
           }
 
           if (this.isViewMode) {
-            console.log('Loading presets locally...');
+            console.log('Loading only preset info...');
             this.colors = this.request.presets.map((preset: RequestPresetModel) => ({
               label: preset.color.name,
               value: preset.color.name,

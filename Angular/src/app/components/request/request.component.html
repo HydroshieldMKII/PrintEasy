@@ -174,8 +174,8 @@
                     <ng-template #body let-preset>
                       <tr>
                         <td>{{ preset.printerModel }}</td>
-                        <td>{{ preset.filamentType }}</td>
-                        <td>{{ preset.color }}</td>
+                        <td>{{ preset.filamentType.name }}</td>
+                        <td>{{ preset.color.name }}</td>
                         <td>{{ preset.printQuality }}mm</td>
                       </tr>
                     </ng-template>

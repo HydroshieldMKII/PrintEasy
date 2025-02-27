@@ -76,7 +76,7 @@
         "filament_type": "Type de filament",
         "color": "Couleur",
         "print_quality": "Qualité d'impression",
-        "no_presets": "Aucun préréglage recommandé. Tout préréglage est bienvenu !",
+        "no_presets": "Aucun préréglage recommandé. Tout préréglage est le bienvenu !",
         "no_printer": "Vous n'avez pas d'imprimante ! Ajoutez-en une pour voir les demandes des autres et contribuer à la communauté.",
         "nothing_to_show": "Rien à afficher ici.",
         "confirm_delete": "Confirmer la suppression",
@@ -170,5 +170,26 @@
     "offerModal": {
         "edit_offer": "Modifier une offre",
         "submit_offer": "Soumettre une offre"
+    },
+    "materials": {
+        "petg": "PETG",
+        "tpu": "TPU",
+        "nylon": "Nylon",
+        "wood": "Bois",
+        "metal": "Métal",
+        "carbon_fiber": "Fibre de carbone"
+    },
+    "colors": {
+        "red": "Rouge",
+        "blue": "Bleu",
+        "green": "Vert",
+        "yellow": "Jaune",
+        "black": "Noir",
+        "white": "Blanc",
+        "orange": "Orange",
+        "purple": "Violet",
+        "pink": "Rose",
+        "brown": "Marron",
+        "gray": "Gris"
     }
 }
