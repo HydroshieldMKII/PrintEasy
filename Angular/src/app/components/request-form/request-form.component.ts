@@ -17,6 +17,7 @@ import { AuthService } from '../../services/authentication.service';
 import { RequestPresetModel } from '../../models/request-preset.model';
 import { OfferModalComponent } from '../offer-modal/offer-modal.component';
 import { TranslatePipe } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-request-form',
@@ -65,7 +66,8 @@ export class RequestFormComponent implements OnInit, OnChanges {
     private presetService: PresetService,
     private fb: FormBuilder,
     private messageService: MessageService,
-    private authService: AuthService
+    private authService: AuthService,
+    private translate: TranslateService
   ) {
     this.dateValidator = this.dateValidator.bind(this);
   }
@@ -252,8 +254,8 @@ export class RequestFormComponent implements OnInit, OnChanges {
     if (!this.appendPresets(formData)) {
       this.messageService.add({
         severity: 'error',
-        summary: 'Error',
-        detail: 'Invalid or duplicated preset information. Please clear or complete your recommended presets.'
+        summary: this.translate.instant('requestForm.invalid_preset'),
+        detail: this.translate.instant('requestForm.invalid_preset_message')
       });
       return;
     }

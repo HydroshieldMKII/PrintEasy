@@ -108,7 +108,6 @@
               <label for="targetDate" class="block font-semibold">{{ 'requestForm.target_date' | translate }}</label>
             </div>
           </p-floatlabel>
-          <div>
             <p-message
             *ngIf="form.get('targetDate')?.errors?.['required'] && (form.get('targetDate')?.dirty || form.get('targetDate')?.touched)"
             severity="error"
@@ -125,7 +124,6 @@
           >
             {{ 'requestForm.target_date_future' | translate }}
           </p-message>
-          </div>
         </div>
       </div>
 

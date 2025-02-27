@@ -8,7 +8,6 @@ import { ApiRequestService } from './api.service';
 import { ApiResponseModel } from '../models/api-response.model';
 
 import { map, Observable, of } from 'rxjs';
-import { MessageService } from 'primeng/api';
 import { PrinterUserModel } from '../models/printer-user.model';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -16,7 +15,6 @@ import { TranslateService } from '@ngx-translate/core';
     providedIn: 'root'
 })
 export class PresetService {
-    messageService: MessageService = inject(MessageService);
     requests: PresetModel[] = [];
 
     private cachedColors: ColorModel[] | null = null;

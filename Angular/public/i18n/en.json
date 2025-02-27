@@ -150,7 +150,8 @@
         "confirm_accept": "Confirm Accept",
         "confirm_accept_message": "Are you sure you want to accept the offer? You can only accept one offer per request.",
         "yes": "Yes",
-        "no": "No"
+        "no": "No",
+        "error_already_exists": "You already submitted an offer with the same preset"
     },
     "offerForm": {
         "preset": "Preset",

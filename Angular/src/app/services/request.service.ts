@@ -174,13 +174,10 @@ export class RequestService {
         return this.api.postRequest('api/request', {}, request).pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 201) {
-                    this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Request created successfully' });
+                    this.messageService.add({ severity: 'success', summary: this.translate.instant('requestForm.created'), detail: this.translate.instant('requestForm.created_message') });
                 } else {
-                    if (response.status === 422) {
-                        for (const [key, value] of Object.entries(response.errors)) {
-                            this.messageService.add({ severity: 'error', summary: 'Error', detail: `${key}: ${value}` });
-                        }
-                    }
+                    console.log("Request creation failed: ", response);
+                    this.messageService.add({ severity: 'error', summary: this.translate.instant('requestForm.error'), detail: this.translate.instant('requestForm.error_message') });
                 }
                 return response;
             })

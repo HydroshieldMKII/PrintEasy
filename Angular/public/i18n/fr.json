@@ -117,8 +117,14 @@
         "cancel": "Annuler",
         "delete": "Supprimer",
         "save": "Enregistrer",
+        "created": "Succès!",
+        "created_message": "Demande créée avec succès!",
+        "error": "Erreur!",
+        "error_message": "Une erreur innatendue s'est produite. Veuillez réessayer plus tard.",
         "confirm_delete": "Confirmer la suppression",
-        "confirm_delete_message": "Êtes-vous sûr de vouloir supprimer cette demande ? Cette action ne peut pas être annulée."
+        "confirm_delete_message": "Êtes-vous sûr de vouloir supprimer cette demande ? Cette action ne peut pas être annulée.",
+        "invalid_preset": "Préréglage invalide",
+        "invalid_preset_message": "Veuillez sélectionner toutes les options pour le préréglage et s'assurer qu'ils sont uniques"
     },
     "offer": {
         "title": "Offres",
@@ -146,7 +152,11 @@
         "confirm_accept": "Confirmer l'acceptation",
         "confirm_accept_message": "Êtes-vous sûr de vouloir accepter cette offre ? Vous ne pouvez accepter qu'une seule offre par demande.",
         "yes": "Oui",
-        "no": "Non"
+        "no": "Non",
+        "created": "Offre créée avec succès!",
+        "updated": "Offre mise à jour avec succès!",
+        "deleted": "Offre supprimée avec succès!",
+        "error_already_exists": "Vous avez déjà soumis une offre avec le même préréglage"
     },
     "offerForm": {
         "preset": "Préréglage",
