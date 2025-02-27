@@ -1,4 +1,6 @@
 class Api::OfferController < AuthenticatedController
+    rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
+
     def index
       offers = Offer.all
       render_offers(filter_offers(offers))
@@ -6,7 +8,6 @@ class Api::OfferController < AuthenticatedController
   
     def show
       offer = current_user.offers.find(params[:id])
-  
       render_offers(offer)
     end
   
@@ -20,7 +21,7 @@ class Api::OfferController < AuthenticatedController
     end
   
     def update
-      offer = Offer.find(params[:id])
+      offer = current_user.offers.find(params[:id])
       valid = true
 
       if offer.printer_user.user != current_user
@@ -39,14 +40,14 @@ class Api::OfferController < AuthenticatedController
       end
 
       if valid && offer.update(offer_params)
-        render json: offer
+        render json: { offer: offer, errors: {} }, status: :ok
       else
         render json: { errors: offer.errors }, status: :unprocessable_entity
       end
     end
   
     def destroy
-      offer = Offer.find(params[:id])
+      offer = current_user.offers.find(params[:id])
       valid = true
 
       if offer.printer_user.user != current_user
@@ -65,7 +66,7 @@ class Api::OfferController < AuthenticatedController
       end
 
       if valid && offer.destroy
-        render json: { errors: {} }, status: :ok
+        render json: { offer: offer, errors: {} }, status: :ok
       else
         render json: { errors: { offer: offer.errors } }, status: :unprocessable_entity
       end
@@ -90,9 +91,9 @@ class Api::OfferController < AuthenticatedController
         valid = false
       end
 
-      offer.cancelled_at = Time.now
-      if valid && offer.save
-        render json: offer, status: :ok
+      if valid
+        offer.update_column(:cancelled_at, Time.now)
+        render json: { offer: offer, errors: {} }, status: :ok
       else
         render json: { errors: offer.errors }, status: :unprocessable_entity
       end
@@ -176,6 +177,10 @@ class Api::OfferController < AuthenticatedController
   
     def offer_params
       params.require(:offer).permit(:request_id, :printer_user_id, :color_id, :filament_id, :price, :print_quality, :target_date)
+    end
+
+    def record_not_found
+      render json: { errors: { offer: 'Offer not found' } }, status: :not_found
     end
   end
   

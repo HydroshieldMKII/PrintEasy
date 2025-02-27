@@ -208,7 +208,7 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
         assert_equal ["must exist", "can't be blank"], json_response['errors']['filament']
         assert_equal ["must be less than or equal to 2"], json_response['errors']['print_quality']
         assert_equal ["must be greater than or equal to 0"], json_response['errors']['price']
-        assert_equal ["must be greater than 2025-02-26"], json_response['errors']['target_date']
+        assert_equal ["must be greater than today"], json_response['errors']['target_date']
     end
 
     test "should not create offer if duplicated" do
@@ -222,7 +222,6 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
 
         # Response format
         json_response = assert_nothing_raised { JSON.parse(response.body) }
-        p json_response
 
         # response content
         assert_not_empty json_response['errors']
@@ -276,9 +275,160 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
         # response content
         assert_not_empty json_response['errors']
         
-        assert_equal ["Couldn't find Offer"], json_response['errors']['base']
+        assert_equal "Offer not found", json_response['errors']['offer']
     end
 
+    # UPDATE
 
+    test "should update offer" do
+        # Database changes
+        assert_no_difference 'Offer.count' do
+            patch api_offer_url(@offer2) , params: { offer: { price: 1.5, target_date: "2026-01-01", print_quality: 0.22, printer_user_id: @offer2.printer_user_id, color_id: @offer2.color_id, filament_id: @offer2.filament_id } }
+        end
 
+        # Http code
+        assert_response :success
+
+        # Response format
+        json_response = assert_nothing_raised { JSON.parse(response.body) }
+
+        # response content
+        assert_equal 2, json_response['offer']['id']
+        assert_equal 1.5, json_response['offer']['price']
+        assert_equal "2026-01-01", json_response['offer']['target_date']
+        assert_equal 0.22, json_response['offer']['print_quality']
+        assert_nil json_response['offer']['cancelled_at']
+        assert_equal 1, json_response['offer']['printer_user_id']
+        assert_equal 2, json_response['offer']['color_id']
+        assert_equal 2, json_response['offer']['filament_id']
+        assert_empty json_response['errors']
+    end
+
+    test "should not update offer with invalid params" do
+        # Database changes
+        assert_no_difference 'Offer.count' do
+            patch api_offer_url(@offer2) , params: { offer: { price: -100.5, target_date: "1970-01-01", print_quality: 1000.22, printer_user_id: -1, color_id: -1, filament_id: -1 } }
+        end
+
+        # Http code
+        assert_response :unprocessable_entity
+
+        # Response format
+        json_response = assert_nothing_raised { JSON.parse(response.body) }
+
+        # response content
+        assert_not_empty json_response['errors']
+        
+        assert_equal ["must exist", "can't be blank"], json_response['errors']['printer_user']
+        assert_equal ["must exist", "can't be blank"], json_response['errors']['color']
+        assert_equal ["must exist", "can't be blank"], json_response['errors']['filament']
+        assert_equal ["must be less than or equal to 2"], json_response['errors']['print_quality']
+        assert_equal ["must be greater than or equal to 0"], json_response['errors']['price']
+        assert_equal ["must be greater than today"], json_response['errors']['target_date']
+    end
+
+    test "should not update offer if not yours" do
+        sign_out @user
+        sign_in @other_user
+
+        # Database changes
+        assert_no_difference 'Offer.count' do
+            patch api_offer_url(@offer2) , params: { offer: { price: 1.5, target_date: "2026-01-01", print_quality: 0.22, printer_user_id: @offer2.printer_user_id, color_id: @offer2.color_id, filament_id: @offer2.filament_id } }
+        end
+
+        # Http code
+        assert_response :not_found
+
+        # Response format
+        json_response = assert_nothing_raised { JSON.parse(response.body) }
+
+        # response content
+        assert_not_empty json_response['errors']
+        
+        assert_equal "Offer not found", json_response['errors']['offer']
+    end
+
+    # DEST
+    test "should destroy offer" do
+        # Database changes
+        assert_difference 'Offer.count', -1 do
+            delete api_offer_url(@offer2)
+        end
+
+        # Http code
+        assert_response :success
+
+        # Response format
+        json_response = assert_nothing_raised { JSON.parse(response.body) }
+
+        # response content
+        assert_equal 2, json_response['offer']['id']
+        assert_equal 2, json_response['offer']['request_id']
+        assert_equal 1, json_response['offer']['printer_user_id']
+        assert_equal 2, json_response['offer']['color_id']
+        assert_equal 2, json_response['offer']['filament_id']
+        assert_equal 2.5, json_response['offer']['price']
+        assert_equal "2021-01-02", json_response['offer']['target_date']
+        assert_equal "2021-01-02T00:00:00.000Z", json_response['offer']['created_at']
+        assert_equal "2021-01-02T00:00:00.000Z", json_response['offer']['updated_at']
+        assert_equal 0.22, json_response['offer']['print_quality']
+        assert_nil json_response['offer']['cancelled_at']
+        assert_empty json_response['errors']
+
+        assert_empty json_response['errors']
+    end
+
+    test "should not destroy offer if not yours" do
+        sign_out @user
+        sign_in @other_user
+
+        # Database changes
+        assert_no_difference 'Offer.count' do
+            delete api_offer_url(@offer2)
+        end
+
+        # Http code
+        assert_response :not_found
+
+        # Response format
+        json_response = assert_nothing_raised { JSON.parse(response.body) }
+
+        # response content
+        assert_not_empty json_response['errors']
+        
+        assert_equal "Offer not found", json_response['errors']['offer']
+    end
+
+    # CANCEL
+
+    test "should cancel offer" do
+        sign_out @user
+        sign_in @other_user
+
+        # Database changes
+        assert_no_difference 'Offer.count' do
+            put reject_api_offer_url(@offer2)
+        end
+
+        # Http code
+        assert_response :success
+
+        # Response format
+        json_response = assert_nothing_raised { JSON.parse(response.body) }
+        p json_response
+
+        # response content
+        assert_equal 2, json_response['offer']['id']
+        assert_equal 2, json_response['offer']['request_id']
+        assert_equal 1, json_response['offer']['printer_user_id']
+        assert_equal 2, json_response['offer']['color_id']
+        assert_equal 2, json_response['offer']['filament_id']
+        assert_equal 2.5, json_response['offer']['price']
+        assert_equal "2021-01-02", json_response['offer']['target_date']
+        assert_equal "2021-01-02T00:00:00.000Z", json_response['offer']['created_at']
+        assert_equal "2021-01-02T00:00:00.000Z", json_response['offer']['updated_at']
+        assert_equal 0.22, json_response['offer']['print_quality']
+        assert_not_nil json_response['offer']['cancelled_at']
+        assert_empty json_response['errors']
+    end
 end
