@@ -8,8 +8,13 @@
             </div>
         </div>
         <div class="profile-rating">
-            <p-rating [(ngModel)]="rating" width="32" height="32"></p-rating>
-            <a href="#" class="reviews">{{ reviews }} reviews</a>
+            <p-rating
+                [readonly]="true"
+                [stars]="5"
+                [(ngModel)]="averageRating"
+                class="big-stars"
+            ></p-rating>
+            <a href="#" class="reviews">{{ userReviews.length }} reviews</a>
         </div>
     </div>
 
@@ -17,69 +22,107 @@
         <p>{{ prints }} prints since {{ authService.currentUser?.createdAt | date:'MMM d, y' }}</p>
     </div>
 
-    <p-tabView class="profile-tabs">
-        <p-tabPanel header="My contest submissions">
-            <div *ngFor="let contest of userContestSubmissions">
-                <div class="mt-4">
-                    <h2>
-                        {{ contest.contest.theme}}
-                    </h2>
-                </div>
-                <div>
-                    <p-carousel [value]="contest.submissions" [numVisible]="3" [numScroll]="1"
+
+    <p-tabs [value]="tab">
+        <p-tablist>
+            <p-tab [value]="'contest-submissions'">My contest submissions</p-tab>
+            <p-tab [value]="'printers'">My printers</p-tab>
+            <p-tab [value]="'reviews'">My Reviews</p-tab>
+        </p-tablist>
+        <p-tabpanels>
+            <p-tabpanel [value]="'contest-submissions'">
+                <div *ngFor="let contest of userContestSubmissions">
+                    <div class="mt-4">
+                        <h2>
+                            {{ contest.contest.theme}}
+                        </h2>
+                    </div>
+                    <div>
+                        <p-carousel [value]="contest.submissions" [numVisible]="3" [numScroll]="1"
                          class="custom-carousel"
                          [responsiveOptions]="responsiveOptions">
                         <ng-template let-product #item>
                             <div class="border border-surface-200 dark:border-surface-700 rounded m-2 p-4 carousel-mobile" [style]="{
                             'width': contest.submissions.length === 1 ? '33%' : (contest.submissions.length === 2 ? '65.5%' : 'auto')
                         }">
-                                <div class="mb-4">
-                                    <div class="relative mx-auto image-container">
-                                        <img [src]="product.imageUrl" [alt]="product.name"
-                                            class="w-full rounded-border" />
+                                    <div class="mb-4">
+                                        <div class="relative mx-auto image-container">
+                                            <img [src]="product.imageUrl" [alt]="product.name"
+                                                class="w-full rounded-border" />
+                                        </div>
+                                    </div>
+                                    <div class="mb-4 font-semibold text-xl">{{ product.name }}</div>
+                                    <div class="flex justify-between items-center">
+                                        <div>{{ product.description }}</div>
+                                        <div class="flex items-center gap-2">
+                                            <!-- Nombre de likes -->
+                                            <span class="font-semibold text-gray-700 dark:text-gray-300">{{
+                                                product.likes.length
+                                                }}</span>
+    
+                                            <!-- Bouton Like -->
+                                            <!-- <p-button 
+                                                [icon]="product.liked ? 'pi pi-heart-fill' : 'pi pi-heart'"
+                                                [severity]="product.liked ? 'danger' : 'secondary'"
+                                                [outlined]="!product.liked"
+                                                (click)="toggleLike(product)"
+                                            /> -->
+    
+                                            <p-button icon="pi pi-heart" severity="secondary" />
+    
+                                            <!-- Bouton Download -->
+                                            <p-button icon="pi pi-download" severity="primary" />
+    
+                                            <!-- @if (authService.currentUser?.id === product.user.id) {
+                                            <p-button type="button" icon="pi pi-pencil"
+                                                severity="primary"></p-button>
+                                            <p-button type="button" icon="pi pi-trash"
+                                                severity="danger"></p-button>
+                                            } -->
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="mb-4 font-semibold text-xl">{{ product.name }}</div>
-                                <div class="flex justify-between items-center">
-                                    <div>{{ product.description }}</div>
-                                    <div class="flex items-center gap-2">
-                                        <!-- Nombre de likes -->
-                                        <span class="font-semibold text-gray-700 dark:text-gray-300">{{
-                                            product.likes.length
-                                            }}</span>
-
-                                        <!-- Bouton Like -->
-                                        <!-- <p-button 
-                                            [icon]="product.liked ? 'pi pi-heart-fill' : 'pi pi-heart'"
-                                            [severity]="product.liked ? 'danger' : 'secondary'"
-                                            [outlined]="!product.liked"
-                                            (click)="toggleLike(product)"
-                                        /> -->
-
-                                        <p-button icon="pi pi-heart" severity="secondary" />
-
-                                        <!-- Bouton Download -->
-                                        <p-button icon="pi pi-download" severity="primary" />
-
-                                        <!-- @if (authService.currentUser?.id === product.user.id) {
-                                        <p-button type="button" icon="pi pi-pencil"
-                                            severity="primary"></p-button>
-                                        <p-button type="button" icon="pi pi-trash"
-                                            severity="danger"></p-button>
-                                        } -->
-                                    </div>
-                                </div>
-                            </div>
-                        </ng-template>
-                    </p-carousel>
+                            </ng-template>
+                        </p-carousel>
+                    </div>
                 </div>
-            </div>
-        </p-tabPanel>
-        <p-tabPanel header="My printers">
-            Content for printers
-        </p-tabPanel>
-        <p-tabPanel header="My Reviews">
-            Content for reviews
-        </p-tabPanel>
-    </p-tabView>
+            </p-tabpanel>
+
+            <p-tabpanel [value]="'printers'">
+                Content for printers
+            </p-tabpanel>
+
+            <p-tabpanel [value]="'reviews'">
+                <div class="review-list">
+                    <div *ngFor="let review of userReviews">
+                        <p-card [style]="{ width: '25rem', overflow: 'hidden', height: '100%' }">
+                            <ng-template #header>
+                                <p-galleria [value]="review.imageUrls" [numVisible]="5" [showItemNavigators]="true" [showThumbnails]="false" [showIndicatorsOnItem]="true" [indicatorsPosition]="'bottom'" [showIndicators]="true" [containerStyle]="{'max-width': '100%', 'height': '400px'}">
+                                    <ng-template #item let-image>
+                                        <img [src]="image.url" class="carousel-image">
+                                    </ng-template>
+                                </p-galleria>
+                                <div *ngIf="review.imageUrls.length == 0" class="empty-carousel">
+                                    <i class="pi pi-images" style="font-size: 2.5rem;"></i>
+                                </div>
+                            </ng-template>
+                            <ng-template #title> {{review.title}} </ng-template>
+                            <ng-template #subtitle> {{review.createdAt | date}} </ng-template>
+                            <p>
+                                {{review.description}}
+                            </p>
+                            <p-rating
+                                [readonly]="true"
+                                [stars]="5"
+                                [(ngModel)]="review.rating"
+                                class="big-stars"
+                            ></p-rating>
+                        </p-card>
+                    </div>
+                </div>
+                
+            </p-tabpanel>
+        </p-tabpanels>
+    </p-tabs>
+    
 </div>
