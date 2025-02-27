@@ -148,7 +148,7 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     test "should create offer" do
         # Database changes
         assert_difference 'Offer.count' do
-            post api_offer_index_url , params: { offer: { name: "Test Offer", price: 1.5, target_date: "2026-01-01", comment: "test comment", request_id: @offer.request_id, printer_user_id: @offer2.printer_user_id, color_id: @offer2.color_id, filament_id: @offer2.filament_id, print_quality: 0.22 } }
+            post api_offer_index_url , params: { offer: { name: "Test Offer", price: 1.5, target_date: "2026-01-01", comment: "test comment", request_id: offers(:ten).request_id, printer_user_id: @offer2.printer_user_id, color_id: @offer2.color_id, filament_id: @offer2.filament_id, print_quality: 0.22 } }
         end
 
         # Http code
@@ -227,6 +227,27 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
         assert_not_empty json_response['errors']
         
         assert_equal ["This offer already exists"], json_response['errors']['request']
+    end
+
+    test "should not create an offer on your request" do
+    end
+
+    test "should not create an offer if request is already accepted" do
+        # Database changes
+        assert_no_difference 'Offer.count' do
+            post api_offer_index_url , params: { offer: { name: "Test Offer", price: 1.5, target_date: "2026-01-01", comment: "test comment", request_id: @offer.request_id, printer_user_id: @offer.printer_user_id, color_id: @offer.color_id, filament_id: @offer.filament_id, print_quality: 0.22 } }
+        end
+
+        # Http code
+        assert_response :unprocessable_entity
+
+        # Response format
+        json_response = assert_nothing_raised { JSON.parse(response.body) }
+
+        # response content
+        assert_not_empty json_response['errors']
+
+        assert_equal ["Request already accepted an offer. Cannot create"], json_response['errors']['offer']
     end
 
     # SHOW
@@ -401,19 +422,23 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
 
     # CANCEL
 
-    test "should not cancel offer if not the owner" do
+    test "should cancel offer successfully" do
+        sign_out @user
+        sign_in @other_user
+
         # Database changes
         assert_no_difference 'Offer.count' do
-            put reject_api_offer_url(@offer2)
+            put reject_api_offer_url(offers(:two))
         end
-
-        # Http code
-        assert_response :not_found
-
-        # Response format
-        json_response = assert_nothing_raised { JSON.parse(response.body) }
-        p json_response
-    end
+        
+        # Expect a success response
+        assert_response :success
+        
+        json_response = JSON.parse(response.body)
+        # Verify that the offer now has a cancellation timestamp
+        assert_not_nil json_response['cancelled_at']
+      end
+      
 
     test "should not cancel offer if not yours" do
         # Database changes

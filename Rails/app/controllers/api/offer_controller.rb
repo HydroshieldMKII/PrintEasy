@@ -12,7 +12,16 @@ class Api::OfferController < AuthenticatedController
   
     def create
       offer = Offer.new(offer_params)
-      if offer.save
+      valid = true
+
+      accepted_requests = Order.joins(:offer).pluck(:request_id).uniq
+      if accepted_requests.include?(offer.request_id)
+        valid = false
+        offer.errors.add(:offer, 'Request already accepted an offer. Cannot create')
+      end
+
+
+      if valid && offer.save
         render json: { offer: offer, errors: {} }, status: :created
       else
         render json: { errors: offer.errors }, status: :unprocessable_entity

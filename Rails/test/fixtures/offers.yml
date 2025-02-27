@@ -122,3 +122,16 @@ nine: {
   updated_at: 2021-01-01,
   print_quality: 0.22
 }
+
+ten: {
+  id: 10,
+  request_id: 3,
+  printer_user_id: 1,
+  color_id: 1,
+  filament_id: 1,
+  price: 1.5,
+  target_date: 2021-01-01,
+  created_at: 2021-01-01,
+  updated_at: 2021-01-01,
+  print_quality: 0.22
+}
