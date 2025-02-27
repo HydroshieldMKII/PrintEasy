@@ -129,19 +129,29 @@
                     *ngIf="tab === 'all'"
                   ></p-button>
                   <p-button
-                    *ngIf="tab === 'mine'"
+                    *ngIf="tab === 'mine' && !request.hasOfferAccepted"
                     icon="pi pi-pencil"
                     title="{{ 'request.edit' | translate }}"
                     routerLink="/requests/edit/{{ request.id }}"
-                    [disabled]="request.hasOfferAccepted"
                   ></p-button>
                   <p-button
-                    *ngIf="tab === 'mine'"
+                  *ngIf="tab === 'mine' && request.hasOfferAccepted"
+                  icon="pi pi-pencil"
+                  title="{{ 'request.edit_disabled' | translate }}"
+                  [disabled]="true"
+                ></p-button>
+                  <p-button
+                    *ngIf="tab === 'mine' && !request.hasOfferAccepted"
                     icon="pi pi-trash"
                     title="{{ 'request.delete' | translate }}"
                     (onClick)="showDeleteDialog(request)"
-                    [disabled]="request.hasOfferAccepted"
                   ></p-button>
+                  <p-button
+                  *ngIf="tab === 'mine' && request.hasOfferAccepted"
+                  icon="pi pi-trash"
+                  title="{{ 'request.delete_disabled' | translate }}"
+                  [disabled]="true"
+                ></p-button>
                   <a [href]="request.stlFileUrl" class="p-button" download style="text-decoration: none;"><i class="pi pi-download"></i></a>
                   <p-button
                     icon="pi pi-share-alt"

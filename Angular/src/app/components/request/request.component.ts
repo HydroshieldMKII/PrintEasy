@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { SelectItem } from 'primeng/api';
 import { Router, RouterLink } from '@angular/router';
 import { RequestModel } from '../../models/request.model';
@@ -6,7 +6,7 @@ import { RequestService } from '../../services/request.service';
 import { ImportsModule } from '../../../imports';
 import { MessageService } from 'primeng/api';
 import { Clipboard } from '@angular/cdk/clipboard';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-request',
@@ -14,7 +14,7 @@ import { TranslatePipe } from '@ngx-translate/core';
   templateUrl: './request.component.html',
   styleUrls: ['./request.component.css']
 })
-export class RequestsComponent {
+export class RequestsComponent implements OnInit {
   activeTab: string = 'mine';
   requests: RequestModel[] | null = null;
   myRequests: RequestModel[] | null = null;
@@ -33,23 +33,82 @@ export class RequestsComponent {
   selectedSortOption: SelectItem | null = null;
   selectedFilterOption: SelectItem | null = null;
 
-  filterOptions: SelectItem[] = [
-    { label: 'Select a filter (Clear)', value: '' },
-    { label: 'My printers', value: 'owned-printer' },
-    { label: 'My country', value: 'country' },
-  ];
+  filterOptions: SelectItem[] = [];
+  sortOptions: SelectItem[] = [];
 
-  sortOptions: SelectItem[] = [
-    { label: 'Select a filter (Clear)', value: '' },
-    { label: 'Name (Asc)', value: 'name-asc' },
-    { label: 'Name (Desc)', value: 'name-desc' },
-    { label: 'Date (Asc)', value: 'date-asc' },
-    { label: 'Date (Desc)', value: 'date-desc' },
-    { label: 'Budget (Asc)', value: 'budget-asc' },
-    { label: 'Budget (Desc)', value: 'budget-desc' },
-    { label: 'Country (Asc)', value: 'country-asc' },
-    { label: 'Country (Desc)', value: 'country-desc' }
-  ];
+  currentLanguage: string = 'en';
+
+  constructor(
+    private requestService: RequestService,
+    private router: Router,
+    private messageService: MessageService,
+    private clipboard: Clipboard,
+    private translateService: TranslateService
+  ) {
+    const queryParams = this.router.parseUrl(this.router.url).queryParams;
+    this.currentFilter = queryParams['filter'] || '';
+    this.currentSort = queryParams['sort'] || '';
+    this.currentSortCategory = queryParams['sortCategory'] || '';
+    this.searchQuery = queryParams['search'] || '';
+
+    // set tab
+    this.activeTab = queryParams['tab'] || 'mine';
+    this.router.navigate([], { queryParams: { tab: this.activeTab }, queryParamsHandling: 'merge' });
+  }
+
+  ngOnInit(): void {
+    this.currentLanguage = localStorage.getItem('language') || 'en';
+    console.log('Current language:', this.currentLanguage);
+
+    this.initializeSelectOptions();
+
+    this.filter(this.activeTab);
+
+    this.selectedFilterOption = this.filterOptions.find(option => option.value === this.currentFilter) || this.filterOptions[0];
+    this.selectedSortOption = this.sortOptions.find(option => option.value === `${this.currentSortCategory}-${this.currentSort}`) || this.sortOptions[0];
+  }
+
+  initializeSelectOptions(): void {
+    if (this.currentLanguage === 'fr') {
+      this.filterOptions = [
+        { label: 'Sélectionner un filtre (Effacer)', value: '' },
+        { label: 'Mes imprimantes', value: 'owned-printer' },
+        { label: 'Mon pays', value: 'country' },
+        { label: 'Acceptées', value: 'in-progress' }
+      ];
+
+      this.sortOptions = [
+        { label: 'Sélectionner un tri (Effacer)', value: '' },
+        { label: 'Nom (Asc)', value: 'name-asc' },
+        { label: 'Nom (Desc)', value: 'name-desc' },
+        { label: 'Date (Asc)', value: 'date-asc' },
+        { label: 'Date (Desc)', value: 'date-desc' },
+        { label: 'Budget (Asc)', value: 'budget-asc' },
+        { label: 'Budget (Desc)', value: 'budget-desc' },
+        { label: 'Pays (Asc)', value: 'country-asc' },
+        { label: 'Pays (Desc)', value: 'country-desc' }
+      ];
+    } else {
+      this.filterOptions = [
+        { label: 'Select a filter (Clear)', value: '' },
+        { label: 'My printers', value: 'owned-printer' },
+        { label: 'My country', value: 'country' },
+        { label: 'Accepted', value: 'in-progress' }
+      ];
+
+      this.sortOptions = [
+        { label: 'Select a sort (Clear)', value: '' },
+        { label: 'Name (Asc)', value: 'name-asc' },
+        { label: 'Name (Desc)', value: 'name-desc' },
+        { label: 'Date (Asc)', value: 'date-asc' },
+        { label: 'Date (Desc)', value: 'date-desc' },
+        { label: 'Budget (Asc)', value: 'budget-asc' },
+        { label: 'Budget (Desc)', value: 'budget-desc' },
+        { label: 'Country (Asc)', value: 'country-asc' },
+        { label: 'Country (Desc)', value: 'country-desc' }
+      ];
+    }
+  }
 
   onTabChange(tab: string): void {
     console.log('Tab changed:', tab);
@@ -67,29 +126,6 @@ export class RequestsComponent {
   get currentRequests(): RequestModel[] {
     return this.activeTab === 'mine' ? this.myRequests || [] : this.requests || [];
   }
-
-  constructor(private requestService: RequestService, private router: Router, private messageService: MessageService, private clipboard: Clipboard) {
-    const queryParams = this.router.parseUrl(this.router.url).queryParams;
-    this.currentFilter = queryParams['filter'] || '';
-    this.currentSort = queryParams['sort'] || '';
-    this.currentSortCategory = queryParams['sortCategory'] || '';
-    this.searchQuery = queryParams['search'] || '';
-
-    // set tab
-    this.activeTab = queryParams['tab'] || 'mine';
-    this.router.navigate([], { queryParams: { tab: this.activeTab }, queryParamsHandling: 'merge' });
-
-    // Fetch requests
-    this.filter(this.activeTab);
-
-    // Select the corresponding select sort and filter
-    this.selectedFilterOption = this.filterOptions.find(option => option.value === this.currentFilter) || this.filterOptions[0];
-    this.selectedSortOption = this.sortOptions.find(option => option.value === `${this.currentSortCategory}-${this.currentSort}`) || this.sortOptions[0];
-
-    // Set serach
-    this.searchQuery = queryParams['search'] || '';
-  }
-
 
   filter(type: string): void {
     this.requestService
@@ -112,7 +148,6 @@ export class RequestsComponent {
         }
       });
   }
-
 
   expandAll(): void {
     this.expandedRows = this.currentRequests.reduce((acc: { [key: number]: boolean }, request: RequestModel) => {
@@ -161,7 +196,6 @@ export class RequestsComponent {
     this.filter('mine');
   }
 
-
   onFilterChange(event: { value: SelectItem }): void {
     console.log('Filter changed. New value:', event.value.value);
     this.currentFilter = event.value.value;
@@ -186,8 +220,18 @@ export class RequestsComponent {
     const fullUrl = new URL(text, window.location.origin).href;
     console.log('Copied to clipboard:', fullUrl);
     this.clipboard.copy(fullUrl);
-    this.messageService.add({ severity: 'success', summary: 'Copied request to clipboard' });
+    this.messageService.add({
+      severity: 'success',
+      summary: this.currentLanguage === 'fr' ? 'Demande copiée dans le presse-papiers' : 'Copied request to clipboard'
+    });
   }
 
-}
+  updateLanguage(newLanguage: string): void {
+    this.currentLanguage = newLanguage;
+    localStorage.setItem('language', newLanguage);
+    this.initializeSelectOptions();
 
+    this.selectedFilterOption = this.filterOptions.find(option => option.value === this.currentFilter) || this.filterOptions[0];
+    this.selectedSortOption = this.sortOptions.find(option => option.value === `${this.currentSortCategory}-${this.currentSort}`) || this.sortOptions[0];
+  }
+}

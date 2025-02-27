@@ -583,7 +583,7 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
 
     # response content
     assert_not_empty json_response['errors']
-    assert_equal ['Offer already rejected. Cannot update'], json_response['errors']['offer']
+    assert_equal ['Offer already rejected'], json_response['errors']['offer']
   end
 
   test 'should not cancel offer if not yours' do

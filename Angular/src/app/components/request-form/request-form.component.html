@@ -146,13 +146,16 @@
         </div>
 
         <div class="stl-actions flex gap-2 mt-4">
-          <p-button
-            *ngIf="isViewMode"
-            label="{{ 'requestForm.download_file' | translate }}"
-            icon="pi pi-download"
-            class="p-button-outlined flex-1"
-            (onClick)="downloadFile(request.stlFileUrl)"
-          ></p-button>
+            <a
+              pButton
+              *ngIf="isViewMode && request.stlFileUrl"
+              [href]="request.stlFileUrl"
+              download
+              label="{{ 'requestForm.download_file' | translate }}"
+              icon="pi pi-download"
+              class="p-button"
+              style="text-decoration: none;"
+            ></a>
           <p-fileUpload
             *ngIf="(isEditMode && !request.hasOffers) || isNewMode"
             [auto]="true"

@@ -59,18 +59,12 @@ module Api
       end
 
       if offer.cancelled_at
-        offer.errors.add(:offer, 'Offer already rejected. Cannot update')
+        offer.errors.add(:offer, 'Offer already rejected')
         valid = false
       end
 
-      # debugger
-
-      if valid
-        if offer.reject!
-          render json: { offer: offer, errors: {} }, status: :ok
-        else
-          render json: { errors: offer.errors }, status: :unprocessable_entity
-        end
+      if valid && offer.reject!
+        render json: { offer: offer, errors: {} }, status: :ok
       else
         render json: { errors: offer.errors }, status: :unprocessable_entity
       end
