@@ -68,7 +68,6 @@ export class SubmissionsComponent {
 
     this.submissionService.getSubmissions(this.paramsId).subscribe((data) => {
       this.submissions = data;
-      console.log('Submissions:', this.submissions);
     });
 
     this.responsiveOptions = [
@@ -116,6 +115,14 @@ export class SubmissionsComponent {
         this.submissions = data;
       });
     });
+
+    this.submissionForm.reset();
+    this.imageUrl = '';
+    this.stlUrl = '';
+    this.uploadedFile = null;
+    this.uploadedFileBlob = null;
+    this.noImagePreview = 'image-preview-container';
+    this.noStlPreview = 'image-preview-container';
   }
 
   onDelete(id: number) {
@@ -188,34 +195,39 @@ export class SubmissionsComponent {
   }
 
   showDialog(submission: SubmissionModel | null) {
-    const userSubmission = this.submissions.filter(submission => submission.mine);
-    if ((this.contest && userSubmission[0].submissions.length < this.contest.submissionLimit) && !this.contest.finished) {
-      this.isEdit = !!submission;
-
-      this.submissionId = submission?.id || 0;
-
-      this.submissionForm.patchValue({
-        name: submission?.name || '',
-        description: submission?.description || '',
-        image: null,
-        stl: null
-      });
-
-      this.stlUrl = submission?.stlUrl || '';
-      this.imageUrl = submission?.imageUrl || '';
-
-      this.noImagePreview = this.isEdit ? '' : 'image-preview-container';
-      this.noStlPreview = this.isEdit ? '' : 'image-preview-container';
-
-      this.display = true;
+    const userSubmissions = this.submissions.filter(sub => sub.mine);
+    const hasNoSubmissions = userSubmissions.length === 0;
+    const hasRemainingSlots = userSubmissions.length > 0 && userSubmissions[0].submissions.length < (this.contest?.submissionLimit ?? 0);
+    const isContestFinished = this.contest?.finished;
+    const isEditMode = !!submission;
+  
+    if (isContestFinished) {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Contest is finished' });
+      return;
     }
-    else {
-      if (this.contest?.finished) {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Contest is finished' });
-      }
-      else {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Submission limit reached' });
-      }
+  
+    if (!isEditMode && !hasNoSubmissions && !hasRemainingSlots) {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Submission limit reached' });
+      return;
     }
+  
+    this.isEdit = isEditMode;
+    this.submissionId = submission?.id || 0;
+  
+    this.submissionForm.patchValue({
+      name: submission?.name || '',
+      description: submission?.description || '',
+      image: null,
+      stl: null
+    });
+  
+    this.stlUrl = submission?.stlUrl || '';
+    this.imageUrl = submission?.imageUrl || '';
+  
+    this.noImagePreview = this.isEdit ? "" : "image-preview-container";
+    this.noStlPreview = this.isEdit ? "" : "image-preview-container";
+  
+    this.display = true;
   }
+  
 }

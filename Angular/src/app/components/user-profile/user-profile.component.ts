@@ -1,21 +1,31 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, Renderer2 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { AvatarModule } from 'primeng/avatar';
 import { RatingModule } from 'primeng/rating';
+import { ImportsModule } from '../../../imports';
 import { TabViewModule } from 'primeng/tabview';
-import { FormsModule } from '@angular/forms';
 
 import { AuthService } from '../../services/authentication.service';
+import { SubmissionService } from '../../services/submission.service';
+import { UserContestSubmissionsModel } from '../../models/user-contest-submissions.model';
 
 @Component({
   selector: 'app-user-profile',
-  imports: [AvatarModule, RatingModule, TabViewModule, FormsModule, CommonModule],
+  imports: [RatingModule, TabViewModule, CommonModule, ImportsModule],
   templateUrl: './user-profile.component.html',
   styleUrl: './user-profile.component.css'
 })
 export class UserProfileComponent {
   readonly authService = inject(AuthService);
+  readonly submissionService = inject(SubmissionService);
+
+  userContestSubmissions: UserContestSubmissionsModel[] = [];
+
+  constructor(private renderer: Renderer2) {
+    this.submissionService.getUserContestSubmissions().subscribe(submissions => {
+      this.userContestSubmissions = submissions;
+    });
+  }
 
   rating = 0;
   reviews = 0;

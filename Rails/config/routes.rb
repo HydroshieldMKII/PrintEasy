@@ -24,6 +24,7 @@ Rails.application.routes.draw do
     resources :submission
     resources :preset
     resources :user_submission, only: [:index, :show]
+    resources :user_contest_submissions, only: [:index]
   end
 
   match '*url', to: "angular#index", via: :get
