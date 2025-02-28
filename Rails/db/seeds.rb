@@ -508,7 +508,7 @@ req_free.save
 # Create Orders
 Current.user = admin
 order1 = Order.create!(offer: Offer.first)
-order2 = Order.create!(offer: Offer.second)
+order2 = Order.create!(offer: Offer.fourth)
 # order3 = Order.create!(offer: Offer.third)
 
 Current.user = user1
