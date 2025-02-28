@@ -571,13 +571,14 @@ colors = Color.all
 filaments = Filament.all
 PrinterUser.all
 
-[admin, user1].each do |user|
-  user_requests = Request.where(user: user)
+[admin, user1].each_with_index do |user, user_index|
+  user_requests = Request.where(user: user).to_a
   next if user_requests.empty?
 
   10.times do |i|
-    request = user_requests.sample
-    printer_user = PrinterUser.where.not(user: user).sample
+    request_index = i % user_requests.length
+    request = user_requests[request_index]
+    printer_user = PrinterUser.where.not(user: user).offset(i % PrinterUser.where.not(user: user).count).first
     print_qualities = [0.08, 0.12, 0.16, 0.2]
 
     Offer.create!(
@@ -585,7 +586,7 @@ PrinterUser.all
       printer_user: printer_user,
       color: colors[i % colors.size],
       filament: filaments[i % filaments.size],
-      price: (i + 1) * 10.0,
+      price: (i + 1) * 10.0 + (user_index * 5.0),
       target_date: Time.now + (i + 5).days,
       print_quality: print_qualities[i % print_qualities.size]
     )
