@@ -40,11 +40,8 @@
         </div>
 
         <div class="stl-section flex flex-col items-center">
-            <div *ngIf="!order?.offer?.request?.stlFileUrl" class="stl-placeholder">
-              <p>STL preview here</p>
-            </div>
             <div class="stl-viewer-container">
-                <stl-model-viewer *ngIf="order?.offer?.request?.stlFileUrl" [stlModels]="[order?.offer?.request?.stlFileUrl ?? '']"></stl-model-viewer>
+                <stl-model-viewer class="stl-viewer" *ngIf="order?.offer?.request?.stlFileUrl" [stlModels]="[order?.offer?.request?.stlFileUrl ?? '']"></stl-model-viewer>
             </div>
         </div>
     </div>

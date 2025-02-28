@@ -61,6 +61,11 @@ textarea {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+.stl-viewer {
+    width: 100%;
+    height: 100%;
+}
+
 .h1c {
     font-size: 2rem;
     font-weight: 600;
@@ -188,6 +193,7 @@ textarea {
 .comment-container {
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: wrap;
 }
 
 .comment {
@@ -237,6 +243,11 @@ textarea {
 
     .h-row p {
         margin: 5px;
+    }
+
+    .stl-viewer {
+        max-width: 20rem;
+
     }
 }
 

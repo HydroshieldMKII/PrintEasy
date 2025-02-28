@@ -25,9 +25,9 @@
 
     <p-tabs [value]="tab">
         <p-tablist>
-            <p-tab [value]="'contest-submissions'">My contest submissions</p-tab>
-            <p-tab [value]="'printers'">My printers</p-tab>
-            <p-tab [value]="'reviews'">My Reviews</p-tab>
+            <p-tab [value]="'contest-submissions'">Submissions</p-tab>
+            <p-tab [value]="'printers'">Printers</p-tab>
+            <p-tab [value]="'reviews'">Reviews</p-tab>
         </p-tablist>
         <p-tabpanels>
             <p-tabpanel [value]="'contest-submissions'">
@@ -95,9 +95,9 @@
             <p-tabpanel [value]="'reviews'">
                 <div class="review-list">
                     <div *ngFor="let review of userReviews">
-                        <p-card [style]="{ width: '25rem', overflow: 'hidden', height: '100%' }">
+                        <p-card [style]="{ width: '20rem', overflow: 'hidden', height: '100%' }">
                             <ng-template #header>
-                                <p-galleria [value]="review.imageUrls" [numVisible]="5" [showItemNavigators]="true" [showThumbnails]="false" [showIndicatorsOnItem]="true" [indicatorsPosition]="'bottom'" [showIndicators]="true" [containerStyle]="{'max-width': '100%', 'height': '400px'}">
+                                <p-galleria [value]="review.imageUrls" [numVisible]="5" [showItemNavigators]="true" [showThumbnails]="false" [showIndicatorsOnItem]="true" [indicatorsPosition]="'bottom'" [showIndicators]="true" [containerStyle]="{'max-width': '100%', 'height': '300px'}">
                                     <ng-template #item let-image>
                                         <img [src]="image.url" class="carousel-image">
                                     </ng-template>
