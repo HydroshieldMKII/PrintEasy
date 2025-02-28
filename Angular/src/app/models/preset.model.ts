@@ -17,7 +17,10 @@ export class PresetModel {
         this.user = user;
     }
 
-    static fromAPI(data: any): PresetModel {
+    static fromAPI(data: any): PresetModel | null {
+        if (!data) {
+            return null;
+        }
         return new PresetModel(
             data.id,
             data.print_quality,

@@ -16,6 +16,7 @@ export class ApiRequestService {
     getRequest(query: string, params?: { [key: string]: string }): Observable<ApiResponseModel> {
         return this.http.get<ApiResponseModel>(query, { params, observe: 'response' }).pipe(
             map(response => {
+                console.log("Response", response);
                 return new ApiResponseModel(
                     {
                         status: response.status,

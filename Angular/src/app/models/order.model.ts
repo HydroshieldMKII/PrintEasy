@@ -5,14 +5,14 @@ import { ReviewModel } from "./review.model";
 export class OrderModel {
     id: number;
     orderStatus: OrderStatusModel[];
-    offer: OfferModel;
+    offer: OfferModel | null;
     availableStatus: string[];
     review: ReviewModel | null;
 
     constructor(
         id: number,
         order_status: OrderStatusModel[],
-        offer: OfferModel,
+        offer: OfferModel | null,
         available_status: string[],
         review: ReviewModel | null
     ) {
@@ -23,7 +23,10 @@ export class OrderModel {
         this.review = review;
     }
 
-    static fromAPI(any: any): OrderModel {
+    static fromAPI(any: any): OrderModel | null {
+        if (!any) {
+            return null;
+        }
         return new OrderModel(
             any.id,
             (any.order_status ? any.order_status.map((order_status: any) => OrderStatusModel.fromAPI(order_status)) : []),

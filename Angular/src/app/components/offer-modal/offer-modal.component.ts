@@ -34,7 +34,7 @@ export class OfferModalComponent implements OnChanges {
 
   selectedPreset: PresetModel | null = null;
   presets: { label: string, value: string, id: number }[] = [];
-  printers: { label: string, value: string, id: number, idPrinterUser: number }[] = [];
+  printers: { label: string | undefined, value: string | undefined, id: number | undefined, idPrinterUser: number | undefined }[] = [];
   filamentTypes: { label: string, value: string, id: number }[] = [];
   colors: { label: string, value: string, id: number }[] = [];
   filaments: { label: string, value: string, id: number }[] = [];
@@ -85,7 +85,7 @@ export class OfferModalComponent implements OnChanges {
     this.presetService.getPrinterUsers().subscribe((printerUsers: PrinterUserModel[]) => {
       this.printers = printerUsers.map(printerUser => {
         const formattedDate = new Date(printerUser.aquiredDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-        return { label: `${printerUser.printer.model} (${formattedDate})`, value: printerUser.printer.model, id: printerUser.printer.id, idPrinterUser: printerUser.id };
+        return { label: `${printerUser?.printer?.model} (${formattedDate})`, value: printerUser?.printer?.model, id: printerUser?.printer?.id, idPrinterUser: printerUser.id };
       });
     });
 
@@ -219,7 +219,7 @@ export class OfferModalComponent implements OnChanges {
       this.colors = colors.map(color => ({ label: color.name, value: color.name, id: color.id }));
       this.printers = printers.map(printerUser => {
         const formattedDate = new Date(printerUser.aquiredDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-        return { label: `${printerUser.printer.model} (${formattedDate})`, value: printerUser.printer.model, id: printerUser.printer.id, idPrinterUser: printerUser.id };
+        return { label: `${printerUser?.printer?.model} (${formattedDate})`, value: printerUser?.printer?.model, id: printerUser?.printer?.id, idPrinterUser: printerUser.id };
       });
       this.filaments = filaments.map(filament => ({ label: filament.name, value: filament.name, id: filament.id }));
 

@@ -9,7 +9,10 @@ export class ImageAttachmentModel {
         this.url = url;
     }
 
-    static fromAPI(data: any): ImageAttachmentModel {
+    static fromAPI(data: any): ImageAttachmentModel | null {
+        if (!data) {
+            return null;
+        }
         return new ImageAttachmentModel(
             data.signed_id,
             data.url

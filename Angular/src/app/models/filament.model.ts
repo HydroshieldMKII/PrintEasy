@@ -7,7 +7,10 @@ export class FilamentModel {
         this.name = name;
     }
 
-    static fromAPI(data: any): FilamentModel {
+    static fromAPI(data: any): FilamentModel | null {
+        if (!data) {
+            return null;
+        }
         return new FilamentModel(
             data.id,
             data.name

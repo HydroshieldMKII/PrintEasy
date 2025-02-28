@@ -23,12 +23,8 @@ module Api
                   include: {
                     user: {
                       except: %i[created_at updated_at is_admin],
-                      methods: %i[profile_picture_url],
-                      include: {
-                        country: {}
-                      }
-                    },
-                    printer: {}
+                      methods: %i[profile_picture_url]
+                    }
                   }
                 },
                 request: {
@@ -37,25 +33,17 @@ module Api
                   include: {
                     user: {
                       except: %i[created_at updated_at is_admin],
-                      methods: %i[profile_picture_url],
-                      include: {
-                        country: {}
-                      }
+                      methods: %i[profile_picture_url]
                     }
                   }
-                },
-                color: {},
-                filament: {}
+                }
               }
             },
             review: {
               include: {
                 user: {
                   except: %i[created_at updated_at is_admin],
-                  methods: %i[profile_picture_url],
-                  include: {
-                    country: {}
-                  }
+                  methods: %i[profile_picture_url]
                 }
               }
             },
@@ -87,12 +75,8 @@ module Api
                     include: {
                       user: {
                         except: %i[created_at updated_at is_admin],
-                        methods: %i[profile_picture_url],
-                        include: {
-                          country: {}
-                        }
-                      },
-                      printer: {}
+                        methods: %i[profile_picture_url]
+                      }
                     }
                   },
                   request: {
@@ -101,15 +85,10 @@ module Api
                     include: {
                       user: {
                         except: %i[created_at updated_at is_admin],
-                        methods: %i[profile_picture_url],
-                        include: {
-                          country: {}
-                        }
+                        methods: %i[profile_picture_url]
                       }
                     }
-                  },
-                  color: {},
-                  filament: {}
+                  }
                 }
               },
               review: {
@@ -117,10 +96,7 @@ module Api
                 include: {
                   user: {
                     except: %i[created_at updated_at is_admin],
-                    methods: %i[profile_picture_url],
-                    include: {
-                      country: {}
-                    }
+                    methods: %i[profile_picture_url]
                   }
                 }
               },

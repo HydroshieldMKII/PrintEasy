@@ -10,7 +10,7 @@ export class RequestModel {
     comment: string;
     stlFileUrl: string;
     presets: RequestPresetModel[];
-    user: UserModel;
+    user: UserModel | null;
     hasOffers: boolean;
     hasOfferAccepted: boolean;
 
@@ -22,7 +22,7 @@ export class RequestModel {
         comment: string,
         stlFileUrl: string,
         presets: RequestPresetModel[],
-        user: UserModel,
+        user: UserModel | null,
         hasOffers: boolean,
         hasOfferAccepted: boolean
     ) {
@@ -38,7 +38,10 @@ export class RequestModel {
         this.hasOfferAccepted = hasOfferAccepted
     }
 
-    static fromAPI(data: any): RequestModel {
+    static fromAPI(data: any): RequestModel | null {
+        if (!data) {
+            return null;
+        }
         return new RequestModel(
             data.id,
             data.name,

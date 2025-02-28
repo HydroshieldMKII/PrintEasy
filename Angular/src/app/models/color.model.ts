@@ -10,7 +10,10 @@ export class ColorModel {
         this.name = name;
     }
 
-    static fromAPI(data: any): ColorModel {
+    static fromAPI(data: any): ColorModel | null {
+        if (!data) {
+            return null;
+        }
         return new ColorModel(
             data.id,
             data.name

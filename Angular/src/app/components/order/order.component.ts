@@ -213,7 +213,7 @@ export class OrderComponent {
           if (this.order.availableStatus.includes('Arrived')) {
             this.canArrive = true;
           }
-          if (this.order.offer.request.user.id == this.auth.currentUser?.id) {
+          if (this.order?.offer?.request?.user?.id == this.auth.currentUser?.id) {
             this.consumer = true;
           }else{
             this.reviewForm.get('rating')?.disable();

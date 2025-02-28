@@ -3,14 +3,14 @@ import { PrinterModel } from "./printer.model";
 
 export class PrinterUserModel {
     id: number;
-    user: UserModel;
-    printer: PrinterModel;
+    user: UserModel | null;
+    printer: PrinterModel | null;
     aquiredDate: Date;
 
     constructor(
         id: number,
-        user: UserModel,
-        printer: PrinterModel,
+        user: UserModel | null,
+        printer: PrinterModel | null,
         aquired_date: Date
     ) {
         this.id = id;
@@ -19,7 +19,10 @@ export class PrinterUserModel {
         this.aquiredDate = aquired_date;
     }
 
-    static fromAPI(data: any): PrinterUserModel {
+    static fromAPI(data: any): PrinterUserModel | null {
+        if (!data) {
+            return null;
+        }
         return new PrinterUserModel(
             data.id,
             UserModel.fromAPI(data.user),

@@ -5,10 +5,10 @@ import { FilamentModel } from "./filament.model";
 
 export class OfferModel {
     id: number;
-    request: RequestModel;
-    printerUser: PrinterUserModel;
-    color: ColorModel;
-    filament: FilamentModel;
+    request: RequestModel | null;
+    printerUser: PrinterUserModel | null;
+    color: ColorModel | null;
+    filament: FilamentModel | null;
     price: number;
     printQuality: number;
     targetDate: Date;
@@ -17,10 +17,10 @@ export class OfferModel {
 
     constructor(
         id: number,
-        request: RequestModel,
-        printer_user: PrinterUserModel,
-        color: ColorModel,
-        filament: FilamentModel,
+        request: RequestModel | null,
+        printer_user: PrinterUserModel | null,
+        color: ColorModel | null,
+        filament: FilamentModel | null,
         price: number,
         print_quality: number,
         target_date: Date,
@@ -37,7 +37,10 @@ export class OfferModel {
         this.cancelledAt = cancelled_at;
     }
 
-    static fromAPI(data: any): OfferModel {
+    static fromAPI(data: any): OfferModel | null {
+        if (!data) {
+            return null;
+        }
         return new OfferModel(
             data.id,
             RequestModel.fromAPI(data.request),

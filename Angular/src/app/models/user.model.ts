@@ -15,7 +15,10 @@ export class UserModel {
         this.isAdmin = isAdmin;
     }
 
-    static fromAPI(data: any): UserModel {
+    static fromAPI(data: any): UserModel | null {
+        if (!data) {
+            return null;
+        }
         return new UserModel(
             data.id,
             data.username,

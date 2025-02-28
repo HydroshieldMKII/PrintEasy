@@ -15,7 +15,10 @@ export class OrderStatusModel {
         this.imageUrl = image_url;
     }
 
-    static fromAPI(data: any): OrderStatusModel {
+    static fromAPI(data: any): OrderStatusModel | null {
+        if (!data) {
+            return null;
+        }
         return new OrderStatusModel(
             data.id,
             data.status_name,

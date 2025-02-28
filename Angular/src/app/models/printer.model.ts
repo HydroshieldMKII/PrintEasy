@@ -10,7 +10,10 @@ export class PrinterModel {
         this.model = model;
     }
 
-    static fromAPI(data: any): PrinterModel {
+    static fromAPI(data: any): PrinterModel | null {
+        if (!data) {
+            return null;
+        }
         return new PrinterModel(
             data.id,
             data.model

@@ -136,7 +136,7 @@ export class RequestFormComponent implements OnInit, OnChanges {
         this.requestService.getRequestById(this.id).subscribe((request) => {
           this.request = request;
           console.log('Request loaded:', this.request);
-          this.isMine = request?.user.id === this.authService.currentUser?.id;
+          this.isMine = request?.user?.id === this.authService.currentUser?.id;
 
           if (this.request === null) {
             this.router.navigate(['/requests']);
