@@ -8,7 +8,7 @@
             <div class="h-row">
                 <p>{{'order.printer_owner' | translate}}</p>
                 <div style="display: flex; flex-direction: row; gap: 10px;">
-                    <p-avatar label="" size="large" shape="circle" image="{{order?.offer?.printerUser?.user?.profilePictureUrl}}"></p-avatar>
+                    <p-avatar label="" size="large" shape="circle" *ngIf="order?.offer?.printerUser?.user?.profilePictureUrl" image="{{order?.offer?.printerUser?.user?.profilePictureUrl}}"></p-avatar>
                     <p class="h3c">{{order?.offer?.printerUser?.user?.username}}</p>
                 </div>
             </div>
