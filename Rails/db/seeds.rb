@@ -443,6 +443,126 @@ submission3.save
   submission.save(validate: false)
 end
 
+2.times do |i|
+  submission = Submission.new(
+    name: "Submission #{i + 1}",
+    description: "Description for submission #{i + 1}.",
+    user: user1,
+    contest: contest3
+  )
+
+  ruby_stl.rewind
+
+  submission.stl.attach(
+    io: ruby_stl,
+    filename: 'RUBY13.stl',
+    content_type: 'application/sla'
+  )
+
+  red_skeleton.rewind
+
+  submission.image.attach(
+    io: red_skeleton,
+    filename: 'red_skeleton.jpg',
+    content_type: 'image/jpg'
+  )
+
+  submission.save(validate: false)
+
+  Like.create!(user: user1, submission: submission)
+end
+
+3.times do |i|
+  submission = Submission.new(
+    name: "Submission #{i + 1}",
+    description: "Description for submission #{i + 1}.",
+    user: user1,
+    contest: contest5
+  )
+
+  ruby_stl.rewind
+
+  submission.stl.attach(
+    io: ruby_stl,
+    filename: 'RUBY13.stl',
+    content_type: 'application/sla'
+  )
+
+  red_skeleton.rewind
+
+  submission.image.attach(
+    io: red_skeleton,
+    filename: 'red_skeleton.jpg',
+    content_type: 'image/jpg'
+  )
+
+  submission.save(validate: false)
+
+  Like.create!(user: user1, submission: submission)
+  Like.create!(user: user2, submission: submission)
+end
+
+4.times do |i|
+  submission = Submission.new(
+    name: "Submission #{i + 1}",
+    description: "Description for submission #{i + 1}.",
+    user: user1,
+    contest: contest7
+  )
+
+  ruby_stl.rewind
+
+  submission.stl.attach(
+    io: ruby_stl,
+    filename: 'RUBY13.stl',
+    content_type: 'application/sla'
+  )
+
+  red_skeleton.rewind
+
+  submission.image.attach(
+    io: red_skeleton,
+    filename: 'red_skeleton.jpg',
+    content_type: 'image/jpg'
+  )
+
+  submission.save(validate: false)
+
+  Like.create!(user: user1, submission: submission)
+  Like.create!(user: user2, submission: submission)
+  Like.create!(user: admin, submission: submission)
+end
+
+5.times do |i|
+  submission = Submission.new(
+    name: "Submission #{i + 1}",
+    description: "Description for submission #{i + 1}.",
+    user: user1,
+    contest: contest8
+  )
+
+  ruby_stl.rewind
+
+  submission.stl.attach(
+    io: ruby_stl,
+    filename: 'RUBY13.stl',
+    content_type: 'application/sla'
+  )
+
+  red_skeleton.rewind
+
+  submission.image.attach(
+    io: red_skeleton,
+    filename: 'red_skeleton.jpg',
+    content_type: 'image/jpg'
+  )
+
+  submission.save(validate: false)
+
+  Like.create!(user: user1, submission: submission)
+  Like.create!(user: user2, submission: submission)
+end
+
 Like.create!(user: user1, submission: submission1)
 Like.create!(user: user1, submission: submission2)
 

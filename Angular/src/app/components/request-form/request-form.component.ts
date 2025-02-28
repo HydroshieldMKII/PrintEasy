@@ -40,6 +40,8 @@ export class RequestFormComponent implements OnInit, OnChanges {
   presetToDelete: any[] = [];
   todayDate = new Date().toISOString().substring(0, 10);
 
+  isDragOver: boolean = false;
+
   request: any = {
     name: '',
     budget: '',
@@ -394,5 +396,40 @@ export class RequestFormComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     console.log('Changes in request form:', changes);
+  }
+
+
+  // Drag and drop
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragOver = true;
+  }
+
+  onDragLeave(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragOver = false;
+  }
+
+  onDrop(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragOver = false;
+
+    if (event.dataTransfer && event.dataTransfer.files) {
+      const files = event.dataTransfer.files;
+      if (files.length > 0) {
+        const file = files[0];
+
+        this.uploadedFile = file;
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          this.uploadedFileBlob = reader.result;
+          console.log('File loaded:', this.uploadedFileBlob);
+        };
+        reader.readAsArrayBuffer(file);
+      }
+    }
   }
 }

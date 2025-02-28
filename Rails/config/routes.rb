@@ -19,6 +19,7 @@ Rails.application.routes.draw do
     resources :order_status
     resources :order
     resources :review
+    resources :user_review, only: [:index]
     resources :status
     resources :contest, except: %i[new edit]
     resources :color

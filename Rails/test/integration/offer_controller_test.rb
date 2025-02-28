@@ -516,6 +516,53 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     assert_empty json_response['errors']
   end
 
+  test 'should not destroy offer if already rejected' do
+    offer = offers(:ten)
+
+    # reject offer
+    put reject_api_offer_url(offer)
+    assert_response :success
+
+    sign_in @user
+
+    # Database changes
+    # assert_no_difference 'Offer.count' do
+    delete api_offer_url(offer)
+    # end
+
+    # Http code
+    assert_response :unprocessable_entity
+
+    # Response format
+    json_response = assert_nothing_raised { JSON.parse(response.body) }
+
+    # response content
+    assert_not_empty json_response['errors']
+
+    assert_equal ['Offer already rejected. Cannot delete'], json_response['errors']['offer']
+  end
+
+  test 'should not destroy offer if accepted' do
+    sign_out @user
+    sign_in @other_user
+
+    # Database changes
+    assert_no_difference 'Offer.count' do
+      delete api_offer_url(@other_offer)
+    end
+
+    # Http code
+    assert_response :unprocessable_entity
+
+    # Response format
+    json_response = assert_nothing_raised { JSON.parse(response.body) }
+
+    # response content
+    assert_not_empty json_response['errors']
+
+    assert_equal ['Offer already accepted. Cannot delete'], json_response['errors']['offer']
+  end
+
   test 'should not destroy offer if not yours' do
     sign_out @user
     sign_in @other_user
@@ -523,6 +570,24 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     # Database changes
     assert_no_difference 'Offer.count' do
       delete api_offer_url(@offer2)
+    end
+
+    # Http code
+    assert_response :not_found
+
+    # Response format
+    json_response = assert_nothing_raised { JSON.parse(response.body) }
+
+    # response content
+    assert_not_empty json_response['errors']
+
+    assert_equal 'Offer not found', json_response['errors']['offer']
+  end
+
+  test 'should not destroy offer if doesnt exist' do
+    # Database changes
+    assert_no_difference 'Offer.count' do
+      delete api_offer_url(9999)
     end
 
     # Http code
