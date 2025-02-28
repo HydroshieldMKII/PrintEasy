@@ -127,14 +127,32 @@
         </div>
       </div>
 
-      <!-- Right Section: STL Preview -->
       <div class="stl-section flex flex-col items-center">
-        <div class="stl-placeholder">
+        <!-- Drag and Drop Area -->
+        <div
+          class="stl-placeholder drop-zone"
+          [ngClass]="{
+            'drag-over': isDragOver,
+            'has-file': request.stlFileUrl || uploadedFileBlob,
+            'no-file': !request.stlFileUrl && !uploadedFileBlob
+          }"
+          (dragover)="onDragOver($event)"
+          (dragleave)="onDragLeave($event)"
+          (drop)="onDrop($event)"
+        >
           <p-message
-            *ngIf="!request.stlFileUrl && !uploadedFileBlob"
+            *ngIf="!request.stlFileUrl && !uploadedFileBlob && !isDragOver"
             severity="warn"
             text="{{ 'requestForm.no_stl_file' | translate }}"
           ></p-message>
+          <div
+            *ngIf="isDragOver"
+            class="drop-message"
+          >
+            <div class="text-center">
+              <p><i class="pi pi-upload text-3xl mb-2"></i>{{ 'requestForm.drop_stl_file' | translate }}</p>
+            </div>
+          </div>
           <stl-model-viewer
             *ngIf="!uploadedFileBlob && (isEditMode || isViewMode) && request.stlFileUrl"
             [stlModels]="[request.stlFileUrl]"
@@ -144,7 +162,6 @@
             [stlModelFiles]="[uploadedFileBlob]"
           ></stl-model-viewer>
         </div>
-
         <div class="stl-actions flex gap-2 mt-4">
             <a
               pButton

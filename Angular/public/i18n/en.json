@@ -238,7 +238,8 @@
         "error": "Error!",
         "error_message": "An unexpected error occurred. Please try again later.",
         "invalid_preset": "Invalid preset",
-        "invalid_preset_message": "Please select all options for the preset and ensure they are unique"
+        "invalid_preset_message": "Please select all options for the preset and ensure they are unique",
+        "drop_stl_file": "Drop your STL file here"
     },
     "offer": {
         "title": "Offers",
