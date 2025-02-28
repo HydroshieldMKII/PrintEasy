@@ -14,12 +14,12 @@
                 </p-floatlabel>
                 <p-message severity="error" variant="simple" size="small">
                   @if (contestForm.get('theme')?.errors?.['required']) {
-                    {{ 'contest_form.error_theme_required' | translate }}
-                   } @else if (contestForm.get('theme')?.errors?.['minlength']) {
-                    {{ 'contest_form.error_theme_short' | translate }}
-                   } @else if (contestForm.get('theme')?.errors?.['maxlength']) {
-                    {{ 'contest_form.error_theme_long' | translate }}
-                   }
+                  {{ 'contest_form.error_theme_required' | translate }}
+                  } @else if (contestForm.get('theme')?.errors?.['minlength']) {
+                  {{ 'contest_form.error_theme_short' | translate }}
+                  } @else if (contestForm.get('theme')?.errors?.['maxlength']) {
+                  {{ 'contest_form.error_theme_long' | translate }}
+                  }
                 </p-message>
               </div>
 
@@ -35,29 +35,31 @@
                     rows="4"></textarea>
                   <label for="description" class="p-text-bold">{{ 'contest_form.description' | translate }}</label>
                 </p-floatlabel>
-                <p-message severity="error" variant="simple" size="small">{{ 'contest_form.error_description_long' | translate }}</p-message>
+                <p-message severity="error" variant="simple" size="small">{{ 'contest_form.error_description_long' |
+                  translate }}</p-message>
               </div>
 
               <!-- Date de début -->
               <div class="container-row mt-12">
                 <div class="">
                   <p-floatlabel variant="in">
-                    <p-datepicker [hourFormat]="'24'" [showTime]="true" formControlName="startDate"
-                      [showIcon]="true" inputId="buttondisplay" [showOnFocus]="false" dateFormat="yy-mm-dd"
-                      [class]="startDatePicker" [style]="{width: '100%'}"></p-datepicker>
+                    <p-datepicker [hourFormat]="'24'" [showTime]="true" formControlName="startDate" [showIcon]="true"
+                      inputId="buttondisplay" [showOnFocus]="false" dateFormat="yy-mm-dd" [class]="startDatePicker"
+                      [style]="{width: '100%'}"></p-datepicker>
                     <label for="startDate">{{ 'contest_form.start_date' | translate }}</label>
                   </p-floatlabel>
                   <p-message class="date-error" severity="error" variant="simple" size="small">
-                    {{ contestForm.errors?.['dateError'] ? contestForm.errors?.['dateError'] : 'contest_form.error_start_at_required' | translate
+                    {{ contestForm.errors?.['dateError'] ? contestForm.errors?.['dateError'] :
+                    'contest_form.error_start_at_required' | translate
                     }}
                   </p-message>
                 </div>
 
                 <div class="">
                   <p-floatlabel variant="in">
-                    <p-datepicker [hourFormat]="'24'" [showTime]="true" formControlName="endDate"
-                      [showIcon]="true" inputId="buttondisplay" [showOnFocus]="false"
-                      dateFormat="yy-mm-dd" [style]="{width: '100%'}"></p-datepicker>
+                    <p-datepicker [hourFormat]="'24'" [showTime]="true" formControlName="endDate" [showIcon]="true"
+                      inputId="buttondisplay" [showOnFocus]="false" dateFormat="yy-mm-dd"
+                      [style]="{width: '100%'}"></p-datepicker>
                     <label for="endDate" class="center-label">{{ 'contest_form.end_date' | translate }}</label>
                   </p-floatlabel>
                 </div>
@@ -70,12 +72,12 @@
                   </p-floatlabel>
                   <p-message severity="error" variant="simple" size="small">
                     @if (contestForm.get('limit')?.errors?.['required']) {
-                      {{ 'contest_form.error_limit_required' | translate }}
-                     } @else if (contestForm.get('limit')?.errors?.['min']) {
-                      {{ 'contest_form.error_limit_min' | translate }}
-                     } @else if (contestForm.get('limit')?.errors?.['max']) {
-                      {{ 'contest_form.error_limit_max' | translate }}
-                     }
+                    {{ 'contest_form.error_limit_required' | translate }}
+                    } @else if (contestForm.get('limit')?.errors?.['min']) {
+                    {{ 'contest_form.error_limit_min' | translate }}
+                    } @else if (contestForm.get('limit')?.errors?.['max']) {
+                    {{ 'contest_form.error_limit_max' | translate }}
+                    }
                   </p-message>
                 </div>
               </div>
@@ -88,6 +90,12 @@
               <div *ngIf="imageUrl">
                 <img [src]="imageUrl" alt="" class="image-preview" />
               </div>
+
+              <div *ngIf="!imageUrl">
+                <p-message severity="warn" styleClass="error-file">
+                  Image is required
+                </p-message>
+              </div>
             </div>
 
             <!-- Upload de l'image -->
@@ -95,7 +103,8 @@
               <div class="fileUploadContainer center">
                 <!-- <label for="image" class="p-text-bold">Image</label> -->
                 <p-fileUpload mode="basic" name="image" accept="image/*" [maxFileSize]="1000000"
-                  (onSelect)="onFileSelect($event)" chooseLabel="{{ 'contest_form.button_upload' | translate }}" [auto]="true"></p-fileUpload>
+                  (onSelect)="onFileSelect($event)" chooseLabel="{{ 'contest_form.button_upload' | translate }}"
+                  [auto]="true"></p-fileUpload>
               </div>
             </div>
           </div>
@@ -103,14 +112,15 @@
         <!-- Boutons -->
         <div class="mt-12">
           <div class="button-container">
-            <p-button label="{{ 'global.cancel_button' | translate }}" type="button" (click)="onCancel()" icon="pi pi-times"
-              severity="secondary"></p-button>
+            <p-button label="{{ 'global.cancel_button' | translate }}" type="button" (click)="onCancel()"
+              icon="pi pi-times" severity="secondary"></p-button>
             @if (isEdit) {
-            <p-button label="{{ 'global.delete_button' | translate }}" type="button" (click)="onDelete()" icon="pi pi-trash" severity="danger">
+            <p-button label="{{ 'global.delete_button' | translate }}" type="button" (click)="onDelete()"
+              icon="pi pi-trash" severity="danger">
             </p-button>
             }
-            <p-button label="{{ 'global.save_button' | translate }}" [disabled]="!contestForm.valid" icon="pi pi-save" severity="success"
-              (onClick)="onSubmit()"></p-button>
+            <p-button label="{{ 'global.save_button' | translate }}" [disabled]="!contestForm.valid" icon="pi pi-save"
+              severity="success" (onClick)="onSubmit()"></p-button>
           </div>
         </div>
       </div>
@@ -118,16 +128,8 @@
   </div>
 </div>
 
-<p-dialog
-  [(visible)]="deleteDialogVisible"
-  [modal]="true"
-  [style]="{ width: '25rem' }"
-  dismissableMask="true"
-  closable="false"
-  blockScroll="true"
-  resizable="false"
-  draggable="false"
->
+<p-dialog [(visible)]="deleteDialogVisible" [modal]="true" [style]="{ width: '25rem' }" dismissableMask="true"
+  closable="false" blockScroll="true" resizable="false" draggable="false">
   <ng-template #header>
     <div class="inline-flex items-center justify-center gap-2">
       <i class="pi pi-exclamation-triangle text-red-500 text-2xl"></i>
@@ -138,12 +140,7 @@
     {{ 'contest.confirm_delete_message' | translate }}
   </span>
   <ng-template #footer>
-    <p-button
-      label="Cancel"
-      [text]="true"
-      severity="secondary"
-      (click)="deleteDialogVisible = false"
-    />
+    <p-button label="Cancel" [text]="true" severity="secondary" (click)="deleteDialogVisible = false" />
     <p-button label="Delete" severity="danger" (click)="confirmDelete()" />
   </ng-template>
 </p-dialog>

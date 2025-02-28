@@ -72,7 +72,7 @@
                 <td>
                   <button pButton type="button" icon="pi pi-pencil" [title]="'offer.edit_offer' | translate" 
                           (click)="editOffer(offer)" *ngIf="activeTab === 'mine'"></button>
-                  <button pButton type="button" icon="pi pi-times" [title]="'offer.cancel_offer' | translate" severity="danger" 
+                  <button pButton type="button" icon="pi pi-trash" [title]="'offer.cancel_offer' | translate" severity="danger" 
                           (click)="cancelOffer(offer, request)" *ngIf="activeTab === 'mine'"></button>
                   <button pButton type="button" icon="pi pi-check" [title]="'offer.accept_offer' | translate" severity="success" 
                           (click)="showAcceptOffer(offer)" *ngIf="activeTab === 'all'"></button>
@@ -87,7 +87,7 @@
         </div>
 
         <div *ngIf="activeTab == 'all' && !isOwningPrinter" class="empty-message" style="width: 100%; height: 100%;">
-          <!-- Optionally display a message if no printer is available -->
+
         </div>
 
         <div *ngIf="(currentRequests.length === 0)" class="empty-message">

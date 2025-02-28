@@ -130,6 +130,12 @@
                                     <stl-model-viewer *ngIf="!isEdit" [stlModelFiles]="[uploadedFileBlob]"
                                         class="stl-preview-file"></stl-model-viewer>
                                 </div>
+
+                                <div *ngIf="!uploadedFileBlob && !stlUrl">
+                                    <p-message severity="warn" styleClass="error-file">
+                                        {{ 'submission_form.error_stl_required' | translate }}
+                                    </p-message>
+                                </div>
                             </div>
                             <div class="mt-25">
                                 <div class="fileUploadContainer center">
@@ -146,6 +152,11 @@
                                 <div *ngIf="imageUrl">
                                     <img [src]="imageUrl" alt="" class="image-preview" />
                                 </div>
+                                <div *ngIf="!imageUrl">
+                                    <p-message severity="warn" styleClass="error-file">
+                                        {{ 'submission_form.error_image_required' | translate }}
+                                    </p-message>
+                                </div>  
                             </div>
                             <div class="mt-25">
                                 <div class="fileUploadContainer center">

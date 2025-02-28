@@ -21,6 +21,12 @@ h2 {
     width: 400px;
 }
 
+:host ::ng-deep .error-file {
+    width: 250px;
+    display: flex;
+    justify-content: center;
+}
+
 .container-column {
     display: flex;
     flex-direction: column;

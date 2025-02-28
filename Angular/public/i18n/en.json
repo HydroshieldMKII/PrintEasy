@@ -81,7 +81,8 @@
         "error_start_at_required": "Start date is required",
         "error_limit_required": "Submission limit is required",
         "error_limit_min": "Submission limit must be at least 1",
-        "error_limit_max": "Submission limit must be at most 30"
+        "error_limit_max": "Submission limit must be at most 30",
+        "error_image_required": "Image is required"
     },
     "submissions": {
         "title_page": "Contest theme:",

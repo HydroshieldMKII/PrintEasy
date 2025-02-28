@@ -81,7 +81,8 @@
         "error_start_at_required": "La date de début est requise",
         "error_limit_required": "La limite de soumission est requise",
         "error_limit_min": "La limite de soumission doit être d'au moins 1",
-        "error_limit_max": "La limite de soumission doit être d'au plus 30"
+        "error_limit_max": "La limite de soumission doit être d'au plus 30",
+        "error_image_required": "L'image est requise"
     },
     "submissions": {
         "title_page": "Thème du concours:",

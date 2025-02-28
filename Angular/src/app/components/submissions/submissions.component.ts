@@ -62,7 +62,7 @@ export class SubmissionsComponent {
     this.contestService.getContest(this.paramsId).subscribe((data) => {
       this.contest = data;
       if (this.contest?.endAt && this.contest?.startAt) {
-        const diff = new Date(this.contest?.endAt).getTime() - new Date(this.contest?.startAt).getTime();
+        const diff = new Date(this.contest?.endAt).getTime() - new Date().getTime();
         this.contestDurationInDays = (diff / (1000 * 60 * 60 * 24)).toFixed(0);
       }
     });
@@ -254,7 +254,7 @@ export class SubmissionsComponent {
   
     this.stlUrl = submission?.stlUrl || '';
     this.imageUrl = submission?.imageUrl || '';
-  
+    
     this.noImagePreview = this.isEdit ? "" : "image-preview-container";
     this.noStlPreview = this.isEdit ? "" : "image-preview-container";
   
