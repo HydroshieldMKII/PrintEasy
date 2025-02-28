@@ -39,6 +39,7 @@ export class AppComponent implements OnInit {
   router: Router = inject(Router);
   auth: AuthService = inject(AuthService);
   items: MenuItem[] | undefined;
+  language: string = 'fr';
 
   constructor(
     private primeng: PrimeNG,
@@ -50,8 +51,10 @@ export class AppComponent implements OnInit {
     this.translate.setTranslation('fr', translationFR);
     this.translate.setTranslation('en', translationEn);
 
-    this.translate.use('fr');
-    localStorage.setItem('language', 'fr');
+    const savedLanguage = localStorage.getItem('language') || 'fr';
+    this.translate.use(savedLanguage);
+    localStorage.setItem('language', savedLanguage);
+    this.language = savedLanguage;
   }
 
   ngOnInit() {
@@ -89,6 +92,20 @@ export class AppComponent implements OnInit {
 
   navigateToHome() {
     this.router.navigate(['/']);
+  }
+
+  switchLanguage() {
+    const lang = localStorage.getItem('language');
+    if (lang === 'fr') {
+      this.translate.use('en');
+      localStorage.setItem('language', 'en');
+    }
+    else {
+      this.translate.use('fr');
+      localStorage.setItem('language', 'fr');
+    }
+
+    this.language = localStorage.getItem('language') || 'fr';
   }
 
   viewProfile() {

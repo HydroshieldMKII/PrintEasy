@@ -20,7 +20,8 @@
             <div *ngIf="contestDurationInDays">
                 <span>
                     <i class="pi pi-calendar"></i>
-                    {{ 'submissions.ends' | translate }} {{ contestDurationInDays }} {{ 'submissions.days' | translate }}
+                    {{ 'submissions.ends' | translate }} {{ contestDurationInDays }} {{ 'submissions.days' | translate
+                    }}
                 </span>
             </div>
         </div>
@@ -39,7 +40,7 @@
             <p-carousel [value]="submission.submissions" [numVisible]="3" [numScroll]="1"
                 [responsiveOptions]="responsiveOptions" class="custom-carousel">
                 <ng-template let-product #item>
-                    <div class="border border-surface-200 dark:border-surface-700 rounded m-2 p-4 carousel-mobile" [style]="{
+                    <div class="border border-surface-200 dark:border-surface-700 rounded m-2 p-4 allo" [style]="{
                     'width': submission.submissions.length === 1 ? '33%' : (submission.submissions.length === 2 ? '65.5%' : 'auto')
                 }">
                         <div class="mb-4">
@@ -66,12 +67,13 @@
                                 <p-button icon="pi pi-heart" severity="secondary" />
 
                                 <!-- Bouton Download -->
-                                <a [href]="product.stlUrl" download ><p-button icon="pi pi-download" severity="primary" /></a>
+                                <p-button icon="pi pi-download" severity="primary" />
 
                                 @if (authService.currentUser?.id === submission.user.id) {
                                 <p-button (click)="showDialog(product)" type="button" icon="pi pi-pencil"
                                     severity="primary"></p-button>
-                                <p-button (click)="onDelete(product.id)" type="button" icon="pi pi-trash" severity="danger"></p-button>
+                                <p-button (click)="onDelete(product.id)" type="button" icon="pi pi-trash"
+                                    severity="danger"></p-button>
                                 }
                             </div>
                         </div>
@@ -88,32 +90,38 @@
         <form [formGroup]="submissionForm">
             <div class="container-popup">
                 <div class="container-column w-full">
-                    <p-floatlabel variant="in">
-                        <input type="text" pInputText formControlName="name" class="w-full" />
-                        <label for="name">{{ 'submission_form.name' | translate }}</label>
-                    </p-floatlabel>
+                    <div>
+                        <p-floatlabel variant="in">
+                            <input type="text" pInputText formControlName="name" class="w-full" />
+                            <label for="name">{{ 'submission_form.name' | translate }}</label>
+                        </p-floatlabel>
 
-                    <p-message severity="error" variant="simple" size="small">
-                        @if (submissionForm.get('name')?.errors?.['required']) {
-                          {{ 'submission_form.error_name_required' | translate }}
-                         } @else if (submissionForm.get('name')?.errors?.['minlength']) {
-                          {{ 'submission_form.error_name_short' | translate }}
-                         } @else if (submissionForm.get('name')?.errors?.['maxlength']) {
-                          {{ 'submission_form.error_name_long' | translate }}
-                         }
-                      </p-message>
+                        <p-message severity="error" variant="simple" size="small">
+                            @if (submissionForm.get('name')?.errors?.['required']) {
+                            {{ 'submission_form.error_name_required' | translate }}
+                            } @else if (submissionForm.get('name')?.errors?.['minlength']) {
+                            {{ 'submission_form.error_name_short' | translate }}
+                            } @else if (submissionForm.get('name')?.errors?.['maxlength']) {
+                            {{ 'submission_form.error_name_long' | translate }}
+                            }
+                        </p-message>
+                    </div>
 
-                    <p-floatlabel variant="in">
-                        <textarea class="description-textarea w-full" id="description" pTextarea
-                            formControlName="description" rows="4"></textarea>
-                        <label for="description">{{ 'submission_form.description' | translate }}</label>
-                    </p-floatlabel>
+                    <div class="mt-25">
+                        <p-floatlabel variant="in">
+                            <textarea class="description-textarea w-full" id="description" pTextarea
+                                formControlName="description" rows="4"></textarea>
+                            <label for="description">{{ 'submission_form.description' | translate }}</label>
+                        </p-floatlabel>
 
-                    <p-message styleClass="error-message" severity="error" variant="simple" size="small">
-                       {{ 'submission_form.error_description_long' | translate }}
-                      </p-message>
+                        @if (submissionForm.get('description')?.errors?.['maxlength']) {
+                        <p-message styleClass="error-message" severity="error" variant="simple" size="small">
+                            {{ 'submission_form.error_description_long' | translate }}
+                        </p-message>
+                        }
+                    </div>
 
-                    <div class="container-row">
+                    <div class="container-row mt-25">
                         <div>
                             <div [class]="noStlPreview">
                                 <div *ngIf="uploadedFileBlob || stlUrl" class="stl-preview">
@@ -126,8 +134,9 @@
                             <div class="mt-25">
                                 <div class="fileUploadContainer center">
                                     <p-fileUpload mode="basic" name="image" accept=".stl" [maxFileSize]="1000000"
-                                        chooseLabel="{{ 'submission_form.upload_stl' | translate }}" (onSelect)="onUploadStl($event)"
-                                        (onError)="onFileUploadError($event)" [auto]="true"></p-fileUpload>
+                                        chooseLabel="{{ 'submission_form.upload_stl' | translate }}"
+                                        (onSelect)="onUploadStl($event)" (onError)="onFileUploadError($event)"
+                                        [auto]="true"></p-fileUpload>
                                 </div>
                             </div>
                         </div>
@@ -141,17 +150,23 @@
                             <div class="mt-25">
                                 <div class="fileUploadContainer center">
                                     <p-fileUpload mode="basic" name="image" accept="image/*" [maxFileSize]="1000000"
-                                        chooseLabel="{{ 'submission_form.upload_image' | translate }}" (onSelect)="onSelectImage($event)"
-                                        (onError)="onFileUploadError($event)" [auto]="true"></p-fileUpload>
+                                        chooseLabel="{{ 'submission_form.upload_image' | translate }}"
+                                        (onSelect)="onSelectImage($event)" (onError)="onFileUploadError($event)"
+                                        [auto]="true"></p-fileUpload>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="button-container">
-                        <p-button label="{{ 'global.cancel_button' | translate }}" type="button" icon="pi pi-times" severity="secondary"></p-button>
-                        <p-button label="{{ 'global.save_button' | translate }}" (onClick)="onSubmit()" [disabled]="!submissionForm.valid"
-                            icon="pi pi-save" severity="success"></p-button>
+                        <p-button label="{{ 'global.cancel_button' | translate }}" type="button" icon="pi pi-times"
+                            severity="secondary" (click)="onCancel()"></p-button>
+                        @if (isEdit) {
+                        <p-button label="{{ 'global.delete_button' | translate }}" type="button" icon="pi pi-trash"
+                            severity="danger" (click)="onDelete(submissionId)"></p-button>
+                        }
+                        <p-button label="{{ 'global.save_button' | translate }}" (onClick)="onSubmit()"
+                            [disabled]="!submissionForm.valid" icon="pi pi-save" severity="success"></p-button>
                     </div>
                 </div>
 
@@ -172,7 +187,8 @@
         {{ 'contest.confirm_delete_message' | translate }}
     </span>
     <ng-template #footer>
-        <p-button label="{{ 'global.cancel_button' | translate}}" [text]="true" severity="secondary" (click)="deleteDialogVisible = false" />
+        <p-button label="{{ 'global.cancel_button' | translate}}" [text]="true" severity="secondary"
+            (click)="deleteDialogVisible = false" />
         <p-button label="{{ 'global.delete_button' | translate }}" severity="danger" (click)="confirmDelete()" />
     </ng-template>
 </p-dialog>
