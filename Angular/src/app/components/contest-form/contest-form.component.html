@@ -131,12 +131,11 @@
   <ng-template #header>
     <div class="inline-flex items-center justify-center gap-2">
       <i class="pi pi-exclamation-triangle text-red-500 text-2xl"></i>
-      <span class="font-bold">Confirm Delete</span>
+      <span class="font-bold">{{ 'contest.confirm_delete' | translate }}</span>
     </div>
   </ng-template>
   <span class="text-surface-500 dark:text-surface-400 block mb-4">
-    Are you sure you want to delete the contest?
-    This action cannot be undone.
+    {{ 'contest.confirm_delete_message' | translate }}
   </span>
   <ng-template #footer>
     <p-button

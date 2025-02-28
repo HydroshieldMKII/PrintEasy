@@ -89,7 +89,10 @@
         "submissions_per_user": "Submissions per user",
         "ends": "Ends in",
         "button_participate": "I want to participate",
-        "days": "days"
+        "days": "days",
+        "contest_not_started": "The contest has not started yet",
+        "contest_ended": "The contest has ended",
+        "submission_limit_reached": "You have reached the submission limit for this contest"
     },
     "submission_form": {
         "title_form": "Participate in the contest",

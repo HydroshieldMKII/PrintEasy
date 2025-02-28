@@ -328,7 +328,7 @@ contest9.image.attach(
 
 contest9.save(validate: false)
 
-50.times do |i|
+10.times do |i|
   contest = Contest.create(
     theme: "Contest #{i + 3}",
     description: "Description for contest #{i + 3}.",
