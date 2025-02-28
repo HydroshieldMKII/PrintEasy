@@ -127,6 +127,19 @@ export class SubmissionsComponent {
   }
 
   onDelete(id: number) {
+    const isContestFinished = this.contest?.finished;
+    const isContestStarted = this.contest?.started;
+
+    if (!isContestStarted) {
+      this.messageService.add({ severity: 'error', summary: this.translateService.instant('global.error'), detail: this.translateService.instant('submissions.contest_not_started') });
+      return;
+    }
+
+    if (isContestFinished) {
+      this.messageService.add({ severity: 'error', summary: this.translateService.instant('global.error'), detail: this.translateService.instant('submissions.contest_ended') });
+      return;
+    }
+
     this.deleteDialogVisible = true;
     this.submissionId = id;
   }
