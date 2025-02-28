@@ -31,6 +31,10 @@ class Submission < ApplicationRecord
     image && url_for(image)
   end
 
+  def liked_by_current_user
+    likes.exists?(user_id: Current.user.id)
+  end
+  
   private
 
   def contest_finished?
