@@ -126,6 +126,17 @@ export class SubmissionsComponent {
     this.noStlPreview = 'image-preview-container';
   }
 
+  onCancel() {
+    this.display = false;
+    this.submissionForm.reset();
+    this.imageUrl = '';
+    this.stlUrl = '';
+    this.uploadedFile = null;
+    this.uploadedFileBlob = null;
+    this.noImagePreview = 'image-preview-container';
+    this.noStlPreview = 'image-preview-container';
+  }
+
   onDelete(id: number) {
     const isContestFinished = this.contest?.finished;
     const isContestStarted = this.contest?.started;
