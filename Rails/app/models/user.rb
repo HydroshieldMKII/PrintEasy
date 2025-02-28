@@ -8,6 +8,7 @@ class User < ApplicationRecord
   has_many :printer_user, dependent: :destroy
   has_many :printers, through: :printer_user
   has_many :offers, through: :printer_user
+  has_many :likes
 
   has_one_attached :profile_picture
 
