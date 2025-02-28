@@ -70,6 +70,12 @@
     width: 100%;
 }
 
+:host ::ng-deep .error-file {
+    width: 250px;
+    display: flex;
+    justify-content: center;
+}
+
 .p-inputtext,
 .p-textarea,
 .p-datepicker,
