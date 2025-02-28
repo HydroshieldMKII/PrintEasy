@@ -20,11 +20,20 @@ export class UserProfileComponent {
   readonly submissionService = inject(SubmissionService);
 
   userContestSubmissions: UserContestSubmissionsModel[] = [];
+  responsiveOptions: any[] | undefined;
 
   constructor(private renderer: Renderer2) {
     this.submissionService.getUserContestSubmissions().subscribe(submissions => {
       this.userContestSubmissions = submissions;
     });
+
+    this.responsiveOptions = [
+      {
+        breakpoint: '575px',
+        numVisible: 1,
+        numScroll: 1
+      }
+    ];
   }
 
   rating = 0;

@@ -328,7 +328,7 @@ contest9.image.attach(
 
 contest9.save(validate: false)
 
-50.times do |i|
+10.times do |i|
   contest = Contest.create(
     theme: "Contest #{i + 3}",
     description: "Description for contest #{i + 3}.",
@@ -508,7 +508,7 @@ req_free.save
 # Create Orders
 Current.user = admin
 order1 = Order.create!(offer: Offer.first)
-order2 = Order.create!(offer: Offer.second)
+order2 = Order.create!(offer: Offer.fourth)
 # order3 = Order.create!(offer: Offer.third)
 
 Current.user = user1

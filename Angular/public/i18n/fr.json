@@ -89,7 +89,10 @@
         "submissions_per_user": "Soumissions par utilisateur",
         "ends": "Se termine dans",
         "button_participate": "Je veux participer",
-        "days": "jours"
+        "days": "jours",
+        "contest_not_started": "Le concours n'a pas encore commencé",
+        "contest_ended": "Le concours est terminé",
+        "submission_limit_reached": "Vous avez atteint la limite de soumission pour ce concours"
     },
     "submission_form": {
         "title_form": "Créer un concours",
