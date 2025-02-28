@@ -629,7 +629,7 @@ req_free.save
 Current.user = admin
 order1 = Order.create!(offer: Offer.first)
 order2 = Order.create!(offer: Offer.fourth)
-# order3 = Order.create!(offer: Offer.third)
+order3 = Order.create!(offer: Offer.third)
 
 Current.user = user1
 order4 = Order.create!(offer: Offer.last)
@@ -647,7 +647,7 @@ Status.create!(name: 'Cancelled')
 Current.user = user1
 
 OrderStatus.create!(order: order4, status: status_accepted, comment: 'offer accepted, printing soon.')
-# OrderStatus.create!(order: order3, status: status_accepted, comment: 'offer accepted, printing soon.')
+OrderStatus.create!(order: order3, status: status_accepted, comment: 'offer accepted, printing soon.')
 OrderStatus.create!(order: order2, status: status_accepted, comment: 'offer accepted, printing soon.')
 OrderStatus.create!(order: order2, status: status_printing, comment: 'Order started printing.')
 OrderStatus.create!(order: order2, status: status_printed, comment: 'Order printed.')

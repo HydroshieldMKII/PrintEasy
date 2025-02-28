@@ -1,26 +1,29 @@
 import { Component, inject, Renderer2 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
-import { RatingModule } from 'primeng/rating';
 import { ImportsModule } from '../../../imports';
-import { TabViewModule } from 'primeng/tabview';
 
 import { AuthService } from '../../services/authentication.service';
 import { SubmissionService } from '../../services/submission.service';
 import { UserContestSubmissionsModel } from '../../models/user-contest-submissions.model';
+import { ReviewModel } from '../../models/review.model';
+import { ReviewService } from '../../services/review.service';
 
 @Component({
   selector: 'app-user-profile',
-  imports: [RatingModule, TabViewModule, CommonModule, ImportsModule],
+  imports: [ImportsModule],
   templateUrl: './user-profile.component.html',
   styleUrl: './user-profile.component.css'
 })
 export class UserProfileComponent {
   readonly authService = inject(AuthService);
   readonly submissionService = inject(SubmissionService);
+  readonly reviewService = inject(ReviewService)
 
   userContestSubmissions: UserContestSubmissionsModel[] = [];
   responsiveOptions: any[] | undefined;
+  userReviews: ReviewModel[] = [];
+  averageRating: number = 0;
+  tab : string = 'contest-submissions';
 
   constructor(private renderer: Renderer2) {
     this.submissionService.getUserContestSubmissions().subscribe(submissions => {
@@ -34,10 +37,13 @@ export class UserProfileComponent {
         numScroll: 1
       }
     ];
-  }
 
-  rating = 0;
-  reviews = 0;
+    this.reviewService.getUserReviews().subscribe(response => {
+      this.userReviews = response.data.reviews
+      console.log(this.userReviews)
+      this.averageRating = this.userReviews.reduce((acc, review) => acc + review.rating, 0) / this.userReviews.length;
+    });
+  }
   prints = 3;
   joinDate = '2022-05-11';
 }

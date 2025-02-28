@@ -211,6 +211,12 @@ export class OfferService {
                         summary: this.translate.instant('global.success'),
                         detail: this.translate.instant('offer.created')
                     });
+                } else if (response.status === 422 && response.errors['request'] == 'This offer already exists') {
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: this.translate.instant('global.error'),
+                        detail: this.translate.instant('offer.error_already_exists')
+                    });
                 } else {
                     console.log("Error: ", response);
                     this.messageService.add({

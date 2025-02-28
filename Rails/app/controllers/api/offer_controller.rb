@@ -9,7 +9,10 @@ module Api
     before_action :validate_not_own_request, only: %i[create]
 
     def index
-      render_offers(filter_offers(Offer.all))
+      offers = filter_offers(Offer.all)
+      offers = offers.sort_by { |offer| offer.target_date }
+
+      render_offers(offers)
     end
 
     def show
