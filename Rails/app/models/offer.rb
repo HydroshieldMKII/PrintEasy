@@ -49,7 +49,7 @@ class Offer < ApplicationRecord
   end
 
   def cannot_delete_if_accepted
-    return unless Order.find_by(offer_id: id)
+    return unless Order.exists?(offer_id: id)
 
     errors.add(:offer, 'Offer already accepted. Cannot delete')
   end

@@ -35,10 +35,15 @@ module Api
     end
 
     def destroy
-      if @offer.destroy
+      # debugger
+      @offer.errors.add(:offer, 'Offer already accepted. Cannot delete') if Order.exists?(offer_id: @offer.id)
+
+      @offer.errors.add(:offer, 'Offer already rejected. Cannot delete') if @offer.cancelled_at
+
+      if @offer.errors.empty? && @offer.destroy
         render json: { offer: @offer, errors: {} }, status: :ok
       else
-        render json: { errors: { offer: @offer.errors } }, status: :unprocessable_entity
+        render json: { errors: @offer.errors }, status: :unprocessable_entity
       end
     end
 
