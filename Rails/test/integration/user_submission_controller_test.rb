@@ -7,6 +7,7 @@ class UserSubmissionControllerTest < ActionDispatch::IntegrationTest
     @user = users(:one)
     @contest = contests(:contest_one)
     @submission = submissions(:submission_one)
+    sign_in @user
   end
 
   test 'should get index' do
@@ -57,7 +58,30 @@ class UserSubmissionControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should return 404 for non-existent submission' do
-    get api_user_submission_url(id: -1)
+    assert_difference('Submission.count', 0) do
+      get api_user_submission_url(id: 0)
+    end
+
     assert_response :not_found
+
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+
+    assert_equal ["Couldn't find Submission with 'id'=0"], @parsed_response['errors']["base"]
+  end
+
+  test "should return true if submission is liked by current user" do
+    assert_difference('Submission.count', 0) do
+      get api_user_submission_index_url, params: { submission: { contest_id: @contest.id } }
+    end
+
+    assert_response :success
+
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+
+    assert_equal @parsed_response["submissions"][0]["submissions"][0]["liked_by_current_user"], true
   end
 end

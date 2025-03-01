@@ -11,9 +11,11 @@ import { StlModelViewerModule } from 'angular-stl-model-viewer';
 import { SubmissionService } from '../../services/submission.service';
 import { ContestService } from '../../services/contest.service';
 import { AuthService } from '../../services/authentication.service';
+import { LikeService } from '../../services/like.service';
 import { SubmissionModel } from '../../models/submission.model';
 import { ContestModel } from '../../models/contest.model';
 import { UserSubmission } from '../../models/user-submission';
+import { LikeModel } from '../../models/like.model';
 
 @Component({
   selector: 'app-submissions',
@@ -27,6 +29,7 @@ export class SubmissionsComponent {
   authService: AuthService = inject(AuthService);
   messageService: MessageService = inject(MessageService);
   translateService: TranslateService = inject(TranslateService);
+  likeService: LikeService = inject(LikeService);
 
   submissionForm: FormGroup;
   contest: ContestModel | null = null;
@@ -217,6 +220,23 @@ export class SubmissionsComponent {
     }
 
     return null;
+  }
+
+  onLike(submission: SubmissionModel) {
+    if (submission.liked) {
+      const like = submission.likes.find(like => like.userId === this.authService.currentUser?.id);      
+      this.likeService.deleteLike(like?.id).subscribe((response) => {
+        const deletedLike = LikeModel.fromApi(response.data.like);
+        submission.likes = submission.likes.filter(l => l.id !== deletedLike.id);
+        submission.liked = false;
+      });
+    } else {
+      this.likeService.createLike(submission.id).subscribe((response) => {
+        const newLike = LikeModel.fromApi(response.data.like);
+        submission.likes.push(newLike);
+        submission.liked = true;
+      });
+    }
   }
 
   showDialog(submission: SubmissionModel | null) {

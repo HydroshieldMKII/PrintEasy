@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Api
-  class UserSubmissionController < ApplicationController
+  class UserSubmissionController < AuthenticatedController
     def index
       @contest = Contest.find(submission_params[:contest_id])
 
@@ -10,7 +10,7 @@ module Api
       @users_with_submissions = @submissions.group_by(&:user).map do |user, user_submissions|
         {
           user: user.as_json,
-          submissions: user_submissions.as_json(include: :likes, methods: %i[image_url stl_url]),
+          submissions: user_submissions.as_json(include: :likes, methods: %i[image_url stl_url liked_by_current_user]),
           mine: user == current_user
         }
       end
@@ -32,8 +32,7 @@ module Api
     private
 
     def submission_params
-      params.require(:submission).permit(:id, :user_id, :contest_id, :name, :description, :created_at, :updated_at,
-                                         files: [])
+      params.require(:submission).permit(:id, :user_id, :contest_id, :name, :description, :created_at, :updated_at)
     end
   end
 end

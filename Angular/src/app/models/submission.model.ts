@@ -1,4 +1,4 @@
-import { Like } from "./like";
+import { LikeModel } from "./like.model";
 
 export class SubmissionModel {
     id: number;
@@ -10,9 +10,10 @@ export class SubmissionModel {
     updated_at: Date;
     imageUrl: string | null;
     stlUrl: string | null;
-    likes: Like[] | null;
+    likes: LikeModel[];
+    liked: boolean = false;
 
-    constructor(id: number, user_id: number, contest_id: number, name: string, description: string | null, created_at: Date, updated_at: Date, image_url: string | null, stl_url: string | null, likes: Like[] | null) {
+    constructor(id: number, user_id: number, contest_id: number, name: string, description: string | null, created_at: Date, updated_at: Date, image_url: string | null, stl_url: string | null, likes: LikeModel[], liked: boolean = false) {
         this.id = id;
         this.user_id = user_id;
         this.contest_id = contest_id;
@@ -23,6 +24,7 @@ export class SubmissionModel {
         this.imageUrl = image_url;
         this.stlUrl = stl_url;
         this.likes = likes;
+        this.liked = liked;
     }
 
     static fromApi(data: any): SubmissionModel {
@@ -36,7 +38,8 @@ export class SubmissionModel {
             new Date(data?.['updated_at']),
             data?.['image_url'],
             data?.['stl_url'],
-            data?.['likes']?.map((like: any) => new Like(like?.['id'], like?.['user_id'], like?.['submission_id']))
+            data?.['likes']?.map((like: any) => new LikeModel(like?.['id'], like?.['user_id'], like?.['submission_id'])),
+            data?.['liked_by_current_user']
         );
     }
 }

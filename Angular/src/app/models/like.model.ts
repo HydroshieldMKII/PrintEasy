@@ -1,4 +1,4 @@
-export class Like {
+export class LikeModel {
     id: number;
     userId: number;
     submissionId: number;
@@ -7,5 +7,13 @@ export class Like {
         this.id = id;
         this.userId = user_id;
         this.submissionId = submission_id;
+    }
+
+    static fromApi(data: any): LikeModel {
+        return new LikeModel(
+            data?.['id'],
+            data?.['user_id'],
+            data?.['submission_id']
+        );
     }
 }
