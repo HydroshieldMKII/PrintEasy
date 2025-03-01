@@ -10,7 +10,7 @@ module Api
 
     def index
       offers = filter_offers(Offer.all)
-      offers = offers.sort_by { |offer| offer.target_date }
+      offers = offers.sort_by(&:target_date)
 
       render_offers(offers)
     end
