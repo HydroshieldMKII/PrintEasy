@@ -225,17 +225,15 @@ export class SubmissionsComponent {
   onLike(submission: SubmissionModel) {
     if (submission.liked) {
       const like = submission.likes.find(like => like.userId === this.authService.currentUser?.id);      
-      this.likeService.deleteLike(like?.id).subscribe((data) => {
-        const like = LikeModel.fromApi(data.data.like);
-        submission.likes = submission.likes.filter(l => l.id !== like.id);
-        console.log('Likes:', submission.likes);
+      this.likeService.deleteLike(like?.id).subscribe((response) => {
+        const deletedLike = LikeModel.fromApi(response.data.like);
+        submission.likes = submission.likes.filter(l => l.id !== deletedLike.id);
         submission.liked = false;
       });
     } else {
-      this.likeService.createLike(submission.id).subscribe((data) => {
-        const like = LikeModel.fromApi(data.data.like);
-        submission.likes.push(like);
-        console.log('Likes:', submission.likes);
+      this.likeService.createLike(submission.id).subscribe((response) => {
+        const newLike = LikeModel.fromApi(response.data.like);
+        submission.likes.push(newLike);
         submission.liked = true;
       });
     }

@@ -17,28 +17,29 @@ export class LikeService {
     return this.api.postRequest('api/like', {}, { submission_id: submissionId }).pipe(
       map(response => {
         if (response.status === 201) {
-          return response;
+          console.log('response:', response);
         }
         else {
           console.log('error:', response.errors);
-          return response;
         }
+
+        return response;
       })
     );
   }
 
-  deleteLike(id: number | undefined): Observable<ApiResponseModel> {
+  deleteLike(id: number = 0): Observable<ApiResponseModel> {
     return this.api.deleteRequest(`api/like/${id}`).pipe(
       map(response => {
         if (response.status === 200) {
-          return response.data;
+          console.log('response:', response);
         }
         else {
           console.log('error:', response.errors);
-          return null;
         }
-      }
-      )
+
+        return response;
+      })
     );
   }
 }
