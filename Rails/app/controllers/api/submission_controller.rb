@@ -3,7 +3,6 @@
 module Api
   class SubmissionController < AuthenticatedController
     before_action :find_submission, only: %i[show update destroy]
-    before_action :submission_user, only: %i[update destroy]
 
     def index
       @submissions = Contest.find(submission_params[:contest_id]).submissions
@@ -16,9 +15,8 @@ module Api
     end
 
     def create
-      @submission = Submission.new(submission_params)
+      @submission = current_user.submissions.build(submission_params)
 
-      current_user.submissions << @submission
       if @submission.save
         render json: { submission: @submission.as_json(methods: %i[stl_url image_url]), errors: {} }, status: :created
       else
@@ -46,17 +44,7 @@ module Api
     private
 
     def find_submission
-      @submission = Submission.find(params[:id])
-    end
-
-    def submission_user
-      return if @submission.nil?
-
-      return if current_user.id == @submission.user_id
-
-      render json: { errors: {
-        user: ['You are not authorized to perform this action']
-      } }, status: :forbidden
+      @submission = current_user.submissions.find(params[:id])
     end
 
     def submission_params

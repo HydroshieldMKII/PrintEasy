@@ -8,7 +8,7 @@ class Contest < ApplicationRecord
     where('start_at <= ?', Time.now)
   }
 
-  has_many :submissions
+  has_many :submissions, dependent: :destroy
   has_many :likes, through: :submissions
 
   has_one_attached :image

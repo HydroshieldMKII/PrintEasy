@@ -18,25 +18,25 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
 
-    assert_equal 4, @parsed_response['contests'].count
+    assert_equal 5, @parsed_response['contests'].count
 
-    assert_equal contests(:contest_four).id, @parsed_response['contests'][0]['id']
-    assert_equal contests(:contest_four).theme, @parsed_response['contests'][0]['theme']
-    assert_equal contests(:contest_four).description, @parsed_response['contests'][0]['description']
-    assert_equal contests(:contest_four).submission_limit, @parsed_response['contests'][0]['submission_limit']
-    assert_equal contests(:contest_four).start_at, @parsed_response['contests'][0]['start_at']
-    assert_equal contests(:contest_four).end_at, @parsed_response['contests'][0]['end_at']
-    assert_equal contests(:contest_four).deleted_at, @parsed_response['contests'][0]['deleted_at']
-    assert_equal contests(:contest_four).image_url, @parsed_response['contests'][0]['image_url']
+    assert_equal contests(:contest_five).id, @parsed_response['contests'][0]['id']
+    assert_equal contests(:contest_five).theme, @parsed_response['contests'][0]['theme']
+    assert_equal contests(:contest_five).description, @parsed_response['contests'][0]['description']
+    assert_equal contests(:contest_five).submission_limit, @parsed_response['contests'][0]['submission_limit']
+    assert_equal contests(:contest_five).start_at, @parsed_response['contests'][0]['start_at']
+    assert_equal contests(:contest_five).end_at, @parsed_response['contests'][0]['end_at']
+    assert_equal contests(:contest_five).deleted_at, @parsed_response['contests'][0]['deleted_at']
+    assert_equal contests(:contest_five).image_url, @parsed_response['contests'][0]['image_url']
 
-    assert_equal contests(:contest_five).id, @parsed_response['contests'][1]['id']
-    assert_equal contests(:contest_five).theme, @parsed_response['contests'][1]['theme']
-    assert_equal contests(:contest_five).description, @parsed_response['contests'][1]['description']
-    assert_equal contests(:contest_five).submission_limit, @parsed_response['contests'][1]['submission_limit']
-    assert_equal contests(:contest_five).start_at, @parsed_response['contests'][1]['start_at']
-    assert_equal contests(:contest_five).end_at, @parsed_response['contests'][1]['end_at']
-    assert_equal contests(:contest_five).deleted_at, @parsed_response['contests'][1]['deleted_at']
-    assert_equal contests(:contest_five).image_url, @parsed_response['contests'][1]['image_url']
+    assert_equal contests(:contest_four).id, @parsed_response['contests'][1]['id']
+    assert_equal contests(:contest_four).theme, @parsed_response['contests'][1]['theme']
+    assert_equal contests(:contest_four).description, @parsed_response['contests'][1]['description']
+    assert_equal contests(:contest_four).submission_limit, @parsed_response['contests'][1]['submission_limit']
+    assert_equal contests(:contest_four).start_at, @parsed_response['contests'][1]['start_at']
+    assert_equal contests(:contest_four).end_at, @parsed_response['contests'][1]['end_at']
+    assert_equal contests(:contest_four).deleted_at, @parsed_response['contests'][1]['deleted_at']
+    assert_equal contests(:contest_four).image_url, @parsed_response['contests'][1]['image_url']
   end
 
   test 'should get show' do
@@ -111,9 +111,9 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
     assert_not_nil @parsed_response['contest']['image_url']
   end
 
-  test 'should destroy contest' do
+  test 'should soft delete contest' do
     assert_difference('Contest.count', -1) do
-      delete api_contest_url(contests(:contest_one).id)
+      delete api_contest_url(contests(:contest_four).id)
     end
 
     assert_nothing_raised do
@@ -124,6 +124,7 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
 
     assert_not_nil @parsed_response['contest']['deleted_at']
     assert_equal Time.now.change(sec: 0), @parsed_response['contest']['deleted_at'].to_datetime.change(sec: 0)
+    assert_equal contests(:contest_four).id, @parsed_response['contest']['id']
   end
 
   test 'should not get show -> contest not found' do
@@ -592,4 +593,128 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
 
     assert_equal 3, @parsed_response['contests'].count
   end
+
+  test "should not soft delete contest if it's already deleted" do
+    assert_difference('Contest.count', -1) do
+      delete api_contest_url(contests(:contest_one).id)
+    end
+
+    sign_in users(:two) # ? Why is this necessary?
+
+    assert_difference('Contest.count', 0) do
+      delete api_contest_url(contests(:contest_one).id)
+    end
+
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+
+    assert_response :not_found
+
+    assert_equal ["Couldn't find Contest with 'id'=1 [WHERE `contests`.`deleted_at` IS NULL]"], @parsed_response['errors']['base']
+  end
+
+  test "should not index if not sign in" do
+    sign_out users(:two)
+
+    assert_difference('Contest.count', 0) do
+      get api_contest_index_url
+    end
+
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+
+    assert_response :unauthorized
+
+    assert_equal ["Invalid login credentials"], @parsed_response['errors']['connection']
+  end
+
+  test "should not show if not sign in" do
+    sign_out users(:two)
+
+    assert_difference('Contest.count', 0) do
+      get api_contest_url(contests(:contest_one).id)
+    end
+
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+
+    assert_response :unauthorized
+
+    assert_equal ["Invalid login credentials"], @parsed_response['errors']['connection']
+  end
+
+  test "should not create if not sign in" do
+    sign_out users(:two)
+
+    assert_difference('Contest.count', 0) do
+      post api_contest_index_path,
+           params: { contest: { theme: 'test', description: 'test', submission_limit: 10, start_at: Time.now + 1.day,
+                                image: fixture_file_upload(
+                                  Rails.root.join('test/fixtures/files/chicken_bagel.jpg'), 'image/jpg'
+                                ) } }
+    end
+
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+
+    assert_response :unauthorized
+
+    assert_equal ["Invalid login credentials"], @parsed_response['errors']['connection']
+  end
+    
+    test "should not update if not sign in" do
+      sign_out users(:two)
+  
+      assert_difference('Contest.count', 0) do
+        put api_contest_url(contests(:contest_one).id),
+            params: { contest: { theme: 'test', description: 'test', submission_limit: 10, start_at: Time.now + 2.day,
+                                 end_at: Time.now + 4.day,
+                                 image: fixture_file_upload(
+                                   Rails.root.join('test/fixtures/files/chicken_bagel.jpg'), 'image/jpg'
+                                 ) } }
+      end
+  
+      assert_nothing_raised do
+        @parsed_response = JSON.parse(response.body)
+      end
+  
+      assert_response :unauthorized
+  
+      assert_equal ["Invalid login credentials"], @parsed_response['errors']['connection']
+    end
+
+    test "should not destroy if not sign in" do
+      sign_out users(:two)
+  
+      assert_difference('Contest.count', 0) do
+        delete api_contest_url(contests(:contest_one).id)
+      end
+  
+      assert_nothing_raised do
+        @parsed_response = JSON.parse(response.body)
+      end
+  
+      assert_response :unauthorized
+  
+      assert_equal ["Invalid login credentials"], @parsed_response['errors']['connection']
+    end
+
+    test "should destroy contest if it's not started" do
+      assert_difference('Contest.count', -1) do
+        delete api_contest_url(contests(:contest_one).id)
+      end
+  
+      assert_nothing_raised do
+        @parsed_response = JSON.parse(response.body)
+      end
+  
+      assert_response :success
+
+      assert_nil @parsed_response['contest']['deleted_at']
+      assert_equal contests(:contest_one).id, @parsed_response['contest']['id']
+    end
 end

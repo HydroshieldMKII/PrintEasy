@@ -13,12 +13,7 @@ module Api
     def show
       @contest = Contest.find(params[:id])
 
-      contest_data = @contest.as_json(methods: %i[image_url finished? started?])
-      top_submission = @contest.submissions.left_joins(:likes).group(:id)
-                               .order('COUNT(likes.id) DESC, submissions.created_at ASC').first
-      contest_data[:winner_user] = top_submission&.user&.as_json
-
-      render json: { contest: contest_data, errors: {} }, status: :ok
+      render json: { contest: @contest.as_json(methods: %i[image_url finished? started? winner_user]), errors: {} }, status: :ok
     end
 
     def create
@@ -43,15 +38,19 @@ module Api
 
     def destroy
       @contest = Contest.find(params[:id])
-
-      @contest.soft_delete
-      render json: { contest: @contest, errors: {} }, status: :ok
+      deleted = @contest.started? ? @contest.soft_delete : @contest.destroy
+    
+      if deleted
+        render json: { contest: @contest.as_json(methods: :image_url), errors: {} }, status: :ok
+      else
+        render json: { errors: @contest.errors.as_json }, status: :unprocessable_entity
+      end
     end
 
     private
 
     def is_admin?
-      return unless current_user && !current_user.is_admin
+      return unless !current_user.is_admin
 
       render json: { errors: { contest: ['You must be an admin to perform this action'] } }, status: :unauthorized
     end
