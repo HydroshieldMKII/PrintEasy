@@ -21,6 +21,10 @@ class User < ApplicationRecord
   validates :password_confirmation, presence: true
   validates :country_id, presence: true
 
+  def accessible_contests
+    is_admin? ? Contest.all : Contest.active_for_user(self)
+  end
+
   def email_required?
     false
   end

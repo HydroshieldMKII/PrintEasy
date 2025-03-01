@@ -1,24 +1,13 @@
 # frozen_string_literal: true
 
 module Api
-  class ContestController < ApplicationController
+  class ContestController < AuthenticatedController
     before_action :is_admin?, only: %i[create update destroy]
 
     def index
-      @contests = current_user.is_admin ? Contest.all : Contest.active_for_user(current_user)
-      contests_with_status = @contests.map do |contest|
-        contest_data = contest.as_json(methods: %i[image_url finished? started?])
+      @contests = Contest.contests_order(current_user)
 
-        top_submission = contest.submissions.left_joins(:likes).group(:id).order('COUNT(likes.id) DESC, submissions.created_at ASC').first
-        contest_data[:winner_user] = top_submission&.user&.as_json
-        contest_data
-      end
-
-      contests_with_status.sort_by! do |contest|
-        [contest['finished?'] ? 1 : 0, contest['start_at']]
-      end
-
-      render json: { contests: contests_with_status, errors: {} }, status: :ok
+      render json: { contests: @contests.as_json(methods: %i[image_url finished? started? winner_user]), errors: {} }, status: :ok
     end
 
     def show

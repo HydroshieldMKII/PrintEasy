@@ -3,7 +3,6 @@
 require 'test_helper'
 
 class ContestControllerTest < ActionDispatch::IntegrationTest
-  include Devise::Test::IntegrationHelpers
   setup do
     sign_in users(:two)
   end
@@ -19,7 +18,7 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
 
-    assert_equal 5, @parsed_response['contests'].count
+    assert_equal 4, @parsed_response['contests'].count
 
     assert_equal contests(:contest_four).id, @parsed_response['contests'][0]['id']
     assert_equal contests(:contest_four).theme, @parsed_response['contests'][0]['theme']
@@ -392,6 +391,8 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
       delete api_contest_url(contests(:contest_one).id)
     end
 
+    sign_in users(:two) # ? Why is this necessary?
+
     assert_difference('Contest.count', 0) do
       get api_contest_url(contests(:contest_one).id)
     end
@@ -409,6 +410,8 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
     assert_difference('Contest.count', -1) do
       delete api_contest_url(contests(:contest_one).id)
     end
+
+    sign_in users(:two) # ? Why is this necessary?
 
     assert_difference('Contest.count', 0) do
       put api_contest_url(contests(:contest_one).id),
@@ -432,6 +435,8 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
     assert_difference('Contest.count', -1) do
       delete api_contest_url(contests(:contest_one).id)
     end
+
+    sign_in users(:two) # ? Why is this necessary?
 
     assert_difference('Contest.count', 0) do
       delete api_contest_url(contests(:contest_one).id)

@@ -4,19 +4,8 @@ module Api
   class UserSubmissionController < AuthenticatedController
     def index
       @contest = Contest.find(submission_params[:contest_id])
-
-      @submissions = @contest.submissions.includes(:likes, :user)
-
-      @users_with_submissions = @submissions.group_by(&:user).map do |user, user_submissions|
-        {
-          user: user.as_json,
-          submissions: user_submissions.as_json(include: :likes, methods: %i[image_url stl_url liked_by_current_user]),
-          mine: user == current_user
-        }
-      end
-
-      @users_with_submissions.sort_by! { |user| user[:user]['username'] }
-
+      @users_with_submissions = @contest.users_with_submissions(current_user)
+      
       render json: { submissions: @users_with_submissions }, status: :ok
     end
 

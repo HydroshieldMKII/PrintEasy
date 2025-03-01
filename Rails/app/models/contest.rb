@@ -9,6 +9,7 @@ class Contest < ApplicationRecord
   }
 
   has_many :submissions
+  has_many :likes, through: :submissions
 
   has_one_attached :image
 
@@ -31,6 +32,61 @@ class Contest < ApplicationRecord
 
   validate :contest_finished?, on: :update
 
+  def winner_user
+    return nil unless finished?
+
+    top_submission = submissions
+                     .left_joins(:likes)
+                     .group(:id)
+                     .order('COUNT(likes.id) DESC, submissions.created_at ASC')
+                     .first
+
+    top_submission&.user
+  end
+
+  def self.contests_order(user)
+    contests = user.accessible_contests
+                    .left_joins(submissions: :likes)
+                    .group('contests.id')
+                    .order(Arel.sql('
+                      CASE 
+                        WHEN contests.end_at IS NOT NULL AND contests.end_at < CURRENT_DATE THEN 1 
+                        ELSE 0 
+                      END, contests.start_at')
+                    )
+    contests
+  end
+
+  def users_with_submissions(current_user)
+    # Get all distinct users in this contest
+    users = User.joins(:submissions)
+                .where(submissions: { contest_id: id })
+                .distinct
+                .order(:username)
+                
+    # Build the result array manually without using group_by or sort_by
+    result = []
+    
+    users.each do |user|
+      # For each user, get their submissions
+      user_submissions = submissions.where(user_id: user.id)
+      
+      # Create the user entry
+      user_entry = {
+        user: user.as_json,
+        submissions: user_submissions.as_json(
+          include: :likes,
+          methods: %i[image_url stl_url liked_by_current_user]
+        ),
+        mine: user.id == current_user.id
+      }
+      
+      result << user_entry
+    end
+    
+    result
+  end
+
   def soft_delete
     update(deleted_at: Time.now)
   end
@@ -40,7 +96,9 @@ class Contest < ApplicationRecord
   end
 
   def finished?
-    end_at && end_at < Time.now
+    return false unless end_at
+    
+    end_at < Time.now
   end
 
   def contest_finished?
