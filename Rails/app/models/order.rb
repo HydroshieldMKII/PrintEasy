@@ -3,8 +3,10 @@
 class Order < ApplicationRecord
   belongs_to :offer
   has_many :order_status
+  accepts_nested_attributes_for :order_status
   has_one :request, through: :offer
   has_one :review
+
   validates :offer_id, presence: true, uniqueness: true
   validate :offer_exists
   validate :not_the_same_user_for_offer_and_request
@@ -17,6 +19,10 @@ class Order < ApplicationRecord
 
   def consumer
     offer.request.user
+  end
+
+  def available_status
+    order_status.last.available_status
   end
 
   private

@@ -26,7 +26,7 @@ module Api
           errors: {}
         }, status: :created
       else
-        render json: { errors: @review.errors.as_json }, status: :bad_request
+        render json: { errors: @review.errors.as_json }, status: :unprocessable_entity
       end
     end
 
@@ -37,7 +37,7 @@ module Api
           errors: {}
         }, status: :ok
       else
-        render json: { errors: @review.errors.as_json }, status: :bad_request
+        render json: { errors: @review.errors.as_json }, status: :unprocessable_entity
       end
     end
 
@@ -48,7 +48,7 @@ module Api
           errors: {}
         }, status: :ok
       else
-        render json: { errors: @review.errors.as_json }, status: :bad_request
+        render json: { errors: @review.errors.as_json }, status: :unprocessable_entity
       end
     end
 

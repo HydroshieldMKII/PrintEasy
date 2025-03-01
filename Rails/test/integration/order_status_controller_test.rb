@@ -80,7 +80,7 @@ class OrderStatusControllerTest < ActionDispatch::IntegrationTest
            params: { order_id: 999, status_name: 'Printing', comment: 'Order status one' }, as: :json
     end
 
-    assert_response :bad_request
+    assert_response :unprocessable_entity
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
@@ -99,7 +99,7 @@ class OrderStatusControllerTest < ActionDispatch::IntegrationTest
   # }, as: :json
   #   end
 
-  #   assert_response :bad_request
+  #   assert_response :unprocessable_entity
   #   assert_nothing_raised do
   #     @parsed_response = JSON.parse(response.body)
   #   end
@@ -113,7 +113,7 @@ class OrderStatusControllerTest < ActionDispatch::IntegrationTest
       post api_order_status_index_path, params: { order_id: 1, status_name: 'Printing', comment: 'allo' }, as: :json
     end
 
-    assert_response :bad_request
+    assert_response :unprocessable_entity
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
@@ -140,7 +140,7 @@ class OrderStatusControllerTest < ActionDispatch::IntegrationTest
       post api_order_status_index_path, params: { order_id: 2, comment: 'Order status one' }, as: :json
     end
 
-    assert_response :bad_request
+    assert_response :unprocessable_entity
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
@@ -273,7 +273,7 @@ class OrderStatusControllerTest < ActionDispatch::IntegrationTest
       patch api_order_status_path(1), params: { status_name: 'Printing', comment: 'Order Status one' }, as: :json
     end
 
-    assert_response :bad_request
+    assert_response :unprocessable_entity
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
@@ -286,7 +286,7 @@ class OrderStatusControllerTest < ActionDispatch::IntegrationTest
       patch api_order_status_path(1), params: { status_name: 'Printing', comment: 'allo' }, as: :json
     end
 
-    assert_response :bad_request
+    assert_response :unprocessable_entity
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
@@ -350,7 +350,7 @@ class OrderStatusControllerTest < ActionDispatch::IntegrationTest
       patch api_order_status_path(10), params: { comment: 'this is changed' }, as: :json
     end
 
-    assert_response :bad_request
+    assert_response :unprocessable_entity
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
@@ -363,7 +363,7 @@ class OrderStatusControllerTest < ActionDispatch::IntegrationTest
       patch api_order_status_path(15), params: { comment: 'this is changed' }, as: :json
     end
 
-    assert_response :bad_request
+    assert_response :unprocessable_entity
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
@@ -376,7 +376,7 @@ class OrderStatusControllerTest < ActionDispatch::IntegrationTest
       patch api_order_status_path(17), params: { comment: 'this is changed' }, as: :json
     end
 
-    assert_response :bad_request
+    assert_response :unprocessable_entity
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
@@ -417,7 +417,7 @@ class OrderStatusControllerTest < ActionDispatch::IntegrationTest
       delete api_order_status_path(1), as: :json
     end
 
-    assert_response :bad_request
+    assert_response :unprocessable_entity
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
@@ -488,7 +488,7 @@ class OrderStatusControllerTest < ActionDispatch::IntegrationTest
                                         as: :json
     end
 
-    assert_response :bad_request
+    assert_response :unprocessable_entity
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
@@ -525,7 +525,7 @@ class OrderStatusControllerTest < ActionDispatch::IntegrationTest
       delete api_order_status_path(order_status_id), as: :json
     end
 
-    assert_response :bad_request
+    assert_response :unprocessable_entity
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end

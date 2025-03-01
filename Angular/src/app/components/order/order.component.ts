@@ -118,8 +118,8 @@ export class OrderComponent {
     });
 
     this.reviewForm = this.fb.group({
-      title: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(50)]],
-      rating: [1, [Validators.min(0), Validators.max(5)]],
+      title: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(30)]],
+      rating: [null, [Validators.min(0), Validators.max(5)]],
       description: ['', [Validators.minLength(5), Validators.maxLength(200)]],
       images: [[]]
     });
@@ -149,7 +149,9 @@ export class OrderComponent {
   }
 
   getStatusTranslations(): void {
+    // TODO: fix translation
     this.translate.get(['status.Accepted', 'status.Printing', 'status.Printed', 'status.Shipped', 'status.Arrived', 'status.Cancelled']).subscribe((translations: any) => {
+      console.log('Translations:', translations);
       this.statusTranslations['Accepted'] = translations['status.Accepted'];
       this.statusTranslations['Printing'] = translations['status.Printing'];
       this.statusTranslations['Printed'] = translations['status.Printed'];
@@ -352,13 +354,13 @@ export class OrderComponent {
             this.isEdit = false;
             this.messageService.add({
               severity: 'success',
-              summary: 'Created',
+              summary: this.errors_type["summary_success"],
               detail: this.errors_type["updated_success"]
             });
           }else {
             this.messageService.add({
               severity: 'error',
-              summary: 'Error',
+              summary: this.errors_type["summary_error"],
               detail: this.errors_type["updated_error"]
             });
           }
@@ -372,13 +374,13 @@ export class OrderComponent {
             this.formVisible = false;
             this.messageService.add({
               severity: 'success',
-              summary: 'Created',
+              summary: this.errors_type["summary_success"],
               detail: this.errors_type["created_success"]
             });
           }else{
             this.messageService.add({
               severity: 'error',
-              summary: 'Error',
+              summary: this.errors_type["summary_error"],
               detail: this.errors_type["created_error"]
             });
           }
@@ -393,7 +395,7 @@ export class OrderComponent {
 
       const reviewData = new FormData();
       reviewData.append('review[title]', this.reviewForm.value.title);
-      reviewData.append('review[rating]', this.reviewForm.value.rating);
+      reviewData.append('review[rating]', this.reviewForm.value.rating ?? 0);
       reviewData.append('review[description]', this.reviewForm.value.description);
       if (!this.isEditReview) {
         reviewData.append('review[order_id]', this.order?.id.toString() || '');
@@ -413,13 +415,13 @@ export class OrderComponent {
             this.deleteReviewDialogVisible = false;
             this.messageService.add({
               severity: 'success',
-              summary: 'Created',
+              summary: this.errors_type["summary_success"],
               detail: this.errors_type["updated_success"]
             });
           }else{
             this.messageService.add({
               severity: 'error',
-              summary: 'Error',
+              summary: this.errors_type["summary_error"],
               detail: this.errors_type["updated_error"]
             });
           }
@@ -433,13 +435,13 @@ export class OrderComponent {
             this.deleteReviewDialogVisible = false;
             this.messageService.add({
               severity: 'success',
-              summary: 'Created',
+              summary: this.errors_type["summary_success"],
               detail: this.errors_type["created_success"]
             });
           }else{
             this.messageService.add({
               severity: 'error',
-              summary: 'Error',
+              summary: this.errors_type["summary_error"],
               detail: this.errors_type["created_error"]
             });
           }
@@ -504,16 +506,17 @@ export class OrderComponent {
       if (response.status != 200) {
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
+          summary: this.errors_type["summary_error"],
           detail: this.errors_type["deleted_error"]
         });
+        this.clearReviewForm();
         return;
       }
       this.refreshOrder();
       this.deleteStatusDialogVisible = false;
       this.messageService.add({
         severity: 'success',
-        summary: 'Deleted',
+        summary: this.errors_type["summary_success"],
         detail: this.errors_type["deleted_success"]
       });
     });
@@ -525,7 +528,7 @@ export class OrderComponent {
       if (response.status != 200) {
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
+          summary: this.errors_type["summary_error"],
           detail: this.errors_type["deleted_error"]
         });
         return;
@@ -534,7 +537,7 @@ export class OrderComponent {
       this.deleteReviewDialogVisible = false;
       this.messageService.add({
         severity: 'success',
-        summary: 'Deleted',
+        summary: this.errors_type["summary_success"],
         detail: this.errors_type["deleted_success"]
       });
     });

@@ -5,10 +5,12 @@ module Api
     def index
       if params[:type] == 'printer'
         @orders = Order.joins(offer: { printer_user: :user })
-                       .where(users: { id: current_user&.id }).order('offers.target_date DESC')
+                       .where(users: { id: current_user&.id })
+                       .order('offers.target_date DESC')
       else
         @orders = Order.joins(offer: { request: :user })
-                       .where(users: { id: current_user&.id }).order('offers.target_date DESC')
+                       .where(users: { id: current_user&.id })
+                       .order('offers.target_date DESC')
       end
 
       render json: {
@@ -61,8 +63,7 @@ module Api
       @order = Order.find(params[:id])
 
       if current_user == @order.consumer || current_user == @order.printer
-        available_status = @order.order_status.last.available_status
-        
+
         render json: {
           order: @order.as_json(
             except: %i[offer_id],
@@ -104,8 +105,9 @@ module Api
                 except: %i[order_id],
                 methods: %i[image_url]
               }
-            }
-          ).merge({ available_status: available_status }),
+            },
+            methods: %i[available_status]
+          ),
           errors: {}
         }, status: :ok
       else
@@ -114,12 +116,12 @@ module Api
     end
 
     def create
-      @order = Order.new(offer_id: params[:id])
+      newParams = { order: { offer_id: params[:id], order_status_attributes: [{ status_name: 'Accepted' }] } }
+      @order = Order.new(newParams[:order])
       if @order.save
-        OrderStatus.create!(order_id: @order.id, status_name: 'Accepted')
         render json: { order: @order.as_json, errors: {} }, status: :created
       else
-        render json: { errors: @order.errors.as_json }, status: :bad_request
+        render json: { errors: @order.errors.as_json }, status: :unprocessable_entity
       end
     end
   end

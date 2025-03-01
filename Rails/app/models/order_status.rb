@@ -9,8 +9,8 @@ class OrderStatus < ApplicationRecord
   validates :comment, length: { maximum: 200 }
   validates :comment, length: { minimum: 5 }, if: -> { comment.present? }
   validates :status_name, presence: true
-  validates :order_id, presence: true
-  validate :order_id_exists, on: :create
+  # validates :order_id, presence: true
+  # validate :order_id_exists, on: :create
   validate :user_can_create_status
   validate :user_can_modify, on: %i[destroy update]
   validate :can_create_state, on: :create
@@ -67,10 +67,10 @@ class OrderStatus < ApplicationRecord
   def available_status
     events = self.class.state_machine.events
     available = []
-    events.each do |event|
+    available = events.filter_map do |event|
       from = event.branches[0].state_requirements[0][:from].values
       to = event.branches[0].state_requirements[0][:to].values
-      available.push(to) if from.include?(status_name)
+      to if from.include?(status_name)
     end
     available.flatten!
     if Current.user == consumer

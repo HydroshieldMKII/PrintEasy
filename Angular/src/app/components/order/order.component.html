@@ -54,24 +54,28 @@
                     [options]="availableStatuses"
                     optionLabel="name"
                     optionValue="value"
-                    placeholder="{{'order.order_status.status_label' | translate}}"
+                    placeholder="{{orderStatusForm.value.statusName}}"
                     [style]="{width: '100%'}"
                     [disabled]="isEdit">
                 </p-dropdown>
 
-                <p-floatlabel variant="in">
-                    <textarea
-                        pTextarea
-                        id="comment"
-                        formControlName="comment"
-                        rows="5"
-                        cols="30"
-                        style="resize: none"
-                        >
-                    </textarea>
-                    <label for="comment">{{'order.order_status.comment_label' | translate}}</label>
-                </p-floatlabel>
-                <p-message severity="error">{{'order.comment_error' | translate}}</p-message>
+                <div>
+                    <p-floatlabel variant="in">
+                        <textarea
+                            pTextarea
+                            id="comment"
+                            formControlName="comment"
+                            rows="5"
+                            cols="30"
+                            style="resize: none"
+                            maxlength="200"
+                            >
+                        </textarea>
+                        <label for="comment">{{'order.order_status.comment_label' | translate}}</label>
+                    </p-floatlabel>
+                    <p-message severity="error" variant="simple" size="small">{{'order.comment_error' | translate}}</p-message>
+                </div>
+                
                 <img src="{{imageUrl}}" alt="" class="image-preview" />
                 <div *ngIf="imageUrl == ''" class="image-placeholder">
                     <p>Image</p>
@@ -81,6 +85,7 @@
                         mode="basic"
                         name="image"
                         accept="image/*"
+                        [auto]="true"
                         chooseLabel="{{'order.order_status.upload_button' | translate}}"
                         (onSelect)="onFileSelect($event)">
                     </p-fileUpload>
@@ -315,10 +320,11 @@
                                 formControlName="title"
                                 pInputText
                                 id="title"
+                                maxlength="30"
                                 />
                                 <label for="title">{{'order.review.title' | translate}}</label>
                             </p-floatlabel>
-                            <p-message severity="error">{{'order.title_error' | translate}}</p-message>
+                            <p-message severity="error" variant="simple" size="small">{{'order.title_error' | translate}}</p-message>
                         </div>
 
                         <div style="margin-bottom: 2rem;">
@@ -330,22 +336,11 @@
                                 rows="5"
                                 cols="30"
                                 style="resize: none"
+                                maxlength="200"
                                 ></textarea>
                                 <label for="description">{{'order.review.description' | translate}}</label>
                             </p-floatlabel>
-                            <p-message severity="error">{{'order.comment_error' | translate}}</p-message>
-                        </div>
-
-                        <div *ngIf="consumer" style="margin-bottom: 2rem;">
-                            <p-fileUpload
-                                mode="basic"
-                                multiple="true"
-                                name="images"
-                                accept="image/*"
-                                chooseLabel="{{'order.order_status.upload_button' | translate}}"
-                                (onSelect)="onReviewFileSelect($event)"
-                                [style]="{'justify-content': 'flex-start'}">
-                            </p-fileUpload>
+                            <p-message severity="error" variant="simple" size="small">{{'order.comment_error' | translate}}</p-message>
                         </div>
 
                         <p-rating 
@@ -361,9 +356,35 @@
                         </div>
                     </form>
                     <div class="flex-col gap-6">
+                        <div *ngIf="reviewImageUrls.length == 0" class="empty-carousel">
+                            <p-fileUpload
+                                *ngIf="consumer"
+                                mode="basic"
+                                multiple="true"
+                                name="images"
+                                accept="image/*"
+                                [auto]="true"
+                                chooseLabel="{{'order.order_status.upload_button' | translate}}"
+                                (onSelect)="onReviewFileSelect($event)"
+                                [style]="{'position': 'absolute', 'top': '0.5rem', 'left': '0.5rem'}">
+                            </p-fileUpload>
+                            <i class="pi pi-images" style="font-size: 2.5rem;"></i>
+                        </div>
                         <p-galleria [value]="reviewImageUrls" [numVisible]="5" [showItemNavigators]="true" [showThumbnails]="false" [showIndicatorsOnItem]="true" [indicatorsPosition]="'bottom'" [showIndicators]="true" [containerStyle]="{'max-width': '100%', 'height': '400px'}">
                             <ng-template #item let-image>
-                                <p-button *ngIf="consumer" icon="pi pi-trash" severity="danger" [style]="{'position': 'absolute', 'top': '0.5rem', 'left': '0.5rem'}" (onClick)="deleteImage(image.url)"></p-button>
+                                <div *ngIf="consumer">
+                                    <p-fileUpload
+                                        mode="basic"
+                                        multiple="true"
+                                        name="images"
+                                        accept="image/*"
+                                        [auto]="true"
+                                        (onSelect)="onReviewFileSelect($event)"
+                                        class="no-label-upload"
+                                        [style]="{'position': 'absolute', 'top': '0.5rem', 'left': '0.5rem'}">
+                                    </p-fileUpload>
+                                </div>
+                                <p-button *ngIf="consumer" icon="pi pi-trash" severity="danger" [style]="{'position': 'absolute', 'top': '0.5rem', 'right': '0.5rem'}" (onClick)="deleteImage(image.url)"></p-button>
                                 <img [src]="image.url" alt="" style="display:block;width:100%;object-fit:contain;height: 400px;">
                             </ng-template>
                         </p-galleria>

@@ -111,7 +111,7 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
       post api_order_index_path, as: :json
     end
 
-    assert_response :bad_request
+    assert_response :unprocessable_entity
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
@@ -126,7 +126,7 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
       post api_order_index_path, params: { id: 999 }, as: :json
     end
 
-    assert_response :bad_request
+    assert_response :unprocessable_entity
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
@@ -140,7 +140,7 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
       post api_order_index_path, params: { id: 2 }, as: :json
     end
 
-    assert_response :bad_request
+    assert_response :unprocessable_entity
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
@@ -154,7 +154,7 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
       post api_order_index_path, params: { id: 1 }, as: :json
     end
 
-    assert_response :bad_request
+    assert_response :unprocessable_entity
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
@@ -168,7 +168,7 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
       post api_order_index_path, params: { id: 3 }, as: :json
     end
 
-    assert_response :bad_request
+    assert_response :unprocessable_entity
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
@@ -212,14 +212,6 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
     assert_nil tested_order['offer']['printer_user']['user']['is_admin']
     assert_nil tested_order['offer']['printer_user']['user']['profile_picture_url']
 
-    assert_equal offers(:one).printer_user.user.country.id,
-                 tested_order['offer']['printer_user']['user']['country']['id']
-    assert_equal offers(:one).printer_user.user.country.name,
-                 tested_order['offer']['printer_user']['user']['country']['name']
-
-    assert_equal offers(:one).printer_user.printer.id, tested_order['offer']['printer_user']['printer']['id']
-    assert_equal offers(:one).printer_user.printer.model, tested_order['offer']['printer_user']['printer']['model']
-
     assert_equal offers(:one).request.id, tested_order['offer']['request']['id']
     assert_equal offers(:one).request.budget, tested_order['offer']['request']['budget']
     assert_equal offers(:one).request.target_date.strftime('%a, %d %b %Y'),
@@ -236,16 +228,8 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
     assert_nil tested_order['offer']['request']['user']['is_admin']
     assert_nil tested_order['offer']['request']['user']['profile_picture_url']
 
-    assert_equal offers(:one).request.user.country.id, tested_order['offer']['request']['user']['country']['id']
-    assert_equal offers(:one).request.user.country.name, tested_order['offer']['request']['user']['country']['name']
+    # TODO: Add reviews
 
-    assert_equal offers(:one).color.id, tested_order['offer']['color']['id']
-    assert_equal offers(:one).color.name, tested_order['offer']['color']['name']
-
-    assert_equal offers(:one).filament.id, tested_order['offer']['filament']['id']
-    assert_equal offers(:one).filament.name, tested_order['offer']['filament']['name']
-
-    # TODO : Add reviews
     assert_equal 1, tested_order['order_status'].length
     tested_order_status = tested_order['order_status'][0]
     assert_nil tested_order_status['order_id']

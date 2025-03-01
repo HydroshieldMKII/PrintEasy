@@ -105,7 +105,7 @@ class ReviewControllerTest < ActionDispatch::IntegrationTest
            params: { review: { order_id: 1, rating: 3, title: 'Review 1', description: 'This is the first review' } }, as: :json
     end
 
-    assert_response :bad_request
+    assert_response :unprocessable_entity
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
@@ -119,7 +119,7 @@ class ReviewControllerTest < ActionDispatch::IntegrationTest
            params: { review: { order_id: 2, rating: 3, title: 'Review 1', description: 'This is the first review' } }, as: :json
     end
 
-    assert_response :bad_request
+    assert_response :unprocessable_entity
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
@@ -133,7 +133,7 @@ class ReviewControllerTest < ActionDispatch::IntegrationTest
            params: { review: { order_id: 3, rating: 3, title: 'Review 1', description: 'This is the first review' } }, as: :json
     end
 
-    assert_response :bad_request
+    assert_response :unprocessable_entity
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
@@ -147,7 +147,7 @@ class ReviewControllerTest < ActionDispatch::IntegrationTest
            params: { review: { order_id: 4, rating: 3, title: 'Review 1', description: 'This is the first review' } }, as: :json
     end
 
-    assert_response :bad_request
+    assert_response :unprocessable_entity
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
@@ -174,7 +174,7 @@ class ReviewControllerTest < ActionDispatch::IntegrationTest
            params: { review: { order_id: 999, rating: 3, title: 'Review 1', description: 'This is the first review' } }, as: :json
     end
 
-    assert_response :bad_request
+    assert_response :unprocessable_entity
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
@@ -188,7 +188,7 @@ class ReviewControllerTest < ActionDispatch::IntegrationTest
            params: { review: { order_id: 7, rating: 6, title: 'Review 1', description: 'This is the first review' } }, as: :json
     end
 
-    assert_response :bad_request
+    assert_response :unprocessable_entity
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
@@ -202,7 +202,7 @@ class ReviewControllerTest < ActionDispatch::IntegrationTest
            params: { review: { order_id: 7, rating: -1, title: 'Review 1', description: 'This is the first review' } }, as: :json
     end
 
-    assert_response :bad_request
+    assert_response :unprocessable_entity
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
@@ -216,7 +216,7 @@ class ReviewControllerTest < ActionDispatch::IntegrationTest
            params: { review: { order_id: 7, rating: 3, title: 'R', description: 'This is the first review' } }, as: :json
     end
 
-    assert_response :bad_request
+    assert_response :unprocessable_entity
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
@@ -235,7 +235,7 @@ class ReviewControllerTest < ActionDispatch::IntegrationTest
            } }, as: :json
     end
 
-    assert_response :bad_request
+    assert_response :unprocessable_entity
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
@@ -249,7 +249,7 @@ class ReviewControllerTest < ActionDispatch::IntegrationTest
            params: { review: { order_id: 7, rating: 3, title: 'Review 1', description: 'This' } }, as: :json
     end
 
-    assert_response :bad_request
+    assert_response :unprocessable_entity
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
@@ -269,7 +269,7 @@ class ReviewControllerTest < ActionDispatch::IntegrationTest
            } }, as: :json
     end
 
-    assert_response :bad_request
+    assert_response :unprocessable_entity
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
@@ -283,7 +283,7 @@ class ReviewControllerTest < ActionDispatch::IntegrationTest
            params: { review: { order_id: 7, rating: 3, title: 'Review 1', description: 'This is the first review' } }, as: :json
     end
 
-    assert_response :bad_request
+    assert_response :unprocessable_entity
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
@@ -297,7 +297,7 @@ class ReviewControllerTest < ActionDispatch::IntegrationTest
            params: { review: { order_id: 6, rating: 3, title: 'Review 1', description: 'This is the first review' } }, as: :json
     end
 
-    assert_response :bad_request
+    assert_response :unprocessable_entity
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end

@@ -131,7 +131,7 @@
         "target_date": "Target Date :",
         "comment": "Comment",
         "comment_error": "Comment has to be between 5 and 200 characters",
-        "title_error": "Title has to be between 5 and 50 characters",
+        "title_error": "Title has to be between 5 and 30 characters",
         "verif_delete_review": "Are you sure you want to delete the review ? This action cannot be undone.",
         "verif_delete_order_status": "Are you sure you want to delete the status ? This action cannot be undone.",
         "review": {
