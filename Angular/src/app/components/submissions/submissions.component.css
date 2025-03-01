@@ -27,9 +27,16 @@ h2 {
     justify-content: center;
 }
 
+.contest-image {
+    max-width: 200px;
+    max-height: 200px;
+    object-fit: cover;
+}
+
 .container-column {
     display: flex;
     flex-direction: column;
+    justify-content: center;
 }
 
 .description-textarea {
@@ -172,6 +179,10 @@ h2 {
     padding: 1rem;
 }
 
+.display-flex {
+    display: flex;
+}
+
 .space-button {
     margin-bottom: 2.5rem;
 }
@@ -249,10 +260,25 @@ h2 {
     gap: 10px;
 }
 
+.texte-tronque {
+    white-space: nowrap;
+    /* Empêche le retour à la ligne */
+    overflow: hidden;
+    /* Cache le texte débordant */
+    text-overflow: ellipsis;
+    /* Affiche "..." pour le texte coupé */
+    width: 200px;
+    /* Nécessaire pour limiter la largeur */
+}
+
 @media (max-width: 768px) {
     .container-row {
         flex-direction: column;
         align-items: center;
+    }
+
+    .display-flex {
+        display: block;
     }
 
     .carousel-mobile {
