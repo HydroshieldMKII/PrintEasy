@@ -3,80 +3,98 @@
 module Api
   class RequestController < AuthenticatedController
     rescue_from ActiveRecord::RecordNotUnique, with: :handle_record_not_unique
-    before_action :index_params, only: :index
-    before_action :show_params, only: :show
-    before_action :create_params, only: :create
-    before_action :update_params, only: :update
+    before_action :set_request, only: %i[show update destroy]
 
-    # GET /requests
     def index
       @requests = fetch_requests
-      render_request(@requests)
+      render_requests(@requests)
     end
 
-    # GET /requests/:id
     def show
       if current_user.printers.exists?
-        @request = Request.includes(:user, preset_requests: %i[color filament printer]).find(params[:id])
-        render_request(@request)
+        render_requests(@request)
       else
         render json: { request: {}, errors: { request: ['You must have a printer to view request details'] } },
                status: :unprocessable_entity
       end
     end
 
-    # POST /requests
     def create
-      @request = Request.new(create_params)
-      @request.user = current_user
+      request = Request.new(request_params)
+      request.user = current_user
 
-      if @request.save
-        render_request(@request, status: :created)
+      if request.save
+        render_requests(request, status: :created)
       else
-        render json: { request: {}, errors: @request.errors }, status: :unprocessable_entity
+        render json: { request: {}, errors: request.errors }, status: :unprocessable_entity
       end
     end
 
-    # PATCH/PUT /requests/:id
     def update
-      @request = Request.includes(:user, preset_requests: %i[color filament printer]).find(params[:id])
-
-      if @request.user != current_user
-        render json: { request: {}, errors: { request: ['You are not allowed to update this request'] } },
-               status: :forbidden
-        return
-      end
-
-      update_params.delete(:preset_requests_attributes) if @request.has_offer_made?
-
-      if @request.update(update_params)
-        render_request(@request)
+      if @request.update(request_params)
+        render_requests(@request)
       else
         render json: { request: {}, errors: @request.errors }, status: :unprocessable_entity
       end
     end
 
-    # DELETE /requests/:id
     def destroy
-      @request = Request.find(params[:id])
-
-      if @request.user != current_user
-        render json: { request: {}, errors: { request: ['You are not allowed to delete this request'] } },
-               status: :forbidden
-        return
+      if @request.destroy
+        render json: { request: @request, errors: {} }
+      else
+        render json: { request: {}, errors: @request.errors }, status: :unprocessable_entity
       end
-
-      if @request.has_offer_accepted?
-        render json: { request: {}, errors: { request: ['Cannot delete request with accepted offers'] } },
-               status: :unprocessable_entity
-        return
-      end
-
-      @request.destroy
-      render json: { request: @request, errors: {} }
     end
 
     private
+
+    def set_request
+      @request = current_user.requests.find(params[:id])
+    end
+
+    def request_params
+      params.require(:request).permit(:name, :comment, :target_date, :budget, :stl_file,
+                                      preset_requests_attributes: %i[id color_id filament_id printer_id print_quality _destroy])
+    end
+
+    def render_requests(resource, status: :ok)
+      if resource.is_a?(Request) # Single request
+        render json: {
+          request: serialize_request(resource),
+          has_printer: current_user.printers.exists?,
+          errors: {}
+        }, status: status
+      else # Collection of requests
+        render json: {
+          request: resource.map { |req| serialize_request(req) },
+          has_printer: current_user.printers.exists?,
+          errors: {}
+        }, status: status
+      end
+    end
+
+    def serialize_request(request)
+      request.as_json(
+        except: %i[user_id created_at updated_at],
+        include: {
+          preset_requests: {
+            except: %i[request_id color_id filament_id printer_id],
+            include: {
+              color: { only: %i[id name] },
+              filament: { only: %i[id name] },
+              printer: { only: %i[id model] }
+            }
+          },
+          user: {
+            only: %i[id username],
+            include: {
+              country: { only: %i[name] }
+            }
+          }
+        },
+        methods: %i[stl_file_url has_offer_made? has_offer_accepted?]
+      )
+    end
 
     def fetch_requests
       case params[:type]
@@ -102,40 +120,11 @@ module Api
       sort_requests(requests)
     end
 
-    def render_request(resource, status: :ok)
-      render json: {
-        request: resource.as_json(
-          except: %i[user_id created_at updated_at],
-          include: {
-            preset_requests: {
-              except: %i[request_id color_id filament_id printer_id],
-              include: {
-                color: { only: %i[id name] },
-                filament: { only: %i[id name] },
-                printer: { only: %i[id model] }
-              }
-            },
-            user: {
-              only: %i[id username],
-              include: {
-                country: { only: %i[name] }
-              }
-            }
-          },
-          methods: %i[stl_file_url has_offer_made? has_offer_accepted?]
-        ),
-        has_printer: has_printer?,
-        errors: resource.respond_to?(:errors) ? resource.errors : {}
-      }, status: status
-    end
-
     def filter_requests(requests)
       case params[:filter]
-      when 'owned-printer' # request that matches the printer owned by the user
-        # requests.joins(:preset_requests)
-        #         .where(preset_requests: { printer_id: current_user.printer_user.pluck(:printer_id) }).distinct
-
-        requests.where(preset_requests: { printer_id: current_user.printer_user.pluck(:printer_id) }).distinct
+      when 'owned-printer'
+        requests.joins(:preset_requests)
+                .where(preset_requests: { printer_id: current_user.printer_user.pluck(:printer_id) }).distinct
       when 'country'
         requests.joins(:user).where(users: { country_id: current_user.country_id }).distinct
       when 'in-progress'
@@ -157,28 +146,6 @@ module Api
         return requests.order("#{sort_column} #{sort_direction}")
       end
       requests.order('target_date ASC')
-    end
-
-    def index_params
-      params.permit(:type, :search, :filter, :sortCategory, :sort).require(:type)
-    end
-
-    def show_params
-      params.permit(:id).require(:id)
-    end
-
-    def create_params
-      params.require(:request).permit(:name, :comment, :target_date, :budget, :stl_file,
-                                      preset_requests_attributes: %i[color_id filament_id printer_id print_quality])
-    end
-
-    def update_params
-      params.require(:request).permit(:name, :comment, :target_date, :budget, :stl_file,
-                                      preset_requests_attributes: %i[id color_id filament_id printer_id print_quality _destroy])
-    end
-
-    def has_printer?
-      current_user.printers.exists?
     end
 
     def handle_record_not_unique(_exception)

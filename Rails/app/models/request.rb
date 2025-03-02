@@ -10,7 +10,6 @@ class Request < ApplicationRecord
   validates :name, presence: true, length: { in: 3..30 }
   validates :budget, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 10_000 }
   validates :comment, length: { maximum: 200 }
-
   has_one_attached :stl_file
 
   # Create validations
@@ -19,8 +18,8 @@ class Request < ApplicationRecord
 
   # Update validations
   validate :target_date_cannot_be_in_the_past_on_update, on: :update
-  validate :cannot_update_if_offer_accepted, on: :update
   validate :stl_file_must_have_stl_extension
+  validate :unique_preset_requests
 
   # Helper methods
   def stl_file_url
@@ -32,25 +31,37 @@ class Request < ApplicationRecord
   end
 
   def has_offer_accepted?
-    offers.joins(order: :order_status)
-          .where(order_status: { status_name: 'Accepted' })
-          .exists?
+    offers.joins(:order).exists?
   end
 
-  # Authorization methods
-  def can_be_viewed_by?(user)
-    user.printers.exists?
+  def update(_params)
+    unless user == Current.user
+      errors.add(:request, 'You are not allowed to update this request')
+      return false
+    end
+
+    if has_offer_accepted?
+      errors.add(:base, 'Cannot update request with accepted offers')
+      return false
+    end
+
+    super
   end
 
-  def can_be_updated_by?(user)
-    self.user == user && !has_offer_accepted?
+  def destroy
+    unless user == Current.user
+      errors.add(:request, 'You are not allowed to delete this request')
+      return false
+    end
+
+    if has_offer_accepted?
+      errors.add(:request, 'Cannot delete request with accepted offers')
+      return false
+    end
+
+    super
   end
 
-  def can_be_deleted_by?(user)
-    self.user == user && !has_offer_accepted?
-  end
-
-  # Validations
   private
 
   def target_date_cannot_be_in_the_past_on_update
@@ -69,9 +80,15 @@ class Request < ApplicationRecord
     errors.add(:stl_file, 'must have .stl extension')
   end
 
-  def cannot_update_if_offer_accepted
-    return unless has_offer_accepted?
-
-    errors.add(:base, 'Cannot update request with accepted offers')
+  def unique_preset_requests
+    seen = {}
+    preset_requests.each do |preset|
+      key = [preset.color_id, preset.filament_id, preset.printer_id, preset.print_quality]
+      if seen[key]
+        preset.errors.add(:base, 'Duplicate preset exists in the request')
+      else
+        seen[key] = true
+      end
+    end
   end
 end
