@@ -10,15 +10,18 @@ class Request < ApplicationRecord
   validates :budget, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 10_000 }
   validates :comment, length: { maximum: 200 }
   has_one_attached :stl_file
+
   # Create validations
   validates :stl_file, presence: true, on: :create
   validates :target_date, presence: true, comparison: { greater_than: Date.today }, on: :create
+
   # Update validations
   validate :target_date_cannot_be_in_the_past_on_update, on: :update
   validate :stl_file_must_have_stl_extension
   validate :unique_preset_requests
 
-  # Scopes for fetching, filtering and sorting
+  validate :can_show_request, on: :show
+
   scope :with_associations, -> { includes(:user, preset_requests: %i[color filament printer]) }
   scope :search_by_name, ->(query) { where('name LIKE ?', "%#{query}%") if query.present? }
   scope :not_accepted, lambda {
@@ -113,7 +116,6 @@ class Request < ApplicationRecord
     )
   end
 
-  # Helper methods
   def stl_file_url
     Rails.application.routes.url_helpers.rails_blob_url(stl_file, only_path: true)
   end
@@ -151,6 +153,12 @@ class Request < ApplicationRecord
   end
 
   private
+
+  def can_show_request
+    return if Current.user.printers.exists? || user == Current.user
+
+    errors.add(:request, 'You must have a printer to view request details')
+  end
 
   def target_date_cannot_be_in_the_past_on_update
     return unless target_date_changed? && target_date < Date.today

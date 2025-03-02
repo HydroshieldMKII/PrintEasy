@@ -3,7 +3,7 @@
 module Api
   class RequestController < AuthenticatedController
     rescue_from ActiveRecord::RecordNotUnique, with: :handle_record_not_unique
-    before_action :set_request, only: %i[show update destroy]
+    before_action :set_request, only: %i[update destroy]
 
     def index
       @requests = Request.fetch_for_user(params)
@@ -11,11 +11,12 @@ module Api
     end
 
     def show
-      if current_user.printers.exists?
+      @request = Request.find(params[:id])
+
+      if @request.errors.empty?
         render_requests(@request)
       else
-        render json: { request: {}, errors: { request: ['You must have a printer to view request details'] } },
-               status: :unprocessable_entity
+        render json: { request: {}, errors: @request.errors }, status: :unprocessable_entity
       end
     end
 
