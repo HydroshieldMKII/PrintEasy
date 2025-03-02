@@ -42,7 +42,7 @@ class UserContestSubmissionsControllerTest < ActionDispatch::IntegrationTest
     assert_equal ['Invalid login credentials'], @parsed_response['errors']['connection']
   end
 
-  test "should not get index if user is not logged in" do
+  test 'should not get index if user is not logged in' do
     sign_out @user
 
     assert_difference('Contest.count', 0) do

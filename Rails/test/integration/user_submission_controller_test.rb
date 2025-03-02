@@ -48,10 +48,10 @@ class UserSubmissionControllerTest < ActionDispatch::IntegrationTest
       @parsed_response = JSON.parse(response.body)
     end
 
-    assert_equal ["Couldn't find Contest with 'id'=0 [WHERE `contests`.`deleted_at` IS NULL]"], @parsed_response['errors']["base"]
+    assert_equal ["Couldn't find Contest with 'id'=0 [WHERE `contests`.`deleted_at` IS NULL]"], @parsed_response['errors']['base']
   end
 
-  test "should return true if submission is liked by current user" do
+  test 'should return true if submission is liked by current user' do
     assert_difference('Submission.count', 0) do
       get api_contest_user_submission_index_url(contest_id: @contest.id)
     end
@@ -62,7 +62,7 @@ class UserSubmissionControllerTest < ActionDispatch::IntegrationTest
       @parsed_response = JSON.parse(response.body)
     end
 
-    assert_equal @parsed_response["submissions"][0]["submissions"][0]["liked_by_current_user"], true
+    assert_equal @parsed_response['submissions'][0]['submissions'][0]['liked_by_current_user'], true
   end
 
   test 'should return false if submission is not liked by current user' do
@@ -94,6 +94,6 @@ class UserSubmissionControllerTest < ActionDispatch::IntegrationTest
       @parsed_response = JSON.parse(response.body)
     end
 
-    assert_equal ["Invalid login credentials"], @parsed_response['errors']['connection']
+    assert_equal ['Invalid login credentials'], @parsed_response['errors']['connection']
   end
 end

@@ -66,7 +66,6 @@ class OrderStatus < ApplicationRecord
 
   def available_status
     events = self.class.state_machine.events
-    available = []
     available = events.filter_map do |event|
       from = event.branches[0].state_requirements[0][:from].values
       to = event.branches[0].state_requirements[0][:to].values

@@ -614,7 +614,7 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
     assert_equal ["Couldn't find Contest with 'id'=1 [WHERE `contests`.`deleted_at` IS NULL]"], @parsed_response['errors']['base']
   end
 
-  test "should not index if not sign in" do
+  test 'should not index if not sign in' do
     sign_out users(:two)
 
     assert_difference('Contest.count', 0) do
@@ -627,10 +627,10 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :unauthorized
 
-    assert_equal ["Invalid login credentials"], @parsed_response['errors']['connection']
+    assert_equal ['Invalid login credentials'], @parsed_response['errors']['connection']
   end
 
-  test "should not show if not sign in" do
+  test 'should not show if not sign in' do
     sign_out users(:two)
 
     assert_difference('Contest.count', 0) do
@@ -643,10 +643,10 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :unauthorized
 
-    assert_equal ["Invalid login credentials"], @parsed_response['errors']['connection']
+    assert_equal ['Invalid login credentials'], @parsed_response['errors']['connection']
   end
 
-  test "should not create if not sign in" do
+  test 'should not create if not sign in' do
     sign_out users(:two)
 
     assert_difference('Contest.count', 0) do
@@ -663,58 +663,58 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :unauthorized
 
-    assert_equal ["Invalid login credentials"], @parsed_response['errors']['connection']
+    assert_equal ['Invalid login credentials'], @parsed_response['errors']['connection']
   end
-    
-    test "should not update if not sign in" do
-      sign_out users(:two)
-  
-      assert_difference('Contest.count', 0) do
-        put api_contest_url(contests(:contest_one).id),
-            params: { contest: { theme: 'test', description: 'test', submission_limit: 10, start_at: Time.now + 2.day,
-                                 end_at: Time.now + 4.day,
-                                 image: fixture_file_upload(
-                                   Rails.root.join('test/fixtures/files/chicken_bagel.jpg'), 'image/jpg'
-                                 ) } }
-      end
-  
-      assert_nothing_raised do
-        @parsed_response = JSON.parse(response.body)
-      end
-  
-      assert_response :unauthorized
-  
-      assert_equal ["Invalid login credentials"], @parsed_response['errors']['connection']
+
+  test 'should not update if not sign in' do
+    sign_out users(:two)
+
+    assert_difference('Contest.count', 0) do
+      put api_contest_url(contests(:contest_one).id),
+          params: { contest: { theme: 'test', description: 'test', submission_limit: 10, start_at: Time.now + 2.day,
+                               end_at: Time.now + 4.day,
+                               image: fixture_file_upload(
+                                 Rails.root.join('test/fixtures/files/chicken_bagel.jpg'), 'image/jpg'
+                               ) } }
     end
 
-    test "should not destroy if not sign in" do
-      sign_out users(:two)
-  
-      assert_difference('Contest.count', 0) do
-        delete api_contest_url(contests(:contest_one).id)
-      end
-  
-      assert_nothing_raised do
-        @parsed_response = JSON.parse(response.body)
-      end
-  
-      assert_response :unauthorized
-  
-      assert_equal ["Invalid login credentials"], @parsed_response['errors']['connection']
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
     end
 
-    test "should destroy contest if it's not started" do
-      assert_difference('Contest.count', -1) do
-        delete api_contest_url(contests(:contest_one).id)
-      end
-  
-      assert_nothing_raised do
-        @parsed_response = JSON.parse(response.body)
-      end
-  
-      assert_response :success
+    assert_response :unauthorized
 
-      assert_nil @parsed_response['contest']['deleted_at']
-      assert_equal contests(:contest_one).id, @parsed_response['contest']['id']
+    assert_equal ['Invalid login credentials'], @parsed_response['errors']['connection']
+  end
+
+  test 'should not destroy if not sign in' do
+    sign_out users(:two)
+
+    assert_difference('Contest.count', 0) do
+      delete api_contest_url(contests(:contest_one).id)
     end
+
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+
+    assert_response :unauthorized
+
+    assert_equal ['Invalid login credentials'], @parsed_response['errors']['connection']
+  end
+
+  test "should destroy contest if it's not started" do
+    assert_difference('Contest.count', -1) do
+      delete api_contest_url(contests(:contest_one).id)
+    end
+
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+
+    assert_response :success
+
+    assert_nil @parsed_response['contest']['deleted_at']
+    assert_equal contests(:contest_one).id, @parsed_response['contest']['id']
+  end
 end

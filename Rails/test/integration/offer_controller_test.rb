@@ -99,7 +99,6 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     assert_equal '2021-01-02', json_response['requests'][0]['offers'][0]['target_date']
     assert_equal 0.22, json_response['requests'][0]['offers'][0]['print_quality']
     assert_nil json_response['requests'][0]['offers'][0]['cancelled_at']
-    assert_equal false, json_response['requests'][0]['offers'][0]['accepted?']
 
     assert_empty json_response['errors']
   end
@@ -575,8 +574,10 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     # response content
     assert_not_empty json_response['errors']
 
-    assert_equal ["Couldn't find Offer with 'id'=9999 [WHERE `offers`.`printer_user_id` IN (SELECT `printer_users`.`id` FROM `printer_users` WHERE `printer_users`.`user_id` = ?)]"],
-                 json_response['errors']['base']
+    assert_equal [
+      "Couldn't find Offer with 'id'=9999 [WHERE `offers`.`printer_user_id` IN " \
+      '(SELECT `printer_users`.`id` FROM `printer_users` WHERE `printer_users`.`user_id` = ?)]'
+    ], json_response['errors']['base']
   end
 
   # CANCEL

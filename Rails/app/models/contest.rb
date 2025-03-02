@@ -45,16 +45,14 @@ class Contest < ApplicationRecord
   end
 
   def self.contests_order(user)
-    contests = user.accessible_contests
-                    .left_joins(submissions: :likes)
-                    .group('contests.id')
-                    .order(Arel.sql('
-                      CASE 
-                        WHEN contests.end_at IS NOT NULL AND contests.end_at < CURRENT_DATE THEN 1 
-                        ELSE 0 
-                      END, contests.start_at')
-                    )
-    contests
+    user.accessible_contests
+        .left_joins(submissions: :likes)
+        .group('contests.id')
+        .order(Arel.sql('
+                      CASE
+                        WHEN contests.end_at IS NOT NULL AND contests.end_at < CURRENT_DATE THEN 1
+                        ELSE 0
+                      END, contests.start_at'))
   end
 
   def users_with_submissions(current_user)
@@ -63,14 +61,14 @@ class Contest < ApplicationRecord
                 .where(submissions: { contest_id: id })
                 .distinct
                 .order(:username)
-                
+
     # Build the result array manually without using group_by or sort_by
     result = []
-    
+
     users.each do |user|
       # For each user, get their submissions
       user_submissions = submissions.where(user_id: user.id)
-      
+
       # Create the user entry
       user_entry = {
         user: user.as_json,
@@ -80,10 +78,10 @@ class Contest < ApplicationRecord
         ),
         mine: user.id == current_user.id
       }
-      
+
       result << user_entry
     end
-    
+
     result
   end
 
@@ -97,7 +95,7 @@ class Contest < ApplicationRecord
 
   def finished?
     return false unless end_at
-    
+
     end_at < Time.now
   end
 

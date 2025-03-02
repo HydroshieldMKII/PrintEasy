@@ -39,7 +39,7 @@ module Api
     def destroy
       @contest = Contest.find(params[:id])
       deleted = @contest.started? ? @contest.soft_delete : @contest.destroy
-    
+
       if deleted
         render json: { contest: @contest.as_json(methods: :image_url), errors: {} }, status: :ok
       else
@@ -50,7 +50,7 @@ module Api
     private
 
     def is_admin?
-      return unless !current_user.is_admin
+      return if current_user.is_admin
 
       render json: { errors: { contest: ['You must be an admin to perform this action'] } }, status: :unauthorized
     end
