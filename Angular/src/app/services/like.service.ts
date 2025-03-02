@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { ApiResponseModel } from '../models/api-response.model';
 import { map } from 'rxjs/operators';
 import { LikeModel } from '../models/like.model';
+import { SubmissionModel } from '../models/submission.model';
 
 
 @Injectable({
@@ -12,6 +13,21 @@ import { LikeModel } from '../models/like.model';
 export class LikeService {
 
   constructor(private api: ApiRequestService) { }
+
+  getLikes(): Observable<SubmissionModel[]> {
+    return this.api.getRequest('api/like').pipe(
+      map(response => {
+        if (response.status === 200) {
+          return response.data.likes.map((submission: SubmissionModel) => SubmissionModel.fromApi(submission));
+        }
+        else {
+          console.log('error:', response.errors);
+          return [];
+        }
+
+      })
+    );
+  }
 
   createLike(submissionId: number): Observable<ApiResponseModel> {
     return this.api.postRequest('api/like', {}, { submission_id: submissionId }).pipe(

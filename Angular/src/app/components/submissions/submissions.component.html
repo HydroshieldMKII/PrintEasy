@@ -24,9 +24,10 @@
                 <div class="display-flex" *ngIf="contestDurationInDays">
                     <span>
                         <i class="pi pi-calendar"></i>
-                        {{ contest?.finished 
-                            ? (contest?.endAt | date:'short') 
-                            : ('submissions.ends' | translate) + ' ' + contestDurationInDays + ' ' + ('submissions.days' | translate) }}
+                        {{ contest?.finished
+                        ? (contest?.endAt | date:'short')
+                        : ('submissions.ends' | translate) + ' ' + contestDurationInDays + ' ' + ('submissions.days' |
+                        translate) }}
                     </span>
                 </div>
             </div>
@@ -66,13 +67,16 @@
                                 </div>
                                 <div class="flex gap-2 items-center">
                                     <!-- Nombre de likes -->
-                                    <span class="font-semibold text-gray-700 dark:text-gray-300">{{ product.likes.length
-                                        }}</span>
+                                    <div class="likes-count">
+                                        <span class="font-semibold text-gray-700 dark:text-gray-300">{{
+                                            product.likes.length
+                                            }}</span>
 
-                                    <!-- Bouton Like -->
-                                    <p-button [icon]="product.liked ? 'pi pi-heart-fill' : 'pi pi-heart'"
-                                        [severity]="product.liked ? 'danger' : 'secondary'" [outlined]="!product.liked"
-                                        (click)="onLike(product)" />
+                                        <!-- Bouton Like -->
+                                        <p-button [icon]="product.liked ? 'pi pi-heart-fill' : 'pi pi-heart'"
+                                            [severity]="product.liked ? 'danger' : 'secondary'"
+                                            [outlined]="!product.liked" (click)="onLike(product)" />
+                                    </div>
 
                                     <!-- (click)="toggleLike(product)" -->
 

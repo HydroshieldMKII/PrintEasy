@@ -267,6 +267,12 @@ h2 {
     width: 200px;
 }
 
+.likes-count {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
 .participate-container {
     background-color: inherit;
     color: #000;

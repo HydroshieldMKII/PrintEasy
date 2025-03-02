@@ -9,6 +9,7 @@ class User < ApplicationRecord
   has_many :printers, through: :printer_user
   has_many :offers, through: :printer_user
   has_many :likes
+  has_many :liked_submissions, through: :likes, source: :submission
 
   has_one_attached :profile_picture
 

@@ -1,9 +1,12 @@
 module Api
     class LikeController < AuthenticatedController
         def index
-            @likes = current_user.likes
+            @likes = current_user.liked_submissions
 
-            render json: { likes: @likes, errors: {} }, status: :ok
+            render json: { likes: @likes.as_json(
+                include: :likes,
+                methods: %i[image_url stl_url liked_by_current_user]
+              ), errors: {} }, status: :ok
         end
 
         def create
