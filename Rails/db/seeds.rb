@@ -737,9 +737,10 @@ status_printed = Status.create!(name: 'Printed')
 status_shipped = Status.create!(name: 'Shipped')
 status_arrived = Status.create!(name: 'Arrived')
 Status.create!(name: 'Cancelled')
-Current.user = user1
 
+Current.user = admin
 OrderStatus.create!(order: order4, status: status_accepted, comment: 'offer accepted, printing soon.')
+
 OrderStatus.create!(order: order3, status: status_accepted, comment: 'offer accepted, printing soon.')
 OrderStatus.create!(order: order2, status: status_accepted, comment: 'offer accepted, printing soon.')
 OrderStatus.create!(order: order2, status: status_printing, comment: 'Order started printing.')
@@ -747,6 +748,7 @@ OrderStatus.create!(order: order2, status: status_printed, comment: 'Order print
 OrderStatus.create!(order: order2, status: status_shipped, comment: 'Order shipped.')
 orderstatus1 = OrderStatus.create!(order: order1, status: status_accepted, comment: 'offer accepted, printing soon.')
 OrderStatus.create!(order: order1, status: status_printing, comment: 'Order started printing.')
+
 orderstatus1.image.attach(
   io: rubyImage,
   filename: 'ruby.jpg',
@@ -754,7 +756,7 @@ orderstatus1.image.attach(
 )
 orderstatus1.save
 
-Current.user = admin
+Current.user = user1
 OrderStatus.create!(order: order2, status: status_arrived, comment: 'Order arrived.')
 rubyImage.rewind
 dariusImage.rewind
