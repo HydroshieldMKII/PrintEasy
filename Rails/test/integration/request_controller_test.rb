@@ -64,8 +64,6 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
       JSON.parse(response.body)
     end
 
-    p json_response
-
     assert(json_response['request'].all? { |r| r['user']['id'] == @user.id })
 
     my_requests = Request.where(user: @user)
