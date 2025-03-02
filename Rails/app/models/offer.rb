@@ -83,7 +83,7 @@ class Offer < ApplicationRecord
       return false
     end
 
-    if request.user_id != Current.user.id
+    if request.user != Current.user
       errors.add(:offer, 'You are not allowed to reject this offer')
       return false
     end

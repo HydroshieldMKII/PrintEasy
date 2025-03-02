@@ -566,7 +566,6 @@ end
 Like.create!(user: user1, submission: submission1)
 Like.create!(user: user1, submission: submission2)
 
-puts 'Creating offers...'
 colors = Color.all
 filaments = Filament.all
 
@@ -576,7 +575,6 @@ user1_printer_users = PrinterUser.where(user: user1).to_a
 user1_request = Request.where(user: user1)
 admin_request = Request.where(user: admin)
 
-puts "Creating offers from admin to user1's request..."
 Current.user = admin
 
 Offer.create!(
@@ -649,7 +647,6 @@ Offer.create!(
   target_date: (Date.today + 7.days).strftime('%Y-%m-%d')
 )
 
-puts "Creating offers from user1 to admin's request..."
 Current.user = user1
 
 Offer.create!(
@@ -773,7 +770,7 @@ dariusImage.rewind
 
 r1 = Review.create!(
   order: order2,
-  user: admin,
+  user: user1,
   title: 'Durable and Precise',
   description: 'Prototype case fit perfectly, highly recommend!',
   rating: 4

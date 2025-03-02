@@ -54,47 +54,48 @@ module Api
     private
 
     def render_offers(resource, status: :ok)
-      if resource.is_a?(Offer)
+      if resource.is_a?(Offer) # Single offer
         render json: {
           offer: serialize_offer(resource),
           errors: {}
         }, status: status
-      else
-        # Use a SQL-based approach for grouping
+      else # Collection of offers by request
         requests_with_offers = render_grouped_offers(resource)
         render json: { requests: requests_with_offers, errors: {} }, status: status
       end
     end
 
     def render_grouped_offers(offers)
-      # Get all unique request IDs from the offers
+      return [] if offers.empty?
+
       request_ids = offers.pluck(:request_id).uniq
 
-      # Fetch the requests with necessary includes
-      requests = Request.includes(user: :country)
-                        .where(id: request_ids)
-                        .as_json(
-                          except: %i[user_id created_at updated_at],
-                          include: {
-                            user: {
-                              only: %i[id username],
-                              include: {
-                                country: { only: %i[id name] }
-                              }
-                            }
-                          }
-                        )
+      requests = Request.where(id: request_ids)
+                        .includes(:user, offers: [
+                                    { printer_user: %i[user printer] },
+                                    :color,
+                                    :filament
+                                  ])
 
-      # Attach the offers to each request
-      requests.map do |request|
-        # Get offers for this request
-        request_offers = offers.select { |o| o.request_id == request['id'] }
-
-        # Serialize each offer
-        request.merge(
-          'offers' => request_offers.map { |offer| serialize_offer(offer) }
-        )
-      end
+      requests.as_json(
+        include: {
+          user: { only: %i[id username] },
+          offers: {
+            except: %i[request_id printer_user_id created_at updated_at color_id filament_id],
+            include: {
+              printer_user: {
+                only: [:id],
+                include: {
+                  user: { only: %i[id username] },
+                  printer: { only: %i[id model] }
+                }
+              },
+              color: {},
+              filament: {}
+            }
+          }
+        }
+      )
     end
 
     def serialize_offer(offer)
@@ -119,7 +120,7 @@ module Api
       when 'all' # Offers received on my requests
         Offer.not_in_accepted_request.for_user_requests
       when 'mine' # Offers sent to another user's requests
-        Offer.not_in_accepted_request.from_user_printers
+        Offer.from_user_printers
       else
         Offer.none
       end

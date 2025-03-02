@@ -16,4 +16,18 @@ export class RequestOfferModel {
         this.targetDate = targetDate;
         this.offers = offers;
     }
+
+    static fromAPI(data: any): RequestOfferModel | null {
+        if (!data) {
+            return null;
+        }
+        return new RequestOfferModel(
+            data.id,
+            data.name,
+            data.budget,
+            data.comment,
+            new Date(data.target_date),
+            data.offers.map((offer: any) => OfferModel.fromAPI(offer))
+        );
+    }
 }

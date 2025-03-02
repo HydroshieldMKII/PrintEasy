@@ -55,47 +55,9 @@ export class OfferService {
         return this.api.getRequest('api/offer', { type: 'all' }).pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
+                    console.log("Offers: ", response.data);
                     return (response.data as any)?.['requests'].map((request: any) => {
-                        return new RequestOfferModel(
-                            request?.['id'],
-                            request?.['name'],
-                            request?.['budget'],
-                            request?.['comment'],
-                            new Date(request?.['target_date']),
-                            (request?.['offers'] as any[]).map((offer: any) => {
-                                // console.log("raw getOffer to create from: ", offer);
-                                return new OfferModel(
-                                    offer?.['id'],
-                                    offer?.['request'],
-                                    new PrinterUserModel(
-                                        offer?.['printer_user']?.['id'],
-                                        new UserModel(
-                                            offer?.['printer_user']?.['user']?.['id'],
-                                            offer?.['printer_user']?.['user']?.['username'],
-                                            offer?.['printer_user']?.['user']?.['country']?.['name']
-                                        ),
-                                        new PrinterModel(
-                                            offer?.['printer_user']?.['printer']?.['id'],
-                                            offer?.['printer_user']?.['printer']?.['model']
-                                        ),
-                                        new Date(offer?.['printer_user']?.['acquired_date'])
-                                    ),
-                                    new FilamentModel(
-                                        offer?.['filament']?.['id'],
-                                        this.translateFilament(offer?.['filament']?.['id'])
-                                    ),
-                                    new ColorModel(
-                                        offer?.['color']?.['id'],
-                                        this.translateColor(offer?.['color']?.['id'])
-                                    ),
-                                    offer?.['price'],
-                                    offer?.['print_quality'],
-                                    offer?.['target_date'],
-                                    offer?.['cancelled_at']
-                                );
-                            }
-                            )
-                        );
+                        return RequestOfferModel.fromAPI(request);
                     });
                 }
                 return [];
@@ -109,45 +71,7 @@ export class OfferService {
                 if (response.status === 200) {
                     console.log("Offer: ", response.data);
                     return (response.data as any)?.['requests'].map((request: any) => {
-                        return new RequestOfferModel(
-                            request?.['id'],
-                            request?.['name'],
-                            request?.['budget'],
-                            request?.['comment'],
-                            new Date(request?.['target_date']),
-                            (request?.['offers'] as any[]).map((offer: any) => {
-                                return new OfferModel(
-                                    offer?.['id'],
-                                    offer?.['request'],
-                                    new PrinterUserModel(
-                                        offer?.['printer_user']?.['id'],
-                                        new UserModel(
-                                            offer?.['printer_user']?.['user']?.['id'],
-                                            offer?.['printer_user']?.['user']?.['username'],
-                                            offer?.['printer_user']?.['user']?.['country']?.['name']
-                                        ),
-                                        new PrinterModel(
-                                            offer?.['printer_user']?.['printer']?.['id'],
-                                            offer?.['printer_user']?.['printer']?.['model']
-                                        ),
-                                        new Date(offer?.['printer_user']?.['acquired_date'])
-                                    ),
-                                    new FilamentModel(
-                                        offer?.['filament']?.['id'],
-                                        this.translateFilament(offer?.['filament']?.['id'])
-                                    ),
-                                    new ColorModel(
-                                        offer?.['color']?.['id'],
-                                        this.translateColor(offer?.['color']?.['id'])
-                                    ),
-                                    offer?.['price'],
-                                    offer?.['print_quality'],
-                                    offer?.['target_date'],
-                                    offer?.['cancelled_at']
-                                );
-                            }
-                            )
-                        );
+                        return RequestOfferModel.fromAPI(request);
                     });
                 }
                 return [];
