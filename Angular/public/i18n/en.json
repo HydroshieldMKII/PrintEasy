@@ -262,6 +262,7 @@
         "free": "Free",
         "no_response": "No response yet",
         "rejected": "Rejected",
+        "accepted": "Accepted",
         "edit_offer": "Edit this offer",
         "cancel_offer": "Cancel this offer",
         "accept_offer": "Accept this offer",

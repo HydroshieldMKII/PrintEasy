@@ -111,6 +111,12 @@ class Offer < ApplicationRecord
     super
   end
 
+  def accepted_at
+    return unless accepted?
+
+    Order.find_by(offer_id: id).order_status.first.created_at
+  end
+
   private
 
   def target_date_greater_than_today

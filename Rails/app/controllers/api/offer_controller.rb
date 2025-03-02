@@ -92,7 +92,8 @@ module Api
               },
               color: {},
               filament: {}
-            }
+            },
+            methods: %i[accepted_at]
           }
         }
       )
