@@ -58,42 +58,33 @@ module Api
     end
 
     def render_requests(resource, status: :ok)
-      if resource.is_a?(Request) # Single request
-        render json: {
-          request: serialize_request(resource),
-          has_printer: current_user.printers.exists?,
-          errors: {}
-        }, status: status
-      else # Collection of requests
-        render json: {
-          request: resource.map { |req| serialize_request(req) },
-          has_printer: current_user.printers.exists?,
-          errors: {}
-        }, status: status
-      end
-    end
+      has_printer = current_user.printers.exists?
+      errors = {}
 
-    def serialize_request(request)
-      request.as_json(
-        except: %i[user_id created_at updated_at],
-        include: {
-          preset_requests: {
-            except: %i[request_id color_id filament_id printer_id],
-            include: {
-              color: { only: %i[id name] },
-              filament: { only: %i[id name] },
-              printer: { only: %i[id model] }
+      render json: {
+        request: resource.as_json(
+          except: %i[user_id created_at updated_at],
+          include: {
+            preset_requests: {
+              except: %i[request_id color_id filament_id printer_id],
+              include: {
+                color: { only: %i[id name] },
+                filament: { only: %i[id name] },
+                printer: { only: %i[id model] }
+              }
+            },
+            user: {
+              only: %i[id username],
+              include: {
+                country: { only: %i[name] }
+              }
             }
           },
-          user: {
-            only: %i[id username],
-            include: {
-              country: { only: %i[name] }
-            }
-          }
-        },
-        methods: %i[stl_file_url has_offer_made? has_offer_accepted?]
-      )
+          methods: %i[stl_file_url has_offer_made? has_offer_accepted?]
+        ),
+        has_printer: has_printer,
+        errors: errors
+      }, status: status
     end
 
     def fetch_requests
