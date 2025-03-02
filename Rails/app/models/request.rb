@@ -20,11 +20,9 @@ class Request < ApplicationRecord
   # Update validations
   validate :target_date_cannot_be_in_the_past_on_update, on: :update
   validate :cannot_update_if_offer_accepted, on: :update
-
   validate :stl_file_must_have_stl_extension
-  validate :unique_preset_requests
 
-  # Helper
+  # Helper methods
   def stl_file_url
     Rails.application.routes.url_helpers.rails_blob_url(stl_file, only_path: true)
   end
@@ -39,11 +37,24 @@ class Request < ApplicationRecord
           .exists?
   end
 
+  # Authorization methods
+  def can_be_viewed_by?(user)
+    user.printers.exists?
+  end
+
+  def can_be_updated_by?(user)
+    self.user == user && !has_offer_accepted?
+  end
+
+  def can_be_deleted_by?(user)
+    self.user == user && !has_offer_accepted?
+  end
+
   # Validations
   private
 
   def target_date_cannot_be_in_the_past_on_update
-    return unless target_date_changed? && target_date < Date.today # https://api.rubyonrails.org/v7.1/classes/ActiveModel/Dirty.html
+    return unless target_date_changed? && target_date < Date.today
 
     errors.add(:target_date, 'must be greater than today')
   end
@@ -62,17 +73,5 @@ class Request < ApplicationRecord
     return unless has_offer_accepted?
 
     errors.add(:base, 'Cannot update request with accepted offers')
-  end
-
-  def unique_preset_requests
-    seen = {}
-    preset_requests.each do |preset|
-      key = [preset.color_id, preset.filament_id, preset.printer_id, preset.print_quality]
-      if seen[key]
-        preset.errors.add(:base, 'Duplicate preset exists in the request')
-      else
-        seen[key] = true
-      end
-    end
   end
 end
