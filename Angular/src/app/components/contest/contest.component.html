@@ -8,13 +8,13 @@
     <p [innerHTML]="'contest.description_page' | translate"></p>
        
     <div class="search-container">
-        <input type="text" pInputText [(ngModel)]="searchTerm" placeholder="Search by theme" />
+        <input type="text" pInputText [(ngModel)]="searchTerm" placeholder="{{ 'contest.search_text' | translate }}" />
         <button pButton pRipple icon="pi pi-filter" class="p-button-text"></button>
         <button pButton pRipple icon="pi pi-sort-alt" class="p-button-text"></button>
     </div>
 
     <div class="contest-list">
-        <div *ngFor="let contest of contests" class="card">
+        <div *ngFor="let contest of contests" class="card" [ngStyle]="{ opacity: contest.finished ? '0.5' : '1' }">
             <div class="contest-content">
                 <img [src]="contest.image" alt="Contest image" class="contest-image" loading="lazy" />
                 <div class="contest-details">
