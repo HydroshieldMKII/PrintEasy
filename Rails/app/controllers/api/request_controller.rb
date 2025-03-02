@@ -13,7 +13,7 @@ module Api
     def show
       @request = Request.find(params[:id])
 
-      if @request.errors.empty?
+      if @request.viewable_by_user?
         render_requests(@request)
       else
         render json: { request: {}, errors: @request.errors }, status: :unprocessable_entity

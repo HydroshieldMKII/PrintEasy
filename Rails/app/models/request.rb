@@ -20,8 +20,6 @@ class Request < ApplicationRecord
   validate :stl_file_must_have_stl_extension
   validate :unique_preset_requests
 
-  validate :can_show_request, on: :show
-
   scope :with_associations, -> { includes(:user, preset_requests: %i[color filament printer]) }
   scope :search_by_name, ->(query) { where('name LIKE ?', "%#{query}%") if query.present? }
   scope :not_accepted, lambda {
@@ -152,13 +150,11 @@ class Request < ApplicationRecord
     super
   end
 
-  private
-
-  def can_show_request
-    return if Current.user.printers.exists? || user == Current.user
-
-    errors.add(:request, 'You must have a printer to view request details')
+  def viewable_by_user?
+    Current.user == user || Current.user.printers.exists?
   end
+
+  private
 
   def target_date_cannot_be_in_the_past_on_update
     return unless target_date_changed? && target_date < Date.today
