@@ -639,6 +639,16 @@ Offer.create!(
   target_date: (Date.today + 12.days).strftime('%Y-%m-%d')
 )
 
+Offer.create!(
+  request: user1_request[5],
+  printer_user: admin_printer_users[1],
+  color: colors[6],
+  filament: filaments[0],
+  price: 32.99,
+  print_quality: 0.1,
+  target_date: (Date.today + 7.days).strftime('%Y-%m-%d')
+)
+
 puts "Creating offers from user1 to admin's request..."
 Current.user = user1
 
