@@ -7,72 +7,95 @@ class Offer < ApplicationRecord
   belongs_to :filament
   has_one :order, dependent: :restrict_with_error
 
+  # Add relation to user through printer_user for easier access
+  has_one :user, through: :printer_user
+
   validates :print_quality, presence: true, numericality: { greater_than: 0, less_than_or_equal_to: 2 }
   validates :request, :printer_user, :color, :filament, presence: true
-  validates :request, uniqueness: { scope: %i[printer_user_id color_id filament_id], message: 'This offer already exists' },
-                      on: %i[create update], unless: :cancelled_at?
+  validates :request, uniqueness: {
+    scope: %i[printer_user_id color_id filament_id],
+    message: 'This offer already exists'
+  }, on: %i[create update], unless: :cancelled_at?
   validates :price, presence: true, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 10_000 }
   validates :target_date, presence: true, format: { with: /\A\d{4}-\d{2}-\d{2}\z/ }
 
   validate :target_date_greater_than_today, on: %i[create update]
-  validate :cannot_update_if_accepted, on: %i[update]
-  validate :cannot_update_if_cancelled, on: %i[update]
-  validate :cannot_delete_if_accepted, on: %i[destroy]
-  validate :cannot_delete_if_cancelled, on: %i[destroy]
-  validate :request_not_already_accepted, on: %i[create]
-
+  validate :not_own_request, on: :create
   validate :user_must_have_printer, on: :create
   validate :user_must_own_printer, on: :create
-  validate :not_own_request, on: :create
+  validate :request_not_already_accepted, on: :create
+
+  with_options on: :update do |offer|
+    offer.validate :cannot_update_if_accepted
+    offer.validate :cannot_update_if_cancelled
+  end
+
+  with_options on: :destroy do |offer|
+    offer.validate :cannot_delete_if_accepted
+    offer.validate :cannot_delete_if_cancelled
+  end
+
+  scope :not_accepted, lambda {
+    where.not(id: Order.select(:offer_id))
+  }
 
   scope :not_in_accepted_request, lambda {
-    accepted_requests = Order.joins(:offer).pluck(:request_id).uniq
-    where.not(id: Order.pluck(:offer_id)).where.not(request_id: accepted_requests)
+    not_accepted.where.not(request_id: Request.joins(offers: :order).select(:id).distinct)
   }
 
-  scope :for_user_requests, lambda { |user|
-    where(request_id: user.requests.pluck(:id)).where.not(id: Order.pluck(:offer_id)).distinct
+  scope :for_user_requests, lambda {
+    not_accepted.where(request: Current.user.requests)
   }
 
-  scope :from_user_printers, lambda { |user|
-    where(printer_user_id: user.printer_user.pluck(:id)).where.not(id: Order.pluck(:offer_id)).distinct
+  scope :from_user_printers, lambda {
+    not_accepted.where(printer_user: Current.user.printer_user)
   }
 
+  def rejected?
+    cancelled_at.present?
+  end
+
+  def accepted?
+    Order.exists?(offer_id: id)
+  end
+
+  # Simplified reject method with validation moved to can_reject?
   def reject!
-    return false if Order.find_by(offer_id: id)
-    return false if cancelled_at
+    return false if accepted? || rejected?
 
     update_column(:cancelled_at, Time.now)
   end
 
-  def can_reject?(user)
-    valid = true
+  def can_reject?
+    errors.clear
 
-    if Order.find_by(offer_id: id)
+    if accepted?
       errors.add(:offer, 'Offer already accepted. Cannot reject')
-      valid = false
+      return false
     end
 
-    if request.user != user
-      errors.add(:offer, 'You are not allowed to reject this offer')
-      valid = false
-    end
-
-    if cancelled_at
+    if rejected?
       errors.add(:offer, 'Offer already rejected')
-      valid = false
+      return false
     end
 
-    valid
+    if Current.user != user
+      errors.add(:offer, 'You are not allowed to reject this offer')
+      return false
+    end
+
+    true
   end
 
   def can_destroy?
-    if Order.exists?(offer_id: id)
+    errors.clear
+
+    if accepted?
       errors.add(:offer, 'Offer already accepted. Cannot delete')
       return false
     end
 
-    if cancelled_at
+    if rejected?
       errors.add(:offer, 'Offer already rejected. Cannot delete')
       return false
     end
@@ -81,7 +104,7 @@ class Offer < ApplicationRecord
   end
 
   def destroy
-    return false if cancelled_at || Order.exists?(offer_id: id)
+    return false if rejected? || accepted?
 
     super
   end
@@ -95,37 +118,36 @@ class Offer < ApplicationRecord
   end
 
   def cannot_update_if_accepted
-    return unless Order.find_by(offer_id: id)
+    return unless accepted?
 
     errors.add(:offer, 'Offer already accepted. Cannot update')
   end
 
   def cannot_update_if_cancelled
-    return unless cancelled_at
+    return unless rejected?
 
     errors.add(:offer, 'Offer already rejected. Cannot update')
   end
 
   def cannot_delete_if_accepted
-    return unless Order.exists?(offer_id: id)
+    return unless accepted?
 
     errors.add(:offer, 'Offer already accepted. Cannot delete')
   end
 
   def cannot_delete_if_cancelled
-    return unless cancelled_at
+    return unless rejected?
 
     errors.add(:offer, 'Offer already rejected. Cannot delete')
   end
 
   def request_not_already_accepted
-    accepted_requests = Order.joins(:offer).pluck(:request_id).uniq
-    return unless accepted_requests.include?(request_id)
+    accepted_request_ids = Order.joins(:offer).select(:request_id).distinct
+    return unless accepted_request_ids.include?(request_id)
 
     errors.add(:offer, 'Request already accepted an offer. Cannot create')
   end
 
-  # New validation methods
   def user_must_have_printer
     return if Current.user&.printer_user&.exists?
 
@@ -134,7 +156,7 @@ class Offer < ApplicationRecord
 
   def user_must_own_printer
     return if printer_user_id.blank?
-    return if Current.user.printer_user.pluck(:id).include?(printer_user_id)
+    return if Current.user.printer_user.select(:id).map(&:id).include?(printer_user_id)
 
     errors.add(:offer, 'You are not allowed to create an offer on this printer')
   end

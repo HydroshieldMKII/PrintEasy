@@ -274,7 +274,7 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
       post api_offer_index_url,
            params: { offer: { name: 'Test Offer', price: 1.5, target_date: '2026-01-01', comment: 'test comment',
                               request_id: @offer.request_id, printer_user_id: @offer.printer_user_id,
-                              color_id: @offer.color_id, filament_id: @offer.filament_id, print_quality: 0.22 } }
+                              color_id: @offer2.color_id, filament_id: @offer2.filament_id, print_quality: 0.22 } }
     end
 
     # Http code
@@ -282,6 +282,7 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
 
     # Response format
     json_response = assert_nothing_raised { JSON.parse(response.body) }
+    p json_response
 
     # response content
     assert_not_empty json_response['errors']
@@ -631,10 +632,9 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should not cancel offer if already rejected' do
-    sign_in @other_user
     put reject_api_offer_url(@offer2)
 
-    sign_in @other_user
+    sign_in @user
 
     # Database changes
     assert_no_difference 'Offer.count' do
@@ -667,7 +667,7 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     # response content
     assert_not_empty json_response['errors']
 
-    assert_equal ["Couldn't find Offer with 'id'=9 [WHERE `offers`.`request_id` IN (1, 3)]"], json_response['errors']['base']
+    assert_equal ["Couldn't find Offer with 'id'=9 in your requests"], json_response['errors']['base']
   end
 
   test 'should not cancel offer if already accepted' do
@@ -707,6 +707,6 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     # response content
     assert_not_empty json_response['errors']
 
-    assert_equal ["Couldn't find Offer with 'id'=9999 [WHERE `offers`.`request_id` IN (1, 3)]"], json_response['errors']['base']
+    assert_equal ["Couldn't find Offer with 'id'=9999 in your requests"], json_response['errors']['base']
   end
 end
