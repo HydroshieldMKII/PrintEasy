@@ -406,7 +406,7 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     # response content
     assert_not_empty json_response['errors']
 
-    assert_equal 'Offer not found', json_response['errors']['offer']
+    assert_equal ["Couldn't find Offer with 'id'=1 [WHERE `printer_users`.`user_id` = ?]"], json_response['errors']['base']
   end
 
   # UPDATE
@@ -484,7 +484,7 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     # response content
     assert_not_empty json_response['errors']
 
-    assert_equal 'Offer not found', json_response['errors']['offer']
+    assert_equal ["Couldn't find Offer with 'id'=2 [WHERE `printer_users`.`user_id` = ?]"], json_response['errors']['base']
   end
 
   # DEST
@@ -582,7 +582,7 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     # response content
     assert_not_empty json_response['errors']
 
-    assert_equal 'Offer not found', json_response['errors']['offer']
+    assert_equal ["Couldn't find Offer with 'id'=2 [WHERE `printer_users`.`user_id` = ?]"], json_response['errors']['base']
   end
 
   test 'should not destroy offer if doesnt exist' do
@@ -600,7 +600,7 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     # response content
     assert_not_empty json_response['errors']
 
-    assert_equal 'Offer not found', json_response['errors']['offer']
+    assert_equal ["Couldn't find Offer with 'id'=9999 [WHERE `printer_users`.`user_id` = ?]"], json_response['errors']['base']
   end
 
   # CANCEL
@@ -667,7 +667,7 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     # response content
     assert_not_empty json_response['errors']
 
-    assert_equal 'Offer not found', json_response['errors']['offer']
+    assert_equal ["Couldn't find Offer with 'id'=9 [WHERE `offers`.`request_id` IN (1, 3)]"], json_response['errors']['base']
   end
 
   test 'should not cancel offer if already accepted' do
@@ -707,6 +707,6 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     # response content
     assert_not_empty json_response['errors']
 
-    assert_equal 'Offer not found', json_response['errors']['offer']
+    assert_equal ["Couldn't find Offer with 'id'=9999 [WHERE `offers`.`request_id` IN (1, 3)]"], json_response['errors']['base']
   end
 end
