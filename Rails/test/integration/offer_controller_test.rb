@@ -405,7 +405,8 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     # response content
     assert_not_empty json_response['errors']
 
-    assert_equal ["Couldn't find Offer with 'id'=1 [WHERE `printer_users`.`user_id` = ?]"], json_response['errors']['base']
+    assert_equal ["Couldn't find Offer with 'id'=1 [WHERE `offers`.`printer_user_id` IN (SELECT `printer_users`.`id` FROM `printer_users` WHERE `printer_users`.`user_id` = ?)]"],
+                 json_response['errors']['base']
   end
 
   # UPDATE
@@ -483,7 +484,8 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     # response content
     assert_not_empty json_response['errors']
 
-    assert_equal ["Couldn't find Offer with 'id'=2 [WHERE `printer_users`.`user_id` = ?]"], json_response['errors']['base']
+    assert_equal ["Couldn't find Offer with 'id'=2 [WHERE `offers`.`printer_user_id` IN (SELECT `printer_users`.`id` FROM `printer_users` WHERE `printer_users`.`user_id` = ?)]"],
+                 json_response['errors']['base']
   end
 
   # DEST
@@ -581,7 +583,8 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     # response content
     assert_not_empty json_response['errors']
 
-    assert_equal ["Couldn't find Offer with 'id'=2 [WHERE `printer_users`.`user_id` = ?]"], json_response['errors']['base']
+    assert_equal ["Couldn't find Offer with 'id'=2 [WHERE `offers`.`printer_user_id` IN (SELECT `printer_users`.`id` FROM `printer_users` WHERE `printer_users`.`user_id` = ?)]"],
+                 json_response['errors']['base']
   end
 
   test 'should not destroy offer if doesnt exist' do
@@ -599,7 +602,8 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     # response content
     assert_not_empty json_response['errors']
 
-    assert_equal ["Couldn't find Offer with 'id'=9999 [WHERE `printer_users`.`user_id` = ?]"], json_response['errors']['base']
+    assert_equal ["Couldn't find Offer with 'id'=9999 [WHERE `offers`.`printer_user_id` IN (SELECT `printer_users`.`id` FROM `printer_users` WHERE `printer_users`.`user_id` = ?)]"],
+                 json_response['errors']['base']
   end
 
   # CANCEL

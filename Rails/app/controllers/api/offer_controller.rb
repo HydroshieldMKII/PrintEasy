@@ -5,9 +5,10 @@ module Api
     before_action :set_offer, only: %i[show update destroy]
 
     def index
-      offers = filter_offers
-      offers = offers.sort_by(&:target_date)
-      render_offers(offers)
+      @offers = filter_offers
+                .includes(:request, printer_user: %i[user printer], color: [], filament: [])
+                .order(:target_date)
+      render_offers(@offers)
     end
 
     def show
@@ -41,20 +42,9 @@ module Api
     end
 
     def reject
-      # Find offers by ID, without filtering by user initially
-      begin
-        offer = Offer.find(params[:id])
-      rescue ActiveRecord::RecordNotFound
-        render json: {
-          errors: {
-            base: ["Couldn't find Offer with 'id'=#{params[:id]}"]
-          }
-        }, status: :not_found
-        return
-      end
+      offer = Offer.find(params[:id])
 
-      # Now check if the offer can be rejected by this user
-      if offer.can_reject?(current_user) && offer.reject!
+      if offer.can_reject? && offer.reject!
         render json: { offer: offer, errors: {} }, status: :ok
       else
         render json: { errors: offer.errors }, status: :unprocessable_entity
@@ -70,17 +60,41 @@ module Api
           errors: {}
         }, status: status
       else
-        render_grouped_offers(resource, status)
+        # Use a SQL-based approach for grouping
+        requests_with_offers = render_grouped_offers(resource)
+        render json: { requests: requests_with_offers, errors: {} }, status: status
       end
     end
 
-    def render_grouped_offers(offers, status)
-      grouped = offers.group_by(&:request)
-      requests = grouped.map do |request_obj, request_offers|
-        serialize_request(request_obj, request_offers)
-      end
+    def render_grouped_offers(offers)
+      # Get all unique request IDs from the offers
+      request_ids = offers.pluck(:request_id).uniq
 
-      render json: { requests: requests, errors: {} }, status: status
+      # Fetch the requests with necessary includes
+      requests = Request.includes(user: :country)
+                        .where(id: request_ids)
+                        .as_json(
+                          except: %i[user_id created_at updated_at],
+                          include: {
+                            user: {
+                              only: %i[id username],
+                              include: {
+                                country: { only: %i[id name] }
+                              }
+                            }
+                          }
+                        )
+
+      # Attach the offers to each request
+      requests.map do |request|
+        # Get offers for this request
+        request_offers = offers.select { |o| o.request_id == request['id'] }
+
+        # Serialize each offer
+        request.merge(
+          'offers' => request_offers.map { |offer| serialize_offer(offer) }
+        )
+      end
     end
 
     def serialize_offer(offer)
@@ -100,28 +114,12 @@ module Api
       )
     end
 
-    def serialize_request(request, offers)
-      request.as_json(
-        except: %i[user_id created_at updated_at],
-        include: {
-          user: {
-            only: %i[id username],
-            include: {
-              country: { only: %i[id name] }
-            }
-          }
-        }
-      ).merge(
-        offers: offers.map { |offer| serialize_offer(offer) }
-      )
-    end
-
     def filter_offers
       case params[:type]
       when 'all' # Offers received on my requests
-        Offer.not_in_accepted_request.for_user_requests(current_user)
+        Offer.not_in_accepted_request.for_user_requests
       when 'mine' # Offers sent to another user's requests
-        Offer.not_in_accepted_request.from_user_printers(current_user)
+        Offer.not_in_accepted_request.from_user_printers
       else
         Offer.none
       end
@@ -135,7 +133,8 @@ module Api
     end
 
     def set_offer
-      @offer = current_user.offers.find(params[:id])
+      printer_user_ids = PrinterUser.where(user: current_user).select(:id)
+      @offer = Offer.where(printer_user_id: printer_user_ids).find(params[:id])
     end
   end
 end

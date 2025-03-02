@@ -566,32 +566,123 @@ end
 Like.create!(user: user1, submission: submission1)
 Like.create!(user: user1, submission: submission2)
 
-# Create Offers
+puts 'Creating offers...'
 colors = Color.all
 filaments = Filament.all
-PrinterUser.all
 
-[admin, user1].each_with_index do |user, user_index|
-  user_requests = Request.where(user: user).to_a
-  next if user_requests.empty?
+admin_printer_users = PrinterUser.where(user: admin).to_a
+user1_printer_users = PrinterUser.where(user: user1).to_a
 
-  10.times do |i|
-    request_index = i % user_requests.length
-    request = user_requests[request_index]
-    printer_user = PrinterUser.where.not(user: user).offset(i % PrinterUser.where.not(user: user).count).first
-    print_qualities = [0.08, 0.12, 0.16, 0.2]
+user1_request = Request.where(user: user1)
+admin_request = Request.where(user: admin)
 
-    Offer.create!(
-      request: request,
-      printer_user: printer_user,
-      color: colors[i % colors.size],
-      filament: filaments[i % filaments.size],
-      price: (i + 1) * 10.0 + (user_index * 5.0),
-      target_date: Time.now + (i + 5).days,
-      print_quality: print_qualities[i % print_qualities.size]
-    )
-  end
-end
+puts "Creating offers from admin to user1's request..."
+Current.user = admin
+
+Offer.create!(
+  request: user1_request[0],
+  printer_user: admin_printer_users[0],
+  color: colors[0],
+  filament: filaments[0],
+  price: 35.50,
+  print_quality: 0.1,
+  target_date: (Date.today + 7.days).strftime('%Y-%m-%d')
+)
+
+Offer.create!(
+  request: user1_request[1],
+  printer_user: admin_printer_users[1],
+  color: colors[1],
+  filament: filaments[1],
+  price: 42.75,
+  print_quality: 0.15,
+  target_date: (Date.today + 8.days).strftime('%Y-%m-%d')
+)
+
+Offer.create!(
+  request: user1_request[2],
+  printer_user: admin_printer_users[2],
+  color: colors[2],
+  filament: filaments[2],
+  price: 28.99,
+  print_quality: 0.2,
+  target_date: (Date.today + 6.days).strftime('%Y-%m-%d')
+)
+
+Offer.create!(
+  request: user1_request[3],
+  printer_user: admin_printer_users[3],
+  color: colors[3],
+  filament: filaments[3],
+  price: 55.00,
+  print_quality: 0.1,
+  target_date: (Date.today + 10.days).strftime('%Y-%m-%d')
+)
+
+Offer.create!(
+  request: user1_request[4],
+  printer_user: admin_printer_users[4],
+  color: colors[4],
+  filament: filaments[4],
+  price: 39.50,
+  print_quality: 0.15,
+  target_date: (Date.today + 9.days).strftime('%Y-%m-%d')
+)
+
+Offer.create!(
+  request: user1_request[5],
+  printer_user: admin_printer_users[0],
+  color: colors[5],
+  filament: filaments[5],
+  price: 47.25,
+  print_quality: 0.2,
+  target_date: (Date.today + 12.days).strftime('%Y-%m-%d')
+)
+
+puts "Creating offers from user1 to admin's request..."
+Current.user = user1
+
+Offer.create!(
+  request: admin_request[1],
+  printer_user: user1_printer_users[0],
+  color: colors[0],
+  filament: filaments[0],
+  price: 29.99,
+  print_quality: 0.1,
+  target_date: (Date.today + 7.days).strftime('%Y-%m-%d')
+)
+
+Offer.create!(
+  request: admin_request[2],
+  printer_user: user1_printer_users[1],
+  color: colors[1],
+  filament: filaments[1],
+  price: 45.50,
+  print_quality: 0.15,
+  target_date: (Date.today + 9.days).strftime('%Y-%m-%d')
+)
+
+Offer.create!(
+  request: admin_request[3],
+  printer_user: user1_printer_users[2],
+  color: colors[2],
+  filament: filaments[2],
+  price: 38.25,
+  print_quality: 0.2,
+  target_date: (Date.today + 6.days).strftime('%Y-%m-%d')
+)
+
+Offer.create!(
+  request: admin_request[4],
+  printer_user: user1_printer_users[3],
+  color: colors[3],
+  filament: filaments[3],
+  price: 52.75,
+  print_quality: 0.1,
+  target_date: (Date.today + 10.days).strftime('%Y-%m-%d')
+)
+
+puts "Created #{Offer.count} offers"
 
 # Request without offers
 req_no_offer = Request.create(
@@ -627,12 +718,13 @@ req_free.stl_file.attach(
 req_free.save
 
 # Create Orders
-Current.user = admin
+Current.user = user1
+# debugger
 order1 = Order.create!(offer: Offer.first)
-order2 = Order.create!(offer: Offer.fourth)
+order2 = Order.create!(offer: Offer.second)
 order3 = Order.create!(offer: Offer.third)
 
-Current.user = user1
+Current.user = admin
 order4 = Order.create!(offer: Offer.last)
 
 rubyImage = File.open(Rails.root.join('db/seeds/files/ruby.jpg'))
