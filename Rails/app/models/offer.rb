@@ -25,6 +25,7 @@ class Offer < ApplicationRecord
   validate :user_must_own_printer, on: :create
   validate :request_not_already_accepted, on: :create
 
+  # Group these validations together by context
   with_options on: :update do |offer|
     offer.validate :cannot_update_if_accepted
     offer.validate :cannot_update_if_cancelled
@@ -35,20 +36,19 @@ class Offer < ApplicationRecord
     offer.validate :cannot_delete_if_cancelled
   end
 
-  scope :not_accepted, lambda {
-    where.not(id: Order.select(:offer_id))
-  }
+  # Improved scopes using relations
+  scope :not_accepted, -> { where.not(id: Order.select(:offer_id)) }
 
   scope :not_in_accepted_request, lambda {
     not_accepted.where.not(request_id: Request.joins(offers: :order).select(:id).distinct)
   }
 
-  scope :for_user_requests, lambda {
-    not_accepted.where(request: Current.user.requests)
+  scope :for_user_requests, lambda { |user|
+    where(request: user.requests)
   }
 
-  scope :from_user_printers, lambda {
-    not_accepted.where(printer_user: Current.user.printer_user)
+  scope :from_user_printers, lambda { |user|
+    where(printer_user: user.printer_user)
   }
 
   def rejected?
@@ -66,7 +66,7 @@ class Offer < ApplicationRecord
     update_column(:cancelled_at, Time.now)
   end
 
-  def can_reject?
+  def can_reject?(user)
     errors.clear
 
     if accepted?
@@ -79,7 +79,7 @@ class Offer < ApplicationRecord
       return false
     end
 
-    if Current.user != user
+    if request.user != user
       errors.add(:offer, 'You are not allowed to reject this offer')
       return false
     end
@@ -142,8 +142,8 @@ class Offer < ApplicationRecord
   end
 
   def request_not_already_accepted
-    accepted_request_ids = Order.joins(:offer).select(:request_id).distinct
-    return unless accepted_request_ids.include?(request_id)
+    # Check if any offer for this request has already been accepted
+    return unless request && Order.joins(:offer).exists?(offers: { request_id: request_id })
 
     errors.add(:offer, 'Request already accepted an offer. Cannot create')
   end
@@ -156,7 +156,7 @@ class Offer < ApplicationRecord
 
   def user_must_own_printer
     return if printer_user_id.blank?
-    return if Current.user.printer_user.select(:id).map(&:id).include?(printer_user_id)
+    return if Current.user.printer_user.pluck(:id).include?(printer_user_id)
 
     errors.add(:offer, 'You are not allowed to create an offer on this printer')
   end

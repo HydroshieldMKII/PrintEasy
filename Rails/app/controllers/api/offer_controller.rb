@@ -41,22 +41,20 @@ module Api
     end
 
     def reject
-      # Find offers for the current user's requests
-      offers_on_my_requests = Offer.for_user_requests
-
+      # Find offers by ID, without filtering by user initially
       begin
-        offer = offers_on_my_requests.find(params[:id])
+        offer = Offer.find(params[:id])
       rescue ActiveRecord::RecordNotFound
         render json: {
           errors: {
-            base: ["Couldn't find Offer with 'id'=#{params[:id]} in your requests"]
+            base: ["Couldn't find Offer with 'id'=#{params[:id]}"]
           }
         }, status: :not_found
         return
       end
 
-      # Move validation to model and simplify controller logic
-      if offer.can_reject? && offer.reject!
+      # Now check if the offer can be rejected by this user
+      if offer.can_reject?(current_user) && offer.reject!
         render json: { offer: offer, errors: {} }, status: :ok
       else
         render json: { errors: offer.errors }, status: :unprocessable_entity
@@ -121,9 +119,9 @@ module Api
     def filter_offers
       case params[:type]
       when 'all' # Offers received on my requests
-        Offer.not_in_accepted_request.for_user_requests
+        Offer.not_in_accepted_request.for_user_requests(current_user)
       when 'mine' # Offers sent to another user's requests
-        Offer.not_in_accepted_request.from_user_printers
+        Offer.not_in_accepted_request.from_user_printers(current_user)
       else
         Offer.none
       end
