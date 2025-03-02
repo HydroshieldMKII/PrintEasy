@@ -27,9 +27,16 @@ h2 {
     justify-content: center;
 }
 
+.contest-image {
+    max-width: 200px;
+    max-height: 200px;
+    object-fit: cover;
+}
+
 .container-column {
     display: flex;
     flex-direction: column;
+    justify-content: center;
 }
 
 .description-textarea {
@@ -172,6 +179,10 @@ h2 {
     padding: 1rem;
 }
 
+.display-flex {
+    display: flex;
+}
+
 .space-button {
     margin-bottom: 2.5rem;
 }
@@ -249,10 +260,58 @@ h2 {
     gap: 10px;
 }
 
+.texte-tronque {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 200px;
+}
+
+.participate-container {
+    background-color: inherit;
+    color: #000;
+    text-align: center;
+    padding: 20px;
+    border-radius: 12px;
+    font-family: 'Arial', sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0, 51, 102, 0.2);
+    max-width: 600px;
+    margin: 20px auto;
+    animation: fadeIn 1s ease-in-out;
+}
+
+.participate-message {
+    margin: 0;
+    line-height: 1.6;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 @media (max-width: 768px) {
     .container-row {
         flex-direction: column;
         align-items: center;
+    }   
+
+    .participate-container {
+        padding: 15px;
+        font-size: 16px;
+        max-width: 90%;
+    }
+
+    .display-flex {
+        display: block;
     }
 
     .carousel-mobile {

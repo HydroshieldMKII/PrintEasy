@@ -1,35 +1,38 @@
 <div class="space-button">
     <div class="contest-container">
-        <h1 class="font-semibold">{{ 'submissions.title_page' | translate }}</h1>
-        <h1 class="">{{ contest?.theme }}</h1>
+        <h1 class="font-semibold">{{ contest?.theme }}</h1>
+        <h3 class="">{{ contest?.description }}</h3>
         <div class="container-row">
             <div>
-                <span>
-                    <i class="pi pi-inbox"></i>
-                    {{ submissions.length }} {{ 'submissions.submissions' | translate }}
-                </span>
+                <img [src]="contest?.image" [alt]="contest?.theme" class="contest-image" />
             </div>
+            <div class="container-column">
+                <div class="display-flex">
+                    <span>
+                        <i class="pi pi-inbox"></i>
+                        {{ submissions.length }} {{ 'submissions.submissions' | translate }}
+                    </span>
+                </div>
 
-            <div>
-                <span>
-                    <i class="pi pi-hashtag"></i>
-                    {{ contest?.submissionLimit }} {{ 'submissions.submissions_per_user' | translate }}
-                </span>
+                <div>
+                    <span>
+                        <i class="pi pi-hashtag"></i>
+                        {{ contest?.submissionLimit }} {{ 'submissions.submissions_per_user' | translate }}
+                    </span>
+                </div>
+
+                <div class="display-flex" *ngIf="contestDurationInDays">
+                    <span>
+                        <i class="pi pi-calendar"></i>
+                        {{ contest?.finished 
+                            ? (contest?.endAt | date:'short') 
+                            : ('submissions.ends' | translate) + ' ' + contestDurationInDays + ' ' + ('submissions.days' | translate) }}
+                    </span>
+                </div>
             </div>
-
-            <div *ngIf="contestDurationInDays">
-                <span>
-                    <i class="pi pi-calendar"></i>
-                    {{ 'submissions.ends' | translate }} {{ contestDurationInDays }} {{ 'submissions.days' | translate
-                    }}
-                </span>
-            </div>
-        </div>
-
-        <div>
-            {{ contest?.description }}
         </div>
     </div>
+    @if (submissions.length > 0) {
     <div *ngFor="let submission of submissions">
         <div class="mt-4">
             <h2>
@@ -40,43 +43,44 @@
             <p-carousel [value]="submission.submissions" [numVisible]="3" [numScroll]="1"
                 [responsiveOptions]="responsiveOptions" class="custom-carousel">
                 <ng-template let-product #item>
-                    <div class="border border-surface-200 dark:border-surface-700 rounded m-2 p-4 allo" [style]="{
-                    'width': submission.submissions.length === 1 ? '33%' : (submission.submissions.length === 2 ? '65.5%' : 'auto')
-                }">
+                    <div class="border border-surface-200 dark:border-surface-700 rounded m-2 p-4 carousel-mobile"
+                        [style]="{
+                        'width': submission.submissions.length === 1 ? '33%' : (submission.submissions.length === 2 ? '65.5%' : 'auto')
+                    }">
                         <div class="mb-4">
                             <div class="relative mx-auto image-container">
                                 <img [src]="product.imageUrl" [alt]="product.name" class="w-full rounded-border" />
                             </div>
                         </div>
                         <div class="mb-4 font-semibold text-xl">{{ product.name }}</div>
-                        <div class="flex justify-between items-center">
-                            <div>{{ product.description }}</div>
-                            <div class="flex items-center gap-2">
-                                <!-- Nombre de likes -->
-                                <span class="font-semibold text-gray-700 dark:text-gray-300">{{ product.likes.length
-                                    }}</span>
+                        <div class="texte-tronque">{{ product.description }}</div>
+                        <div class="mt-4">
+                            <div class="w-full flex items-center justify-between gap-2">
+                                <div class="flex gap-2">
+                                    @if (authService.currentUser?.id === submission.user.id && !contest?.finished) {
+                                    <p-button (click)="showDialog(product)" type="button" icon="pi pi-pencil"
+                                        severity="primary"></p-button>
+                                    <p-button (click)="onDelete(product.id)" type="button" icon="pi pi-trash"
+                                        severity="danger"></p-button>
+                                    }
+                                </div>
+                                <div class="flex gap-2 items-center">
+                                    <!-- Nombre de likes -->
+                                    <span class="font-semibold text-gray-700 dark:text-gray-300">{{ product.likes.length
+                                        }}</span>
 
-                                <!-- Bouton Like -->
-                                <p-button 
-                                    [icon]="product.liked ? 'pi pi-heart-fill' : 'pi pi-heart'"
-                                    [severity]="product.liked ? 'danger' : 'secondary'"
-                                    [outlined]="!product.liked"
-                                    (click)="onLike(product)"
-                                />
-                                
-                                <!-- (click)="toggleLike(product)" -->
+                                    <!-- Bouton Like -->
+                                    <p-button [icon]="product.liked ? 'pi pi-heart-fill' : 'pi pi-heart'"
+                                        [severity]="product.liked ? 'danger' : 'secondary'" [outlined]="!product.liked"
+                                        (click)="onLike(product)" />
 
-                                <!-- <p-button icon="pi pi-heart" severity="secondary" /> -->
+                                    <!-- (click)="toggleLike(product)" -->
 
-                                <!-- Bouton Download -->
-                                <p-button icon="pi pi-download" severity="primary" />
+                                    <!-- <p-button icon="pi pi-heart" severity="secondary" /> -->
 
-                                @if (authService.currentUser?.id === submission.user.id) {
-                                <p-button (click)="showDialog(product)" type="button" icon="pi pi-pencil"
-                                    severity="primary"></p-button>
-                                <p-button (click)="onDelete(product.id)" type="button" icon="pi pi-trash"
-                                    severity="danger"></p-button>
-                                }
+                                    <!-- Bouton Download -->
+                                    <p-button icon="pi pi-download" severity="primary" />
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -84,9 +88,15 @@
             </p-carousel>
         </div>
     </div>
+    } @else {
+    <div class="participate-container">
+        <p class="participate-message"> {{ 'submissions.participate_message' | translate }} </p>
+    </div>
+    }
+    @if (!contest?.finished) {
     <p-button (click)="showDialog(null)" severity="info" label="{{ 'submissions.button_participate' | translate }}"
         class="button-participate"></p-button>
-
+    }
     <p-dialog header="{{ 'submission_form.title_form' | translate }}" [(visible)]="display" [modal]="true"
         [style]="{'max-width': '1000px' }" class="responsive-dialog">
         <form [formGroup]="submissionForm">
@@ -158,7 +168,7 @@
                                     <p-message severity="warn" styleClass="error-file">
                                         {{ 'submission_form.error_image_required' | translate }}
                                     </p-message>
-                                </div>  
+                                </div>
                             </div>
                             <div class="mt-25">
                                 <div class="fileUploadContainer center">
@@ -197,7 +207,7 @@
         </div>
     </ng-template>
     <span class="text-surface-500 dark:text-surface-400 block mb-4">
-        {{ 'contest.confirm_delete_message' | translate }}
+        {{ 'submissions.confirm_delete_message' | translate }}
     </span>
     <ng-template #footer>
         <p-button label="{{ 'global.cancel_button' | translate}}" [text]="true" severity="secondary"

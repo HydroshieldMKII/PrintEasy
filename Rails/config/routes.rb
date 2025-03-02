@@ -21,14 +21,15 @@ Rails.application.routes.draw do
     resources :review
     resources :user_review, only: [:index]
     resources :status
-    resources :contest, except: %i[new edit]
+    resources :contest, except: %i[new edit] do
+      resources :user_submission, only: %i[index]
+    end
     resources :color
     resources :filament
     resources :submission
     resources :preset
-    resources :user_submission, only: %i[index show]
     resources :user_contest_submissions, only: [:index]
-    resources :like, only: %i[create destroy]
+    resources :like, only: %i[index create destroy]
   end
 
   match '*url', to: 'angular#index', via: :get

@@ -21,6 +21,26 @@ class User < ApplicationRecord
   validates :password_confirmation, presence: true
   validates :country_id, presence: true
 
+  def accessible_contests
+    is_admin? ? Contest.all : Contest.active_for_user(self)
+  end
+
+  
+  def user_contests_submissions
+    contests = Contest.joins(:submissions).where(submissions: { user_id: id }).distinct
+      
+    contests_with_submissions = contests.map do |contest|
+      contest_data = contest.as_json(methods: %i[image_url finished? started? winner_user])
+      {
+        contest: contest_data,
+        submissions: contest.submissions.where(user_id: id)
+                                       .as_json(include: :likes, methods: %i[image_url stl_url])
+      }
+    end
+    
+      contests_with_submissions
+  end
+
   def email_required?
     false
   end
