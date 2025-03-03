@@ -251,7 +251,7 @@
     "offer": {
         "title": "Offres",
         "tab_received": "Offres reçues",
-        "tab_pending": "Mes offres en attente",
+        "tab_pending": "Mes offres envoyées",
         "username": "Nom d'utilisateur",
         "printer": "Imprimante",
         "preset": "Préréglage",

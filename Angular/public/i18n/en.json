@@ -251,7 +251,7 @@
     "offer": {
         "title": "Offers",
         "tab_received": "Offer received",
-        "tab_pending": "My pending offer",
+        "tab_pending": "My offer sent",
         "username": "Username",
         "printer": "Printer",
         "preset": "Preset",
