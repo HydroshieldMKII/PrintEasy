@@ -114,7 +114,7 @@ export class RequestService {
                         presets,
                         user,
                         request?.['has_offer_made?'],
-                        request?.['has_offer_accepted?']
+                        request?.['accepted_at']
                     );
                 }
                 return null;

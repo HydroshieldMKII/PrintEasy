@@ -58,6 +58,70 @@ class Offer < ApplicationRecord
     where(printer_user_id: PrinterUser.where(user_id: Current.user.id).select(:id))
   }
 
+  def self.filter_by_type(type)
+    case type
+    when 'all' # Offers received on my requests
+      not_in_accepted_request.for_user_requests
+    when 'mine' # Offers sent to another user's requests
+      from_user_printers
+    else
+      none
+    end
+  end
+
+  # Single offer
+  def serialize
+    as_json(
+      except: %i[request_id printer_user_id created_at updated_at color_id filament_id],
+      include: {
+        printer_user: {
+          only: %i[id],
+          include: {
+            user: { only: %i[id username] },
+            printer: { only: %i[id model] }
+          }
+        },
+        color: {},
+        filament: {}
+      },
+      methods: %i[accepted_at]
+    )
+  end
+
+  # Grouping and serializing offers by request
+  def self.group_by_request(offers)
+    return [] if offers.empty?
+
+    request_ids = offers.pluck(:request_id).uniq
+    requests = Request.where(id: request_ids)
+                      .includes(:user, offers: [
+                                  { printer_user: %i[user printer] },
+                                  :color,
+                                  :filament
+                                ])
+
+    requests.as_json(
+      include: {
+        user: { only: %i[id username] },
+        offers: {
+          except: %i[request_id printer_user_id created_at updated_at color_id filament_id],
+          include: {
+            printer_user: {
+              only: [:id],
+              include: {
+                user: { only: %i[id username] },
+                printer: { only: %i[id model] }
+              }
+            },
+            color: {},
+            filament: {}
+          },
+          methods: %i[accepted_at]
+        }
+      }
+    )
+  end
+
   def rejected?
     cancelled_at.present?
   end
