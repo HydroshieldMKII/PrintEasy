@@ -4,6 +4,7 @@ class Request < ApplicationRecord
   belongs_to :user
   has_many :offers, dependent: :destroy
   has_many :preset_requests, dependent: :destroy
+
   accepts_nested_attributes_for :preset_requests, allow_destroy: true
   validates :user_id, presence: true
   validates :name, presence: true, length: { in: 3..30 }
@@ -18,7 +19,8 @@ class Request < ApplicationRecord
   # Update
   validate :target_date_cannot_be_in_the_past_on_update, on: :update
   validate :stl_file_must_have_stl_extension
-  validate :unique_preset_requests
+  validates :preset_requests,
+            uniqueness: { include: %i[color_id filament_id printer_id], message: 'This preset request already exists' }
 
   scope :with_associations, -> { includes(:user, preset_requests: %i[color filament printer]) }
   scope :search_by_name, ->(query) { where('name LIKE ?', "%#{query}%") if query.present? }
@@ -91,6 +93,7 @@ class Request < ApplicationRecord
     end
   end
 
+  # Serialize a single request
   def serialize
     as_json(
       except: %i[user_id created_at updated_at],
@@ -112,6 +115,50 @@ class Request < ApplicationRecord
       },
       methods: %i[stl_file_url has_offer_made? accepted_at]
     )
+  end
+
+  # Serialize a collection of requests
+  def self.serialize_collection(requests)
+    requests.as_json(
+      except: %i[user_id created_at updated_at],
+      include: {
+        preset_requests: {
+          except: %i[request_id color_id filament_id printer_id],
+          include: {
+            color: { only: %i[id name] },
+            filament: { only: %i[id name] },
+            printer: { only: %i[id model] }
+          }
+        },
+        user: {
+          only: %i[id username],
+          include: {
+            country: { only: %i[name] }
+          }
+        }
+      },
+      methods: %i[stl_file_url has_offer_made? accepted_at]
+    )
+  end
+
+  # Format response for API
+  def self.format_response(resource, current_user, status: :ok)
+    has_printer = current_user.printers.exists?
+
+    request_data = if resource.is_a?(Request)
+                     resource.serialize
+                   else
+                     serialize_collection(resource)
+                   end
+
+    {
+      json: {
+        request: request_data,
+        has_printer: has_printer,
+        errors: {}
+      },
+      status: status
+    }
   end
 
   def stl_file_url
@@ -174,17 +221,5 @@ class Request < ApplicationRecord
     return if extension.downcase == '.stl'
 
     errors.add(:stl_file, 'must have .stl extension')
-  end
-
-  def unique_preset_requests
-    seen = {}
-    preset_requests.each do |preset|
-      key = [preset.color_id, preset.filament_id, preset.printer_id, preset.print_quality]
-      if seen[key]
-        preset.errors.add(:base, 'Duplicate preset exists in the request')
-      else
-        seen[key] = true
-      end
-    end
   end
 end

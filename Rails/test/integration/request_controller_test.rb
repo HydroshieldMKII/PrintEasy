@@ -278,6 +278,57 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'must be less than or equal to 2', json_response['errors']['preset_requests.print_quality'][0]
   end
 
+  test 'should not create request with invalid stl_file' do
+    assert_no_difference('Request.count') do
+      post api_request_index_url, params: {
+        request: {
+          name: 'Invalid STL File Request',
+          comment: 'This request has an invalid stl file',
+          budget: 100,
+          target_date: 5.days.from_now.to_date,
+          stl_file: fixture_file_upload('test/fixtures/files/invalid.txt', 'text/plain'),
+          preset_requests_attributes: [
+            { color_id: 1, filament_id: 1, printer_id: 1, print_quality: 0.1 }
+          ]
+        }
+
+      }
+    end
+    assert_response :unprocessable_entity
+
+    json_response = assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+
+    assert_equal 'must have .stl extension', json_response['errors']['stl_file'][0]
+  end
+
+  test 'should not create request with duplicated preset_requests' do
+    assert_no_difference('Request.count') do
+      post api_request_index_url, params: {
+        request: {
+          name: 'Duplicated Preset Request',
+          comment: 'This request has duplicated preset requests',
+          budget: 100,
+          target_date: 5.days.from_now.to_date,
+          stl_file: fixture_file_upload(Rails.root.join('test/fixtures/files/RUBY13.stl'), 'application/octet-stream'),
+          preset_requests_attributes: [
+            { color_id: 1, filament_id: 1, printer_id: 1, print_quality: 0.1 },
+            { color_id: 1, filament_id: 1, printer_id: 1, print_quality: 0.1 }
+          ]
+        }
+      }
+    end
+
+    assert_response :unprocessable_entity
+
+    json_response = assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+
+    assert_equal ['Duplicate preset exists in the request'], json_response['errors']['preset_requests.base']
+  end
+
   test 'should not update request with accepted offers' do
     assert_no_difference('Request.count') do
       patch api_request_url(@user_request), params: {
@@ -352,6 +403,7 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
     json_response = assert_nothing_raised do
       JSON.parse(response.body)
     end
+    p json_response
 
     assert_equal 'Fully Updated Request', json_response['request']['name']
     assert_equal 'This is a fully updated request', json_response['request']['comment']
