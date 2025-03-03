@@ -10,8 +10,8 @@ module Api
     end
 
     def show
-      @request = Request.find(params[:id])
-      if @request.viewable_by_user?
+      @request = Request.viewable_by_user.find(params[:id])
+      if @request
         render Request.format_response(@request)
       else
         render json: { request: {}, errors: @request.errors }, status: :unprocessable_entity
@@ -19,8 +19,8 @@ module Api
     end
 
     def create
-      request = Request.new(request_params)
-      request.user = current_user
+      request = current_user.requests.new(request_params)
+
       if request.save
         render Request.format_response(request, status: :created)
       else
@@ -32,6 +32,7 @@ module Api
       if @request.update(request_params)
         render Request.format_response(@request)
       else
+
         render json: { request: {}, errors: @request.errors }, status: :unprocessable_entity
       end
     end

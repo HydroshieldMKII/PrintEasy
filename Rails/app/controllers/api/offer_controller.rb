@@ -33,7 +33,7 @@ module Api
     end
 
     def destroy
-      if @offer.can_destroy? && @offer.destroy
+      if @offer.destroy
         render json: { offer: @offer, errors: {} }, status: :ok
       else
         render json: { errors: @offer.errors }, status: :unprocessable_entity

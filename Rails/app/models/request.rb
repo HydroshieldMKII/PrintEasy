@@ -20,6 +20,9 @@ class Request < ApplicationRecord
   # Update
   validate :target_date_cannot_be_in_the_past_on_update, on: :update
   validate :stl_file_must_have_stl_extension
+  validate :can_update?, on: :update
+
+  before_destroy :can_destroy?, prepend: true
 
   scope :with_associations, -> { includes(:user, preset_requests: %i[color filament printer]) }
   scope :search_by_name, lambda { |query|
@@ -55,6 +58,12 @@ class Request < ApplicationRecord
 
     direction = direction == 'asc' ? 'ASC' : 'DESC'
     order("#{column} #{direction}")
+  }
+
+  scope :viewable_by_user, lambda {
+    where(user: Current.user).or(
+      Current.user.printers.exists? ? where.not(id: nil) : none
+    )
   }
 
   def self.fetch_for_user(params)
@@ -177,35 +186,30 @@ class Request < ApplicationRecord
     offers.joins(:order).first&.created_at
   end
 
-  def update(_params)
+  private
+
+  def can_destroy?
+    unless user == Current.user
+      errors.add(:base, 'You are not allowed to delete this request')
+      throw(:abort)
+    end
+
+    if has_offer_accepted?
+      errors.add(:base, 'Cannot delete request with accepted offers')
+      throw(:abort)
+    end
+  end
+
+  def can_update?
     unless user == Current.user
       errors.add(:request, 'You are not allowed to update this request')
       return false
     end
-    if has_offer_accepted?
-      errors.add(:base, 'Cannot update request with accepted offers')
-      return false
-    end
-    super
-  end
+    return unless has_offer_accepted?
 
-  def destroy
-    unless user == Current.user
-      errors.add(:request, 'You are not allowed to delete this request')
-      return false
-    end
-    if has_offer_accepted?
-      errors.add(:request, 'Cannot delete request with accepted offers')
-      return false
-    end
-    super
+    errors.add(:base, 'Cannot update request with accepted offers')
+    false
   end
-
-  def viewable_by_user?
-    Current.user == user || Current.user.printers.exists?
-  end
-
-  private
 
   def target_date_cannot_be_in_the_past_on_update
     return unless target_date_changed? && target_date < Date.today

@@ -8,6 +8,8 @@ class Offer < ApplicationRecord
   has_one :order, dependent: :restrict_with_error
   has_one :user, through: :printer_user
 
+  before_destroy :can_destroy?, prepend: true
+
   # https://apidock.com/rails/Object/with_options
   with_options presence: true do |offer|
     offer.validates :print_quality, numericality: { greater_than: 0, less_than_or_equal_to: 2 }
@@ -156,6 +158,7 @@ class Offer < ApplicationRecord
   end
 
   def can_destroy?
+    # debugger
     if accepted?
       errors.add(:offer, 'Offer already accepted. Cannot delete')
       return false
@@ -167,12 +170,6 @@ class Offer < ApplicationRecord
     end
 
     true
-  end
-
-  def destroy
-    return false if rejected? || accepted?
-
-    super
   end
 
   def accepted_at
