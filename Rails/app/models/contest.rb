@@ -9,8 +9,8 @@ class Contest < ApplicationRecord
     where('start_at <= ?', Time.now)
   }
 
-  scope :search, -> (query) {
-    where('theme LIKE ?', "%#{query}%")
+  scope :search, -> (search) {
+    where('theme LIKE ?', "%#{search}%")
   }
 
   scope :active, ->(params) {
@@ -88,7 +88,7 @@ class Contest < ApplicationRecord
 
   def self.contests_order(user, params)
     contests = user.accessible_contests
-                    .search(params[:query])
+                    .search(params[:search])
                     .active(params)
                     .finished(params)
                     .sort_by_submissions(params[:sort_by_submissions])

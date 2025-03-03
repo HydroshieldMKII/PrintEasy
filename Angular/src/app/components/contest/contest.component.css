@@ -73,6 +73,10 @@ h2 {
     margin-top: 30px;
 } */
 
+.search-bar {
+    height: 100%;
+}
+
 .contest-card {
     width: 100%;
     max-width: 600px;

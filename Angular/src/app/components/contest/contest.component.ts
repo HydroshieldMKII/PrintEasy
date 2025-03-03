@@ -37,7 +37,7 @@ export class ContestComponent {
   currentSortCategory: string = '';
   currentQuery: string = '';
 
-  filterOptions: SelectItem[] =  [
+  filterOptions: SelectItem[] = [
     { label: 'All', value: '' },
     { label: 'Active', value: 'active' },
     { label: 'Finished', value: 'finished' }
@@ -67,15 +67,25 @@ export class ContestComponent {
     this.fetchContests();
   }
 
-  searchTerm: string = '';
-
   ssf() {
-    let ssf_params: {  } = { };
+    let ssf_params: {} = {};
 
     if (this.currentFilter === 'active') {
       ssf_params = { ...ssf_params, active: true };
     } else if (this.currentFilter === 'finished') {
       ssf_params = { ...ssf_params, finished: true };
+    }
+
+    if (this.currentSort) {
+      if (this.currentSortCategory === 'submissions') {
+        ssf_params = { ...ssf_params, sort_by_submissions: this.currentSort };
+      } else if (this.currentSortCategory === 'start_at') {
+        ssf_params = { ...ssf_params, sort: this.currentSort, category: this.currentSortCategory };
+      }
+    }
+
+    if (this.currentQuery) {
+      ssf_params = { ...ssf_params, search: this.currentQuery };
     }
 
     return ssf_params;
@@ -84,12 +94,6 @@ export class ContestComponent {
   newContest() {
     console.log('New contest');
     this.route.navigate(['/contest/new']);
-  }
-
-  filterContests(): ContestModel[] {
-    return this.contests.filter(contest =>
-      contest.theme.toLowerCase().includes(this.searchTerm.toLowerCase())
-    );
   }
 
   editContest(contest: ContestModel) {
@@ -137,13 +141,17 @@ export class ContestComponent {
       queryParams: { sortCategory: this.currentSortCategory || null, sort: this.currentSort || null },
       queryParamsHandling: 'merge'
     });
+
+    this.fetchContests();
   }
 
   onSearch() {
     this.route.navigate([], {
-      queryParams: { search: this.searchTerm || null },
+      queryParams: { search: this.currentQuery || null },
       queryParamsHandling: 'merge'
     });
+
+    this.fetchContests();
   }
 
   fetchContests() {

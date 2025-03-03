@@ -8,14 +8,16 @@
     <p [innerHTML]="'contest.description_page' | translate"></p>
        
     <div class="search-container">
-        <input type="text" pInputText [(ngModel)]="searchTerm" placeholder="{{ 'contest.search_text' | translate }}" />
+        <form (submit)="onSearch()">
+          <input class="search-bar" type="text" pInputText [(ngModel)]="currentQuery" name="searchTerm" placeholder="{{ 'contest.search_text' | translate }}" />
+        </form>
         <!-- <button pButton pRipple icon="pi pi-filter" class="p-button-text"></button>
         <button pButton pRipple icon="pi pi-sort-alt" class="p-button-text"></button> -->
         <p-floatlabel variant="in">
           <p-select
             inputId="in_label"
             [options]="filterOptions"
-            [(ngModel)]="selectedFilterOption"
+            [(ngModel)]="selectedFilterOption" name="selectedFilterOption"
             optionLabel="label"
             styleClass="w-full"
             variant="filled"
@@ -28,7 +30,7 @@
           <p-select
             inputId="in_label"
             [options]="sortOptions"
-            [(ngModel)]="selectedSortOption"
+            [(ngModel)]="selectedSortOption" name="selectedSortOption"
             optionLabel="label"
             styleClass="w-full"
             variant="filled"
