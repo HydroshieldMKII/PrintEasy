@@ -111,6 +111,13 @@ export class OrderComponent {
 
     this.refreshOrder();
 
+    this.translate.onLangChange.subscribe(() => {
+      this.getStatusTranslations();
+      this.getStatusDefaultMessages();
+      this.getEditMenuWithTranslations();
+      this.getTranslatedErrors();
+    });
+
     this.orderStatusForm = this.fb.group({
       statusName: ['', [Validators.required, this.statusNameValidator.bind(this)]],
       comment: ['', [Validators.minLength(5), Validators.maxLength(200)]],
@@ -149,40 +156,34 @@ export class OrderComponent {
   }
 
   getStatusTranslations(): void {
-    // TODO: fix translation
-    this.translate.get(['status.Accepted', 'status.Printing', 'status.Printed', 'status.Shipped', 'status.Arrived', 'status.Cancelled']).subscribe((translations: any) => {
-      console.log('Translations:', translations);
-      this.statusTranslations['Accepted'] = translations['status.Accepted'];
-      this.statusTranslations['Printing'] = translations['status.Printing'];
-      this.statusTranslations['Printed'] = translations['status.Printed'];
-      this.statusTranslations['Shipped'] = translations['status.Shipped'];
-      this.statusTranslations['Arrived'] = translations['status.Arrived'];
-      this.statusTranslations['Cancelled'] = translations['status.Cancelled'];
-    });
+    const results = this.translate.instant(['status.Accepted', 'status.Printing', 'status.Printed', 'status.Shipped', 'status.Arrived', 'status.Cancelled']);
+    this.statusTranslations['Accepted'] = results['status.Accepted'];
+    this.statusTranslations['Printing'] = results['status.Printing'];
+    this.statusTranslations['Printed'] = results['status.Printed'];
+    this.statusTranslations['Shipped'] = results['status.Shipped'];
+    this.statusTranslations['Arrived'] = results['status.Arrived'];
+    this.statusTranslations['Cancelled'] = results['status.Cancelled'];
   }
 
   getTranslatedErrors(): void {
-    this.translate.get(['global.errors']).subscribe((translations: any) => {
-      this.errors_type = translations['global.errors'];
-    });
+    const results = this.translate.instant(['global.errors']);
+    this.errors_type = results['global.errors'];
   }
 
   getStatusDefaultMessages(): void {
-    this.translate.get(['order.order_status.empty_comments.Accepted', 'order.order_status.empty_comments.Printing', 'order.order_status.empty_comments.Printed', 'order.order_status.empty_comments.Shipped', 'order.order_status.empty_comments.Arrived', 'order.order_status.empty_comments.Cancelled']).subscribe((translations: any) => {
-      this.statusDefaultCommentRef['Accepted'] = translations['order.order_status.empty_comments.Accepted'];
-      this.statusDefaultCommentRef['Printing'] = translations['order.order_status.empty_comments.Printing'];
-      this.statusDefaultCommentRef['Printed'] = translations['order.order_status.empty_comments.Printed'];
-      this.statusDefaultCommentRef['Shipped'] = translations['order.order_status.empty_comments.Shipped'];
-      this.statusDefaultCommentRef['Arrived'] = translations['order.order_status.empty_comments.Arrived'];
-      this.statusDefaultCommentRef['Cancelled'] = translations['order.order_status.empty_comments.Cancelled'];
-    });
+    const results = this.translate.instant(['order.order_status.empty_comments.Accepted', 'order.order_status.empty_comments.Printing', 'order.order_status.empty_comments.Printed', 'order.order_status.empty_comments.Shipped', 'order.order_status.empty_comments.Arrived', 'order.order_status.empty_comments.Cancelled'])
+    this.statusDefaultCommentRef['Accepted'] = results['order.order_status.empty_comments.Accepted'];
+    this.statusDefaultCommentRef['Printing'] = results['order.order_status.empty_comments.Printing'];
+    this.statusDefaultCommentRef['Printed'] = results['order.order_status.empty_comments.Printed'];
+    this.statusDefaultCommentRef['Shipped'] = results['order.order_status.empty_comments.Shipped'];
+    this.statusDefaultCommentRef['Arrived'] = results['order.order_status.empty_comments.Arrived'];
+    this.statusDefaultCommentRef['Cancelled'] = results['order.order_status.empty_comments.Cancelled'];
   }
 
   getEditMenuWithTranslations(): void {
-    this.translate.get(['global.edit_button', 'global.delete_button']).subscribe((translations: any) => {
-      this.editMenuItems[0].label = translations['global.edit_button'];
-      this.editMenuItems[1].label = translations['global.delete_button'];
-    });
+    const results = this.translate.instant(['global.edit_button', 'global.delete_button'])
+    this.editMenuItems[0].label = results['global.edit_button'];
+    this.editMenuItems[1].label = results['global.delete_button'];
   }
 
   refreshOrder(): void {
