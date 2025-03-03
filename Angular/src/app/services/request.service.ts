@@ -127,41 +127,8 @@ export class RequestService {
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
                     console.log("Requests response: ", response.data);
-                    this.requests = (response.data as any)?.['request'].map((request: any) => {
-                        const user = new UserModel(
-                            request?.['user']?.['id'],
-                            request?.['user']?.['username'],
-                            request?.['user']?.['country']?.['name']
-                        );
-
-                        const presets = (request?.['preset_requests'] as any[]).map((preset: any) => {
-                            return new RequestPresetModel(
-                                preset?.['id'],
-                                preset?.['print_quality'],
-                                new ColorModel(
-                                    preset?.['color']?.['id'],
-                                    this.translateColor(preset?.['color']?.['id'])
-                                ),
-                                new FilamentModel(
-                                    preset?.['filament']?.['id'],
-                                    this.translateFilament(preset?.['filament']?.['id'])
-                                ),
-                                preset?.['printer']?.['model']
-                            );
-                        });
-
-                        return new RequestModel(
-                            request?.['id'],
-                            request?.['name'],
-                            request?.['budget'],
-                            new Date(request?.['target_date']),
-                            request?.['comment'],
-                            request?.['stl_file_url'],
-                            presets,
-                            user,
-                            request?.['has_offer_made?'],
-                            request?.['has_offer_accepted?']
-                        );
+                    this.requests = (response.data as any)?.['request'].map((requestData: any) => {
+                        return RequestModel.fromAPI(requestData);
                     });
                 }
                 return [this.requests, response.data?.['has_printer']];

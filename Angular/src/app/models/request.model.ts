@@ -12,7 +12,7 @@ export class RequestModel {
     presets: RequestPresetModel[];
     user: UserModel | null;
     hasOffers: boolean;
-    hasOfferAccepted: boolean;
+    acceptedAt: Date | null;
 
     constructor(
         id: number,
@@ -24,7 +24,7 @@ export class RequestModel {
         presets: RequestPresetModel[],
         user: UserModel | null,
         hasOffers: boolean,
-        hasOfferAccepted: boolean
+        acceptedAt: Date | null
     ) {
         this.id = id;
         this.name = name;
@@ -35,7 +35,7 @@ export class RequestModel {
         this.presets = presets;
         this.user = user;
         this.hasOffers = hasOffers;
-        this.hasOfferAccepted = hasOfferAccepted
+        this.acceptedAt = acceptedAt;
     }
 
     static fromAPI(data: any): RequestModel | null {
@@ -49,10 +49,10 @@ export class RequestModel {
             new Date(data.target_date),
             data.comment,
             data.stl_file_url,
-            (data.presets ? data.presets.map((preset: any) => PresetModel.fromAPI(preset)) : []),
+            (data.preset_requests ? data.preset_requests.map((preset: any) => RequestPresetModel.fromAPI(preset)) : []),
             UserModel.fromAPI(data.user),
             data.has_offers,
-            data.has_offer_accepted
+            data.accepted_at ? new Date(data.accepted_at) : null
         );
     }
 }

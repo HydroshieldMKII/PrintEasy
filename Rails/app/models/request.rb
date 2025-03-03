@@ -29,11 +29,11 @@ class Request < ApplicationRecord
   }
   scope :by_printer_owner, lambda {
     joins(:preset_requests)
-      .where(preset_requests: { printer_id: Current.user.printer_user.pluck(:printer_id) })
+      .where(preset_requests: { printer: Current.user.printers })
       .distinct
   }
-  scope :by_country, lambda { |country_id|
-    joins(:user).where(users: { country_id: country_id }).distinct
+  scope :by_country, lambda {
+    joins(:user).where(users: { country_id: Current.user.country_id }).distinct
   }
   scope :in_progress, lambda {
     joins(offers: { order: :order_status })
@@ -81,9 +81,9 @@ class Request < ApplicationRecord
   def self.apply_filter(filter)
     case filter
     when 'owned-printer'
-      by_printer_owner(Current.user)
+      by_printer_owner
     when 'country'
-      by_country(Current.user.country_id)
+      by_country
     when 'in-progress'
       in_progress
     else
@@ -110,7 +110,7 @@ class Request < ApplicationRecord
           }
         }
       },
-      methods: %i[stl_file_url has_offer_made? has_offer_accepted?]
+      methods: %i[stl_file_url has_offer_made? accepted_at]
     )
   end
 
@@ -124,6 +124,10 @@ class Request < ApplicationRecord
 
   def has_offer_accepted?
     offers.joins(:order).exists?
+  end
+
+  def accepted_at
+    offers.joins(:order).first&.created_at
   end
 
   def update(_params)

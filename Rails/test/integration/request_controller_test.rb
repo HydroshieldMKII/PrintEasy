@@ -77,7 +77,6 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
     assert_equal @user_request.target_date.to_s, request1['target_date']
     assert_equal @user_request.stl_file_url, request1['stl_file_url']
     assert_equal true, request1['has_offer_made?']
-    assert_equal true, request1['has_offer_accepted?']
 
     preset1 = request1['preset_requests'][0]
     assert_equal @preset.id, preset1['id']
@@ -97,7 +96,6 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
     assert_equal @user_request2.target_date.to_s, request2['target_date']
     assert_equal @user_request2.stl_file_url, request2['stl_file_url']
     assert_equal true, request2['has_offer_made?']
-    assert_equal false, request2['has_offer_accepted?']
 
     assert_equal true, json_response['has_printer']
     assert_empty json_response['errors']

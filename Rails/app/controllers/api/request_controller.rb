@@ -82,7 +82,7 @@ module Api
                              }
                            }
                          },
-                         methods: %i[stl_file_url has_offer_made? has_offer_accepted?]
+                         methods: %i[stl_file_url has_offer_made? accepted_at]
                        )
                      end
 
