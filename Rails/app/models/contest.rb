@@ -4,8 +4,50 @@ class Contest < ApplicationRecord
   # before_validation :set_start_at, on: [:create, :update]
 
   default_scope { where(deleted_at: nil) }
+
   scope :active_for_user, lambda { |_user|
     where('start_at <= ?', Time.now)
+  }
+
+  scope :search, -> (query) {
+    where('theme LIKE ?', "%#{query}%")
+  }
+
+  scope :finished, -> {
+    where('end_at < ?', Time.now)
+  }
+
+  scope :active, -> {
+    where('start_at <= ? AND (end_at IS NULL OR end_at > ?)', Time.now, Time.now)
+  }
+
+  scope :multi_submission, -> { 
+    where("submission_limit > ? AND start_at <= ?", 1, Time.now)
+  }
+  # sort=submissions_desc or sort=submissions_asc
+  scope :sort_by_submissions, -> (direction_params) {
+    return if direction_params.blank?
+
+    direction = %w[asc desc].include?(direction_params) ? direction_params : "desc"
+    left_joins(:submissions)
+      .group(:id)
+      .order("COUNT(submissions.id) #{direction.upcase}")
+  }
+  # sort=start_at_desc or sort=start_at_asc
+  scope :sort_by_date, -> (sort_params) {
+    return if sort_params.blank?
+
+    parts = sort_params.split('_')
+  
+    column = parts[0..-2].join('_')
+    direction = parts.last
+    
+    allowed_columns = %w[start_at end_at]
+    allowed_directions = %w[asc desc]
+
+    if allowed_columns.include?(column) && allowed_directions.include?(direction)
+      order(column => direction)
+    end 
   }
 
   has_many :submissions, dependent: :destroy
