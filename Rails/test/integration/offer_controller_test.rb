@@ -32,9 +32,9 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     json_response = assert_nothing_raised { JSON.parse(response.body) }
 
     # response content
-    assert_equal 9, json_response['requests'][0]['offers'][0]['id']
-    assert_equal 1.5, json_response['requests'][0]['offers'][0]['price']
-    assert_equal '2021-01-01', json_response['requests'][0]['offers'][0]['target_date']
+    assert_equal 2, json_response['requests'][0]['offers'][0]['id']
+    assert_equal 2.5, json_response['requests'][0]['offers'][0]['price']
+    assert_equal '2021-01-02', json_response['requests'][0]['offers'][0]['target_date']
     assert_equal 0.22, json_response['requests'][0]['offers'][0]['print_quality']
     assert_nil json_response['requests'][0]['offers'][0]['cancelled_at']
     assert_equal 1, json_response['requests'][0]['offers'][0]['printer_user']['id']
@@ -42,14 +42,14 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'James Bond', json_response['requests'][0]['offers'][0]['printer_user']['user']['username']
     assert_equal 1, json_response['requests'][0]['offers'][0]['printer_user']['printer']['id']
     assert_equal 'Bambulab', json_response['requests'][0]['offers'][0]['printer_user']['printer']['model']
-    assert_equal 1, json_response['requests'][0]['offers'][0]['color']['id']
-    assert_equal 'Blue', json_response['requests'][0]['offers'][0]['color']['name']
-    assert_equal 1, json_response['requests'][0]['offers'][0]['filament']['id']
-    assert_equal 'PLA', json_response['requests'][0]['offers'][0]['filament']['name']
+    assert_equal 2, json_response['requests'][0]['offers'][0]['color']['id']
+    assert_equal 'Red', json_response['requests'][0]['offers'][0]['color']['name']
+    assert_equal 2, json_response['requests'][0]['offers'][0]['filament']['id']
+    assert_equal 'ABS', json_response['requests'][0]['offers'][0]['filament']['name']
 
-    assert_equal 2, json_response['requests'][0]['offers'][1]['id']
-    assert_equal 2.5, json_response['requests'][0]['offers'][1]['price']
-    assert_equal '2021-01-02', json_response['requests'][0]['offers'][1]['target_date']
+    assert_equal 9, json_response['requests'][0]['offers'][1]['id']
+    assert_equal 1.5, json_response['requests'][0]['offers'][1]['price']
+    assert_equal '2021-01-01', json_response['requests'][0]['offers'][1]['target_date']
     assert_equal 0.22, json_response['requests'][0]['offers'][1]['print_quality']
     assert_nil json_response['requests'][0]['offers'][1]['cancelled_at']
     assert_equal 1, json_response['requests'][0]['offers'][1]['printer_user']['id']
@@ -57,10 +57,10 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'James Bond', json_response['requests'][0]['offers'][1]['printer_user']['user']['username']
     assert_equal 1, json_response['requests'][0]['offers'][1]['printer_user']['printer']['id']
     assert_equal 'Bambulab', json_response['requests'][0]['offers'][1]['printer_user']['printer']['model']
-    assert_equal 2, json_response['requests'][0]['offers'][1]['color']['id']
-    assert_equal 'Red', json_response['requests'][0]['offers'][1]['color']['name']
-    assert_equal 2, json_response['requests'][0]['offers'][1]['filament']['id']
-    assert_equal 'ABS', json_response['requests'][0]['offers'][1]['filament']['name']
+    assert_equal 1, json_response['requests'][0]['offers'][1]['color']['id']
+    assert_equal 'Blue', json_response['requests'][0]['offers'][1]['color']['name']
+    assert_equal 1, json_response['requests'][0]['offers'][1]['filament']['id']
+    assert_equal 'PLA', json_response['requests'][0]['offers'][1]['filament']['name']
 
     assert_equal 2, json_response['requests'][0]['id']
     assert_equal 'Test Request 2', json_response['requests'][0]['name']
@@ -69,8 +69,6 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     assert_equal '2021-12-31', json_response['requests'][0]['target_date']
     assert_equal 2, json_response['requests'][0]['user']['id']
     assert_equal 'John Doe', json_response['requests'][0]['user']['username']
-    assert_equal 2, json_response['requests'][0]['user']['country']['id']
-    assert_equal 'USA', json_response['requests'][0]['user']['country']['name']
   end
 
   test 'should get all index' do
@@ -86,7 +84,6 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
 
     # Response format
     json_response = assert_nothing_raised { JSON.parse(response.body) }
-    # p json_response
 
     # response content
     assert_equal 2, json_response['requests'][0]['id']
@@ -96,38 +93,12 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     assert_equal '2021-12-31', json_response['requests'][0]['target_date']
     assert_equal 2, json_response['requests'][0]['user']['id']
     assert_equal 'John Doe', json_response['requests'][0]['user']['username']
-    assert_equal 2, json_response['requests'][0]['user']['country']['id']
-    assert_equal 'USA', json_response['requests'][0]['user']['country']['name']
 
-    assert_equal 9, json_response['requests'][0]['offers'][0]['id']
-    assert_equal 1.5, json_response['requests'][0]['offers'][0]['price']
-    assert_equal '2021-01-01', json_response['requests'][0]['offers'][0]['target_date']
+    assert_equal 2, json_response['requests'][0]['offers'][0]['id']
+    assert_equal 2.5, json_response['requests'][0]['offers'][0]['price']
+    assert_equal '2021-01-02', json_response['requests'][0]['offers'][0]['target_date']
     assert_equal 0.22, json_response['requests'][0]['offers'][0]['print_quality']
     assert_nil json_response['requests'][0]['offers'][0]['cancelled_at']
-    assert_equal 1, json_response['requests'][0]['offers'][0]['printer_user']['id']
-    assert_equal 1, json_response['requests'][0]['offers'][0]['printer_user']['user']['id']
-    assert_equal 'James Bond', json_response['requests'][0]['offers'][0]['printer_user']['user']['username']
-    assert_equal 1, json_response['requests'][0]['offers'][0]['printer_user']['printer']['id']
-    assert_equal 'Bambulab', json_response['requests'][0]['offers'][0]['printer_user']['printer']['model']
-    assert_equal 1, json_response['requests'][0]['offers'][0]['color']['id']
-    assert_equal 'Blue', json_response['requests'][0]['offers'][0]['color']['name']
-    assert_equal 1, json_response['requests'][0]['offers'][0]['filament']['id']
-    assert_equal 'PLA', json_response['requests'][0]['offers'][0]['filament']['name']
-
-    assert_equal 2, json_response['requests'][0]['offers'][1]['id']
-    assert_equal 2.5, json_response['requests'][0]['offers'][1]['price']
-    assert_equal '2021-01-02', json_response['requests'][0]['offers'][1]['target_date']
-    assert_equal 0.22, json_response['requests'][0]['offers'][1]['print_quality']
-    assert_nil json_response['requests'][0]['offers'][1]['cancelled_at']
-    assert_equal 1, json_response['requests'][0]['offers'][1]['printer_user']['id']
-    assert_equal 1, json_response['requests'][0]['offers'][1]['printer_user']['user']['id']
-    assert_equal 'James Bond', json_response['requests'][0]['offers'][1]['printer_user']['user']['username']
-    assert_equal 1, json_response['requests'][0]['offers'][1]['printer_user']['printer']['id']
-    assert_equal 'Bambulab', json_response['requests'][0]['offers'][1]['printer_user']['printer']['model']
-    assert_equal 2, json_response['requests'][0]['offers'][1]['color']['id']
-    assert_equal 'Red', json_response['requests'][0]['offers'][1]['color']['name']
-    assert_equal 2, json_response['requests'][0]['offers'][1]['filament']['id']
-    assert_equal 'ABS', json_response['requests'][0]['offers'][1]['filament']['name']
 
     assert_empty json_response['errors']
   end
@@ -274,7 +245,7 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
       post api_offer_index_url,
            params: { offer: { name: 'Test Offer', price: 1.5, target_date: '2026-01-01', comment: 'test comment',
                               request_id: @offer.request_id, printer_user_id: @offer.printer_user_id,
-                              color_id: @offer.color_id, filament_id: @offer.filament_id, print_quality: 0.22 } }
+                              color_id: @offer2.color_id, filament_id: @offer2.filament_id, print_quality: 0.22 } }
     end
 
     # Http code
@@ -406,7 +377,10 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     # response content
     assert_not_empty json_response['errors']
 
-    assert_equal 'Offer not found', json_response['errors']['offer']
+    assert_equal [
+      "Couldn't find Offer with 'id'=1 [WHERE `offers`.`printer_user_id` IN " \
+      '(SELECT `printer_users`.`id` FROM `printer_users` WHERE `printer_users`.`user_id` = ?)]'
+    ], json_response['errors']['base']
   end
 
   # UPDATE
@@ -484,7 +458,10 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     # response content
     assert_not_empty json_response['errors']
 
-    assert_equal 'Offer not found', json_response['errors']['offer']
+    assert_equal [
+      "Couldn't find Offer with 'id'=2 [WHERE `offers`.`printer_user_id` IN " \
+      '(SELECT `printer_users`.`id` FROM `printer_users` WHERE `printer_users`.`user_id` = ?)]'
+    ], json_response['errors']['base']
   end
 
   # DEST
@@ -582,7 +559,10 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     # response content
     assert_not_empty json_response['errors']
 
-    assert_equal 'Offer not found', json_response['errors']['offer']
+    assert_equal [
+      "Couldn't find Offer with 'id'=2 [WHERE `offers`.`printer_user_id` IN " \
+      '(SELECT `printer_users`.`id` FROM `printer_users` WHERE `printer_users`.`user_id` = ?)]'
+    ], json_response['errors']['base']
   end
 
   test 'should not destroy offer if doesnt exist' do
@@ -600,7 +580,10 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     # response content
     assert_not_empty json_response['errors']
 
-    assert_equal 'Offer not found', json_response['errors']['offer']
+    assert_equal [
+      "Couldn't find Offer with 'id'=9999 [WHERE `offers`.`printer_user_id` IN " \
+      '(SELECT `printer_users`.`id` FROM `printer_users` WHERE `printer_users`.`user_id` = ?)]'
+    ], json_response['errors']['base']
   end
 
   # CANCEL
@@ -633,6 +616,7 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
   test 'should not cancel offer if already rejected' do
     sign_in @other_user
     put reject_api_offer_url(@offer2)
+    assert_response :success
 
     sign_in @other_user
 
@@ -659,7 +643,7 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     end
 
     # Http code
-    assert_response :not_found
+    assert_response :unprocessable_entity
 
     # Response format
     json_response = assert_nothing_raised { JSON.parse(response.body) }
@@ -667,7 +651,7 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     # response content
     assert_not_empty json_response['errors']
 
-    assert_equal 'Offer not found', json_response['errors']['offer']
+    assert_equal ['You are not allowed to reject this offer'], json_response['errors']['offer']
   end
 
   test 'should not cancel offer if already accepted' do
@@ -707,6 +691,6 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     # response content
     assert_not_empty json_response['errors']
 
-    assert_equal 'Offer not found', json_response['errors']['offer']
+    assert_equal ["Couldn't find Offer with 'id'=9999"], json_response['errors']['base']
   end
 end

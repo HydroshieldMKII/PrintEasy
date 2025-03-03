@@ -59,9 +59,9 @@ export class ContestComponent {
   }
 
   confirmDelete() {
-    this.contestService.deleteContest(this.id).subscribe(() => {
+    this.contestService.deleteContest(this.id).subscribe((data) => {
       this.deleteDialogVisible = false;
-      this.contests = this.contests.filter(contest => contest.id !== 1);
+      this.contests = this.contests.filter(contest => contest.id !== this.id);
     }
     );
   }

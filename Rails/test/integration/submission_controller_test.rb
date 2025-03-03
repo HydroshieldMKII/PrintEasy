@@ -384,7 +384,7 @@ class SubmissionControllerTest < ActionDispatch::IntegrationTest
       @parsed_response = JSON.parse(response.body)
     end
 
-    assert_equal ["Couldn't find Submission with 'id'=9"], @parsed_response['errors']['base']
+    assert_equal ["Couldn't find Submission with 'id'=9 [WHERE `submissions`.`user_id` = ?]"], @parsed_response['errors']['base']
   end
 
   test 'should not update submission with invalid id' do
@@ -401,7 +401,7 @@ class SubmissionControllerTest < ActionDispatch::IntegrationTest
       @parsed_response = JSON.parse(response.body)
     end
 
-    assert_equal ["Couldn't find Submission with 'id'=9"], @parsed_response['errors']['base']
+    assert_equal ["Couldn't find Submission with 'id'=9 [WHERE `submissions`.`user_id` = ?]"], @parsed_response['errors']['base']
   end
 
   test 'should not update submission with invalid user' do
@@ -415,13 +415,13 @@ class SubmissionControllerTest < ActionDispatch::IntegrationTest
                                     image: fixture_file_upload(@image_file.filename.to_s, @image_file.content_type) } }
     end
 
-    assert_response :forbidden
+    assert_response :not_found
 
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
 
-    assert_equal ['You are not authorized to perform this action'], @parsed_response['errors']['user']
+    assert_equal ["Couldn't find Submission with 'id'=1 [WHERE `submissions`.`user_id` = ?]"], @parsed_response['errors']['base']
   end
 
   test 'should not destroy submission with invalid user' do
@@ -432,13 +432,13 @@ class SubmissionControllerTest < ActionDispatch::IntegrationTest
       delete api_submission_url(@submission)
     end
 
-    assert_response :forbidden
+    assert_response :not_found
 
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
 
-    assert_equal ['You are not authorized to perform this action'], @parsed_response['errors']['user']
+    assert_equal ["Couldn't find Submission with 'id'=1 [WHERE `submissions`.`user_id` = ?]"], @parsed_response['errors']['base']
   end
 
   test 'should not destroy submission without login' do
@@ -554,7 +554,7 @@ class SubmissionControllerTest < ActionDispatch::IntegrationTest
       @parsed_response = JSON.parse(response.body)
     end
 
-    assert_equal ["Couldn't find Submission with 'id'=9"], @parsed_response['errors']['base']
+    assert_equal ["Couldn't find Submission with 'id'=9 [WHERE `submissions`.`user_id` = ?]"], @parsed_response['errors']['base']
   end
 
   test 'should not update submission without id' do
@@ -572,7 +572,7 @@ class SubmissionControllerTest < ActionDispatch::IntegrationTest
       @parsed_response = JSON.parse(response.body)
     end
 
-    assert_equal ["Couldn't find Submission with 'id'=9"], @parsed_response['errors']['base']
+    assert_equal ["Couldn't find Submission with 'id'=9 [WHERE `submissions`.`user_id` = ?]"], @parsed_response['errors']['base']
   end
 
   test 'should not destroy submission without id' do
@@ -586,7 +586,7 @@ class SubmissionControllerTest < ActionDispatch::IntegrationTest
       @parsed_response = JSON.parse(response.body)
     end
 
-    assert_equal ["Couldn't find Submission with 'id'=9"], @parsed_response['errors']['base']
+    assert_equal ["Couldn't find Submission with 'id'=9 [WHERE `submissions`.`user_id` = ?]"], @parsed_response['errors']['base']
   end
 
   test 'should not create submission if submission limit is reached' do

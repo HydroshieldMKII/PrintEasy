@@ -61,7 +61,8 @@
         "ends": "Se termine",
         "confirm_delete": "Confirmer la suppression",
         "confirm_delete_message": "Êtes-vous sûr de vouloir supprimer le concours ? Cette action ne peut pas être annulée.",
-        "button_contest_detail": "Détails du concours"
+        "button_contest_detail": "Détails du concours",
+        "search_text": "Rechercher par thème"
     },
     "contest_form": {
         "title_form": "Créer un concours",
@@ -93,10 +94,12 @@
         "days": "jours",
         "contest_not_started": "Le concours n'a pas encore commencé",
         "contest_ended": "Le concours est terminé",
-        "submission_limit_reached": "Vous avez atteint la limite de soumission pour ce concours"
+        "submission_limit_reached": "Vous avez atteint la limite de soumission pour ce concours",
+        "participate_message": "Ne manquez pas votre chance de briller ! 🌟 Participez dès maintenant et tentez de remporter le concours. Plus vite vous jouez, plus vous avez de chances de gagner ! ⏳ En cas d'égalité, c'est le premier à avoir participé qui l'emporte. Alors, foncez ! 🚀🔥",
+        "confirm_delete_message": "Êtes-vous sûr de vouloir supprimer la soumission ? Cette action ne peut pas être annulée."
     },
     "submission_form": {
-        "title_form": "Créer un concours",
+        "title_form": "Participer au concours",
         "name": "Nom",
         "description": "Description",
         "upload_image": "Téléverser une image",
@@ -259,6 +262,7 @@
         "free": "Gratuit",
         "no_response": "Pas encore de réponse",
         "rejected": "Refusée",
+        "accepted": "Acceptée",
         "edit_offer": "Modifier cette offre",
         "cancel_offer": "Annuler cette offre",
         "accept_offer": "Accepter cette offre",

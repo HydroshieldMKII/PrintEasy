@@ -9,6 +9,7 @@ class User < ApplicationRecord
   has_many :printers, through: :printer_user
   has_many :offers, through: :printer_user
   has_many :likes
+  has_many :liked_submissions, through: :likes, source: :submission
 
   has_one_attached :profile_picture
 
@@ -20,6 +21,23 @@ class User < ApplicationRecord
   validates :username, presence: true, uniqueness: true
   validates :password_confirmation, presence: true
   validates :country_id, presence: true
+
+  def accessible_contests
+    is_admin? ? Contest.all : Contest.active_for_user(self)
+  end
+
+  def user_contests_submissions
+    contests = Contest.joins(:submissions).where(submissions: { user_id: id }).distinct
+
+    contests.map do |contest|
+      contest_data = contest.as_json(methods: %i[image_url finished? started? winner_user])
+      {
+        contest: contest_data,
+        submissions: contest.submissions.where(user_id: id)
+                            .as_json(include: :likes, methods: %i[image_url stl_url])
+      }
+    end
+  end
 
   def email_required?
     false

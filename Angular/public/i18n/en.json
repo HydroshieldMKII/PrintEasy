@@ -61,7 +61,8 @@
         "ends": "Ends",
         "confirm_delete": "Confirm delete",
         "confirm_delete_message": "Are you sure you want to delete the contest? This action cannot be undone.",
-        "button_contest_detail": "Contest details"
+        "button_contest_detail": "Contest details",
+        "search_text": "Search by theme"
     },
     "contest_form": {
         "title_form": "Create a contest",
@@ -93,7 +94,9 @@
         "days": "days",
         "contest_not_started": "The contest has not started yet",
         "contest_ended": "The contest has ended",
-        "submission_limit_reached": "You have reached the submission limit for this contest"
+        "submission_limit_reached": "You have reached the submission limit for this contest",
+        "participate_message": "Don't miss your chance to shine! 🌟 Join now and try to win the contest. The sooner you participate, the higher your chances of winning! ⏳ In case of a tie, the first participant takes the prize. So, go for it! 🚀🔥",
+        "confirm_delete_message": "Are you sure you want to delete the submission? This action cannot be undone."
     },
     "submission_form": {
         "title_form": "Participate in the contest",
@@ -259,6 +262,7 @@
         "free": "Free",
         "no_response": "No response yet",
         "rejected": "Rejected",
+        "accepted": "Accepted",
         "edit_offer": "Edit this offer",
         "cancel_offer": "Cancel this offer",
         "accept_offer": "Accept this offer",
