@@ -160,8 +160,8 @@ class OrderStatus < ApplicationRecord
   def can_destroy?
     if %w[Accepted Cancelled Arrived Shipped].include?(status_name)
       return true if status_name == 'Accepted' && order.order_status.where(status_name: 'Accepted').count > 1
-
-      raise CannotDestroyStatusError, 'Cannot delete the status'
+      errors.add(:order_status, 'Cannot delete the status')
+      throw :abort
     end
     true
   end
@@ -169,7 +169,8 @@ class OrderStatus < ApplicationRecord
   def is_frozen?
     last_state = order&.order_status&.order(created_at: :desc)&.first
     if %w[Cancelled Arrived Shipped].include?(last_state.status_name)
-      raise OrderStatusFrozenError, 'Cannot change status of a frozen order'
+      errors.add(:order_status, 'Cannot change status of a frozen order')
+      throw :abort
     end
 
     true

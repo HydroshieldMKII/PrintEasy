@@ -2,10 +2,7 @@
 
 module Api
   class OrderStatusController < AuthenticatedController
-    before_action :order_status_params_update, only: %i[update]
-    before_action :order_status_params_create, only: %i[create]
     before_action :get_order_status, only: %i[show update destroy]
-    # TODO: remove rescues
     def show
       if current_user == @order_status.consumer || current_user == @order_status.printer
         render json: {
@@ -28,8 +25,6 @@ module Api
       else
         render json: { errors: @order_status.errors.as_json }, status: :unprocessable_entity
       end
-    rescue OrderStatus::OrderStatusFrozenError => e
-      render json: { errors: { order_status: [e.to_s] }.as_json }, status: :unprocessable_entity
     end
 
     def create
@@ -42,15 +37,11 @@ module Api
     end
 
     def destroy
-      if @order_status.destroy!
+      if @order_status.destroy
         render json: { order_status: @order_status.as_json, errors: {} }, status: :ok
       else
         render json: { errors: @order_status.errors.as_json }, status: :unprocessable_entity
       end
-    rescue OrderStatus::CannotDestroyStatusError => e
-      render json: { errors: { order_status: [e.to_s] }.as_json }, status: :unprocessable_entity
-    rescue OrderStatus::OrderStatusFrozenError => e
-      render json: { errors: { order_status: [e.to_s] }.as_json }, status: :unprocessable_entity
     end
 
     private
