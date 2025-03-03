@@ -57,11 +57,11 @@ class OrderStatus < ApplicationRecord
   end
 
   def consumer
-    order.offer.request.user
+    order&.offer&.request&.user
   end
 
   def printer
-    order.offer.printer_user.user
+    order&.offer&.printer_user&.user
   end
 
   def available_status
@@ -89,9 +89,6 @@ class OrderStatus < ApplicationRecord
     Rails.application.routes.url_helpers.rails_blob_url(image, only_path: true) if image.attached?
   end
 
-  class CannotDestroyStatusError < StandardError; end
-  class OrderStatusFrozenError < StandardError; end
-
   private
 
   def can_transition
@@ -111,14 +108,14 @@ class OrderStatus < ApplicationRecord
   end
 
   def user_can_create_status
-    return true if order.printer == Current.user || order.consumer == Current.user
+    return true if printer == Current.user || consumer == Current.user
 
     errors.add(:order_status, 'You are not authorized to create a new status for this order')
     false
   end
 
   def user_can_modify
-    return true if order.printer == Current.user
+    return true if printer == Current.user
 
     errors.add(:order_status, 'You are not authorized to delete this status')
     false
@@ -134,7 +131,7 @@ class OrderStatus < ApplicationRecord
 
   def can_create_state
     last_state = order&.order_status&.order(created_at: :desc)&.first&.status_name
-    if Current.user == order.consumer
+    if Current.user == consumer
       if %w[Cancelled Accepted Printing Printed Shipped].include?(status_name)
         if status_name == 'Cancelled'
           if last_state != 'Accepted'
@@ -148,7 +145,7 @@ class OrderStatus < ApplicationRecord
           return false
         end
       end
-    elsif Current.user == order.printer
+    elsif Current.user == printer
       if status_name == 'Arrived'
         errors.add(:order_status, "Invalid transition from #{last_state} to Arrived")
         return false

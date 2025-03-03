@@ -14,11 +14,11 @@ class Order < ApplicationRecord
   validate :user_owns_request
 
   def printer
-    offer.printer_user.user
+    offer&.printer_user&.user
   end
 
   def consumer
-    offer.request.user
+    offer&.request&.user
   end
 
   def available_status
@@ -30,13 +30,13 @@ class Order < ApplicationRecord
   def offer_exists
     if offer.nil?
       errors.add(:offer_id, 'Offer must exist')
-      throw :abort
+      return false
     end
     true
   end
 
   def not_the_same_user_for_offer_and_request
-    if offer.request.user == offer.printer_user.user
+    if consumer == printer
       errors.add(:offer_id, 'Consumer and printer cannot be the same user')
       return false
     end
@@ -44,8 +44,10 @@ class Order < ApplicationRecord
   end
 
   def not_two_order_with_the_same_request
-    # debugger
-    return unless request.offers.joins(:order).count.positive?
+    if request.nil?
+      return false
+    end
+    return true unless request.offers.joins(:order).count.positive?
 
     errors.add(:offer_id, 'Request already has an order')
     false
