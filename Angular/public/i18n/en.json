@@ -201,7 +201,13 @@
         "delete_success": "Request deleted successfully",
         "delete_error": "Request deletion failed",
         "accepted": "Accepted",
-        "pending": "Pending"
+        "pending": "Pending",
+        "advanced_filters": "Advanced Filters",
+        "budget_range": "Budget Range",
+        "date_range": "Target Date Range",
+        "select_date_range": "Select date range",
+        "clear_filters": "Clear Filters",
+        "apply_filters": "Apply Filters"
     },
     "requestForm": {
         "edit_request": "Edit Request",

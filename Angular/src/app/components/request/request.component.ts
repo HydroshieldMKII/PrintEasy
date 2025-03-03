@@ -36,6 +36,11 @@ export class RequestsComponent implements OnInit {
   filterOptions: SelectItem[] = [];
   sortOptions: SelectItem[] = [];
 
+  // New filters
+  budgetRange: number[] = [0, 10000];
+  dateRange: Date[] | null = null;
+  isAdvancedFiltering: boolean = false;
+
   currentLanguage: string = 'en';
 
   constructor(
@@ -58,14 +63,31 @@ export class RequestsComponent implements OnInit {
 
   ngOnInit(): void {
     this.currentLanguage = localStorage.getItem('language') || 'en';
-    console.log('Current language:', this.currentLanguage);
+
+    // Initialize budget range
+    this.initBudgetRange();
 
     this.initializeSelectOptions();
-
     this.filter(this.activeTab);
 
     this.selectedFilterOption = this.filterOptions.find(option => option.value === this.currentFilter) || this.filterOptions[0];
     this.selectedSortOption = this.sortOptions.find(option => option.value === `${this.currentSortCategory}-${this.currentSort}`) || this.sortOptions[0];
+  }
+
+  // Initialize the budget range with correct values
+  initBudgetRange(): void {
+    // Default range
+    this.budgetRange = [0, 10000];
+
+    // Try to get stored range from query params
+    const queryParams = this.router.parseUrl(this.router.url).queryParams;
+    if (queryParams['minBudget'] && queryParams['maxBudget']) {
+      this.budgetRange = [
+        parseInt(queryParams['minBudget']),
+        parseInt(queryParams['maxBudget'])
+      ];
+      this.isAdvancedFiltering = true;
+    }
   }
 
   initializeSelectOptions(): void {
@@ -124,7 +146,37 @@ export class RequestsComponent implements OnInit {
   }
 
   get currentRequests(): RequestModel[] {
-    return this.activeTab === 'mine' ? this.myRequests || [] : this.requests || [];
+    let filteredRequests = this.activeTab === 'mine' ? this.myRequests || [] : this.requests || [];
+
+    // Apply the advanced filters if they're active
+    if (this.isAdvancedFiltering) {
+      filteredRequests = this.applyAdvancedFiltersToList(filteredRequests);
+    }
+
+    return filteredRequests;
+  }
+
+  applyAdvancedFiltersToList(requests: RequestModel[]): RequestModel[] {
+    return requests.filter(request => {
+      // Apply budget filter
+      const budgetInRange = request.budget >= this.budgetRange[0] && request.budget <= this.budgetRange[1];
+
+      // Apply date filter if set
+      let dateInRange = true;
+      if (this.dateRange && this.dateRange.length === 2 && this.dateRange[0] && this.dateRange[1]) {
+        const requestDate = new Date(request.targetDate);
+        const startDate = new Date(this.dateRange[0]);
+        const endDate = new Date(this.dateRange[1]);
+
+        // Set hours to 0 for proper comparison
+        startDate.setHours(0, 0, 0, 0);
+        endDate.setHours(23, 59, 59, 999);
+
+        dateInRange = requestDate >= startDate && requestDate <= endDate;
+      }
+
+      return budgetInRange && dateInRange;
+    });
   }
 
   filter(type: string): void {
@@ -233,5 +285,58 @@ export class RequestsComponent implements OnInit {
 
     this.selectedFilterOption = this.filterOptions.find(option => option.value === this.currentFilter) || this.filterOptions[0];
     this.selectedSortOption = this.sortOptions.find(option => option.value === `${this.currentSortCategory}-${this.currentSort}`) || this.sortOptions[0];
+  }
+
+  // Advanced filters methods
+  clearAdvancedFilters(): void {
+    this.budgetRange = [0, 10000];
+    this.dateRange = null;
+    this.isAdvancedFiltering = false;
+
+    // Remove filter query parameters
+    this.router.navigate([], {
+      queryParams: {
+        minBudget: null,
+        maxBudget: null,
+        startDate: null,
+        endDate: null
+      },
+      queryParamsHandling: 'merge'
+    });
+
+    this.messageService.add({
+      severity: 'info',
+      summary: this.currentLanguage === 'fr' ? 'Filtres réinitialisés' : 'Filters cleared',
+      detail: this.currentLanguage === 'fr' ? 'Tous les filtres avancés ont été réinitialisés' : 'All advanced filters have been reset'
+    });
+  }
+
+  applyAdvancedFilters(): void {
+    this.isAdvancedFiltering = true;
+
+    // Save filter settings to query params for persistence
+    const queryParams: any = {
+      minBudget: this.budgetRange[0],
+      maxBudget: this.budgetRange[1]
+    };
+
+    // Add date range if selected
+    if (this.dateRange && this.dateRange.length === 2 && this.dateRange[0] && this.dateRange[1]) {
+      queryParams.startDate = this.dateRange[0].toISOString().split('T')[0];
+      queryParams.endDate = this.dateRange[1].toISOString().split('T')[0];
+    }
+
+    this.router.navigate([], {
+      queryParams: queryParams,
+      queryParamsHandling: 'merge'
+    });
+
+    this.messageService.add({
+      severity: 'success',
+      summary: this.currentLanguage === 'fr' ? 'Filtres appliqués' : 'Filters applied',
+      detail: this.currentLanguage === 'fr'
+        ? `Budget: ${this.budgetRange[0]}$ - ${this.budgetRange[1]}$${this.dateRange ? ', Dates sélectionnées' : ''}`
+        : `Budget: ${this.budgetRange[0]}$ - ${this.budgetRange[1]}$${this.dateRange ? ', Date range selected' : ''}`
+    });
   }
 }

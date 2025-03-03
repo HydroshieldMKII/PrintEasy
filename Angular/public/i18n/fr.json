@@ -201,7 +201,13 @@
         "delete_success": "Demande supprimée avec succès",
         "delete_error": "Échec de la suppression de la demande",
         "accepted": "Acceptée",
-        "pending": "En attente"
+        "pending": "En attente",
+        "advanced_filters": "Filtres Avancés",
+        "budget_range": "Fourchette de Budget",
+        "date_range": "Période de Date Cible",
+        "select_date_range": "Sélectionner une période",
+        "clear_filters": "Effacer les Filtres",
+        "apply_filters": "Appliquer les Filtres"
     },
     "requestForm": {
         "edit_request": "Modifier la demande",

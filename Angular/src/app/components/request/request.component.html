@@ -34,30 +34,6 @@
             />
           </div>
           <div class="flex gap-2 ssf">
-            <p-floatlabel variant="in">
-              <p-select
-                inputId="in_label"
-                [options]="filterOptions"
-                [(ngModel)]="selectedFilterOption"
-                optionLabel="label"
-                styleClass="w-full"
-                variant="filled"
-                (onChange)="onFilterChange($event)"
-              />
-              <label for="in_label">{{ 'request.filter_by' | translate }}</label>
-            </p-floatlabel>
-            <p-floatlabel variant="in">
-              <p-select
-                inputId="in_label"
-                [options]="sortOptions"
-                [(ngModel)]="selectedSortOption"
-                optionLabel="label"
-                styleClass="w-full"
-                variant="filled"
-                (onChange)="onSortChange($event)"
-              />
-              <label for="in_label">{{ 'request.sort_by' | translate }}</label>
-            </p-floatlabel>
             <form (ngSubmit)="onSearch()">
               <span class="p-input-icon-right">
                 <i class="pi pi-search" style="margin-right: 5px"></i>
@@ -73,6 +49,84 @@
               </span>
             </form>
           </div>
+        </div>
+
+        <div class="advanced-filters-section mb-4">
+          <p-accordion>
+            <p-accordionTab [header]="'request.advanced_filters' | translate">
+              <div class="flex-row-filters">
+                <div class="filter-group budget-range">
+                  <label>{{ 'request.budget_range' | translate }}</label>
+                  <div class="slider-container">
+                    <p-slider [(ngModel)]="budgetRange" [range]="true" [min]="0" [max]="10000" [style]="{'width':'100%'}"></p-slider>
+                    <div class="range-labels">
+                      <span class="min-value">${{budgetRange[0]}}</span>
+                      <span class="max-value">${{budgetRange[1]}}</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="filter-group date-range">
+                  <p-floatlabel variant="in">
+                  <p-calendar 
+                    [(ngModel)]="dateRange" 
+                    selectionMode="range" 
+                    [readonlyInput]="true"
+                    [showIcon]="true"
+                    dateFormat="yy-mm-dd"
+                    [style]="{'width':'100%'}"
+                    appendTo="body"
+                    inputId="date_range"
+                  ></p-calendar>
+                  <label for="date_range">{{ 'request.date_range' | translate }}</label>
+                  </p-floatlabel>
+                </div>
+
+                <p-floatlabel variant="in">
+                  <p-select
+                    inputId="in_label"
+                    [options]="filterOptions"
+                    [(ngModel)]="selectedFilterOption"
+                    optionLabel="label"
+                    styleClass="w-full"
+                    variant="filled"
+                    appendTo="body"
+                    (onChange)="onFilterChange($event)"
+                  />
+                  <label for="in_label">{{ 'request.filter_by' | translate }}</label>
+                </p-floatlabel>
+                <p-floatlabel variant="in">
+                  <p-select
+                    inputId="in_label"
+                    [options]="sortOptions"
+                    [(ngModel)]="selectedSortOption"
+                    optionLabel="label"
+                    styleClass="w-full"
+                    variant="filled"
+                    appendTo="body"
+                    (onChange)="onSortChange($event)"
+                  />
+                  <label for="in_label">{{ 'request.sort_by' | translate }}</label>
+                </p-floatlabel>
+                
+                <div class="filter-actions">
+                  <p-button 
+                    icon="pi pi-filter-slash" 
+                    [label]="'request.clear_filters' | translate" 
+                    styleClass="p-button-outlined p-button-secondary"
+                    (onClick)="clearAdvancedFilters()"
+                  ></p-button>
+                  
+                  <p-button 
+                    icon="pi pi-filter" 
+                    [label]="'request.apply_filters' | translate" 
+                    styleClass="p-button-primary"
+                    (onClick)="applyAdvancedFilters()"
+                  ></p-button>
+                </div>
+              </div>
+            </p-accordionTab>
+          </p-accordion>
         </div>
 
         <p-table
@@ -108,10 +162,10 @@
                   [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
                 />
               </td>
-              <td [ngClass]="{'disabled-col ': request.acceptedAt}">{{ request.name }}</td>
-              <td [ngClass]="{'disabled-col ': request.acceptedAt}">{{ request.budget == 0 ? "Free" : request.budget | currency }}</td>
-              <td [ngClass]="{'disabled-col ': request.acceptedAt}">{{ request.targetDate | date }}</td>
-              <td [ngClass]="{'disabled-col ': request.acceptedAt}">{{ request.user.country.name }}</td>
+              <td [ngClass]="{'disabled-col': request.acceptedAt}">{{ request.name }}</td>
+              <td [ngClass]="{'disabled-col': request.acceptedAt}">{{ request.budget == 0 ? "Free" : request.budget | currency }}</td>
+              <td [ngClass]="{'disabled-col': request.acceptedAt}">{{ request.targetDate | date }}</td>
+              <td [ngClass]="{'disabled-col': request.acceptedAt}">{{ request.user.country.name }}</td>
                 <td *ngIf="activeTab == 'mine'">
                 <span [ngStyle]="{'color': 'rgb(34, 34, 34)', 'background-color': request.acceptedAt ? 'rgb(143, 255, 98)' : 'rgb(255, 176, 86)', 'border-radius': '10px', 'height': '30px','width':'90px', 'padding': '7px', 'display': 'flex', 'flex-direction': 'row', 'align-items': 'center', 'justify-content': 'center'}">
                   <p *ngIf="request.acceptedAt">{{ 'request.accepted' | translate }}</p>
@@ -231,7 +285,6 @@
   </p-tabs>
 </div>
 
-<!-- Delete Confirmation Dialog -->
 <p-dialog
   [(visible)]="deleteDialogVisible"
   [modal]="true"
