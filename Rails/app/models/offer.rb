@@ -47,15 +47,15 @@ class Offer < ApplicationRecord
   scope :not_accepted, -> { where.not(id: Order.select(:offer_id)) }
 
   scope :not_in_accepted_request, lambda {
-    not_accepted.where.not(request_id: Request.joins(offers: :order).select(:id).distinct)
+    not_accepted.where.not(request_id: Request.joins(offers: :order))
   }
 
   scope :for_user_requests, lambda {
-    where(request_id: Request.where(user_id: Current.user.id).select(:id))
+    where(request_id: Request.where(user: Current.user))
   }
 
   scope :from_user_printers, lambda {
-    where(printer_user_id: PrinterUser.where(user_id: Current.user.id).select(:id))
+    where(printer_user_id: PrinterUser.where(user: Current.user))
   }
 
   def self.filter_by_type(type)

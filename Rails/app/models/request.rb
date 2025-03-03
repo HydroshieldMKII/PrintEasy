@@ -51,7 +51,7 @@ class Request < ApplicationRecord
       'date' => 'target_date',
       'budget' => 'budget',
       'country' => 'users.country_id'
-    }.fetch(category, 'created_at')
+    }.fetch(category, 'date')
 
     direction = direction == 'asc' ? 'ASC' : 'DESC'
     order("#{column} #{direction}")
@@ -142,7 +142,6 @@ class Request < ApplicationRecord
     )
   end
 
-  # Format response for API
   def self.format_response(resource, status: :ok)
     has_printer = Current.user.printers.exists?
 
