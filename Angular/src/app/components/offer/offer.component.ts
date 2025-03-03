@@ -51,11 +51,12 @@ export class OffersComponent {
 
     if (this.activeTab === 'all') {
       this.offerService.getOffers().subscribe((requests: any[]) => {
+        console.log("all offers:", requests);
         this.offers = requests;
       });
     } else if (this.activeTab === 'mine') {
       this.offerService.getMyOffers().subscribe((offers: any[]) => {
-        console.log("offers:", offers);
+        console.log("my offers:", offers);
         this.myOffers = offers;
       });
     }

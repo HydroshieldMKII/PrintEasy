@@ -5,10 +5,10 @@ module Api
     before_action :set_offer, only: %i[show update destroy]
 
     def index
-      offers = filter_offers(Offer.all)
-      offers = offers.sort_by(&:target_date)
-
-      render_offers(offers)
+      @offers = filter_offers
+                .includes(:request, printer_user: %i[user printer], color: [], filament: [])
+                .order(:target_date)
+      render_offers(@offers)
     end
 
     def show
@@ -42,17 +42,9 @@ module Api
     end
 
     def reject
-      offers_on_my_requests = Offer.where(request_id: current_user.requests.pluck(:id))
+      offer = Offer.find(params[:id])
 
-      begin
-        offer = offers_on_my_requests.find(params[:id])
-      rescue ActiveRecord::RecordNotFound
-        render json: { errors: { base: ["Couldn't find Offer with 'id'=#{params[:id]} [WHERE `offers`.`request_id` IN (#{current_user.requests.pluck(:id).join(', ')})]"] } },
-               status: :not_found
-        return
-      end
-
-      if offer.can_reject?(current_user) && offer.reject!
+      if offer.can_reject? && offer.reject!
         render json: { offer: offer, errors: {} }, status: :ok
       else
         render json: { errors: offer.errors }, status: :unprocessable_entity
@@ -62,83 +54,89 @@ module Api
     private
 
     def render_offers(resource, status: :ok)
-      if resource.is_a?(Offer)
-        render json: { offer: resource.as_json(
-          except: %i[request_id printer_user_id created_at updated_at color_id filament_id],
-          include: {
-            printer_user: {
-              only: %i[id],
-              include: {
-                user: {
-                  only: %i[id username]
-                },
-                printer: {
-                  only: %i[id model]
-                }
-              }
-            },
-            color: {},
-            filament: {}
-          }
-        ), errors: {} }, status: status
-      else
-        grouped = resource.group_by(&:request)
-        requests = grouped.map do |request_obj, offers|
-          request_obj.as_json(
-            except: %i[user_id created_at updated_at],
-            include: {
-              user: {
-                only: %i[id username],
-                include: {
-                  country: {
-                    only: %i[id name]
-                  }
-                }
-              }
-            }
-          ).merge(
-            offers: offers.as_json(
-              except: %i[request_id printer_user_id created_at updated_at color_id filament_id],
-              include: {
-                printer_user: {
-                  only: %i[id],
-                  include: {
-                    user: {
-                      only: %i[id username]
-                    },
-                    printer: {
-                      only: %i[id model]
-                    }
-                  }
-                },
-                color: {},
-                filament: {}
-              }
-            )
-          )
-        end
-        render json: { requests: requests, errors: {} }, status: status
+      if resource.is_a?(Offer) # Single offer
+        render json: {
+          offer: serialize_offer(resource),
+          errors: {}
+        }, status: status
+      else # Collection of offers by request
+        requests_with_offers = render_grouped_offers(resource)
+        render json: { requests: requests_with_offers, errors: {} }, status: status
       end
     end
 
-    def filter_offers(_offers)
+    def render_grouped_offers(offers)
+      return [] if offers.empty?
+
+      request_ids = offers.pluck(:request_id).uniq
+
+      requests = Request.where(id: request_ids)
+                        .includes(:user, offers: [
+                                    { printer_user: %i[user printer] },
+                                    :color,
+                                    :filament
+                                  ])
+
+      requests.as_json(
+        include: {
+          user: { only: %i[id username] },
+          offers: {
+            except: %i[request_id printer_user_id created_at updated_at color_id filament_id],
+            include: {
+              printer_user: {
+                only: [:id],
+                include: {
+                  user: { only: %i[id username] },
+                  printer: { only: %i[id model] }
+                }
+              },
+              color: {},
+              filament: {}
+            },
+            methods: %i[accepted_at]
+          }
+        }
+      )
+    end
+
+    def serialize_offer(offer)
+      offer.as_json(
+        except: %i[request_id printer_user_id created_at updated_at color_id filament_id],
+        include: {
+          printer_user: {
+            only: %i[id],
+            include: {
+              user: { only: %i[id username] },
+              printer: { only: %i[id model] }
+            }
+          },
+          color: {},
+          filament: {}
+        }
+      )
+    end
+
+    def filter_offers
       case params[:type]
       when 'all' # Offers received on my requests
-        Offer.not_in_accepted_request.for_user_requests(current_user)
+        Offer.not_in_accepted_request.for_user_requests
       when 'mine' # Offers sent to another user's requests
-        Offer.not_in_accepted_request.from_user_printers(current_user)
+        Offer.from_user_printers
       else
         Offer.none
       end
     end
 
     def offer_params
-      params.require(:offer).permit(:request_id, :printer_user_id, :color_id, :filament_id, :price, :print_quality,
-                                    :target_date)
+      params.require(:offer).permit(
+        :request_id, :printer_user_id, :color_id, :filament_id,
+        :price, :print_quality, :target_date
+      )
     end
 
     def set_offer
-      @offer = current_user.offers.find(params[:id])
+      printer_user_ids = PrinterUser.where(user: current_user).select(:id)
+      @offer = Offer.where(printer_user_id: printer_user_ids).find(params[:id])
     end
   end
 end

@@ -13,6 +13,7 @@ export class OfferModel {
     printQuality: number;
     targetDate: Date;
     cancelledAt?: Date | null;
+    acceptedAt?: Date | null;
 
 
     constructor(
@@ -24,7 +25,8 @@ export class OfferModel {
         price: number,
         print_quality: number,
         target_date: Date,
-        cancelled_at?: Date | null
+        cancelled_at?: Date | null,
+        accepted_at?: Date | null
     ) {
         this.id = id;
         this.request = request;
@@ -35,6 +37,7 @@ export class OfferModel {
         this.printQuality = print_quality;
         this.targetDate = target_date
         this.cancelledAt = cancelled_at;
+        this.acceptedAt = accepted_at;
     }
 
     static fromAPI(data: any): OfferModel | null {
@@ -50,7 +53,8 @@ export class OfferModel {
             data.price,
             data.print_quality,
             new Date(data.target_date),
-            new Date(data.cancelled_at)
+            data.cancelled_at ? new Date(data.cancelled_at) : null,
+            data.accepted_at ? new Date(data.accepted_at) : null
         );
     }
 }

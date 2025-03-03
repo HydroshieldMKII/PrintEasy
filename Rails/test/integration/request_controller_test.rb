@@ -66,33 +66,40 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
 
     assert(json_response['request'].all? { |r| r['user']['id'] == @user.id })
 
-    my_requests = Request.where(user_id: @user.id)
+    my_requests = Request.where(user: @user)
     assert_equal my_requests.count, json_response['request'].length
 
-    assert_equal @user_request.id, json_response['request'][0]['id']
-    assert_equal @user_request.name, json_response['request'][0]['name']
-    assert_equal @user_request.budget, json_response['request'][0]['budget']
-    assert_equal @user_request.comment, json_response['request'][0]['comment']
-    assert_equal @user_request.target_date.to_s, json_response['request'][0]['target_date']
-    assert_equal @user_request.stl_file_url, json_response['request'][0]['stl_file_url']
-    assert_equal @user_request.preset_requests.count, json_response['request'][0]['preset_requests'].length
-    assert_equal @user_request.preset_requests[0].color.id,
-                 json_response['request'][0]['preset_requests'][0]['color']['id']
-    assert_equal @user_request.preset_requests[0].color.name,
-                 json_response['request'][0]['preset_requests'][0]['color']['name']
-    assert_equal @user_request.preset_requests[0].filament.id,
-                 json_response['request'][0]['preset_requests'][0]['filament']['id']
-    assert_equal @user_request.preset_requests[0].filament.name,
-                 json_response['request'][0]['preset_requests'][0]['filament']['name']
-    assert_equal @user_request.preset_requests[0].printer.id,
-                 json_response['request'][0]['preset_requests'][0]['printer']['id']
-    assert_equal @user_request.preset_requests[0].printer.model,
-                 json_response['request'][0]['preset_requests'][0]['printer']['model']
-    assert_equal @user_request.preset_requests[0].print_quality,
-                 json_response['request'][0]['preset_requests'][0]['print_quality']
-    assert_equal @user_request.user.id, json_response['request'][0]['user']['id']
-    assert_equal @user_request.user.username, json_response['request'][0]['user']['username']
-    assert_equal @user_request.user.country.name, json_response['request'][0]['user']['country']['name']
+    request1 = json_response['request'][0]
+    assert_equal @user_request.id, request1['id']
+    assert_equal @user_request.name, request1['name']
+    assert_equal @user_request.budget, request1['budget']
+    assert_equal @user_request.comment, request1['comment']
+    assert_equal @user_request.target_date.to_s, request1['target_date']
+    assert_equal @user_request.stl_file_url, request1['stl_file_url']
+    assert_equal true, request1['has_offer_made?']
+    assert_equal true, request1['has_offer_accepted?']
+
+    preset1 = request1['preset_requests'][0]
+    assert_equal @preset.id, preset1['id']
+    assert_equal @preset.print_quality, preset1['print_quality']
+    assert_equal @preset.color.id, preset1['color']['id']
+    assert_equal @preset.color.name, preset1['color']['name']
+    assert_equal @preset.filament.id, preset1['filament']['id']
+    assert_equal @preset.filament.name, preset1['filament']['name']
+    assert_equal @preset.printer.id, preset1['printer']['id']
+    assert_equal @preset.printer.model, preset1['printer']['model']
+
+    request2 = json_response['request'][1]
+    assert_equal @user_request2.id, request2['id']
+    assert_equal @user_request2.name, request2['name']
+    assert_equal @user_request2.budget, request2['budget']
+    assert_equal @user_request2.comment, request2['comment']
+    assert_equal @user_request2.target_date.to_s, request2['target_date']
+    assert_equal @user_request2.stl_file_url, request2['stl_file_url']
+    assert_equal true, request2['has_offer_made?']
+    assert_equal false, request2['has_offer_accepted?']
+
+    assert_equal true, json_response['has_printer']
     assert_empty json_response['errors']
   end
 
@@ -134,6 +141,7 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
 
   test 'should return error for nonexistent request' do
     get api_request_url(id: 9999), as: :json
+
     assert_response :not_found
     json_response = assert_nothing_raised do
       JSON.parse(response.body)
@@ -404,7 +412,7 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
 
   test 'Data should not be updated if date is invalid' do
     assert_no_difference('Request.count') do
-      patch api_request_url(@user_request), params: {
+      patch api_request_url(@user_request2), params: {
         request: { name: 'abc', budget: 100, target_date: '1970-01-01' }
       }, as: :json
     end
@@ -478,7 +486,7 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
 
   test 'should not allow user to update request with invalid stl_file' do
     assert_no_difference('Request.count') do
-      patch api_request_url(@user_request), params: {
+      patch api_request_url(@user_request2), params: {
         request: { stl_file: fixture_file_upload('test/fixtures/files/invalid.txt', 'text/plain') }
       }
     end
@@ -520,11 +528,18 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
       request: { name: 'Hacked Update' }
     }, as: :json
 
-    assert_response :forbidden
+    assert_response :not_found
+
+    json_response = assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+
+    assert_equal ["Couldn't find Request with 'id'=1 [WHERE `requests`.`user_id` = ?]"], json_response['errors']['base']
   end
 
   ### DELETE ACTION ###
   test 'should not delete request with accepted offer' do
+    # debugger
     assert_difference('Request.count', 0) do
       delete api_request_url(@user_request)
     end
@@ -535,7 +550,7 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
       JSON.parse(response.body)
     end
 
-    assert_equal 'Cannot delete request with accepted offers', json_response['errors']['request'][0]
+    assert_equal ['Cannot delete request with accepted offers'], json_response['errors']['request']
   end
 
   test "should not allow user to delete another user's request" do
@@ -546,12 +561,12 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
       delete api_request_url(@user_request), as: :json
     end
 
-    assert_response :forbidden
+    assert_response :not_found
 
     json_response = assert_nothing_raised do
       JSON.parse(response.body)
     end
 
-    assert_equal 'You are not allowed to delete this request', json_response['errors']['request'][0]
+    assert_equal ["Couldn't find Request with 'id'=1 [WHERE `requests`.`user_id` = ?]"], json_response['errors']['base']
   end
 end
