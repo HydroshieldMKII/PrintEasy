@@ -13,18 +13,22 @@ class Contest < ApplicationRecord
     where('theme LIKE ?', "%#{query}%")
   }
 
-  scope :finished, -> {
-    where('end_at < ?', Time.now)
+  scope :active, ->(params) {
+    return if !params.key?(:active)
+
+    where('start_at <= ? AND (end_at IS NULL OR end_at >= ?)', Time.now, Time.now)
   }
 
-  scope :active, -> {
-    where('start_at <= ? AND (end_at IS NULL OR end_at > ?)', Time.now, Time.now)
+  scope :finished, ->(params) {
+    return if !params.key?(:finished)
+
+    where('end_at < ?', Time.now)
   }
 
   scope :multi_submission, -> { 
     where("submission_limit > ? AND start_at <= ?", 1, Time.now)
   }
-  # sort=submissions_desc or sort=submissions_asc
+  
   scope :sort_by_submissions, -> (direction_params) {
     return if direction_params.blank?
 
@@ -33,21 +37,17 @@ class Contest < ApplicationRecord
       .group(:id)
       .order("COUNT(submissions.id) #{direction.upcase}")
   }
-  # sort=start_at_desc or sort=start_at_asc
-  scope :sort_by_date, -> (sort_params) {
-    return if sort_params.blank?
-
-    parts = sort_params.split('_')
   
-    column = parts[0..-2].join('_')
-    direction = parts.last
+  scope :sort_by_date, -> (category, sort) {
+    return if sort.blank? || category.blank?
     
     allowed_columns = %w[start_at end_at]
     allowed_directions = %w[asc desc]
 
-    if allowed_columns.include?(column) && allowed_directions.include?(direction)
-      order(column => direction)
-    end 
+    column = allowed_columns.include?(category) ? category : "start_at"
+    direction = allowed_directions.include?(sort) ? sort : "asc"
+
+    order(column => direction)
   }
 
   has_many :submissions, dependent: :destroy
@@ -86,10 +86,13 @@ class Contest < ApplicationRecord
     top_submission&.user
   end
 
-  def self.contests_order(user)
+  def self.contests_order(user, params)
     contests = user.accessible_contests
-                    .left_joins(submissions: :likes)
-                    .group('contests.id')
+                    .search(params[:query])
+                    .active(params)
+                    .finished(params)
+                    .sort_by_submissions(params[:sort_by_submissions])
+                    .sort_by_date(params[:category], params[:sort])
                     .order(Arel.sql('
                       CASE 
                         WHEN contests.end_at IS NOT NULL AND contests.end_at < CURRENT_DATE THEN 1 

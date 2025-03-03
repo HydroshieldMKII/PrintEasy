@@ -5,7 +5,7 @@ module Api
     before_action :is_admin?, only: %i[create update destroy]
 
     def index
-      @contests = Contest.contests_order(current_user)
+      @contests = Contest.contests_order(current_user, params)
 
       render json: { contests: @contests.as_json(methods: %i[image_url finished? started? winner_user]), errors: {} }, status: :ok
     end

@@ -9,8 +9,33 @@
        
     <div class="search-container">
         <input type="text" pInputText [(ngModel)]="searchTerm" placeholder="{{ 'contest.search_text' | translate }}" />
-        <button pButton pRipple icon="pi pi-filter" class="p-button-text"></button>
-        <button pButton pRipple icon="pi pi-sort-alt" class="p-button-text"></button>
+        <!-- <button pButton pRipple icon="pi pi-filter" class="p-button-text"></button>
+        <button pButton pRipple icon="pi pi-sort-alt" class="p-button-text"></button> -->
+        <p-floatlabel variant="in">
+          <p-select
+            inputId="in_label"
+            [options]="filterOptions"
+            [(ngModel)]="selectedFilterOption"
+            optionLabel="label"
+            styleClass="w-full"
+            variant="filled"
+            (onChange)="onFilterChange($event)"
+          />
+          <label for="in_label">Filter</label>
+        </p-floatlabel>
+
+        <p-floatlabel variant="in">
+          <p-select
+            inputId="in_label"
+            [options]="sortOptions"
+            [(ngModel)]="selectedSortOption"
+            optionLabel="label"
+            styleClass="w-full"
+            variant="filled"
+            (onChange)="onSortChange($event)"
+          />
+          <label for="in_label">Sort</label>
+        </p-floatlabel>
     </div>
 
     <div class="contest-list">

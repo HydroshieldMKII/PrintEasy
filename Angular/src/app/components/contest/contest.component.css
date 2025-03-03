@@ -143,6 +143,14 @@ h2 {
     width: 100%;
 }
 
+:host ::ng-deep .p-select {
+    width: 187px;
+}
+
+:host ::ng-deep .p-select-label {
+   display: flex;
+}
+
 @media (max-width: 768px) {
     p-speeddial {
         padding: absolute;

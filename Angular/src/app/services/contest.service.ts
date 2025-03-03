@@ -17,8 +17,8 @@ export class ContestService {
 
   constructor(private api: ApiRequestService) { }
 
-  getContests(): Observable<ContestModel[]> {
-    return this.api.getRequest('api/contest').pipe(
+  getContests(params: any): Observable<ContestModel[]> {
+    return this.api.getRequest('api/contest', params).pipe(
       map(response => {
         if (response.status === 200) {
           return response.data.contests.map((contest: any) => ContestModel.fromApi(contest));
