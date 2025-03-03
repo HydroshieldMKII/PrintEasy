@@ -199,7 +199,9 @@
         "confirm_delete": "Confirmer la suppression",
         "confirm_delete_message": "Êtes-vous sûr de vouloir supprimer cette demande ? Cette action ne peut pas être annulée.",
         "delete_success": "Demande supprimée avec succès",
-        "delete_error": "Échec de la suppression de la demande"
+        "delete_error": "Échec de la suppression de la demande",
+        "accepted": "Acceptée",
+        "pending": "En attente"
     },
     "requestForm": {
         "edit_request": "Modifier la demande",

@@ -122,8 +122,9 @@
               <td [ngClass]="{'disabled-col ': request.acceptedAt}">{{ request.targetDate | date }}</td>
               <td [ngClass]="{'disabled-col ': request.acceptedAt}">{{ request.user.country.name }}</td>
                 <td *ngIf="activeTab == 'mine'">
-                <span [ngStyle]="{'color': 'rgb(34, 34, 34)', 'background-color': request.acceptedAt ? '#4CAF50' : '#FFA726', 'border-radius': '10px', 'height': '30px', 'padding': '7px', 'display': 'flex', 'flex-direction': 'row', 'align-items': 'center'}">
-                  <p>{{ request.acceptedAt ? 'Accepted' : 'Pending' }}</p>
+                <span [ngStyle]="{'color': 'rgb(34, 34, 34)', 'background-color': request.acceptedAt ? '#4CAF50' : '#FFA726', 'border-radius': '10px', 'height': '30px','width':'90px', 'padding': '7px', 'display': 'flex', 'flex-direction': 'row', 'align-items': 'center', 'justify-content': 'center'}">
+                  <p *ngIf="request.acceptedAt">{{ 'request.accepted' | translate }}</p>
+                  <p *ngIf="!request.acceptedAt">{{ 'request.pending' | translate }}</p>
                 </span>
                 </td>
               <td>

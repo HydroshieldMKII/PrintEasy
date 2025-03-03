@@ -199,7 +199,9 @@
         "confirm_delete": "Confirm Delete",
         "confirm_delete_message": "Are you sure you want to delete the request? This action cannot be undone.",
         "delete_success": "Request deleted successfully",
-        "delete_error": "Request deletion failed"
+        "delete_error": "Request deletion failed",
+        "accepted": "Accepted",
+        "pending": "Pending"
     },
     "requestForm": {
         "edit_request": "Edit Request",
