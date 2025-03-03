@@ -131,7 +131,7 @@
                                             <div class="status-content-date-container">
                                                 <p class="status-content-date">{{status.updatedAt | date:'medium'}}</p>
                                             </div>
-                                            <div class="three-dot-container" *ngIf="!consumer && !['Cancelled', 'Arrived', 'Shipped'].includes(currentStatus?.statusName ?? '')">
+                                            <div class="three-dot-container" *ngIf="!consumer && !['Cancelled', 'Arrived', 'Shipped'].includes(currentStatus?.statusName ?? '') && AcceptedStatus.length > 1">
                                                 <p-button [rounded]="true" [text]="true" icon="pi pi-ellipsis-v" (click)="menu.toggle($event); setSelectedOrderStatus(status.id)" />
                                                 <p-menu #menu [model]="editMenuItems" [popup]="true"></p-menu>
                                             </div>

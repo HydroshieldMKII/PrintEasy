@@ -125,7 +125,17 @@
         "no_review_message": "Pas d'avis",
         "action_button_label": "Voir les détails",
         "no_contract_message": "Vous n'avez aucun contrat en attente !",
-        "no_commands_message": "Vous n'avez aucune commande en attente !"
+        "no_commands_message": "Vous n'avez aucune commande en attente !",
+        "ssf": {
+            "reviewed": "Avisé",
+            "not_reviewed": "Non avisé",
+            "name_asc": "Nom (ASC)",
+            "name_desc": "Nom (DESC)",
+            "price_asc": "Prix (ASC)",
+            "price_desc": "Prix (DESC)",
+            "date_asc": "Date (ASC)",
+            "date_desc": "Date (DESC)"
+        }
     },
     "order": {
         "printer_owner": "Propriétaire de l'imprimante :",

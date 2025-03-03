@@ -125,7 +125,17 @@
         "no_review_message": "No Review",
         "action_button_label": "See Details",
         "no_contract_message": "You dont have any contracts pending!",
-        "no_commands_message": "You dont have any commands pending!"
+        "no_commands_message": "You dont have any commands pending!",
+        "ssf": {
+            "reviewed": "Reviewed",
+            "not_reviewed": "Not Reviewed",
+            "name_asc": "Name (ASC)",
+            "name_desc": "Name (DESC)",
+            "price_asc": "Price (ASC)",
+            "price_desc": "Price (DESC)",
+            "date_asc": "Date (ASC)",
+            "date_desc": "Date (DESC)"
+        }
     },
     "order": {
         "printer_owner": "Printer owner :",

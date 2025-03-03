@@ -13,17 +13,8 @@ import { Observable } from 'rxjs';
 export class OrderService {
     constructor(private api: ApiRequestService) { }
 
-    getMyOrders(): Observable<ApiResponseModel> {
-        return this.api.getRequest('api/order').pipe(
-            map((response: ApiResponseModel) => {
-                response.data.orders = response.data.orders.map((order: any) => OrderModel.fromAPI(order));
-                return response;
-            })
-        );
-    }
-
-    getMakeOrders(): Observable<ApiResponseModel> {
-        return this.api.getRequest('api/order?type=printer').pipe(
+    getOrders(params : { [key: string]: string } | undefined): Observable<ApiResponseModel> {
+        return this.api.getRequest('api/order', params).pipe(
             map((response: ApiResponseModel) => {
                 response.data.orders = response.data.orders.map((order: any) => OrderModel.fromAPI(order));
                 return response;

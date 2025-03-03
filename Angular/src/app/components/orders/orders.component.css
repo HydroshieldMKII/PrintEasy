@@ -48,3 +48,26 @@ i {
     color: #6c757d;
     font-size: 1.2rem;
 }
+
+.p-input-icon-right {
+    position: relative;
+}
+
+.p-input-icon-right input {
+    padding-right: 2.5rem;
+}
+
+.p-input-icon-right .pi {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.search-field {
+    width: 100%;
+}
+
+:host ::ng-deep .p-select {
+    width: 190px;
+}
