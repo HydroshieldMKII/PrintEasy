@@ -15,11 +15,12 @@ import { DialogModule } from 'primeng/dialog';
 import { MessageService, SelectItem } from 'primeng/api';
 import { Select, SelectModule } from 'primeng/select';
 import { FloatLabelModule } from 'primeng/floatlabel';
+import { SliderModule } from 'primeng/slider';
 
 @Component({
   selector: 'app-contest',
   standalone: true,
-  imports: [CardModule, ButtonModule, InputTextModule, FormsModule, CommonModule, SpeedDialModule, DialogModule, RouterLink, TranslatePipe, SelectModule, FloatLabelModule],
+  imports: [CardModule, ButtonModule, InputTextModule, FormsModule, CommonModule, SpeedDialModule, DialogModule, RouterLink, TranslatePipe, SelectModule, FloatLabelModule, SliderModule],
   templateUrl: './contest.component.html',
   styleUrls: ['./contest.component.css']
 })
@@ -36,11 +37,14 @@ export class ContestComponent {
   currentSort: string = '';
   currentSortCategory: string = '';
   currentQuery: string = '';
+  currentValue: number = 1;
+  sliderClass: string = 'none';
 
   filterOptions: SelectItem[] = [
     { label: 'All', value: '' },
     { label: 'Active', value: 'active' },
-    { label: 'Finished', value: 'finished' }
+    { label: 'Finished', value: 'finished' },
+    { label: 'Submissions', value: 'submissions' },
   ];
   sortOptions: SelectItem[] = [
     { label: 'None', value: '' },
@@ -62,6 +66,10 @@ export class ContestComponent {
 
       this.selectedFilterOption = this.filterOptions.find(option => option.value === this.currentFilter) || this.filterOptions[0];
       this.selectedSortOption = this.sortOptions.find(option => option.value === `${this.currentSortCategory}-${this.currentSort}`) || this.sortOptions[0];
+
+      if (this.currentFilter === 'submissions') {
+        this.sliderClass = 'flex';
+      }
     });
 
     this.fetchContests();
@@ -125,7 +133,12 @@ export class ContestComponent {
       queryParamsHandling: 'merge'
     });
 
-    this.fetchContests();
+    if (this.currentFilter === 'submissions') {
+      this.sliderClass = 'flex';
+    } else {
+      this.sliderClass = 'none';
+      this.fetchContests();
+    }
   }
 
   onSortChange(event: any) {
@@ -152,6 +165,9 @@ export class ContestComponent {
     });
 
     this.fetchContests();
+  }
+
+  onSlideEnd(event: any) {
   }
 
   fetchContests() {

@@ -1,88 +1,79 @@
 <div class="contest-container">
-    @if (authService.currentUser?.isAdmin) {
-    <p-speeddial direction="left" [style]="{ position: 'absolute', top: 1, right: 'calc(1%)' }"
-        [buttonProps]="{ severity: 'success', rounded: true }" (onClick)="newContest()" />
-    }
-    
-    <h2>{{ 'contest.title_page' | translate }}</h2>
-    <p [innerHTML]="'contest.description_page' | translate"></p>
-       
-    <div class="search-container">
-        <form (submit)="onSearch()">
-          <input class="search-bar" type="text" pInputText [(ngModel)]="currentQuery" name="searchTerm" placeholder="{{ 'contest.search_text' | translate }}" />
-        </form>
-        <!-- <button pButton pRipple icon="pi pi-filter" class="p-button-text"></button>
-        <button pButton pRipple icon="pi pi-sort-alt" class="p-button-text"></button> -->
-        <p-floatlabel variant="in">
-          <p-select
-            inputId="in_label"
-            [options]="filterOptions"
-            [(ngModel)]="selectedFilterOption" name="selectedFilterOption"
-            optionLabel="label"
-            styleClass="w-full"
-            variant="filled"
-            (onChange)="onFilterChange($event)"
-          />
-          <label for="in_label">Filter</label>
-        </p-floatlabel>
+  @if (authService.currentUser?.isAdmin) {
+  <p-speeddial direction="left" [style]="{ position: 'absolute', top: 1, right: 'calc(1%)' }"
+    [buttonProps]="{ severity: 'success', rounded: true }" (onClick)="newContest()" />
+  }
 
-        <p-floatlabel variant="in">
-          <p-select
-            inputId="in_label"
-            [options]="sortOptions"
-            [(ngModel)]="selectedSortOption" name="selectedSortOption"
-            optionLabel="label"
-            styleClass="w-full"
-            variant="filled"
-            (onChange)="onSortChange($event)"
-          />
-          <label for="in_label">Sort</label>
-        </p-floatlabel>
+  <h2>{{ 'contest.title_page' | translate }}</h2>
+  <p [innerHTML]="'contest.description_page' | translate"></p>
+
+  <div class="search-container">
+    <div [class]="sliderClass">
+      <p>{{ currentValue }}</p>
+      <p-slider [(ngModel)]="currentValue" (onSlideEnd)="onSlideEnd($event)" min="0" max="3" />
     </div>
 
-    <div class="contest-list">
-        <div *ngFor="let contest of contests" class="card" [ngStyle]="{ opacity: contest.finished ? '0.5' : '1' }">
-            <div class="contest-content">
-                <img [src]="contest.image" alt="Contest image" class="contest-image" loading="lazy" />
-                <div class="contest-details">
-                    <h3 class="contest-theme">{{ contest.theme }} {{ contest.finished ? '(Ended)' : '' }}</h3>
-                    <p class="contest-description">{{ contest.description ? (contest.description.length > 30 ? (contest.description | slice:0:30) + '...' : contest.description) : '' }}</p>
-                    <p *ngIf="contest.finished && contest.winnerUser">
-                        <i class="pi pi-trophy"></i><span> {{ 'contest.winner' | translate }}:</span> {{ contest.winnerUser.username }}
-                    </p>
-                    <p *ngIf="!contest.finished || !contest.winnerUser">
-                        <i class="pi pi-users"></i><span> {{ 'contest.submission_limit' | translate }}:</span> {{ contest.submissionLimit }}
-                    </p>
-  
-                    <p><i class="pi pi-calendar"></i><span> {{ 'contest.starts' | translate }}:</span> {{ contest.startAt | date:'MMM d, y h:mm a' }}</p>
-                    <p><i class="pi pi-calendar-times"></i><span> {{ 'contest.ends' | translate }}:</span> {{ contest.endAt ? (contest.endAt | date:'MMM d, y h:mm a') : 'N/A' }}</p>
-                </div>
-            </div>
+    <p-floatlabel variant="in">
+      <p-select inputId="in_label" [options]="filterOptions" [(ngModel)]="selectedFilterOption"
+        name="selectedFilterOption" optionLabel="label" styleClass="w-full" variant="filled"
+        (onChange)="onFilterChange($event)" />
+      <label for="in_label">Filter</label>
+    </p-floatlabel>
 
+    <p-floatlabel variant="in">
+      <p-select inputId="in_label" [options]="sortOptions" [(ngModel)]="selectedSortOption" name="selectedSortOption"
+        optionLabel="label" styleClass="w-full" variant="filled" (onChange)="onSortChange($event)" />
+      <label for="in_label">Sort</label>
+    </p-floatlabel>
 
-            <button [routerLink]="['/contest', contest.id, 'submissions']" pButton label="{{ 'contest.button_contest_detail' | translate }}" class="p-button-outlined contest-detail-button"></button>
-            
-            @if (authService.currentUser?.isAdmin) {
-            <div class="admin-buttons">
-                <button pButton icon="pi pi-pencil" class="p-button-text" (click)="editContest(contest)"></button>
-                <button pButton icon="pi pi-trash" class="p-button-text p-button-danger"
-                    (click)="deleteContest(contest.id)"></button>
-            </div>
-            }
+    <form (submit)="onSearch()">
+      <input class="search-bar" type="text" pInputText [(ngModel)]="currentQuery" name="searchTerm"
+        placeholder="{{ 'contest.search_text' | translate }}" />
+    </form>
+  </div>
+
+  <div class="contest-list">
+    <div *ngFor="let contest of contests" class="card" [ngStyle]="{ opacity: contest.finished ? '0.5' : '1' }">
+      <div class="contest-content">
+        <img [src]="contest.image" alt="Contest image" class="contest-image" loading="lazy" />
+        <div class="contest-details">
+          <h3 class="contest-theme">{{ contest.theme }} {{ contest.finished ? '(Ended)' : '' }}</h3>
+          <p class="contest-description">{{ contest.description ? (contest.description.length > 30 ?
+            (contest.description | slice:0:30) + '...' : contest.description) : '' }}</p>
+          <p *ngIf="contest.finished && contest.winnerUser">
+            <i class="pi pi-trophy"></i><span> {{ 'contest.winner' | translate }}:</span> {{ contest.winnerUser.username
+            }}
+          </p>
+          <p *ngIf="!contest.finished || !contest.winnerUser">
+            <i class="pi pi-users"></i><span> {{ 'contest.submission_limit' | translate }}:</span> {{
+            contest.submissionLimit }}
+          </p>
+
+          <p><i class="pi pi-calendar"></i><span> {{ 'contest.starts' | translate }}:</span> {{ contest.startAt |
+            date:'MMM d, y h:mm a' }}</p>
+          <p><i class="pi pi-calendar-times"></i><span> {{ 'contest.ends' | translate }}:</span> {{ contest.endAt ?
+            (contest.endAt | date:'MMM d, y h:mm a') : 'N/A' }}</p>
         </div>
+      </div>
+
+
+      <button [routerLink]="['/contest', contest.id, 'submissions']" pButton
+        label="{{ 'contest.button_contest_detail' | translate }}"
+        class="p-button-outlined contest-detail-button"></button>
+
+      @if (authService.currentUser?.isAdmin) {
+      <div class="admin-buttons">
+        <button pButton icon="pi pi-pencil" class="p-button-text" (click)="editContest(contest)"></button>
+        <button pButton icon="pi pi-trash" class="p-button-text p-button-danger"
+          (click)="deleteContest(contest.id)"></button>
+      </div>
+      }
     </div>
+  </div>
 </div>
 
-<p-dialog
-  [(visible)]="deleteDialogVisible"
-  [modal]="true"
-  [style]="{ width: '25rem' }"
-  dismissableMask="true"
-  closable="false"
-  blockScroll="true"
-  resizable="false"
-  draggable="false"
->
+<p-dialog [(visible)]="deleteDialogVisible" [modal]="true" [style]="{ width: '25rem' }" dismissableMask="true"
+  closable="false" blockScroll="true" resizable="false" draggable="false">
   <ng-template #header>
     <div class="inline-flex items-center justify-center gap-2">
       <i class="pi pi-exclamation-triangle text-red-500 text-2xl"></i>
@@ -93,12 +84,8 @@
     {{ 'contest.confirm_delete_message' | translate }}
   </span>
   <ng-template #footer>
-    <p-button
-      label="{{ 'global.cancel_button' | translate }}"	
-      [text]="true"
-      severity="secondary"
-      (click)="deleteDialogVisible = false"
-    />
+    <p-button label="{{ 'global.cancel_button' | translate }}" [text]="true" severity="secondary"
+      (click)="deleteDialogVisible = false" />
     <p-button label="{{ 'global.delete_button' | translate }}" severity="danger" (click)="confirmDelete()" />
   </ng-template>
 </p-dialog>

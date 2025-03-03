@@ -25,8 +25,8 @@ class Contest < ApplicationRecord
     where('end_at < ?', Time.now)
   }
 
-  scope :multi_submission, -> { 
-    where("submission_limit > ? AND start_at <= ?", 1, Time.now)
+  scope :multi_submission, ->(params) { 
+    where("submission_limit > ? AND start_at <= ?", params, Time.now)
   }
   
   scope :sort_by_submissions, -> (direction_params) {
@@ -91,6 +91,7 @@ class Contest < ApplicationRecord
                     .search(params[:search])
                     .active(params)
                     .finished(params)
+                    .multi_submission(params[:multi_submission])
                     .sort_by_submissions(params[:sort_by_submissions])
                     .sort_by_date(params[:category], params[:sort])
                     .order(Arel.sql('
