@@ -4,6 +4,7 @@ class Request < ApplicationRecord
   belongs_to :user
   has_many :offers, dependent: :destroy
   has_many :preset_requests, dependent: :destroy
+  validate :unique_preset_requests
 
   accepts_nested_attributes_for :preset_requests, allow_destroy: true
   validates :user_id, presence: true
@@ -19,11 +20,11 @@ class Request < ApplicationRecord
   # Update
   validate :target_date_cannot_be_in_the_past_on_update, on: :update
   validate :stl_file_must_have_stl_extension
-  validates :preset_requests,
-            uniqueness: { include: %i[color_id filament_id printer_id], message: 'This preset request already exists' }
 
   scope :with_associations, -> { includes(:user, preset_requests: %i[color filament printer]) }
-  scope :search_by_name, ->(query) { where('name LIKE ?', "%#{query}%") if query.present? }
+  scope :search_by_name, lambda { |query|
+    where('requests.name LIKE ?', "%#{query}%") if query.present?
+  }
   scope :not_accepted, lambda {
     accepted_requests = joins(offers: { order: :order_status })
                         .where(order_status: { status_name: 'Accepted' })
@@ -142,8 +143,8 @@ class Request < ApplicationRecord
   end
 
   # Format response for API
-  def self.format_response(resource, current_user, status: :ok)
-    has_printer = current_user.printers.exists?
+  def self.format_response(resource, status: :ok)
+    has_printer = Current.user.printers.exists?
 
     request_data = if resource.is_a?(Request)
                      resource.serialize
@@ -221,5 +222,17 @@ class Request < ApplicationRecord
     return if extension.downcase == '.stl'
 
     errors.add(:stl_file, 'must have .stl extension')
+  end
+
+  def unique_preset_requests
+    seen = {}
+    preset_requests.each do |preset|
+      key = [preset.color_id, preset.filament_id, preset.printer_id, preset.print_quality]
+      if seen[key]
+        errors.add(:base, 'Duplicate preset exists in the request')
+      else
+        seen[key] = true
+      end
+    end
   end
 end

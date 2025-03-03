@@ -173,9 +173,21 @@ h3 {
     align-items: center;
 }
 
+:host ::ng-deep .p-select {
+    width: 180px;
+}
+
+:host ::ng-deep .p-select-label {
+    display: flex;
+}
+
 @media (max-width: 768px) {
     .ssf {
         display: block;
+    }
+
+    :host ::ng-deep .p-select {
+        width: 100%;
     }
 
     /* each child */

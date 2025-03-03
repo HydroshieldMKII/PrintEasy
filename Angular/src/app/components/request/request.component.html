@@ -68,21 +68,12 @@
                   [(ngModel)]="searchQuery"
                   name="searchQuery"
                   class="search-field"
-                  style="margin-bottom: 10px; margin-right: 10px"
+                  style="margin-bottom: 10px; margin-right: 10px; height: 100%;"
                 />
               </span>
-              <button
-                pButton
-                type="submit"
-                icon="pi pi-search"
-                label="{{ 'request.search_button' | translate }}"
-                class="search-btn"
-              ></button>
             </form>
           </div>
         </div>
-
-        <hr />
 
         <p-table
           *ngIf="currentRequests.length > 0"

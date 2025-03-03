@@ -326,7 +326,7 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
       JSON.parse(response.body)
     end
 
-    assert_equal ['Duplicate preset exists in the request'], json_response['errors']['preset_requests.base']
+    assert_equal ['Duplicate preset exists in the request'], json_response['errors']['base']
   end
 
   test 'should not update request with accepted offers' do
@@ -403,7 +403,6 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
     json_response = assert_nothing_raised do
       JSON.parse(response.body)
     end
-    p json_response
 
     assert_equal 'Fully Updated Request', json_response['request']['name']
     assert_equal 'This is a fully updated request', json_response['request']['comment']
@@ -413,11 +412,17 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
     assert_equal @user_request2.preset_requests.count, json_response['request']['preset_requests'].length
 
     first_preset = json_response['request']['preset_requests'][0]
+    assert_not_nil first_preset['id']
     assert_equal 3, first_preset['color']['id']
     assert_equal 3, first_preset['filament']['id']
     assert_equal 3, first_preset['printer']['id']
     assert_equal 0.3, first_preset['print_quality']
 
+    second_preset = json_response['request']['preset_requests'][1]
+    assert_not_nil second_preset['color']['id']
+    assert_equal 2, second_preset['filament']['id']
+    assert_equal 2, second_preset['printer']['id']
+    assert_equal 0.2, second_preset['print_quality']
     assert_empty json_response['errors']
   end
 

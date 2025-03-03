@@ -71,14 +71,14 @@ export class RequestsComponent implements OnInit {
   initializeSelectOptions(): void {
     if (this.currentLanguage === 'fr') {
       this.filterOptions = [
-        { label: 'Sélectionner un filtre (Effacer)', value: '' },
+        { label: 'Aucun', value: '' },
         { label: 'Mes imprimantes', value: 'owned-printer' },
         { label: 'Mon pays', value: 'country' },
         { label: 'Acceptées', value: 'in-progress' }
       ];
 
       this.sortOptions = [
-        { label: 'Sélectionner un tri (Effacer)', value: '' },
+        { label: 'Aucun', value: '' },
         { label: 'Nom (Asc)', value: 'name-asc' },
         { label: 'Nom (Desc)', value: 'name-desc' },
         { label: 'Date (Asc)', value: 'date-asc' },
@@ -90,14 +90,14 @@ export class RequestsComponent implements OnInit {
       ];
     } else {
       this.filterOptions = [
-        { label: 'Select a filter (Clear)', value: '' },
+        { label: 'None', value: '' },
         { label: 'My printers', value: 'owned-printer' },
         { label: 'My country', value: 'country' },
         { label: 'Accepted', value: 'in-progress' }
       ];
 
       this.sortOptions = [
-        { label: 'Select a sort (Clear)', value: '' },
+        { label: 'None', value: '' },
         { label: 'Name (Asc)', value: 'name-asc' },
         { label: 'Name (Desc)', value: 'name-desc' },
         { label: 'Date (Asc)', value: 'date-asc' },

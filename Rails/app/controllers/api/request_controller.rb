@@ -6,13 +6,13 @@ module Api
 
     def index
       @requests = Request.fetch_for_user(params)
-      render Request.format_response(@requests, current_user)
+      render Request.format_response(@requests)
     end
 
     def show
       @request = Request.find(params[:id])
       if @request.viewable_by_user?
-        render Request.format_response(@request, current_user)
+        render Request.format_response(@request)
       else
         render json: { request: {}, errors: @request.errors }, status: :unprocessable_entity
       end
@@ -22,7 +22,7 @@ module Api
       request = Request.new(request_params)
       request.user = current_user
       if request.save
-        render Request.format_response(request, current_user, status: :created)
+        render Request.format_response(request, status: :created)
       else
         render json: { request: {}, errors: request.errors }, status: :unprocessable_entity
       end
@@ -30,7 +30,7 @@ module Api
 
     def update
       if @request.update(request_params)
-        render Request.format_response(@request, current_user)
+        render Request.format_response(@request)
       else
         render json: { request: {}, errors: @request.errors }, status: :unprocessable_entity
       end
