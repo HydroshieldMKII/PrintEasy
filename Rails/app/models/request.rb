@@ -11,11 +11,11 @@ class Request < ApplicationRecord
   validates :comment, length: { maximum: 200 }
   has_one_attached :stl_file
 
-  # Create validations
+  # Create
   validates :stl_file, presence: true, on: :create
   validates :target_date, presence: true, comparison: { greater_than: Date.today }, on: :create
 
-  # Update validations
+  # Update
   validate :target_date_cannot_be_in_the_past_on_update, on: :update
   validate :stl_file_must_have_stl_extension
   validate :unique_preset_requests
