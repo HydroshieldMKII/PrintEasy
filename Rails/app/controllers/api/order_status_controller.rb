@@ -3,6 +3,7 @@
 module Api
   class OrderStatusController < AuthenticatedController
     before_action :get_order_status, only: %i[show update destroy]
+    
     def show
       if current_user == @order_status.consumer || current_user == @order_status.printer
         render json: {
