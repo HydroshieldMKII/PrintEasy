@@ -2,6 +2,19 @@ import { RequestPresetModel } from './request-preset.model';
 import { PresetModel } from './preset.model';
 import { UserModel } from './user.model';
 
+export type RequestApi = {
+    id: number;
+    name: string;
+    budget: number;
+    target_date: string;
+    comment: string;
+    stl_file_url: string;
+    preset_requests: RequestPresetModel[];
+    user: any;
+    has_offers: boolean;
+    accepted_at: string | null;
+}
+
 export class RequestModel {
     id: number;
     name: string;

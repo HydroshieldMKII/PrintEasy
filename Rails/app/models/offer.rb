@@ -104,14 +104,16 @@ class Offer < ApplicationRecord
 
     requests.as_json(
       include: {
-        user: { only: %i[id username] },
         offers: {
           except: %i[request_id printer_user_id created_at updated_at color_id filament_id],
           include: {
             printer_user: {
               only: [:id],
               include: {
-                user: { only: %i[id username] },
+                user: { 
+                  only: %i[id username],
+                  include: { country: {} }
+                },
                 printer: { only: %i[id model] }
               }
             },

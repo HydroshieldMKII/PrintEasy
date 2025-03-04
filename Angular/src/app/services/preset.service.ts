@@ -80,10 +80,7 @@ export class PresetService {
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
                     console.log("Fetched Colors:", response.data);
-                    this.cachedColors = (response.data as ColorModel[]).map(color => ({
-                        ...color,
-                        name: this.translateColor(color.id)
-                    }));
+                    this.cachedColors = (response.data as ColorModel[]).map(color => new ColorModel(color.id, color.name));
                     return this.cachedColors;
                 }
                 return [];
