@@ -65,13 +65,13 @@ module Api
 
     def offer_params
       params.require(:offer).permit(
-        :request_id, :printer_user_id, :color_id, :filament_id,
+        :request_id, :printer_users_id, :color_id, :filament_id,
         :price, :print_quality, :target_date
       )
     end
 
     def set_offer
-      @offer = Offer.where(printer_user: current_user.printer_user).find(params[:id])
+      @offer = Offer.where(printer_users: current_user.printer_users).find(params[:id])
     end
   end
 end

@@ -8,6 +8,9 @@ import { OfferModalComponent } from '../offer-modal/offer-modal.component';
 import { ImportsModule } from '../../../imports';
 import { TranslatePipe } from '@ngx-translate/core';
 import { TranslateService } from '@ngx-translate/core';
+import { OfferModel } from '../../models/offer.model';
+import { ApiResponseModel } from '../../models/api-response.model';
+import { RequestOfferModel } from '../../models/request-offer.model';
 
 @Component({
   selector: 'app-offer',
@@ -17,8 +20,8 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class OffersComponent {
   activeTab: string = 'mine';
-  offers: any[] | null = null;  // "all" offers (received)
-  myOffers: any[] | null = null; // "my" pending offers
+  offers: RequestOfferModel[] | null = null;  // "all" offers (received)
+  myOffers: RequestOfferModel[] | null = null; // "my" pending offers
   offerModalVisible: boolean = false;
   offerIdToEdit: number | null = null;
 
@@ -55,9 +58,15 @@ export class OffersComponent {
         this.offers = requests;
       });
     } else if (this.activeTab === 'mine') {
-      this.offerService.getMyOffers().subscribe((offers: any[]) => {
-        console.log("my offers:", offers);
-        this.myOffers = offers;
+      this.offerService.getMyOffers().subscribe((response) => {
+        console.log("my offers loaded:", response);
+        if (response instanceof ApiResponseModel) {
+          console.log("Error getting my offers:", response);
+          return;
+        }
+
+        console.log("my offers:", response);
+        this.myOffers = response as RequestOfferModel[];
       });
     }
   }
@@ -71,8 +80,12 @@ export class OffersComponent {
       });
     }
     if (this.activeTab === 'mine' && !this.myOffers) {
-      this.offerService.getMyOffers().subscribe((requests: any[]) => {
-        this.myOffers = requests;
+      this.offerService.getMyOffers().subscribe((response) => {
+        if (response instanceof ApiResponseModel) {
+          console.log("Error getting my offers:", response);
+          return;
+        }
+        this.myOffers = response as RequestOfferModel[];
       });
     }
   }
@@ -143,7 +156,11 @@ export class OffersComponent {
         this.offerToAccept = null;
         this.acceptDialogVisible = false;
 
-        this.offerService.getMyOffers().subscribe((offers: any[]) => {
+        this.offerService.getMyOffers().subscribe((offers: any) => {
+          if (offers instanceof ApiResponseModel) {
+            console.log("Error getting my offers:", offers);
+            return;
+          }
           this.myOffers = offers;
         });
 
@@ -166,8 +183,12 @@ export class OffersComponent {
   onOfferUpdated(offer: any): void {
     console.log("Offer updated from offer list:", offer);
     this.offerIdToEdit = null;
-    this.offerService.getMyOffers().subscribe((offers: any[]) => {
-      this.myOffers = offers;
+    this.offerService.getMyOffers().subscribe((offers) => {
+      if (offers instanceof ApiResponseModel) {
+        console.log("Error getting my offers:", offers);
+        return;
+      }
+      this.myOffers = offers as RequestOfferModel[];
     });
   }
 
@@ -177,8 +198,12 @@ export class OffersComponent {
         this.offerToRefuse = null;
         this.refuseDialogVisible = false;
 
-        this.offerService.getMyOffers().subscribe((offers: any[]) => {
-          this.myOffers = offers;
+        this.offerService.getMyOffers().subscribe((response) => {
+          if (response instanceof ApiResponseModel) {
+            console.log("Error getting my offers:", response);
+            return;
+          }
+          this.myOffers = response as RequestOfferModel[];
         });
 
         this.offerService.getOffers().subscribe((offers: any[]) => {
