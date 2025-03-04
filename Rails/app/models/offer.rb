@@ -80,7 +80,10 @@ class Offer < ApplicationRecord
         printer_user: {
           only: %i[id],
           include: {
-            user: { only: %i[id username] },
+            user: { 
+              only: %i[id username],
+              include: { country: {} }
+             },
             printer: { only: %i[id model] }
           }
         },

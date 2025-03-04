@@ -89,48 +89,14 @@ export class OfferService {
         );
     }
 
-    getOfferById(id: number): Observable<OfferModel | null> {
+    getOfferById(id: number): Observable<OfferModel | ApiResponseModel> {
         console.log("fetching info for offer ID: ", id);
         return this.api.getRequest(`api/offer/${id}`).pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
-                    // // console.log("raw getOfferById to create from: ", response.data);
-                    // const offer = response.data?.['offer'];
-
-                    // const color = new ColorModel(
-                    //     offer?.['color']?.['id'],
-                    //     this.translateColor(offer?.['color']?.['id'])
-                    // );
-
-                    // const filament = new FilamentModel(
-                    //     offer?.['filament']?.['id'],
-                    //     this.translateFilament(offer?.['filament']?.['id'])
-                    // );
-
-                    // return new OfferModel(
-                    //     offer?.['id'],
-                    //     offer?.['request'],
-                    //     new PrinterUserModel(
-                    //         offer?.['printer_user']?.['id'],
-                    //         new UserModel(
-                    //             offer?.['printer_user']?.['user']?.['id'],
-                    //             offer?.['printer_user']?.['user']?.['username'],
-                    //             offer?.['printer_user']?.['user']?.['country']?.['name']
-                    //         ),
-                    //         new PrinterModel(
-                    //             offer?.['printer_user']?.['printer']?.['id'],
-                    //             offer?.['printer_user']?.['printer']?.['model']
-                    //         ),
-                    //         new Date(offer?.['printer_user']?.['acquired_date'])
-                    //     ),
-                    //     color,
-                    //     filament,
-                    //     offer?.['price'],
-                    //     offer?.['print_quality'],
-                    //     offer?.['target_date']
-                    // );
+                    return OfferModel.fromAPI(response.data.offer as OfferApi);
                 }
-                return null;
+                return response;
             })
         );
     }
