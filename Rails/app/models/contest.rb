@@ -25,8 +25,13 @@ class Contest < ApplicationRecord
     where('end_at < ?', Time.now)
   }
 
-  scope :multi_submission, ->(params) { 
-    where("submission_limit > ? AND start_at <= ?", params, Time.now)
+  scope :with_participants, ->(participants) {
+    return if participants.blank?  
+  
+    joins(:submissions)
+    .joins("LEFT JOIN users ON users.id = submissions.user_id")
+    .group("contests.id")
+    .having("COUNT(DISTINCT users.id) = ?", participants)
   }
   
   scope :sort_by_submissions, -> (direction_params) {
@@ -47,7 +52,7 @@ class Contest < ApplicationRecord
     column = allowed_columns.include?(category) ? category : "start_at"
     direction = allowed_directions.include?(sort) ? sort : "asc"
 
-    order(column => direction)
+    order(Arel.sql('IF(contests.end_at IS NOT NULL AND contests.end_at < CURRENT_DATE, 1, 0)'), column => direction)
   }
 
   has_many :submissions, dependent: :destroy
@@ -91,7 +96,7 @@ class Contest < ApplicationRecord
                     .search(params[:search])
                     .active(params)
                     .finished(params)
-                    .multi_submission(params[:multi_submission])
+                    .with_participants(params[:participants])
                     .sort_by_submissions(params[:sort_by_submissions])
                     .sort_by_date(params[:category], params[:sort])
                     .order(Arel.sql('
