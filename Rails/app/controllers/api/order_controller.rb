@@ -47,7 +47,8 @@ module Api
                   except: %i[crountry_id],
                   include: {country: {}},
                   methods: %i[profile_picture_url]
-                }
+                },
+                printer: { only: %i[id model]}
               }
             },
             request: {
