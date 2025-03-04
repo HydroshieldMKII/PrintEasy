@@ -61,7 +61,7 @@ export class ReviewService {
         return this.api.getRequest("/api/user_review").pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
-                    response.data.reviews = response.data.reviews.map((review: ReviewApi) => ReviewModel.fromAPI(review));
+                    return response.data.reviews.map((review: ReviewApi) => ReviewModel.fromAPI(review));
                 }
                 return response;
             })

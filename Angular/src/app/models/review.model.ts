@@ -40,14 +40,13 @@ export class ReviewModel {
     }
 
     static fromAPI(data: ReviewApi): ReviewModel {
-        console.log("test", data);
         return new ReviewModel(
             data.id,
             data.rating,
             data.title,
             data.description,
             new Date(data.created_at),
-            data.image_urls.map((image: ImageAttachmentApi) => ImageAttachmentModel.fromAPI(image)),
+            data.image_urls ? data.image_urls.map((image: ImageAttachmentApi) => ImageAttachmentModel.fromAPI(image)) : [],
             UserModel.fromAPI(data.user)
         );
     }

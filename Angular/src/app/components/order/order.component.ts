@@ -17,6 +17,7 @@ import { ApiResponseModel } from '../../models/api-response.model';
 import { AuthService } from '../../services/authentication.service';
 import { ReviewService } from '../../services/review.service';
 import { ImageAttachmentModel } from '../../models/image-attachment.model';
+import { ReviewModel } from '../../models/review.model';
 
 interface StatusChoice {
   name: string;
@@ -224,102 +225,102 @@ export class OrderComponent {
     this.isEditReview = false;
 
     const orderId = Number(this.route.snapshot.params['id']);
-    this.orderService.getOrder(orderId).subscribe((response: ApiResponseModel) => {
-      if (response.status === 200) {
-        this.order = response.data.order;
+    this.orderService.getOrder(orderId).subscribe((response: ApiResponseModel | OrderModel) => {
+      if (response instanceof OrderModel) {
+        this.order = response;
         console.log('Order:', this.order);
         if (this.order) {
           this.currentStatus = this.order.orderStatus[this.order.orderStatus.length - 1];
           console.log('Current status:', this.currentStatus);
           if (this.order.availableStatus.includes('Cancelled')) {
-            this.canCancel = true;
+        this.canCancel = true;
           }
           if (this.order.availableStatus.includes('Arrived')) {
-            this.canArrive = true;
+        this.canArrive = true;
           }
           if (this.order?.offer?.request?.user?.id == this.auth.currentUser?.id) {
-            this.consumer = true;
-          }else{
-            this.reviewForm.get('rating')?.disable();
-            this.reviewForm.get('title')?.disable();
-            this.reviewForm.get('description')?.disable();
+        this.consumer = true;
+          } else {
+        this.reviewForm.get('rating')?.disable();
+        this.reviewForm.get('title')?.disable();
+        this.reviewForm.get('description')?.disable();
           }
           for (let status of this.order.orderStatus) {
-            this.sortStatus(status);
+        this.sortStatus(status);
           }
-          if (this.order.review){
-            this.isEditReview = true;
-            this.reviewImageUrls = this.order.review.imageUrls;
-            this.reviewForm.patchValue({ title: this.order.review.title });
-            this.reviewForm.patchValue({ rating: this.order.review.rating });
-            this.reviewForm.patchValue({ description: this.order.review.description });
+          if (this.order.review) {
+        this.isEditReview = true;
+        this.reviewImageUrls = this.order.review.imageUrls;
+        this.reviewForm.patchValue({ title: this.order.review.title });
+        this.reviewForm.patchValue({ rating: this.order.review.rating });
+        this.reviewForm.patchValue({ description: this.order.review.description });
           }
           for (let status of this.order.availableStatus) {
-            switch (status) {
-              case 'Accepted':
-                this.statusActions.push({
-                  label: this.statusTranslations['Accepted'],
-                  icon: 'pi pi-play',
-                  command: () => {
-                    this.ShowOrderStatusForm();
-                    this.orderStatusForm.patchValue({ statusName: 'Accepted' });
-                  }
-                });
-                break;
-              case 'Printing':
-                this.statusActions.push({
-                  label: this.statusTranslations['Printing'],
-                  icon: 'pi pi-print',
-                  command: () => {
-                    this.ShowOrderStatusForm();
-                    this.orderStatusForm.patchValue({ statusName: 'Printing' });
-                  }
-                });
-                break;
-              case 'Printed':
-                this.statusActions.push({
-                  label: this.statusTranslations['Printed'],
-                  icon: 'pi pi-check-circle',
-                  command: () => {
-                    this.ShowOrderStatusForm();
-                    this.orderStatusForm.patchValue({ statusName: 'Printed' });
-                  }
-                });
-                break;
-              case 'Shipped':
-                this.statusActions.push({
-                  label: this.statusTranslations['Shipped'],
-                  icon: 'pi pi-send',
-                  command: () => {
-                    this.ShowOrderStatusForm();
-                    this.orderStatusForm.patchValue({ statusName: 'Shipped' });
-                  }
-                });
-                break;
-              case 'Arrived':
-                this.statusActions.push({
-                  label: this.statusTranslations['Arrived'],
-                  icon: 'pi pi-home',
-                  command: () => {
-                    this.ShowOrderStatusForm();
-                    this.orderStatusForm.patchValue({ statusName: 'Arrived' });
-                  }
-                });
-                break;
-              case 'Cancelled':
-                this.statusActions.push({
-                  label: this.statusTranslations['Cancelled'],
-                  icon: 'pi pi-ban',
-                  command: () => {
-                    this.ShowOrderStatusForm();
-                    this.orderStatusForm.patchValue({ statusName: 'Cancelled' });
-                  }
-                });
-                break;
-            }
+        switch (status) {
+          case 'Accepted':
+            this.statusActions.push({
+          label: this.statusTranslations['Accepted'],
+          icon: 'pi pi-play',
+          command: () => {
+            this.ShowOrderStatusForm();
+            this.orderStatusForm.patchValue({ statusName: 'Accepted' });
+          }
+            });
+            break;
+          case 'Printing':
+            this.statusActions.push({
+          label: this.statusTranslations['Printing'],
+          icon: 'pi pi-print',
+          command: () => {
+            this.ShowOrderStatusForm();
+            this.orderStatusForm.patchValue({ statusName: 'Printing' });
+          }
+            });
+            break;
+          case 'Printed':
+            this.statusActions.push({
+          label: this.statusTranslations['Printed'],
+          icon: 'pi pi-check-circle',
+          command: () => {
+            this.ShowOrderStatusForm();
+            this.orderStatusForm.patchValue({ statusName: 'Printed' });
+          }
+            });
+            break;
+          case 'Shipped':
+            this.statusActions.push({
+          label: this.statusTranslations['Shipped'],
+          icon: 'pi pi-send',
+          command: () => {
+            this.ShowOrderStatusForm();
+            this.orderStatusForm.patchValue({ statusName: 'Shipped' });
+          }
+            });
+            break;
+          case 'Arrived':
+            this.statusActions.push({
+          label: this.statusTranslations['Arrived'],
+          icon: 'pi pi-home',
+          command: () => {
+            this.ShowOrderStatusForm();
+            this.orderStatusForm.patchValue({ statusName: 'Arrived' });
+          }
+            });
+            break;
+          case 'Cancelled':
+            this.statusActions.push({
+          label: this.statusTranslations['Cancelled'],
+          icon: 'pi pi-ban',
+          command: () => {
+            this.ShowOrderStatusForm();
+            this.orderStatusForm.patchValue({ statusName: 'Cancelled' });
+          }
+            });
+            break;
+        }
           }
           this.order.availableStatus.forEach((status: string) => {
-            this.availableStatuses.push({ name: this.statusTranslations[status], value: status });
+        this.availableStatuses.push({ name: this.statusTranslations[status], value: status });
           });
           console.log('Available statuses:', this.availableStatuses);
         }
@@ -367,9 +368,9 @@ export class OrderComponent {
         orderStatusData.append('order_status[image]', this.orderStatusForm.value.image);
       }
       if (this.isEdit) {
-        this.orderStatusService.updateOrderStatus(this.currentlySelectedOrderStatusId, orderStatusData).subscribe((response: ApiResponseModel) => {
+        this.orderStatusService.updateOrderStatus(this.currentlySelectedOrderStatusId, orderStatusData).subscribe((response: ApiResponseModel | OrderStatusModel) => {
           console.log('Order status updated:', response);
-          if (response.status == 200) {
+          if (response instanceof OrderStatusModel) {
             this.refreshOrder();
             this.clearStatusForm();
             this.formVisible = false;
@@ -388,9 +389,9 @@ export class OrderComponent {
           }
         });
       }else{
-        this.orderStatusService.createOrderStatus(orderStatusData).subscribe((response : ApiResponseModel) => {
+        this.orderStatusService.createOrderStatus(orderStatusData).subscribe((response : ApiResponseModel | OrderStatusModel) => {
           console.log('Order status created:', response);
-          if (response.status == 201) {
+          if (response instanceof OrderStatusModel) {
             this.refreshOrder();
             this.clearStatusForm();
             this.formVisible = false;
@@ -429,9 +430,9 @@ export class OrderComponent {
       }
       console.log('Review data:', reviewData);
       if (this.isEditReview) {
-        this.reviewService.updateReview(this.order?.review?.id || -1, reviewData).subscribe((response : ApiResponseModel) => {
+        this.reviewService.updateReview(this.order?.review?.id || -1, reviewData).subscribe((response : ApiResponseModel | ReviewModel) => {
           console.log('Review updated:', response);
-          if (response.status == 200) {
+          if (response instanceof ReviewModel) {
             this.clearReviewForm();
             this.refreshOrder();
             this.deleteReviewDialogVisible = false;
@@ -449,9 +450,9 @@ export class OrderComponent {
           }
         });
       }else{
-        this.reviewService.createReview(reviewData).subscribe((response : ApiResponseModel) => {
+        this.reviewService.createReview(reviewData).subscribe((response : ApiResponseModel | ReviewModel) => {
           console.log('Review created:', response);
-          if (response.status == 201) {
+          if (response instanceof ReviewModel) {
             this.clearReviewForm();
             this.refreshOrder();
             this.deleteReviewDialogVisible = false;
@@ -508,60 +509,66 @@ export class OrderComponent {
   }
 
   setStatusForm() : void {
-    this.orderStatusService.getOrderStatus(this.currentlySelectedOrderStatusId).subscribe((response : ApiResponseModel) => {
+    this.orderStatusService.getOrderStatus(this.currentlySelectedOrderStatusId).subscribe((response : ApiResponseModel | OrderStatusModel) => {
       console.log('Order status:', response);
-      if (response.status != 200) {
-        return;
+      if (response instanceof OrderStatusModel) {
+        const orderStatus = response;
+        this.orderStatusForm.patchValue({ statusName: orderStatus.statusName });
+        this.orderStatusForm.patchValue({ comment: orderStatus.comment });
+        this.imageUrl = orderStatus.imageUrl;
+        this.isEdit = true;
+        this.formVisible = true;
       }
-      const orderStatus = response.data.order_status;
-      this.orderStatusForm.patchValue({ statusName: orderStatus.statusName });
-      this.orderStatusForm.patchValue({ comment: orderStatus.comment });
-      this.imageUrl = orderStatus.imageUrl;
-      this.isEdit = true;
-      this.formVisible = true;
     });
   }
 
   DeleteOrderStatus(): void {
-    this.orderStatusService.deleteOrderStatus(this.currentlySelectedOrderStatusId).subscribe((response: ApiResponseModel) => {
-      console.log('Order status deleted:', response);
-      if (response.status != 200) {
+    this.orderStatusService.deleteOrderStatus(this.currentlySelectedOrderStatusId).subscribe((response: ApiResponseModel | OrderStatusModel) => {
+      
+      if (response instanceof OrderStatusModel) {
+        console.log('Order status deleted:', response);
+        this.refreshOrder();
+        this.deleteStatusDialogVisible = false;
+        this.messageService.add({
+          severity: 'success',
+          summary: this.errors_type["summary_success"],
+          detail: this.errors_type["deleted_success"]
+        });
+      }else {
         this.messageService.add({
           severity: 'error',
           summary: this.errors_type["summary_error"],
           detail: this.errors_type["deleted_error"]
         });
         this.clearReviewForm();
-        return;
       }
-      this.refreshOrder();
-      this.deleteStatusDialogVisible = false;
-      this.messageService.add({
-        severity: 'success',
-        summary: this.errors_type["summary_success"],
-        detail: this.errors_type["deleted_success"]
-      });
+
+      
     });
   }
 
   DeleteReview() : void {
-    this.reviewService.deleteReview(this.order?.review?.id || -1).subscribe((response : ApiResponseModel) => {
-      console.log('Review deleted:', response);
-      if (response.status != 200) {
+    this.reviewService.deleteReview(this.order?.review?.id || -1).subscribe((response : ApiResponseModel | ReviewModel) => {
+      
+      if (response instanceof ReviewModel) {
+        console.log('Review deleted:', response);
+        this.refreshOrder();
+        this.deleteReviewDialogVisible = false;
+        this.messageService.add({
+          severity: 'success',
+          summary: this.errors_type["summary_success"],
+          detail: this.errors_type["deleted_success"]
+        });
+      }else{
         this.messageService.add({
           severity: 'error',
           summary: this.errors_type["summary_error"],
           detail: this.errors_type["deleted_error"]
         });
-        return;
       }
-      this.refreshOrder();
-      this.deleteReviewDialogVisible = false;
-      this.messageService.add({
-        severity: 'success',
-        summary: this.errors_type["summary_success"],
-        detail: this.errors_type["deleted_success"]
-      });
+
+      
+
     });
   }
 

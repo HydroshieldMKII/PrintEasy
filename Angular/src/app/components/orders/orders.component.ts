@@ -85,17 +85,21 @@ export class OrdersComponent {
 
   getMyOrders(params : { [key: string]: string } = {}) {
     params['type'] = 'my';
-    this.orderService.getOrders(params).subscribe((response: ApiResponseModel) => {
-      this.myOrders = response.data.orders;
-      console.log(this.myOrders);
+    this.orderService.getOrders(params).subscribe((response: ApiResponseModel | OrderModel[]) => {
+      if (Array.isArray(response)){
+        this.myOrders = response;
+        console.log(this.myOrders);
+      }
     });
   }
 
   getMakeOrders(params : { [key: string]: string } = {}) {
     params['type'] = 'printer';
-    this.orderService.getOrders(params).subscribe((response: ApiResponseModel) => {
-      this.makeOrders = response.data.orders;
-      console.log(this.makeOrders);
+    this.orderService.getOrders(params).subscribe((response: ApiResponseModel | OrderModel[]) => {
+      if (Array.isArray(response)){
+        this.makeOrders = response;
+        console.log(this.makeOrders);
+      }
     });
   }
 
