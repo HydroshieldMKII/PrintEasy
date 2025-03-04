@@ -158,18 +158,15 @@ class Offer < ApplicationRecord
   end
 
   def can_destroy?
-    # debugger
     if accepted?
       errors.add(:offer, 'Offer already accepted. Cannot delete')
-      return false
+      throw(:abort)
     end
 
     if rejected?
       errors.add(:offer, 'Offer already rejected. Cannot delete')
-      return false
+      throw(:abort)
     end
-
-    true
   end
 
   def accepted_at
