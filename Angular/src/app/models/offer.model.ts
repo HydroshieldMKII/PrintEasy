@@ -1,7 +1,20 @@
-import { RequestModel } from "./request.model";
-import { PrinterUserModel } from "./printer-user.model";
-import { ColorModel } from "./color.model";
-import { FilamentModel } from "./filament.model";
+import { RequestModel, RequestApi } from "./request.model";
+import { PrinterUserModel, PrinterUserApi } from "./printer-user.model";
+import { ColorModel, ColorApi } from "./color.model";
+import { FilamentModel, FilamentApi } from "./filament.model";
+
+export type OfferApi = {
+    id: number;
+    request: RequestApi;
+    printer_user: PrinterUserApi;
+    color: ColorApi;
+    filament: FilamentApi;
+    price: number;
+    print_quality: number;
+    target_date: string;
+    cancelled_at?: Date | null;
+    accepted_at?: Date | null;
+}
 
 export class OfferModel {
     id: number;
@@ -40,10 +53,7 @@ export class OfferModel {
         this.acceptedAt = acceptedAt;
     }
 
-    static fromAPI(data: any): OfferModel | null {
-        if (!data) {
-            return null;
-        }
+    static fromAPI(data: OfferApi): OfferModel | null {
         return new OfferModel(
             data.id,
             RequestModel.fromAPI(data.request),

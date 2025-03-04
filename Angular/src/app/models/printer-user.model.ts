@@ -1,5 +1,13 @@
-import { UserModel } from "./user.model";
+import { UserModel, UserApi } from "./user.model";
+import { PrinterApi } from "./printer.model";
 import { PrinterModel } from "./printer.model";
+
+export type PrinterUserApi = {
+    id: number;
+    user: UserApi | null;
+    printer: PrinterApi | null;
+    aquired_date: Date;
+}
 
 export class PrinterUserModel {
     id: number;
