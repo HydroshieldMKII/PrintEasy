@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require 'test_helper'
+#TODO: Add comments
+#TODO: refactor tests because of changes in everything
 
 class OrderControllerTest < ActionDispatch::IntegrationTest
   include Devise::Test::IntegrationHelpers
