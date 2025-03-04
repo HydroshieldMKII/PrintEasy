@@ -39,6 +39,7 @@ export class ContestComponent {
   currentQuery: string = '';
   currentValue: number = 1;
   sliderClass: string = 'none';
+  showAdvancedFilters: boolean = false;
 
   filterOptions: SelectItem[] = [
     { label: 'All', value: '' },
@@ -173,6 +174,10 @@ export class ContestComponent {
     });
 
     this.fetchContests();
+  }
+
+  toggleAdvancedFilters() {
+    this.showAdvancedFilters = !this.showAdvancedFilters;
   }
 
   fetchContests() {
