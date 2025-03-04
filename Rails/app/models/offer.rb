@@ -7,6 +7,7 @@ class Offer < ApplicationRecord
   belongs_to :filament
   has_one :order, dependent: :restrict_with_error
   has_one :user, through: :printer_user
+  has_many :order_status, through: :order
 
   before_destroy :can_destroy?, prepend: true
 

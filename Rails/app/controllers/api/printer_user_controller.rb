@@ -14,7 +14,7 @@ module Api
             only: %i[id model]
           }
         },
-        methods: [:last_review_image]
+        methods: [:last_review_image, :last_used]
       })
     end
     
