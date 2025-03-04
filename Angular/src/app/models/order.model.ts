@@ -6,7 +6,7 @@ import { ReviewModel, ReviewApi } from "./review.model";
 export type OrderApi = {
     id: number;
     order_status: OrderStatusApi[];
-    offer: OfferApi | null;
+    offer: OfferApi;
     available_status: string[];
     review: ReviewApi | null;
 }
@@ -14,14 +14,14 @@ export type OrderApi = {
 export class OrderModel {
     id: number;
     orderStatus: OrderStatusModel[];
-    offer: OfferModel | null;
+    offer: OfferModel;
     availableStatus: string[];
     review: ReviewModel | null;
 
     constructor(
         id: number,
         orderStatus: OrderStatusModel[],
-        offer: OfferModel | null,
+        offer: OfferModel,
         availableStatus: string[],
         review: ReviewModel | null
     ) {
