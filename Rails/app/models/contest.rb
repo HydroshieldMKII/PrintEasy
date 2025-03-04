@@ -88,7 +88,7 @@ class Contest < ApplicationRecord
                      .order('COUNT(likes.id) DESC, submissions.created_at ASC')
                      .first
 
-    top_submission&.user
+    top_submission&.user.as_json(include: :country, except: %i[country_id])
   end
 
   def self.contests_order(user, params)
@@ -124,7 +124,7 @@ class Contest < ApplicationRecord
 
       # Create the user entry
       user_entry = {
-        user: user.as_json,
+        user: user.as_json(include: :country, except: %i[country_id]),
         submissions: user_submissions.as_json(
           include: :likes,
           methods: %i[image_url stl_url liked_by_current_user]

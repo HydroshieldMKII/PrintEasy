@@ -33,10 +33,7 @@ export class UserModel {
         this.isAdmin = isAdmin;
     }
 
-    static fromAPI(data: UserApi): UserModel | null {
-        if (!data) {
-            return null;
-        }
+    static fromAPI(data: UserApi): UserModel {
         return new UserModel(
             data.id,
             data.username,

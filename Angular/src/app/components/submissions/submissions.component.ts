@@ -63,10 +63,12 @@ export class SubmissionsComponent {
     });
 
     this.contestService.getContest(this.paramsId).subscribe((data) => {
-      this.contest = data;
-      if (this.contest?.endAt && this.contest?.startAt) {
-        const diff = new Date(this.contest?.endAt).getTime() - new Date().getTime();
-        this.contestDurationInDays = (diff / (1000 * 60 * 60 * 24)).toFixed(0);
+      if (data instanceof ContestModel) {
+        this.contest = data;
+        if (this.contest?.endAt && this.contest?.startAt) {
+          const diff = new Date(this.contest?.endAt).getTime() - new Date().getTime();
+          this.contestDurationInDays = (diff / (1000 * 60 * 60 * 24)).toFixed(0);
+        }
       }
     });
 
@@ -224,7 +226,7 @@ export class SubmissionsComponent {
 
   onLike(submission: SubmissionModel) {
     if (submission.liked) {
-      const like = submission.likes.find(like => like.userId === this.authService.currentUser?.id);      
+      const like = submission.likes.find(like => like.userId === this.authService.currentUser?.id);
       this.likeService.deleteLike(like?.id).subscribe((response) => {
         const deletedLike = LikeModel.fromApi(response.data.like);
         submission.likes = submission.likes.filter(l => l.id !== deletedLike.id);
@@ -246,7 +248,7 @@ export class SubmissionsComponent {
     const isContestFinished = this.contest?.finished;
     const isContestStarted = this.contest?.started;
     const isEditMode = !!submission;
-    
+
     if (!isContestStarted) {
       this.messageService.add({ severity: 'error', summary: this.translateService.instant('global.error'), detail: this.translateService.instant('submissions.contest_not_started') });
       return;
@@ -256,29 +258,29 @@ export class SubmissionsComponent {
       this.messageService.add({ severity: 'error', summary: this.translateService.instant('global.error'), detail: this.translateService.instant('submissions.contest_ended') });
       return;
     }
-  
+
     if (!isEditMode && !hasNoSubmissions && !hasRemainingSlots) {
       this.messageService.add({ severity: 'error', summary: this.translateService.instant('global.error'), detail: this.translateService.instant('submissions.submission_limit_reached') });
       return;
     }
-  
+
     this.isEdit = isEditMode;
     this.submissionId = submission?.id || 0;
-  
+
     this.submissionForm.patchValue({
       name: submission?.name || '',
       description: submission?.description || '',
       image: null,
       stl: null
     });
-  
+
     this.stlUrl = submission?.stlUrl || '';
     this.imageUrl = submission?.imageUrl || '';
-    
+
     this.noImagePreview = this.isEdit ? "" : "image-preview-container";
     this.noStlPreview = this.isEdit ? "" : "image-preview-container";
-  
+
     this.display = true;
   }
-  
+
 }

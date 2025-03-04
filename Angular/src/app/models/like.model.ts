@@ -1,3 +1,9 @@
+export type LikeAPI = {
+    id: number;
+    user_id: number;
+    submission_id: number;
+}
+
 export class LikeModel {
     id: number;
     userId: number;
@@ -15,9 +21,9 @@ export class LikeModel {
 
     static fromApi(data: any): LikeModel {
         return new LikeModel(
-            data?.['id'],
-            data?.['user_id'],
-            data?.['submission_id']
+            data?.id,
+            data?.user_id,
+            data?.submission_id
         );
     }
 }
