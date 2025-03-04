@@ -34,57 +34,22 @@ export class OrdersComponent {
   searchQuery : string | null = null;
   selectedFilterOption : SelectItem | null = null;
   selectedSortOption : SelectItem | null = null;
-  filterOptions : SelectItemGroup[] = [
-    {
-      label: 'Status',
-      items: [
-        { label: this.translate.instant('status.Accepted'), value: 'Accepted' },
-        { label: this.translate.instant('status.Printing'), value: 'Printing' },
-        { label: this.translate.instant('status.Printed'), value: 'Printed' },
-        { label: this.translate.instant('status.Shipped'), value: 'Shipped' },
-        { label: this.translate.instant('status.Arrived'), value: 'Arrived' },
-        { label: this.translate.instant('status.Cancelled'), value: 'Cancelled' }
-      ]
-    },
-    {
-      label: this.translate.instant('order.review.tab'),
-      items: [
-        { label: this.translate.instant('orders.ssf.reviewed'), value: 'reviewed' },
-        { label: this.translate.instant('orders.ssf.not_reviewed'), value: 'notReviewed' }
-      ]
-    }
-  ]
-  sortOptions : SelectItem[] = [
-    { label: this.translate.instant('orders.ssf.name_asc'), value: 'name-asc' },
-    { label: this.translate.instant('orders.ssf.name_desc'), value: 'name-desc' },
-    { label: this.translate.instant('orders.ssf.price_asc'), value: 'price-asc' },
-    { label: this.translate.instant('orders.ssf.price_desc'), value: 'price-desc' },
-    { label: this.translate.instant('orders.ssf.date_asc'), value: 'date-asc' },
-    { label: this.translate.instant('orders.ssf.date_desc'), value: 'date-desc' }
-  ]
-
+  filterOptions : SelectItemGroup[] = []
+  sortOptions : SelectItem[] = []
+  
   constructor() {
     this.translate.onLangChange.subscribe(() => {
       this.translateRefresh();
     });
+    this.translateRefresh();
 
-    if (this.router.routerState.snapshot.root.queryParams["tab"] == 'commands') {
-      this.tab = 'commands';
-      this.getMyOrders();
-    }
-    else if (this.router.routerState.snapshot.root.queryParams["tab"] == 'contracts') {
-      this.tab = 'contracts';
-      this.getMakeOrders();
-    }
-    else {
-      this.tab = 'commands';
-      this.getMyOrders();
-    }
     this.searchQuery = this.router.routerState.snapshot.root.queryParams["search"];
     this.selectedFilterOption = this.filterOptions
       .flatMap(group => group.items)
       .find(item => item.value == this.router.routerState.snapshot.root.queryParams["filter"]) ?? null;
     this.selectedSortOption = this.sortOptions.find(item => item.value == this.router.routerState.snapshot.root.queryParams["sort"]) ?? null;
+
+    this.updateUrl();
   }
 
   translateRefresh() {
@@ -159,29 +124,23 @@ export class OrdersComponent {
       params['search'] = this.searchQuery;
     }
     this.router.navigate(['/orders'], { queryParams: params });
-
-    if (this.tab == 'commands'){
-      this.getMyOrders(params);
-    }
-    else if (this.tab == 'contracts'){
+    if (this.tab == 'contracts'){
       this.getMakeOrders(params);
     }
+    else {
+      this.getMyOrders(params);
+    }
+    
   }
 
   openContracts() {
     this.tab = 'contracts';
     this.updateUrl();
-    if (this.makeOrders.length == 0){
-      this.getMakeOrders();
-    }
   }
 
   openCommands() {
     this.tab = 'commands';
     this.updateUrl();
-    if (this.myOrders.length == 0){
-      this.getMyOrders();
-    }
   }
 
 }

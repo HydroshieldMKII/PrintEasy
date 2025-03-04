@@ -6,9 +6,9 @@
         </p-tablist>
         <p-tabpanels>
             <p-tabpanel [value]="'commands'">
-                <p-table *ngIf="myOrders.length > 0" [value]="myOrders" [tableStyle]="{'width': '100%'}">
+                <p-table [value]="myOrders" [tableStyle]="{'width': '100%'}">
                     <ng-template #caption>
-                        <div style="display: flex; flex-direction: row; gap: 10px; align-items: stretch;">
+                        <div class="ssf-container">
                             <form (ngSubmit)="onSearch()">
                                 <span class="p-input-icon-right">
                                   <i class="pi pi-search" style="margin-right: 5px"></i>
@@ -137,9 +137,9 @@
                 </div>
             </p-tabpanel>
             <p-tabpanel [value]="'contracts'">
-                <p-table *ngIf="makeOrders.length > 0" [value]="makeOrders" [tableStyle]="{'width': '100%'}">
+                <p-table [value]="makeOrders" [tableStyle]="{'width': '100%'}">
                     <ng-template #caption>
-                        <div style="display: flex; flex-direction: row; gap: 10px; align-items: stretch;">
+                        <div class="ssf-container">
                             <form (ngSubmit)="onSearch()">
                                 <span class="p-input-icon-right">
                                   <i class="pi pi-search" style="margin-right: 5px"></i>

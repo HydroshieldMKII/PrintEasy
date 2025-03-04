@@ -71,3 +71,17 @@ i {
 :host ::ng-deep .p-select {
     width: 190px;
 }
+
+.ssf-container {
+    display: flex; 
+    flex-direction: row; 
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+@media (max-width: 768px) {
+    .ssf-container {
+        flex-direction: column;
+    }
+}
