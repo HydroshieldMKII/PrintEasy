@@ -3,15 +3,16 @@
 module Api
   class OrderController < AuthenticatedController
     def index
-      if params[:type] == 'printer'
-        @orders = Order.joins(offer: { printer_user: :user })
-                       .where(users: { id: current_user&.id })
-                       .order('offers.target_date DESC')
-      else
-        @orders = Order.joins(offer: { request: :user })
-                       .where(users: { id: current_user&.id })
-                       .order('offers.target_date DESC')
-      end
+      # if params[:type] == 'printer'
+      #   @orders = Order.joins(offer: { printer_user: :user })
+      #                  .where(users: { id: current_user&.id })
+      #                  .order('offers.target_date DESC')
+      # else
+      #   @orders = Order.joins(offer: { request: :user })
+      #                  .where(users: { id: current_user&.id })
+      #                  .order('offers.target_date DESC')
+      # end
+      @orders = Order.fetch_for_user(params)
 
       render json: {
         orders: @orders.as_json(
@@ -24,7 +25,8 @@ module Api
                   except: %i[printer_id user_id],
                   include: {
                     user: {
-                      except: %i[created_at updated_at is_admin],
+                      except: %i[crountry_id],
+                      include: {country: {}},
                       methods: %i[profile_picture_url]
                     }
                   }
@@ -34,7 +36,8 @@ module Api
                   methods: %i[stl_file_url],
                   include: {
                     user: {
-                      except: %i[created_at updated_at is_admin],
+                      except: %i[crountry_id],
+                      include: {country: {}},
                       methods: %i[profile_picture_url]
                     }
                   }
@@ -44,7 +47,8 @@ module Api
             review: {
               include: {
                 user: {
-                  except: %i[created_at updated_at is_admin],
+                  except: %i[crountry_id],
+                  include: {country: {}},
                   methods: %i[profile_picture_url]
                 }
               }

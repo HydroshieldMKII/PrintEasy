@@ -1,3 +1,8 @@
+export type PrinterApi = {
+    id: number;
+    model: string;
+}
+
 export class PrinterModel {
     id: number;
     model: string;

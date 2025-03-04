@@ -91,8 +91,6 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     assert_equal 200.0, json_response['requests'][0]['budget']
     assert_equal 'Test Comments 2', json_response['requests'][0]['comment']
     assert_equal '2021-12-31', json_response['requests'][0]['target_date']
-    assert_equal 2, json_response['requests'][0]['user']['id']
-    assert_equal 'John Doe', json_response['requests'][0]['user']['username']
 
     assert_equal 2, json_response['requests'][0]['offers'][0]['id']
     assert_equal 2.5, json_response['requests'][0]['offers'][0]['price']
@@ -513,6 +511,7 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
 
     # Response format
     json_response = assert_nothing_raised { JSON.parse(response.body) }
+    p json_response
 
     # response content
     assert_not_empty json_response['errors']

@@ -18,6 +18,7 @@ import { RequestPresetModel } from '../../models/request-preset.model';
 import { OfferModalComponent } from '../offer-modal/offer-modal.component';
 import { TranslatePipe } from '@ngx-translate/core';
 import { TranslateService } from '@ngx-translate/core';
+import { ApiResponseModel } from '../../models/api-response.model';
 
 @Component({
   selector: 'app-request-form',
@@ -92,7 +93,6 @@ export class RequestFormComponent implements OnInit, OnChanges {
     return null;
   }
 
-
   ngOnInit(): void {
     const action = this.route.snapshot.url[0]?.path;
     this.id = this.route.snapshot.params['id'];
@@ -131,16 +131,18 @@ export class RequestFormComponent implements OnInit, OnChanges {
       });
     }
 
-    if (this.isEditMode || this.isViewMode) {
-      if (this.id !== null) {
-        this.requestService.getRequestById(this.id).subscribe((request) => {
-          this.request = request;
-          console.log('Request loaded:', this.request);
-          this.isMine = request?.user?.id === this.authService.currentUser?.id;
+    if ((this.isEditMode || this.isViewMode) && this.id !== null) {
+      this.requestService.getRequestById(this.id).subscribe((response) => {
+        if (response instanceof ApiResponseModel) {
+          console.error('An error occured while fetching data:', response);
+          this.router.navigate(['/requests']);
+          return;
+        }
 
-          if (this.request === null) {
-            this.router.navigate(['/requests']);
-          }
+        if (response instanceof RequestModel) {
+          this.request = response;
+          console.log('Request loaded:', this.request);
+          this.isMine = response.user?.id === this.authService.currentUser?.id;
 
           if (this.isViewMode) {
             console.log('Loading only preset info...');
@@ -149,23 +151,18 @@ export class RequestFormComponent implements OnInit, OnChanges {
               value: preset.color.name,
               id: preset.color.id
             }));
-
             console.log('Colors detected:', this.colors);
-
             this.filamentTypes = this.request.presets.map((preset: RequestPresetModel) => ({
               label: preset.filamentType.name,
               value: preset.filamentType.name,
               id: preset.filamentType.id
             }));
-
             console.log('Filament types detected:', this.filamentTypes);
-
             this.printers = this.request.presets.map((preset: RequestPresetModel) => ({
               label: preset.printerModel.model,
               value: preset.printerModel.model,
               id: preset.printerModel.id
             }));
-
             console.log('Printers detected:', this.printers);
           }
 
@@ -182,8 +179,11 @@ export class RequestFormComponent implements OnInit, OnChanges {
             targetDate: [{ value: new Date(this.request.targetDate).toISOString().substring(0, 10), disabled: this.isViewMode || this.request.hasOfferAccepted }, [Validators.required, this.dateValidator]],
             comment: [{ value: this.request.comment, disabled: this.isViewMode || this.request.hasOfferAccepted }, Validators.maxLength(200)]
           });
-        });
-      }
+        } else { //Not instance of RequestModel
+          console.error('Invalid request data received:', response);
+          this.router.navigate(['/requests']);
+        }
+      });
     }
 
     if (this.isNewMode) {

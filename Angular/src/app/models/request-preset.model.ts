@@ -1,6 +1,14 @@
-import { ColorModel } from "./color.model";
-import { FilamentModel } from "./filament.model";
-import { PrinterModel } from "./printer.model";
+import { ColorModel, ColorApi } from "./color.model";
+import { FilamentModel, FilamentApi } from "./filament.model";
+import { PrinterModel, PrinterApi } from "./printer.model";
+
+export type RequestPresetApi = {
+    id: number;
+    print_quality: number;
+    color: ColorApi;
+    filament: FilamentApi;
+    printer: PrinterApi;
+}
 
 export class RequestPresetModel {
     id: number;
@@ -9,7 +17,13 @@ export class RequestPresetModel {
     filamentType: FilamentModel;
     printerModel: PrinterModel;
 
-    constructor(id: number, printQuality: number, color: ColorModel, filamentType: FilamentModel, printerModel: PrinterModel) {
+    constructor(
+        id: number,
+        printQuality: number,
+        color: ColorModel,
+        filamentType: FilamentModel,
+        printerModel: PrinterModel
+    ) {
         this.id = id;
         this.printQuality = printQuality;
         this.color = color;
@@ -17,10 +31,7 @@ export class RequestPresetModel {
         this.printerModel = printerModel;
     }
 
-    static fromAPI(data: any): RequestPresetModel | null {
-        if (!data) {
-            return null;
-        }
+    static fromAPI(data: any): RequestPresetModel {
         return new RequestPresetModel(
             data.id,
             data.print_quality,

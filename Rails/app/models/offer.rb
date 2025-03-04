@@ -104,14 +104,16 @@ class Offer < ApplicationRecord
 
     requests.as_json(
       include: {
-        user: { only: %i[id username] },
         offers: {
           except: %i[request_id printer_user_id created_at updated_at color_id filament_id],
           include: {
             printer_user: {
               only: [:id],
               include: {
-                user: { only: %i[id username] },
+                user: { 
+                  only: %i[id username],
+                  include: { country: {} }
+                },
                 printer: { only: %i[id model] }
               }
             },
@@ -158,18 +160,15 @@ class Offer < ApplicationRecord
   end
 
   def can_destroy?
-    # debugger
     if accepted?
       errors.add(:offer, 'Offer already accepted. Cannot delete')
-      return false
+      throw(:abort)
     end
 
     if rejected?
       errors.add(:offer, 'Offer already rejected. Cannot delete')
-      return false
+      throw(:abort)
     end
-
-    true
   end
 
   def accepted_at

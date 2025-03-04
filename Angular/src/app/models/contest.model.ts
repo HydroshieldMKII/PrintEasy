@@ -1,4 +1,18 @@
-import { UserModel } from './user.model';
+import { UserModel, UserApi } from './user.model';
+
+export type ContestAPI = {
+    id: number;
+    theme: string;
+    description: string;
+    submission_limit: number;
+    start_at: Date;
+    end_at: Date | null;
+    image_url: string;
+    deleted_at: Date | null;
+    'finished?': boolean;
+    winner_user: UserApi | null;
+    'started?': boolean;
+}
 
 export class ContestModel {
     id: number;
@@ -13,21 +27,33 @@ export class ContestModel {
     winnerUser: UserModel | null;
     started: boolean;
 
-    constructor(id: number, theme: string, description: string, submission_limit: number, start_at: Date, end_at: Date | null, image: string, deleted_at: Date | null, finished: boolean, winnerUser: UserModel | null, started: boolean) {
+    constructor(
+        id: number, 
+        theme: string, 
+        description: string, 
+        submissionLimit: number, 
+        startAt: Date, 
+        endAt: Date | null, 
+        image: string, 
+        deletedAt: Date | null, 
+        finished: boolean, 
+        winnerUser: UserModel | null, 
+        started: boolean
+    ) {
         this.id = id;
         this.theme = theme;
         this.description = description;
-        this.submissionLimit = submission_limit;
-        this.startAt = start_at;
-        this.endAt = end_at;
-        this.deleteAt = deleted_at;
+        this.submissionLimit = submissionLimit;
+        this.startAt = startAt;
+        this.endAt = endAt;
+        this.deleteAt = deletedAt;
         this.image = image;
         this.finished = finished;
         this.winnerUser = winnerUser;
         this.started = started;
     }
 
-    static fromApi(data: any): ContestModel {
+    static fromApi(data: ContestAPI): ContestModel {
         return new ContestModel(
             data.id,
             data.theme,

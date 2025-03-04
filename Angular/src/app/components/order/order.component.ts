@@ -7,6 +7,7 @@ import { MenuItem } from 'primeng/api';
 import { StlModelViewerModule } from 'angular-stl-model-viewer';
 import { MessageService } from 'primeng/api';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { Router, RouterLink } from '@angular/router';
 
 import { OrderModel } from '../../models/order.model';
 import { OrderStatusModel } from '../../models/order-status.model';
@@ -36,6 +37,7 @@ export class OrderComponent {
   messageService: MessageService = inject(MessageService);
   reviewService: ReviewService = inject(ReviewService);
   translate: TranslateService = inject(TranslateService);
+  router : Router = inject(Router);
 
   order: OrderModel | null = null;
   currentStatus: OrderStatusModel | null = null;
@@ -102,8 +104,19 @@ export class OrderComponent {
   reviewForm: FormGroup;
   imageUrl: string = '';
   currentlySelectedOrderStatusId: number = -1
-
+  tab : string = 'status';
   constructor(private fb: FormBuilder) {
+    if (this.router.routerState.snapshot.root.queryParams["tab"] == 'status') {
+      this.tab = 'status';
+    }
+    else if (this.router.routerState.snapshot.root.queryParams["tab"] == 'review') {
+      this.tab = 'review';
+    }
+    else {
+      this.tab = 'status';
+    }
+
+
     this.getStatusTranslations();
     this.getStatusDefaultMessages();
     this.getEditMenuWithTranslations();
@@ -153,6 +166,14 @@ export class OrderComponent {
     } else {
       return { statusNameError: 'Invalid status' };
     }
+  }
+
+  setStatusTab(): void {
+    this.router.navigate([`/orders/view/${Number(this.route.snapshot.params['id'])}`], { queryParams: { tab: 'status' } });
+  }
+
+  setReviewTab(): void {
+    this.router.navigate([`/orders/view/${Number(this.route.snapshot.params['id'])}`], { queryParams: { tab: 'review' } });
   }
 
   getStatusTranslations(): void {

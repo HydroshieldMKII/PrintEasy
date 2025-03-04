@@ -1,19 +1,27 @@
-import { ContestModel } from "./contest.model";
-import { SubmissionModel } from "./submission.model";
+import { ContestModel, ContestAPI } from "./contest.model";
+import { SubmissionModel, SubmissionAPI } from "./submission.model";
+
+export type UserContestSubmissionsAPI = {
+    contest: ContestAPI;
+    submissions: SubmissionAPI[];
+}
 
 export class UserContestSubmissionsModel {
     readonly contest: ContestModel;
     readonly submissions: SubmissionModel[];
     
-    constructor(contest: ContestModel, submissions: SubmissionModel[]) {
+    constructor(
+        contest: ContestModel, 
+        submissions: SubmissionModel[]
+    ) {
         this.contest = contest;
         this.submissions = submissions;
     }
 
-    static fromApi(data: any): UserContestSubmissionsModel {
+    static fromApi(data: UserContestSubmissionsAPI): UserContestSubmissionsModel {
         return new UserContestSubmissionsModel(
             ContestModel.fromApi(data.contest),
-            data.submissions.map((submission: any) => SubmissionModel.fromApi(submission))
+            data.submissions.map((submission: SubmissionAPI) => SubmissionModel.fromApi(submission))
         );
     }
 }

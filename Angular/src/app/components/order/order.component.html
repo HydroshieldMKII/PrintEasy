@@ -98,13 +98,13 @@
         </form>
     </p-dialog>
 
-    <p-tabs value="0">
+    <p-tabs [value]="tab">
         <p-tablist>
-            <p-tab value="0">Status</p-tab>
-            <p-tab value="1" disabled="{{currentStatus?.statusName != 'Arrived' && currentStatus?.statusName != 'Cancelled'}}">{{'order.review.tab' | translate}}</p-tab>
+            <p-tab [value]="'status'" (click)="setStatusTab()">Status</p-tab>
+            <p-tab [value]="'review'" (click)="setReviewTab()" disabled="{{currentStatus?.statusName != 'Arrived' && currentStatus?.statusName != 'Cancelled'}}">{{'order.review.tab' | translate}}</p-tab>
         </p-tablist>
         <p-tabpanels>
-            <p-tabpanel value="0">
+            <p-tabpanel [value]="'status'">
 
                 <div style="width: 100%; display: flex; flex-direction: row; align-items: flex-start;">
                     <p-speeddial *ngIf="statusActions.length > 0" showIcon="pi pi-pen-to-square" class="p-actions-container" [model]="statusActions" direction="right" [style]="{'margin-left': '4px'}" [buttonProps]="{ severity: 'contrast'}" [tooltipOptions]="{ tooltipPosition: 'bottom' }" />
@@ -131,7 +131,7 @@
                                             <div class="status-content-date-container">
                                                 <p class="status-content-date">{{status.updatedAt | date:'medium'}}</p>
                                             </div>
-                                            <div class="three-dot-container" *ngIf="!consumer && !['Cancelled', 'Arrived', 'Shipped'].includes(currentStatus?.statusName ?? '')">
+                                            <div class="three-dot-container" *ngIf="!consumer && !['Cancelled', 'Arrived', 'Shipped'].includes(currentStatus?.statusName ?? '') && AcceptedStatus.length > 1">
                                                 <p-button [rounded]="true" [text]="true" icon="pi pi-ellipsis-v" (click)="menu.toggle($event); setSelectedOrderStatus(status.id)" />
                                                 <p-menu #menu [model]="editMenuItems" [popup]="true"></p-menu>
                                             </div>
@@ -310,7 +310,7 @@
 
                 </p-stepper>
             </p-tabpanel>
-            <p-tabpanel value="1">
+            <p-tabpanel [value]="'review'">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6" style="margin-bottom: 5px;">
                     <form class="" [formGroup]="reviewForm">
                         <div style="margin-bottom: 2rem;">

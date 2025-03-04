@@ -31,7 +31,7 @@ export class ContestService {
     );
   }
 
-  getContest(id: number): Observable<ContestModel | null> {
+  getContest(id: number): Observable<ContestModel | ApiResponseModel> {
     return this.api.getRequest(`api/contest/${id}`).pipe(
       map(response => {
         if (response.status === 200) {
@@ -39,7 +39,7 @@ export class ContestService {
         } else {
           console.log('error:', response.errors);
           this.messageService.add({ severity: 'error', summary: this.translateService.instant('global.errors.summary_error'), detail: this.translateService.instant('global.errors.get_error') });
-          return null;
+          return response;
         }
       })
     );

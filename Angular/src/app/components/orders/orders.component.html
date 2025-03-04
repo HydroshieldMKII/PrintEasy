@@ -6,7 +6,56 @@
         </p-tablist>
         <p-tabpanels>
             <p-tabpanel [value]="'commands'">
-                <p-table *ngIf="myOrders.length > 0" [value]="myOrders" [tableStyle]="{'width': '100%'}">
+                <p-table [value]="myOrders" [tableStyle]="{'width': '100%'}">
+                    <ng-template #caption>
+                        <div class="ssf-container">
+                            <form (ngSubmit)="onSearch()">
+                                <span class="p-input-icon-right">
+                                  <i class="pi pi-search" style="margin-right: 5px"></i>
+                                  <input
+                                    pInputText
+                                    type="text"
+                                    [(ngModel)]="searchQuery"
+                                    placeholder="{{ 'request.search_placeholder' | translate }}"
+                                    name="searchQuery"
+                                    class="search-field"
+                                    style="margin-bottom: 10px; margin-right: 10px"
+                                  />
+                                </span>
+                            </form>
+                            <p-floatlabel variant="in">
+                                <p-select
+                                    [options]="filterOptions"
+                                    [(ngModel)]="selectedFilterOption"
+                                    optionLabel="label"
+                                    styleClass="w-full"
+                                    variant="filled"
+                                    [group]="true"
+                                    [showClear]="true"
+                                    (onChange)="onFilterChange($event)"
+                                >
+                                    <ng-template let-group #group>
+                                        <div>
+                                            <span style="font-size: 24px;">{{group.label}}</span>
+                                        </div>
+                                    </ng-template>
+                                </p-select>
+                                <label for="in_label">{{ 'request.filter_by' | translate }}</label>
+                            </p-floatlabel>
+                            <p-floatlabel variant="in">
+                                <p-select
+                                    [options]="sortOptions"
+                                    [(ngModel)]="selectedSortOption"
+                                    optionLabel="label"
+                                    styleClass="w-full"
+                                    variant="filled"
+                                    [showClear]="true"
+                                    (onChange)="onSortChange($event)"
+                                ></p-select>
+                                <label for="in_label">{{ 'request.sort_by' | translate }}</label>
+                            </p-floatlabel>
+                        </div>
+                    </ng-template>
                     <ng-template #header>
                         <tr>
                             <th>
@@ -88,7 +137,56 @@
                 </div>
             </p-tabpanel>
             <p-tabpanel [value]="'contracts'">
-                <p-table *ngIf="makeOrders.length > 0" [value]="makeOrders" [tableStyle]="{'width': '100%'}">
+                <p-table [value]="makeOrders" [tableStyle]="{'width': '100%'}">
+                    <ng-template #caption>
+                        <div class="ssf-container">
+                            <form (ngSubmit)="onSearch()">
+                                <span class="p-input-icon-right">
+                                  <i class="pi pi-search" style="margin-right: 5px"></i>
+                                  <input
+                                    pInputText
+                                    type="text"
+                                    [(ngModel)]="searchQuery"
+                                    placeholder="{{ 'request.search_placeholder' | translate }}"
+                                    name="searchQuery"
+                                    class="search-field"
+                                    style="margin-bottom: 10px; margin-right: 10px"
+                                  />
+                                </span>
+                            </form>
+                            <p-floatlabel variant="in">
+                                <p-select
+                                    [options]="filterOptions"
+                                    [(ngModel)]="selectedFilterOption"
+                                    optionLabel="label"
+                                    styleClass="w-full"
+                                    variant="filled"
+                                    [group]="true"
+                                    [showClear]="true"
+                                    (onChange)="onFilterChange($event)"
+                                >
+                                    <ng-template let-group #group>
+                                        <div>
+                                            <span style="font-size: 24px;">{{group.label}}</span>
+                                        </div>
+                                    </ng-template>
+                                </p-select>
+                                <label for="in_label">{{ 'request.filter_by' | translate }}</label>
+                            </p-floatlabel>
+                            <p-floatlabel variant="in">
+                                <p-select
+                                    [options]="sortOptions"
+                                    [(ngModel)]="selectedSortOption"
+                                    optionLabel="label"
+                                    styleClass="w-full"
+                                    variant="filled"
+                                    [showClear]="true"
+                                    (onChange)="onSortChange($event)"
+                                ></p-select>
+                                <label for="in_label">{{ 'request.sort_by' | translate }}</label>
+                            </p-floatlabel>
+                        </div>
+                    </ng-template>
                     <ng-template #header>
                         <tr>
                             <th>

@@ -2,6 +2,19 @@ import { RequestPresetModel } from './request-preset.model';
 import { PresetModel } from './preset.model';
 import { UserModel } from './user.model';
 
+export type RequestApi = {
+    id: number;
+    name: string;
+    budget: number;
+    target_date: string;
+    comment: string;
+    stl_file_url: string;
+    preset_requests: RequestPresetModel[];
+    user: any;
+    has_offers: boolean;
+    accepted_at: string | null;
+}
+
 export class RequestModel {
     id: number;
     name: string;
@@ -38,10 +51,7 @@ export class RequestModel {
         this.acceptedAt = acceptedAt;
     }
 
-    static fromAPI(data: any): RequestModel | null {
-        if (!data) {
-            return null;
-        }
+    static fromAPI(data: RequestApi): RequestModel {
         return new RequestModel(
             data.id,
             data.name,
@@ -49,7 +59,7 @@ export class RequestModel {
             new Date(data.target_date),
             data.comment,
             data.stl_file_url,
-            (data.preset_requests ? data.preset_requests.map((preset: any) => RequestPresetModel.fromAPI(preset)) : []),
+            (data?.preset_requests?.map((preset: any) => RequestPresetModel.fromAPI(preset)) ?? []),
             UserModel.fromAPI(data.user),
             data.has_offers,
             data.accepted_at ? new Date(data.accepted_at) : null

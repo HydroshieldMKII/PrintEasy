@@ -1,7 +1,20 @@
-import { RequestModel } from "./request.model";
-import { PrinterUserModel } from "./printer-user.model";
-import { ColorModel } from "./color.model";
-import { FilamentModel } from "./filament.model";
+import { RequestModel, RequestApi } from "./request.model";
+import { PrinterUserModel, PrinterUserApi } from "./printer-user.model";
+import { ColorModel, ColorApi } from "./color.model";
+import { FilamentModel, FilamentApi } from "./filament.model";
+
+export type OfferApi = {
+    id: number;
+    request: RequestApi;
+    printer_user: PrinterUserApi;
+    color: ColorApi;
+    filament: FilamentApi;
+    price: number;
+    print_quality: number;
+    target_date: string;
+    cancelled_at?: Date | null;
+    accepted_at?: Date | null;
+}
 
 export class OfferModel {
     id: number;
@@ -18,32 +31,29 @@ export class OfferModel {
 
     constructor(
         id: number,
-        request: RequestModel | null,
-        printer_user: PrinterUserModel | null,
-        color: ColorModel | null,
-        filament: FilamentModel | null,
+        request: RequestModel,
+        printerUser: PrinterUserModel,
+        color: ColorModel,
+        filament: FilamentModel,
         price: number,
-        print_quality: number,
-        target_date: Date,
-        cancelled_at?: Date | null,
-        accepted_at?: Date | null
+        printQuality: number,
+        targetDate: Date,
+        cancelledAt?: Date | null,
+        acceptedAt?: Date | null
     ) {
         this.id = id;
         this.request = request;
-        this.printerUser = printer_user;
+        this.printerUser = printerUser;
         this.color = color;
         this.filament = filament;
         this.price = price;
-        this.printQuality = print_quality;
-        this.targetDate = target_date
-        this.cancelledAt = cancelled_at;
-        this.acceptedAt = accepted_at;
+        this.printQuality = printQuality;
+        this.targetDate = targetDate
+        this.cancelledAt = cancelledAt;
+        this.acceptedAt = acceptedAt;
     }
 
-    static fromAPI(data: any): OfferModel | null {
-        if (!data) {
-            return null;
-        }
+    static fromAPI(data: OfferApi): OfferModel {
         return new OfferModel(
             data.id,
             RequestModel.fromAPI(data.request),

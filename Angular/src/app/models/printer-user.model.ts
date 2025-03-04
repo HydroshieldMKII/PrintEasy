@@ -1,5 +1,13 @@
-import { UserModel } from "./user.model";
+import { UserModel, UserApi } from "./user.model";
+import { PrinterApi } from "./printer.model";
 import { PrinterModel } from "./printer.model";
+
+export type PrinterUserApi = {
+    id: number;
+    user: UserApi;
+    printer: PrinterApi;
+    aquired_date: Date;
+}
 
 export class PrinterUserModel {
     id: number;
@@ -11,18 +19,15 @@ export class PrinterUserModel {
         id: number,
         user: UserModel | null,
         printer: PrinterModel | null,
-        aquired_date: Date
+        aquiredDate: Date
     ) {
         this.id = id;
         this.user = user;
         this.printer = printer;
-        this.aquiredDate = aquired_date;
+        this.aquiredDate = aquiredDate;
     }
 
-    static fromAPI(data: any): PrinterUserModel | null {
-        if (!data) {
-            return null;
-        }
+    static fromAPI(data: any): PrinterUserModel {
         return new PrinterUserModel(
             data.id,
             UserModel.fromAPI(data.user),

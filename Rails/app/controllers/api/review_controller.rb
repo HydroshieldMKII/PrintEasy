@@ -3,8 +3,6 @@
 module Api
   class ReviewController < AuthenticatedController
     before_action :get_review, only: %i[update destroy]
-    before_action :review_params, only: %i[update]
-    before_action :review_params_create, only: %i[create]
 
     def show
       @review = Review.find(params[:id])
