@@ -42,6 +42,11 @@ export class RequestsComponent implements OnInit {
   isAdvancedFiltering: boolean = false;
 
   currentLanguage: string = 'en';
+  showAdvancedFilters: boolean = false;
+
+  toggleAdvancedFilters(): void {
+    this.showAdvancedFilters = !this.showAdvancedFilters;
+  }
 
   constructor(
     private requestService: RequestService,

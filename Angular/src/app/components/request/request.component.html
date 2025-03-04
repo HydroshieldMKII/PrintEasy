@@ -18,116 +18,120 @@
 
     <p-tabpanels>
       <p-tabpanel *ngFor="let tab of ['all', 'mine']" [value]="tab">
-        <div class="flex justify-between items-center my-3 ssf-container">
-          <div class="flex gap-2 toggle-all">
-            <p-button
-              label="{{ 'request.expand_all' | translate }}"
-              icon="pi pi-plus"
-              text
-              (onClick)="expandAll()"
-            />
-            <p-button
-              label="{{ 'request.collapse_all' | translate }}"
-              icon="pi pi-minus"
-              text
-              (onClick)="collapseAll()"
-            />
-          </div>
-          <div class="flex gap-2 ssf">
-            <form (ngSubmit)="onSearch()">
-              <span class="p-input-icon-right">
-                <i class="pi pi-search" style="margin-right: 5px"></i>
-                <input
-                  pInputText
-                  type="text"
-                  placeholder="{{ 'request.search_placeholder' | translate }}"
-                  [(ngModel)]="searchQuery"
-                  name="searchQuery"
-                  class="search-field"
-                  style="margin-bottom: 10px; margin-right: 10px; height: 100%;"
-                />
-              </span>
-            </form>
+
+<div class="advanced-filters mb-4">
+  <div class="filter-header">
+    <div class="search-container">
+      <span class="p-input-icon-right">
+        <i class="pi pi-search"></i>
+        <input
+          pInputText
+          type="text"
+          placeholder="{{ 'request.search_placeholder' | translate }}"
+          [(ngModel)]="searchQuery"
+          (keyup.enter)="onSearch()"
+        />
+      </span>
+    </div>
+    
+    <div class="advanced-toggle" (click)="toggleAdvancedFilters()">
+      <span class="filter-title">{{ 'request.advanced_filters' | translate }}</span>
+      <i class="pi" [ngClass]="{'pi-chevron-down': showAdvancedFilters, 'pi-chevron-right': !showAdvancedFilters}"></i>
+    </div>
+  </div>
+  
+  <div class="filter-content" *ngIf="showAdvancedFilters">
+    <div class="filter-row">
+      <div class="filter-item budget-range">
+        <label>{{ 'request.budget_range' | translate }}</label>
+        <div class="slider-wrapper">
+          <p-slider [(ngModel)]="budgetRange" [range]="true" [min]="0" [max]="10000"></p-slider>
+          <div class="range-values">
+            <span>${{budgetRange[0]}}</span>
+            <span>${{budgetRange[1]}}</span>
           </div>
         </div>
-
-        <div class="advanced-filters-section mb-4">
-          <p-accordion>
-            <p-accordionTab [header]="'request.advanced_filters' | translate">
-              <div class="flex-row-filters">
-                <div class="filter-group budget-range">
-                  <label>{{ 'request.budget_range' | translate }}</label>
-                  <div class="slider-container">
-                    <p-slider [(ngModel)]="budgetRange" [range]="true" [min]="0" [max]="10000" [style]="{'width':'100%'}"></p-slider>
-                    <div class="range-labels">
-                      <span class="min-value">${{budgetRange[0]}}</span>
-                      <span class="max-value">${{budgetRange[1]}}</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div class="filter-group date-range">
-                  <p-floatlabel variant="in">
-                  <p-calendar 
-                    [(ngModel)]="dateRange" 
-                    selectionMode="range" 
-                    [readonlyInput]="true"
-                    [showIcon]="true"
-                    dateFormat="yy-mm-dd"
-                    [style]="{'width':'100%'}"
-                    appendTo="body"
-                    inputId="date_range"
-                  ></p-calendar>
-                  <label for="date_range">{{ 'request.date_range' | translate }}</label>
-                  </p-floatlabel>
-                </div>
-
-                <p-floatlabel variant="in">
-                  <p-select
-                    inputId="in_label"
-                    [options]="filterOptions"
-                    [(ngModel)]="selectedFilterOption"
-                    optionLabel="label"
-                    styleClass="w-full"
-                    variant="filled"
-                    appendTo="body"
-                    (onChange)="onFilterChange($event)"
-                  />
-                  <label for="in_label">{{ 'request.filter_by' | translate }}</label>
-                </p-floatlabel>
-                <p-floatlabel variant="in">
-                  <p-select
-                    inputId="in_label"
-                    [options]="sortOptions"
-                    [(ngModel)]="selectedSortOption"
-                    optionLabel="label"
-                    styleClass="w-full"
-                    variant="filled"
-                    appendTo="body"
-                    (onChange)="onSortChange($event)"
-                  />
-                  <label for="in_label">{{ 'request.sort_by' | translate }}</label>
-                </p-floatlabel>
-                
-                <div class="filter-actions">
-                  <p-button 
-                    icon="pi pi-filter-slash" 
-                    [label]="'request.clear_filters' | translate" 
-                    styleClass="p-button-outlined p-button-secondary"
-                    (onClick)="clearAdvancedFilters()"
-                  ></p-button>
-                  
-                  <p-button 
-                    icon="pi pi-filter" 
-                    [label]="'request.apply_filters' | translate" 
-                    styleClass="p-button-primary"
-                    (onClick)="applyAdvancedFilters()"
-                  ></p-button>
-                </div>
-              </div>
-            </p-accordionTab>
-          </p-accordion>
+      </div>
+      
+      <div class="filter-item date-filter">
+        <div>
+          <p-floatlabel variant="in">
+            <p-datepicker 
+              [(ngModel)]="dateRange" 
+              selectionMode="range" 
+              [readonlyInput]="true"
+              [showIcon]="true"
+              dateFormat="yy-mm-dd"
+              appendTo="body"
+            ></p-datepicker>
+            <label>{{ 'request.date_range' | translate }}</label>
+          </p-floatlabel>
         </div>
+      </div>
+      
+      <div class="filter-item">
+        <div>
+          <p-float-label variant="in">
+            <p-select
+              [options]="filterOptions"
+              [(ngModel)]="selectedFilterOption"
+              optionLabel="label"
+              appendTo="body"
+              (onChange)="onFilterChange($event)"
+            ></p-select>
+            <label>{{ 'request.filter_by' | translate }}</label>
+          </p-float-label>
+        </div>
+      </div>
+      
+      <div class="filter-item">
+        <p-float-label variant="in">
+          <p-select
+            [options]="sortOptions"
+            [(ngModel)]="selectedSortOption"
+            optionLabel="label"
+            appendTo="body"
+            (onChange)="onSortChange($event)"
+          ></p-select>
+          <label>{{ 'request.sort_by' | translate }}</label>
+        </p-float-label>
+      </div>
+    </div>
+  </div>
+  
+  <div class="filter-actions-bar">
+    <div class="flex gap-2 toggle-all">
+      <p-button
+        label="{{ 'request.expand_all' | translate }}"
+        icon="pi pi-plus"
+        text
+        (onClick)="expandAll()"
+      />
+      <p-button
+        label="{{ 'request.collapse_all' | translate }}"
+        icon="pi pi-minus"
+        text
+        (onClick)="collapseAll()"
+      />
+    </div>
+    
+    <div class="filter-buttons">
+      <p-button 
+        icon="pi pi-filter-slash"
+        styleClass="p-button-sm p-button-outlined"
+        (onClick)="clearAdvancedFilters()"
+        title="{{ 'request.clear_filters' | translate }}"
+      ></p-button>
+      
+      <p-button 
+        icon="pi pi-filter"
+        styleClass="p-button-sm"
+        (onClick)="applyAdvancedFilters()"
+        title="{{ 'request.apply_filters' | translate }}"
+      ></p-button>
+    </div>
+  </div>
+</div>
 
         <p-table
           *ngIf="currentRequests.length > 0"

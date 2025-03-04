@@ -174,6 +174,161 @@ h3 {
     display: flex;
 }
 
+.disabled-col {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.advanced-filters {
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    margin-bottom: 1rem;
+}
+
+.filter-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.filter-content {
+    padding: 1rem;
+    transition: max-height 0.3s ease;
+}
+
+.filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-end;
+}
+
+.filter-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 160px;
+    flex: 1;
+}
+
+.filter-item label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #555;
+}
+
+.budget-range {
+    flex: 1.5;
+    min-width: 200px;
+}
+
+.date-filter {
+    flex: 1.5;
+    min-width: 180px;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-left: auto;
+    align-self: flex-end;
+}
+
+:host ::ng-deep .p-button.p-button-sm {
+    padding: 0.35rem 0.7rem;
+}
+
+:host ::ng-deep .p-button.p-button-sm .p-button-icon {
+    font-size: 0.875rem;
+}
+
+:host ::ng-deep .filter-item .p-dropdown,
+:host ::ng-deep .filter-item .p-select,
+:host ::ng-deep .filter-item .p-datepicker {
+    width: 100%;
+}
+
+/* Filter header styles (merged and deduplicated) */
+.filter-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    user-select: none;
+    border-bottom: 1px solid #e0e0e0;
+    transition: background-color 0.2s;
+    gap: 1rem;
+}
+
+.filter-header:hover {
+    background-color: #f0f0f0;
+}
+
+.filter-header.active {
+    background-color: #f0f8ff;
+    border-left: 3px solid #007bff;
+}
+
+.filter-header .search-container {
+    flex: 1;
+    min-width: 200px;
+}
+
+.filter-header .advanced-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+}
+
+/* Slider styles (merged and deduplicated) */
+.slider-wrapper {
+    padding-top: 5px;
+    padding-bottom: 30px;
+    position: relative;
+}
+
+.range-values {
+    position: absolute;
+    bottom: 5px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: #666;
+}
+
+:host ::ng-deep .p-slider .p-slider-handle {
+    border: 2px solid #007bff;
+    background: #ffffff;
+    width: 1.2rem;
+    height: 1.2rem;
+    margin-top: -0.6rem;
+    margin-left: -0.6rem;
+}
+
+/* Filter actions bar (new component) */
+.filter-actions-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-top: 1px solid #e0e0e0;
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Hide old filter actions */
+.filter-item .filter-actions {
+    display: none;
+}
+
+/* Mobile optimizations (merged and deduplicated) */
 @media (max-width: 768px) {
     .ssf {
         display: block;
@@ -208,86 +363,53 @@ h3 {
         margin-bottom: 0;
         height: 0px;
     }
-}
 
-.disabled-col {
-    opacity: 0.5;
-    pointer-events: none;
-}
-
-.advanced-filters-section {
-    margin-bottom: 1rem;
-}
-
-.flex-row-filters {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    width: 100%;
-}
-
-.filter-group {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.budget-range {
-    display: flex;
-    min-width: 450px;
-}
-
-.date-range {
-    display: flex;
-    min-width: 30px;
-}
-
-.filter-group label {
-    font-weight: 600;
-    white-space: nowrap;
-    font-size: 0.9rem;
-    margin-right: 0.5rem;
-}
-
-.slider-container {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    width: 300px;
-}
-
-.range-labels {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.75rem;
-    color: #666;
-    margin-top: 2px;
-}
-
-.filter-actions {
-    display: flex;
-    gap: 0.5rem;
-    margin-left: auto;
-}
-
-:host ::ng-deep .p-calendar {
-    width: 100%;
-}
-
-@media (max-width: 768px) {
-    .flex-row-filters {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 1rem;
+    :host ::ng-deep .filter-item .p-datepicker {
+        width: 100%;
     }
 
-    .filter-group {
+    .filter-row {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: stretch;
     }
 
     .filter-actions {
         margin-left: 0;
         justify-content: flex-end;
+        margin-top: 0.5rem;
+    }
+
+    .date-filter {
+        width: 100%;
+    }
+
+    .filter-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-header .search-container,
+    .filter-header .advanced-toggle {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+
+    .filter-header .advanced-toggle {
+        justify-content: space-between;
+    }
+
+    .filter-actions-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+    }
+
+    .filter-buttons {
+        justify-content: flex-end;
+    }
+
+    .toggle-all {
+        width: 100%;
+        justify-content: flex-start;
     }
 }
