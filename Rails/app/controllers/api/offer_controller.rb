@@ -71,7 +71,7 @@ module Api
     end
 
     def set_offer
-      @offer = Offer.where(printer_users: current_user.printer_users).find(params[:id])
+      @offer = Offer.where(printer_user: current_user.printer_users).find(params[:id])
     end
   end
 end

@@ -83,10 +83,158 @@
                     </div>
                 </div>
             </p-tabpanel>
-
+            
             <p-tabpanel [value]="'printers'">
-                Content for printers
+                <div class="printers-container">
+                    <div *ngFor="let printerUser of printerUsers" class="printer-card">
+                        <div class="card-header">
+                            <h3>{{ printerUser.printer.model }}</h3>
+                        </div>
+                        
+                        <div class="printer-preview">
+                            <div *ngIf="printerUser.lastReviewedImage" class="preview-image">
+                                <img [src]="printerUser.lastReviewedImage" alt="Last print preview">
+                            </div>
+                            <div *ngIf="!printerUser.lastReviewedImage" class="preview-placeholder">
+                                <i class="pi pi-image"></i>
+                                <span>No print preview</span>
+                            </div>
+                        </div>
+                        
+                        <div class="card-body">
+                            <p class="acquisition-date">
+                                <i class="pi pi-calendar"></i>
+                                Acquired on {{ printerUser.aquiredDate | date:'MMM d, y' }}
+                            </p>
+                            
+                            <p class="last-used" *ngIf="printerUser.lastUsed">
+                                <i class="pi pi-clock"></i>
+                                Last used on {{ printerUser.lastUsed | date:'MMM d, y' }}
+                            </p>
+                            <p class="last-used not-used" *ngIf="!printerUser.lastUsed">
+                                <i class="pi pi-clock"></i>
+                                Never used
+                            </p>
+                        </div>
+                        
+                        <div class="card-actions">
+                            <div class="button-group">
+                                <p-button
+                                    type="button"
+                                    icon="pi pi-pencil"
+                                    severity="primary"
+                                    (click)="editPrinter(printerUser)">
+                                </p-button>
+                                <p-button
+                                    type="button"
+                                    icon="pi pi-trash"
+                                    severity="danger"
+                                    (click)="showDeleteDialog(printerUser)">
+                                </p-button>
+                            </div>
+                        </div>
+                    </div>
+                   
+                    <div class="add-printer-card" (click)="showAddPrinterDialog()">
+                        <div class="add-printer-content">
+                            <i class="pi pi-plus-circle"></i>
+                            <p>Add Printer</p>
+                        </div>
+                    </div>
+                </div>
             </p-tabpanel>
+            
+            <!-- Add/Edit Printer Dialog -->
+            <p-dialog 
+                header="{{isEditMode ? 'Edit Printer' : 'Add Printer'}}" 
+                [(visible)]="printerDialogVisible" 
+                [modal]="true" 
+                [style]="{width: '30rem'}" 
+                [draggable]="false" 
+                [resizable]="false">
+                <form [formGroup]="printerForm" (ngSubmit)="onPrinterSubmit()">
+                    <div class="field">
+                        <label for="model">Printer Model</label>
+                        <p-select 
+                            formControlName="printer" 
+                            [options]="availablePrinters" 
+                            optionLabel="model" 
+                            placeholder="Select a printer model" 
+                            [style]="{width: '100%'}"
+                            appendTo="body">
+                        </p-select>
+                        <small *ngIf="printerForm.get('printer')?.hasError('required') && printerForm.get('printer')?.touched" class="p-error">Printer model is required</small>
+                    </div>
+                    
+                    <div class="field">
+                        <label for="aquiredDate">Acquisition Date</label>
+                        <p-calendar 
+                            appendTo="body"
+                            formControlName="aquiredDate" 
+                            [showIcon]="true" 
+                            dateFormat="yy-mm-dd"
+                            [style]="{width: '100%'}"
+                            [maxDate]="today">
+                        </p-calendar>
+                        <small *ngIf="printerForm.get('aquiredDate')?.hasError('required') && printerForm.get('aquiredDate')?.touched" class="p-error">Acquisition date is required</small>
+                    </div>
+                    
+                    <div class="dialog-footer">
+                        <p-button type="button" label="Cancel" icon="pi pi-times" (click)="printerDialogVisible = false" styleClass="p-button-text"></p-button>
+                        <p-button type="submit" label="Save" icon="pi pi-check" [disabled]="printerForm.invalid"></p-button>
+                    </div>
+                </form>
+            </p-dialog>
+            
+            <!-- Delete Confirmation Dialog -->
+            <p-dialog 
+                [(visible)]="deleteDialogVisible" 
+                [modal]="true" 
+                [style]="{ width: '25rem' }" 
+                dismissableMask="true"
+                closable="false"
+                blockScroll="true"
+                resizable="false"
+                draggable="false">
+                <ng-template #header>
+                    <div class="inline-flex items-center justify-center gap-2">
+                        <i class="pi pi-exclamation-triangle text-red-500 text-2xl"></i>
+                        <span class="font-bold">Confirm Delete</span>
+                    </div>
+                </ng-template>
+                <span class="text-surface-500 dark:text-surface-400 block mb-4">
+                    Are you sure you want to delete this printer? This action cannot be undone.
+                </span>
+                <ng-template #footer>
+                    <p-button label="Cancel" [text]="true" severity="secondary" (click)="deleteDialogVisible = false" />
+                    <p-button label="Delete" severity="danger" (click)="confirmDelete()" />
+                </ng-template>
+            </p-dialog>
+            
+            <!-- Delete Confirmation Dialog -->
+            <p-dialog 
+                [(visible)]="deleteDialogVisible" 
+                [modal]="true" 
+                [style]="{ width: '25rem' }" 
+                dismissableMask="true"
+                closable="false"
+                blockScroll="true"
+                resizable="false"
+                draggable="false">
+                <ng-template #header>
+                    <div class="inline-flex items-center justify-center gap-2">
+                        <i class="pi pi-exclamation-triangle text-red-500 text-2xl"></i>
+                        <span class="font-bold">Confirm Delete</span>
+                    </div>
+                </ng-template>
+                <span class="text-surface-500 dark:text-surface-400 block mb-4">
+                    Are you sure you want to delete this printer? This action cannot be undone.
+                </span>
+                <ng-template #footer>
+                    <p-button label="Cancel" [text]="true" severity="secondary" (click)="deleteDialogVisible = false" />
+                    <p-button label="Delete" severity="danger" (click)="confirmDelete()" />
+                </ng-template>
+            </p-dialog>
 
             <p-tabpanel [value]="'reviews'">
                 <div class="review-list">
