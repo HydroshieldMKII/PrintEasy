@@ -9,7 +9,13 @@ export class PresetModel {
     filament: FilamentModel;
     user: UserModel;
 
-    constructor(id: number, printQuality: number, color: ColorModel, filament: FilamentModel, user: UserModel) {
+    constructor(
+        id: number, 
+        printQuality: number, 
+        color: ColorModel, 
+        filament: FilamentModel, 
+        user: UserModel
+    ) {
         this.id = id;
         this.printQuality = printQuality;
         this.color = color;

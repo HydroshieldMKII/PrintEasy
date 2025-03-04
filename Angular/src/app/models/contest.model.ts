@@ -13,7 +13,19 @@ export class ContestModel {
     winnerUser: UserModel | null;
     started: boolean;
 
-    constructor(id: number, theme: string, description: string, submission_limit: number, start_at: Date, end_at: Date | null, image: string, deleted_at: Date | null, finished: boolean, winnerUser: UserModel | null, started: boolean) {
+    constructor(
+        id: number, 
+        theme: string, 
+        description: string, 
+        submission_limit: number, 
+        start_at: Date, 
+        end_at: Date | null, 
+        image: string, 
+        deleted_at: Date | null, 
+        finished: boolean, 
+        winnerUser: UserModel | null, 
+        started: boolean
+    ) {
         this.id = id;
         this.theme = theme;
         this.description = description;

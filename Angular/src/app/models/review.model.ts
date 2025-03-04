@@ -10,7 +10,15 @@ export class ReviewModel {
     user: UserModel | null;
     imageUrls: ImageAttachmentModel[] = [];
 
-    constructor(id: number, rating: number, title: string, description: string, created_at: Date, image_urls: ImageAttachmentModel[] = [], user: UserModel | null) {
+    constructor(
+        id: number, 
+        rating: number, 
+        title: string, 
+        description: string, 
+        created_at: Date, 
+        image_urls: ImageAttachmentModel[] = [], 
+        user: UserModel | null
+    ) {
         this.id = id;
         this.title = title;
         this.rating = rating;

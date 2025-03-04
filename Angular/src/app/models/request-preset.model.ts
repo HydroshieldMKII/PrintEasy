@@ -9,7 +9,13 @@ export class RequestPresetModel {
     filamentType: FilamentModel;
     printerModel: PrinterModel;
 
-    constructor(id: number, printQuality: number, color: ColorModel, filamentType: FilamentModel, printerModel: PrinterModel) {
+    constructor(
+        id: number, 
+        printQuality: number, 
+        color: ColorModel, 
+        filamentType: FilamentModel, 
+        printerModel: PrinterModel
+    ) {
         this.id = id;
         this.printQuality = printQuality;
         this.color = color;

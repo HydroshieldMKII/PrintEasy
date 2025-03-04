@@ -6,7 +6,14 @@ export class OrderStatusModel {
     updatedAt: Date;
     imageUrl: string;
 
-    constructor(id: number, status_name: string, comment: string, created_at: Date, updated_at: Date, image_url: string) {
+    constructor(
+        id: number, 
+        status_name: string, 
+        comment: string, 
+        created_at: Date, 
+        updated_at: Date, 
+        image_url: string
+    ) {
         this.id = id;
         this.statusName = status_name;
         this.comment = comment;

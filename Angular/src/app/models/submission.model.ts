@@ -13,7 +13,19 @@ export class SubmissionModel {
     likes: LikeModel[];
     liked: boolean = false;
 
-    constructor(id: number, user_id: number, contest_id: number, name: string, description: string | null, created_at: Date, updated_at: Date, image_url: string | null, stl_url: string | null, likes: LikeModel[], liked: boolean = false) {
+    constructor(
+        id: number, 
+        user_id: number, 
+        contest_id: number, 
+        name: string, 
+        description: string | null, 
+        created_at: Date, 
+        updated_at: Date, 
+        image_url: string | null, 
+        stl_url: string | null, 
+        likes: LikeModel[], 
+        liked: boolean = false
+    ) {
         this.id = id;
         this.user_id = user_id;
         this.contest_id = contest_id;

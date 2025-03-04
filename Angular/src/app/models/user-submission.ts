@@ -6,7 +6,11 @@ export class UserSubmission {
     submissions: SubmissionModel[];
     mine: boolean;
 
-    constructor(user: UserModel, submissions: SubmissionModel[], mine: boolean) {
+    constructor(
+        user: UserModel, 
+        submissions: SubmissionModel[], 
+        mine: boolean
+    ) {
         this.user = user;
         this.submissions = submissions;
         this.mine = mine;

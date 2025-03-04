@@ -6,7 +6,14 @@ export class UserModel {
     profilePictureUrl?: string;
     isAdmin?: boolean;
 
-    constructor(id: number, username: string, country: string, profile_picture_url?: string, createdAt?: Date, isAdmin?: boolean) {
+    constructor(
+        id: number, 
+        username: string, 
+        country: string, 
+        profile_picture_url?: string, 
+        createdAt?: Date, 
+        isAdmin?: boolean
+    ) {
         this.id = id;
         this.username = username;
         this.country = country;

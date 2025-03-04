@@ -5,7 +5,10 @@ export class UserContestSubmissionsModel {
     readonly contest: ContestModel;
     readonly submissions: SubmissionModel[];
     
-    constructor(contest: ContestModel, submissions: SubmissionModel[]) {
+    constructor(
+        contest: ContestModel, 
+        submissions: SubmissionModel[]
+    ) {
         this.contest = contest;
         this.submissions = submissions;
     }
