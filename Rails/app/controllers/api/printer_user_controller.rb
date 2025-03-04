@@ -31,7 +31,7 @@ module Api
     end
     
     def create
-      @printer_user = current_user.printer_user.new(printer_user_params)
+      @printer_user = current_user.printer_users.new(printer_user_params)
       
       if @printer_user.save
         render json: @printer_user.as_json({
@@ -82,7 +82,7 @@ module Api
     private
     
     def set_printer_user
-      @printer_user = current_user.printer_user.find(params[:id])
+      @printer_user = current_user.printer_users.find(params[:id])
     end
     
     def printer_user_params

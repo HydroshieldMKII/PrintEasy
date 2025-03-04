@@ -3,7 +3,7 @@
 class PrinterUser < ApplicationRecord
   belongs_to :printer
   belongs_to :user
-  has_many :offers
+  has_many :offers, dependent: :destroy
   
   def last_review_image
     # Find completed offers with reviews and images
