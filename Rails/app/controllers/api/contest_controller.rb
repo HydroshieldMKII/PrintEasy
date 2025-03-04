@@ -5,22 +5,31 @@ module Api
     before_action :is_admin?, only: %i[create update destroy]
 
     def index
-      @contests = Contest.contests_order(current_user)
+      @contests = Contest.contests_order(current_user, params)
 
-      render json: { contests: @contests.as_json(methods: %i[image_url finished? started? winner_user]), errors: {} }, status: :ok
+      render json: { 
+        contests: @contests.as_json(include: :submissions, methods: %i[image_url finished? started? winner_user]), errors: {} 
+        }, 
+        status: :ok
     end
 
     def show
       @contest = Contest.find(params[:id])
 
-      render json: { contest: @contest.as_json(methods: %i[image_url finished? started? winner_user]), errors: {} }, status: :ok
+      render json: { 
+        contest: @contest.as_json(include: :submissions, methods: %i[image_url finished? started? winner_user]), errors: {} 
+        },
+        status: :ok
     end
 
     def create
       @contest = Contest.new(contest_params)
 
       if @contest.save
-        render json: { contest: @contest.as_json(methods: :image_url), errors: {} }, status: :created
+        render json: {
+           contest: @contest.as_json(include: :submissions, methods: %i[image_url finished? started? winner_user]), errors: {} 
+           },
+          status: :created
       else
         render json: { errors: @contest.errors.as_json }, status: :unprocessable_entity
       end
@@ -30,7 +39,10 @@ module Api
       @contest = Contest.find(params[:id])
 
       if @contest.update(contest_params)
-        render json: { contest: @contest.as_json(methods: :image_url), errors: {} }, status: :ok
+        render json: {
+           contest: @contest.as_json(include: :submissions, methods: %i[image_url finished? started? winner_user]), errors: {} 
+           },
+          status: :ok
       else
         render json: { errors: @contest.errors.as_json }, status: :unprocessable_entity
       end
@@ -41,7 +53,10 @@ module Api
       deleted = @contest.started? ? @contest.soft_delete : @contest.destroy
 
       if deleted
-        render json: { contest: @contest.as_json(methods: :image_url), errors: {} }, status: :ok
+        render json: {
+           contest: @contest.as_json(include: :submissions, methods: %i[image_url finished? started? winner_user]), errors: {} 
+           }, 
+           status: :ok
       else
         render json: { errors: @contest.errors.as_json }, status: :unprocessable_entity
       end

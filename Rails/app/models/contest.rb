@@ -4,8 +4,55 @@ class Contest < ApplicationRecord
   # before_validation :set_start_at, on: [:create, :update]
 
   default_scope { where(deleted_at: nil) }
+
   scope :active_for_user, lambda { |_user|
     where('start_at <= ?', Time.now)
+  }
+
+  scope :search, -> (search) {
+    where('theme LIKE ?', "%#{search}%")
+  }
+
+  scope :active, ->(params) {
+    return if !params.key?(:active)
+
+    where('start_at <= ? AND (end_at IS NULL OR end_at >= ?)', Time.now, Time.now)
+  }
+
+  scope :finished, ->(params) {
+    return if !params.key?(:finished)
+
+    where('end_at < ?', Time.now)
+  }
+
+  scope :with_participants, ->(participants) {
+    return if participants.blank?  
+  
+    joins(:submissions)
+    .joins("LEFT JOIN users ON users.id = submissions.user_id")
+    .group("contests.id")
+    .having("COUNT(DISTINCT users.id) = ?", participants)
+  }
+  
+  scope :sort_by_submissions, -> (direction_params) {
+    return if direction_params.blank?
+
+    direction = %w[asc desc].include?(direction_params) ? direction_params : "desc"
+    left_joins(:submissions)
+      .group(:id)
+      .order("COUNT(submissions.id) #{direction.upcase}")
+  }
+  
+  scope :sort_by_date, -> (category, sort) {
+    return if sort.blank? || category.blank?
+    
+    allowed_columns = %w[start_at end_at]
+    allowed_directions = %w[asc desc]
+
+    column = allowed_columns.include?(category) ? category : "start_at"
+    direction = allowed_directions.include?(sort) ? sort : "asc"
+
+    order(Arel.sql('IF(contests.end_at IS NOT NULL AND contests.end_at < CURRENT_DATE, 1, 0)'), column => direction)
   }
 
   has_many :submissions, dependent: :destroy
@@ -44,6 +91,7 @@ class Contest < ApplicationRecord
     top_submission&.user
   end
 
+<<<<<<< HEAD
   def self.contests_order(user)
     user.accessible_contests
         .left_joins(submissions: :likes)
@@ -53,6 +101,23 @@ class Contest < ApplicationRecord
                         WHEN contests.end_at IS NOT NULL AND contests.end_at < CURRENT_DATE THEN 1
                         ELSE 0
                       END, contests.start_at'))
+=======
+  def self.contests_order(user, params)
+    contests = user.accessible_contests
+                    .search(params[:search])
+                    .active(params)
+                    .finished(params)
+                    .with_participants(params[:participants])
+                    .sort_by_submissions(params[:sort_by_submissions])
+                    .sort_by_date(params[:category], params[:sort])
+                    .order(Arel.sql('
+                      CASE 
+                        WHEN contests.end_at IS NOT NULL AND contests.end_at < CURRENT_DATE THEN 1 
+                        ELSE 0 
+                      END, contests.start_at')
+                    )
+    contests
+>>>>>>> SSF-Contests
   end
 
   def users_with_submissions(current_user)

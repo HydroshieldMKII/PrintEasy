@@ -48,7 +48,7 @@ module Api
     end
 
     def submission_params
-      params.require(:submission).permit(:id, :contest_id, :name, :description, :created_at, :updated_at, :stl, :image)
+      params.require(:submission).permit(:contest_id, :name, :description, :created_at, :updated_at, :stl, :image)
     end
   end
 end
