@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { RequestModel } from '../models/request.model';
+import { RequestModel, RequestApi } from '../models/request.model';
 import { RequestPresetModel } from '../models/request-preset.model';
 import { UserModel } from '../models/user.model';
 import { PrinterModel } from '../models/printer.model';
@@ -141,7 +141,7 @@ export class RequestService {
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
                     console.log("Requests response: ", response.data);
-                    this.requests = (response.data as any)?.['request'].map((requestData: any) => {
+                    this.requests = (response.data.request as RequestApi[])?.map((requestData: RequestApi) => {
                         return RequestModel.fromAPI(requestData);
                     });
                 }

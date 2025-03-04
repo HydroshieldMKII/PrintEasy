@@ -51,10 +51,7 @@ export class RequestModel {
         this.acceptedAt = acceptedAt;
     }
 
-    static fromAPI(data: any): RequestModel | null {
-        if (!data) {
-            return null;
-        }
+    static fromAPI(data: RequestApi): RequestModel {
         return new RequestModel(
             data.id,
             data.name,

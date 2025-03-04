@@ -31,10 +31,10 @@ export class OfferModel {
 
     constructor(
         id: number,
-        request: RequestModel | null,
-        printerUser: PrinterUserModel | null,
-        color: ColorModel | null,
-        filament: FilamentModel | null,
+        request: RequestModel,
+        printerUser: PrinterUserModel,
+        color: ColorModel,
+        filament: FilamentModel,
         price: number,
         printQuality: number,
         targetDate: Date,
@@ -53,7 +53,7 @@ export class OfferModel {
         this.acceptedAt = acceptedAt;
     }
 
-    static fromAPI(data: OfferApi): OfferModel | null {
+    static fromAPI(data: OfferApi): OfferModel {
         return new OfferModel(
             data.id,
             RequestModel.fromAPI(data.request),

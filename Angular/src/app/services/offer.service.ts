@@ -57,9 +57,10 @@ export class OfferService {
                 if (response.status === 200) {
                     console.log("Offers: ", response.data);
                     return (response.data as any)?.['requests'].map((request: any) => {
-                        request.offers.map((offer: any) => {
+                        request.offers = request.offers.map((offer: any) => {
                             offer.color.name = this.translateColor(offer.color.id);
                             offer.filament.name = this.translateFilament(offer.filament.id);
+                            return offer;
                         });
                         return RequestOfferModel.fromAPI(request);
                     });
