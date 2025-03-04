@@ -46,6 +46,18 @@ class Request < ApplicationRecord
       .where(order_status: { status_name: 'Accepted' })
       .distinct
   }
+  scope :by_budget_range, lambda { |min_budget, max_budget|
+    where('requests.budget >= ? AND requests.budget <= ?', min_budget, max_budget) if min_budget.present? && max_budget.present?
+  }
+  scope :by_date_range, lambda { |start_date, end_date|
+    if start_date.present? && end_date.present?
+      where('requests.target_date > ? AND requests.target_date <= ?', 
+            start_date.to_date.beginning_of_day, 
+            end_date.to_date.end_of_day)
+    elsif start_date.present?
+      where('requests.target_date >= ?', start_date.to_date.end_of_day)
+    end
+  }
   scope :sorted, lambda { |category, direction|
     return order('target_date ASC') unless category.present? && direction.present?
 
@@ -67,7 +79,7 @@ class Request < ApplicationRecord
   }
 
   def self.fetch_for_user(params)
-    case params[:type]
+    requests = case params[:type]
     when 'all'
       if Current.user.printers.exists?
         with_associations
@@ -88,6 +100,11 @@ class Request < ApplicationRecord
     else
       none
     end
+
+    requests = requests.by_budget_range(params[:minBudget], params[:maxBudget])
+    requests = requests.by_date_range(params[:startDate], params[:endDate])
+    
+    requests
   end
 
   def self.apply_filter(filter)

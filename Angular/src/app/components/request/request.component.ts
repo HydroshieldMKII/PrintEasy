@@ -6,7 +6,7 @@ import { RequestService } from '../../services/request.service';
 import { ImportsModule } from '../../../imports';
 import { MessageService } from 'primeng/api';
 import { Clipboard } from '@angular/cdk/clipboard';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-request',
@@ -37,7 +37,7 @@ export class RequestsComponent implements OnInit {
   sortOptions: SelectItem[] = [];
 
   budgetRange: number[] = [0, 10000];
-  dateRange: Date[] | null = null;
+  dateRange: any[] | null = null;
 
   currentLanguage: string = 'en';
   showAdvancedFilters: boolean = false;
@@ -50,8 +50,7 @@ export class RequestsComponent implements OnInit {
     private requestService: RequestService,
     private router: Router,
     private messageService: MessageService,
-    private clipboard: Clipboard,
-    private translateService: TranslateService
+    private clipboard: Clipboard
   ) {
     const queryParams = this.router.parseUrl(this.router.url).queryParams;
     this.currentFilter = queryParams['filter'] || '';
@@ -81,12 +80,14 @@ export class RequestsComponent implements OnInit {
     this.dateRange = null;
 
     const queryParams = this.router.parseUrl(this.router.url).queryParams;
-    if (queryParams['startDate'] && queryParams['endDate']) {
+    if (queryParams['startDate']) {
       const startDate = new Date(queryParams['startDate']);
-      const endDate = new Date(queryParams['endDate']);
+      const endDate = queryParams['endDate'] ? new Date(queryParams['endDate']) : null;
 
       startDate.setUTCHours(12, 0, 0, 0);
-      endDate.setUTCHours(12, 0, 0, 0);
+      if (endDate) {
+        endDate.setUTCHours(12, 0, 0, 0);
+      }
 
       this.dateRange = [startDate, endDate];
     }
@@ -164,13 +165,25 @@ export class RequestsComponent implements OnInit {
   }
 
   filter(type: string): void {
-    const startDate = this.dateRange && this.dateRange.length > 0 ? this.dateRange[0] : null;
-    const endDate = this.dateRange && this.dateRange.length > 1 ? this.dateRange[1] : null;
+    const startDate = this.dateRange && this.dateRange[0] ? this.dateRange[0] : null;
+    const endDate = this.dateRange && this.dateRange.length > 1 && this.dateRange[1] ? this.dateRange[1] : null;
+
+    console.log('Filtering requests. Start date:', startDate, 'End date:', endDate, 'Type:', type);
+    console.log('Filtering requests. Budget range:', this.budgetRange[0], this.budgetRange[1]);
 
     this.requestService
-      .filter(this.currentFilter, this.currentSortCategory, this.currentSort, this.searchQuery, this.budgetRange[0], this.budgetRange[1], startDate, endDate, type)
+      .filter(
+        this.currentFilter,
+        this.currentSortCategory,
+        this.currentSort,
+        this.searchQuery,
+        this.budgetRange[0],
+        this.budgetRange[1],
+        startDate,
+        endDate,
+        type
+      )
       .subscribe(([requests, isOwningPrinter]: [RequestModel[], boolean]) => {
-
         if (this.isOwningPrinter === null) {
           console.log('Is owning printer:', isOwningPrinter);
           this.isOwningPrinter = isOwningPrinter;
@@ -277,10 +290,20 @@ export class RequestsComponent implements OnInit {
         minBudget: null,
         maxBudget: null,
         startDate: null,
-        endDate: null
+        endDate: null,
+        filter: null,
+        sort: null,
+        sortCategory: null
       },
       queryParamsHandling: 'merge'
     });
+
+    this.budgetRange = [0, 10000];
+    this.dateRange = null;
+    this.searchQuery = '';
+    this.currentFilter = '';
+    this.currentSort = '';
+    this.currentSortCategory = '';
 
     this.selectedFilterOption = this.filterOptions[0];
     this.selectedSortOption = this.sortOptions[0];
@@ -290,17 +313,40 @@ export class RequestsComponent implements OnInit {
   }
 
   applyAdvancedFilters(): void {
-
-    //budget range
     const queryParams: any = {
       minBudget: this.budgetRange[0],
       maxBudget: this.budgetRange[1]
     };
 
-    //date range
-    if (this.dateRange && this.dateRange.length === 2 && this.dateRange[0] && this.dateRange[1]) {
+    console.log('Applying advanced filters. Budget range:', this.budgetRange, 'Date range:', this.dateRange, 'Search query:', this.searchQuery);
+
+    if (this.dateRange && this.dateRange.length >= 1 && this.dateRange[0]) {
       queryParams.startDate = this.dateRange[0].toISOString().split('T')[0];
-      queryParams.endDate = this.dateRange[1].toISOString().split('T')[0];
+
+      if (this.dateRange.length === 2 && this.dateRange[1]) {
+        queryParams.endDate = this.dateRange[1].toISOString().split('T')[0];
+      } else {
+        queryParams.endDate = null;
+      }
+    } else {
+      queryParams.startDate = null;
+      queryParams.endDate = null;
+    }
+
+    if (this.searchQuery) {
+      queryParams.search = this.searchQuery;
+    }
+
+    if (this.currentFilter) {
+      queryParams.filter = this.currentFilter;
+    }
+
+    if (this.currentSort) {
+      queryParams.sort = this.currentSort;
+    }
+
+    if (this.currentSortCategory) {
+      queryParams.sortCategory = this.currentSortCategory
     }
 
     this.router.navigate([], {

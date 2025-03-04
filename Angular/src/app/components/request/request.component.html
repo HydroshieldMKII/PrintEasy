@@ -57,13 +57,16 @@
         <div>
           <p-floatlabel variant="in">
             <p-datepicker 
-              [(ngModel)]="dateRange" 
-              selectionMode="range" 
-              [readonlyInput]="true"
-              [showIcon]="true"
-              dateFormat="yy-mm-dd"
-              appendTo="body"
-            ></p-datepicker>
+            [(ngModel)]="dateRange" 
+            selectionMode="range" 
+            [readonlyInput]="true"
+            [showIcon]="true"
+            dateFormat="yy-mm-dd"
+            appendTo="body"
+            [monthNavigator]="true"
+            [yearNavigator]="true"
+            yearRange="2020:2030"
+          ></p-datepicker>
             <label>{{ 'request.date_range' | translate }}</label>
           </p-floatlabel>
         </div>

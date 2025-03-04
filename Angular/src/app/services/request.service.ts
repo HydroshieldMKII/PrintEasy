@@ -67,8 +67,8 @@ export class RequestService {
         if (sortCategory) params.sortCategory = sortCategory;
         if (orderParams) params.sort = orderParams;
         if (searchParams) params.search = searchParams;
-        if (minBudget) params.minBudget = minBudget;
-        if (maxBudget) params.maxBudget = maxBudget;
+        if (minBudget !== undefined && minBudget !== null) params.minBudget = minBudget;
+        if (maxBudget !== undefined && maxBudget !== null) params.maxBudget = maxBudget;
         if (startDate) params.startDate = startDate.toISOString().split('T')[0]
         if (endDate) params.endDate = endDate.toISOString().split('T')[0]
         if (type) params.type = type;
