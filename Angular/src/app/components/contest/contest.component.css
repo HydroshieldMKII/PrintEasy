@@ -7,6 +7,21 @@
     margin-top: 10px;
 }
 
+.slider-wrapper {
+    padding-top: 20px;
+    padding-bottom: 30px;
+    position: relative;
+}
+
+.range-values {
+    position: absolute;
+    bottom: 5px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+}
+
 .contest-list {
     display: flex;
     gap: 20px;

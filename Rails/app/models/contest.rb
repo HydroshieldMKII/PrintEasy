@@ -26,12 +26,12 @@ class Contest < ApplicationRecord
   }
 
   scope :with_participants, ->(participants) {
-    return if participants.blank?  
-  
-    joins(:submissions)
+    return if participants.blank?
+
+    left_joins(:submissions)
     .joins("LEFT JOIN users ON users.id = submissions.user_id")
     .group("contests.id")
-    .having("COUNT(DISTINCT users.id) = ?", participants)
+    .having("COUNT(DISTINCT users.id) <= ?", participants)
   }
   
   scope :sort_by_submissions, -> (direction_params) {

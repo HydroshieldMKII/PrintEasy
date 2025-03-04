@@ -43,8 +43,7 @@ export class ContestComponent {
   filterOptions: SelectItem[] = [
     { label: 'All', value: '' },
     { label: 'Active', value: 'active' },
-    { label: 'Finished', value: 'finished' },
-    { label: 'Participants', value: 'participants' },
+    { label: 'Finished', value: 'finished' }
   ];
   sortOptions: SelectItem[] = [
     { label: 'None', value: '' },
@@ -67,10 +66,6 @@ export class ContestComponent {
 
       this.selectedFilterOption = this.filterOptions.find(option => option.value === this.currentFilter) || this.filterOptions[0];
       this.selectedSortOption = this.sortOptions.find(option => option.value === `${this.currentSortCategory}-${this.currentSort}`) || this.sortOptions[0];
-
-      if (this.currentFilter === 'participants') {
-        this.sliderClass = 'flex';
-      }
     });
 
     this.fetchContests();
@@ -83,8 +78,6 @@ export class ContestComponent {
       ssf_params = { ...ssf_params, active: true };
     } else if (this.currentFilter === 'finished') {
       ssf_params = { ...ssf_params, finished: true };
-    } else if (this.currentFilter === 'participants') {
-      ssf_params = { ...ssf_params, participants: this.currentValue };
     }
 
     if (this.currentSort) {
@@ -94,11 +87,15 @@ export class ContestComponent {
         ssf_params = { ...ssf_params, sort: this.currentSort, category: this.currentSortCategory };
       }
     }
-
+    
     if (this.currentQuery) {
       ssf_params = { ...ssf_params, search: this.currentQuery };
     }
 
+    if (this.currentValue >= 0) {
+      ssf_params = { ...ssf_params, participants: this.currentValue };
+    }
+    
     return ssf_params;
   }
 
@@ -131,19 +128,10 @@ export class ContestComponent {
   onFilterChange(event: { value: SelectItem }) {
     this.currentFilter = event.value.value || '';
 
-    if (this.currentFilter === 'participants') {
-      this.sliderClass = 'flex';
-      this.route.navigate([], {
-        queryParams: { filter: this.currentFilter || null, participants: this.currentValue || null },
-        queryParamsHandling: 'merge'
-      });
-    } else {
-      this.route.navigate([], {
-        queryParams: { filter: this.currentFilter || null, participants: null },
-        queryParamsHandling: 'merge'
-      });
-      this.sliderClass = 'none';
-    }
+    this.route.navigate([], {
+      queryParams: { filter: this.currentFilter || null },
+      queryParamsHandling: 'merge'
+    });
 
     this.fetchContests();
   }
@@ -176,6 +164,8 @@ export class ContestComponent {
 
   onSlideEnd(event: any) {
     this.currentValue = event.value;
+
+    console.log('Slide end:', this.currentValue);
 
     this.route.navigate([], {
       queryParams: { participants: this.currentValue || 0 },

@@ -8,9 +8,14 @@
   <p [innerHTML]="'contest.description_page' | translate"></p>
 
   <div class="search-container">
-    <div [class]="sliderClass">
-      <p>{{ currentValue }}</p>
-      <p-slider [(ngModel)]="currentValue" (onSlideEnd)="onSlideEnd($event)" min="0" max="30" />
+    <div class="flex">
+      <div class="slider-wrapper">
+        <p-slider [(ngModel)]="currentValue" (onSlideEnd)="onSlideEnd($event)" min="0" max="30" />
+        <div class="range-values">
+          <span>0</span>
+          <span>{{ currentValue }}</span>
+        </div>
+      </div>
     </div>
 
     <p-floatlabel variant="in">
