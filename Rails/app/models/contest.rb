@@ -91,17 +91,6 @@ class Contest < ApplicationRecord
     top_submission&.user
   end
 
-<<<<<<< HEAD
-  def self.contests_order(user)
-    user.accessible_contests
-        .left_joins(submissions: :likes)
-        .group('contests.id')
-        .order(Arel.sql('
-                      CASE
-                        WHEN contests.end_at IS NOT NULL AND contests.end_at < CURRENT_DATE THEN 1
-                        ELSE 0
-                      END, contests.start_at'))
-=======
   def self.contests_order(user, params)
     contests = user.accessible_contests
                     .search(params[:search])
@@ -117,7 +106,6 @@ class Contest < ApplicationRecord
                       END, contests.start_at')
                     )
     contests
->>>>>>> SSF-Contests
   end
 
   def users_with_submissions(current_user)
