@@ -1,5 +1,5 @@
 export type ImageAttachmentApi = {
-    signed_id: number | null;
+    signed_id: number;
     url: string;
 }
 

@@ -7,11 +7,7 @@ module Api
     def show
       @review = Review.find(params[:id])
       render json: {
-        review: @review.as_json(
-          except: %i[created_at updated_at],
-          include: { user: { except: %i[created_at updated_at is_admin] } },
-          methods: %i[image_urls]
-        ),
+        review: review_as_json(@review),
         errors: {}
       }, status: :ok
     end
@@ -20,7 +16,7 @@ module Api
       @review = Review.new(review_params_create)
       if @review.save
         render json: {
-          review: @review.as_json(methods: %i[image_urls], include: { user: { except: %i[created_at updated_at is_admin] } }),
+          review: review_as_json(@review),
           errors: {}
         }, status: :created
       else
@@ -31,7 +27,7 @@ module Api
     def update
       if @review.update(review_params)
         render json: {
-          review: @review.as_json(methods: %i[image_urls], include: { user: { except: %i[created_at updated_at is_admin] } }),
+          review: review_as_json(@review),
           errors: {}
         }, status: :ok
       else
@@ -42,7 +38,7 @@ module Api
     def destroy
       if @review.destroy!
         render json: {
-          review: @review.as_json(methods: %i[image_urls], include: { user: { except: %i[created_at updated_at is_admin] } }),
+          review: review_as_json(@review),
           errors: {}
         }, status: :ok
       else
@@ -51,6 +47,19 @@ module Api
     end
 
     private
+
+    def review_as_json(review)
+      review.as_json(
+        methods: %i[image_urls], 
+        include: { 
+          user: { 
+            except: %i[country_id], 
+            include: { country: {} }, 
+            methods: %i[profile_picture_url] 
+          } 
+        }
+      )
+    end
 
     def get_review
       user_reviews = Review.where(user_id: current_user.id)

@@ -32,13 +32,13 @@ export class OrderModel {
         this.review = review;
     }
 
-    static fromAPI(any: OrderApi): OrderModel {
+    static fromAPI(data: OrderApi): OrderModel {
         return new OrderModel(
-            any.id,
-            (any.order_status ? any.order_status.map((order_status: OrderStatusApi) => OrderStatusModel.fromAPI(order_status)) : []),
-            OfferModel.fromAPI(any.offer),
-            any.available_status,
-            ReviewModel.fromAPI(any.review)
+            data.id,
+            (data.order_status ? data.order_status.map((order_status: OrderStatusApi) => OrderStatusModel.fromAPI(order_status)) : []),
+            OfferModel.fromAPI(data.offer),
+            data.available_status,
+            data.review ? ReviewModel.fromAPI(data.review) : null
         );
     }
 }
