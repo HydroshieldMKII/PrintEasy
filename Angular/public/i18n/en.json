@@ -212,7 +212,7 @@
         "delete_error": "Request deletion failed",
         "accepted": "Accepted",
         "pending": "Pending",
-        "advanced_filters": "Advanced Filters",
+        "advanced_filters": "Advanced",
         "budget_range": "Budget Range",
         "date_range": "Target Date Range",
         "select_date_range": "Select date range",

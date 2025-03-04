@@ -10,6 +10,7 @@ import { ReviewService } from '../../services/review.service';
 import { SubmissionModel } from '../../models/submission.model';
 import { LikeService } from '../../services/like.service';
 import { LikeModel } from '../../models/like.model';
+import { ApiResponseModel } from '../../models/api-response.model';
 
 @Component({
   selector: 'app-user-profile',
@@ -48,9 +49,12 @@ export class UserProfileComponent {
       }
     ];
 
-    this.reviewService.getUserReviews().subscribe(response => {
-      this.userReviews = response.data.reviews
-      console.log(this.userReviews)
+    this.reviewService.getUserReviews().subscribe((response : ApiResponseModel | ReviewModel[]) => {
+      if (response instanceof ApiResponseModel) {
+        return;
+      }
+      this.userReviews = response;
+      console.log("reviews", this.userReviews)
       this.averageRating = this.userReviews.reduce((acc, review) => acc + review.rating, 0) / this.userReviews.length;
     });
   }

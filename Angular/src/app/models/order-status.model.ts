@@ -1,3 +1,12 @@
+export type OrderStatusApi = {
+    id: number;
+    status_name: string;
+    comment: string;
+    created_at: string;
+    updated_at: string;
+    image_url: string;
+}
+
 export class OrderStatusModel {
     id: number;
     statusName: string;
@@ -22,10 +31,7 @@ export class OrderStatusModel {
         this.imageUrl = imageUrl;
     }
 
-    static fromAPI(data: any): OrderStatusModel | null {
-        if (!data) {
-            return null;
-        }
+    static fromAPI(data: OrderStatusApi): OrderStatusModel {
         return new OrderStatusModel(
             data.id,
             data.status_name,

@@ -1,5 +1,16 @@
 import { UserModel } from './user.model';
-import { ImageAttachmentModel } from './image-attachment.model';
+import { ImageAttachmentModel, ImageAttachmentApi } from './image-attachment.model';
+import { UserApi } from './user.model';
+
+export type ReviewApi = {
+    id: number;
+    rating: number;
+    title: string;
+    description: string;
+    created_at: string;
+    image_urls: ImageAttachmentApi[];
+    user: UserApi;
+}
 
 export class ReviewModel {
     id: number;
@@ -28,17 +39,14 @@ export class ReviewModel {
         this.imageUrls = imageUrls;
     }
 
-    static fromAPI(data: any): ReviewModel | null {
-        if (!data) {
-            return null;
-        }
+    static fromAPI(data: ReviewApi): ReviewModel {
         return new ReviewModel(
             data.id,
             data.rating,
             data.title,
             data.description,
             new Date(data.created_at),
-            (data.image_urls ?? []).map((image: any) => ImageAttachmentModel.fromAPI(image)),
+            data.image_urls ? data.image_urls.map((image: ImageAttachmentApi) => ImageAttachmentModel.fromAPI(image)) : [],
             UserModel.fromAPI(data.user)
         );
     }

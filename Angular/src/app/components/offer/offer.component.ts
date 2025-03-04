@@ -8,6 +8,8 @@ import { OfferModalComponent } from '../offer-modal/offer-modal.component';
 import { ImportsModule } from '../../../imports';
 import { TranslatePipe } from '@ngx-translate/core';
 import { TranslateService } from '@ngx-translate/core';
+import { ApiResponseModel } from '../../models/api-response.model';
+import { OrderModel } from '../../models/order.model';
 
 @Component({
   selector: 'app-offer',
@@ -137,8 +139,8 @@ export class OffersComponent {
 
   confirmAccept(): void {
     console.log("Accepting id:", this.offerToAccept.id);
-    this.orderService.createOrder(this.offerToAccept.id).subscribe((response) => {
-      if (response.status === 201) {
+    this.orderService.createOrder(this.offerToAccept.id).subscribe((response : ApiResponseModel | OrderModel) => {
+      if (response instanceof OrderModel) {
         this.messageService.add({ severity: 'success', summary: this.translate.instant('global.success'), detail: this.translate.instant('offer.accept_success') });
         this.offerToAccept = null;
         this.acceptDialogVisible = false;

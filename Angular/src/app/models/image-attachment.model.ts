@@ -1,3 +1,8 @@
+export type ImageAttachmentApi = {
+    signed_id: number;
+    url: string;
+}
+
 export class ImageAttachmentModel {
     signedId: number | null;
     url: string;
@@ -13,10 +18,7 @@ export class ImageAttachmentModel {
         this.url = url;
     }
 
-    static fromAPI(data: any): ImageAttachmentModel | null {
-        if (!data) {
-            return null;
-        }
+    static fromAPI(data: ImageAttachmentApi): ImageAttachmentModel {
         return new ImageAttachmentModel(
             data.signed_id,
             data.url

@@ -1,5 +1,5 @@
 import { inject, Injectable } from "@angular/core";
-import { ReviewModel } from "../models/review.model";
+import { ReviewApi, ReviewModel } from "../models/review.model";
 
 import { ApiRequestService } from "./api.service";
 import { ApiResponseModel } from "../models/api-response.model";
@@ -13,46 +13,56 @@ import { Observable } from "rxjs";
 export class ReviewService {
     constructor(private api: ApiRequestService) {}
 
-    getReview(id: number): Observable<ApiResponseModel> {
+    getReview(id: number): Observable<ReviewModel | ApiResponseModel> {
         return this.api.getRequest(`api/review/${id}`).pipe(
             map((response: ApiResponseModel) => {
-                response.data.review = ReviewModel.fromAPI(response.data.review);
+                if (response.status === 200) {
+                    return ReviewModel.fromAPI(response.data.review);
+                }
                 return response;
             })
         );
     }
 
-    createReview(review: FormData): Observable<ApiResponseModel> {
+    createReview(review: FormData): Observable<ReviewModel | ApiResponseModel> {
         return this.api.postRequest("api/review", {}, review).pipe(
             map((response: ApiResponseModel) => {
-                response.data.review = ReviewModel.fromAPI(response.data.review);
+                if (response.status === 201) {
+                    return ReviewModel.fromAPI(response.data.review);
+                }
                 return response;
             })
         );
     }
 
-    updateReview(id: number, review: FormData): Observable<ApiResponseModel> {
+    updateReview(id: number, review: FormData): Observable<ReviewModel | ApiResponseModel> {
         return this.api.patchRequest(`api/review/${id}`, {}, review).pipe(
             map((response: ApiResponseModel) => {
-                response.data.review = ReviewModel.fromAPI(response.data.review);
+                if (response.status === 200) {
+                    return ReviewModel.fromAPI(response.data.review);
+                }
                 return response;
             })
         );
     }
 
-    deleteReview(id: number): Observable<ApiResponseModel> {
+    deleteReview(id: number): Observable<ReviewModel | ApiResponseModel> {
         return this.api.deleteRequest(`api/review/${id}`).pipe(
             map((response: ApiResponseModel) => {
-                response.data.review = ReviewModel.fromAPI(response.data.review);
+                if (response.status === 200) {
+                    return ReviewModel.fromAPI(response.data.review);
+                }
                 return response;
             })
         );
     }
 
-    getUserReviews(): Observable<ApiResponseModel> {
+    getUserReviews(): Observable<ReviewModel[] | ApiResponseModel> {
         return this.api.getRequest("/api/user_review").pipe(
             map((response: ApiResponseModel) => {
-                response.data.reviews = response.data.reviews.map((review: ReviewModel) => ReviewModel.fromAPI(review));
+                if (response.status === 200) {
+                    return response.data.reviews.map((review: ReviewApi) => ReviewModel.fromAPI(review));
+                }
                 return response;
             })
         );
