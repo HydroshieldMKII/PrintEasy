@@ -40,5 +40,6 @@ class PrinterUserControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_equal printers(:two).id, json_response['printer']['id']
+    assert_equal 10.days.ago.to_date, json_response['acquired_date'].to_date
   end
 end
