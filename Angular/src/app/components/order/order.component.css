@@ -235,6 +235,10 @@ textarea {
     margin-bottom: 2rem;
 }
 
+.info-label {
+    color: #003064;
+}
+
 /* Mobile Responsive */
 @media (max-width: 768px) {
     .grid {
