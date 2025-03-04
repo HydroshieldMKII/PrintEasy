@@ -50,13 +50,27 @@ export class RequestService {
         private translate: TranslateService
     ) { }
 
-    filter(filterParams: string, sortCategory: string, orderParams: string, searchParams: string, type: string): Observable<[RequestModel[], boolean]> {
+    filter(
+        filterParams: string,
+        sortCategory: string,
+        orderParams: string,
+        searchParams: string,
+        minBudget: number,
+        maxBudget: number,
+        startDate: any,
+        endDate: any,
+        type: string
+    ): Observable<[RequestModel[], boolean]> {
         const params: any = {};
 
         if (filterParams) params.filter = filterParams;
         if (sortCategory) params.sortCategory = sortCategory;
         if (orderParams) params.sort = orderParams;
         if (searchParams) params.search = searchParams;
+        if (minBudget) params.minBudget = minBudget;
+        if (maxBudget) params.maxBudget = maxBudget;
+        if (startDate) params.startDate = startDate.toISOString().split('T')[0]
+        if (endDate) params.endDate = endDate.toISOString().split('T')[0]
         if (type) params.type = type;
 
         console.log("Filter params: ", params);

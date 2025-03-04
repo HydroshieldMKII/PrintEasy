@@ -36,10 +36,8 @@ export class RequestsComponent implements OnInit {
   filterOptions: SelectItem[] = [];
   sortOptions: SelectItem[] = [];
 
-  // New filters
   budgetRange: number[] = [0, 10000];
   dateRange: Date[] | null = null;
-  isAdvancedFiltering: boolean = false;
 
   currentLanguage: string = 'en';
   showAdvancedFilters: boolean = false;
@@ -69,8 +67,8 @@ export class RequestsComponent implements OnInit {
   ngOnInit(): void {
     this.currentLanguage = localStorage.getItem('language') || 'en';
 
-    // Initialize budget range
     this.initBudgetRange();
+    this.initDateRange();
 
     this.initializeSelectOptions();
     this.filter(this.activeTab);
@@ -79,19 +77,30 @@ export class RequestsComponent implements OnInit {
     this.selectedSortOption = this.sortOptions.find(option => option.value === `${this.currentSortCategory}-${this.currentSort}`) || this.sortOptions[0];
   }
 
-  // Initialize the budget range with correct values
+  initDateRange(): void {
+    this.dateRange = null;
+
+    const queryParams = this.router.parseUrl(this.router.url).queryParams;
+    if (queryParams['startDate'] && queryParams['endDate']) {
+      const startDate = new Date(queryParams['startDate']);
+      const endDate = new Date(queryParams['endDate']);
+
+      startDate.setUTCHours(12, 0, 0, 0);
+      endDate.setUTCHours(12, 0, 0, 0);
+
+      this.dateRange = [startDate, endDate];
+    }
+  }
+
   initBudgetRange(): void {
-    // Default range
     this.budgetRange = [0, 10000];
 
-    // Try to get stored range from query params
     const queryParams = this.router.parseUrl(this.router.url).queryParams;
     if (queryParams['minBudget'] && queryParams['maxBudget']) {
       this.budgetRange = [
         parseInt(queryParams['minBudget']),
         parseInt(queryParams['maxBudget'])
       ];
-      this.isAdvancedFiltering = true;
     }
   }
 
@@ -151,42 +160,15 @@ export class RequestsComponent implements OnInit {
   }
 
   get currentRequests(): RequestModel[] {
-    let filteredRequests = this.activeTab === 'mine' ? this.myRequests || [] : this.requests || [];
-
-    // Apply the advanced filters if they're active
-    if (this.isAdvancedFiltering) {
-      filteredRequests = this.applyAdvancedFiltersToList(filteredRequests);
-    }
-
-    return filteredRequests;
-  }
-
-  applyAdvancedFiltersToList(requests: RequestModel[]): RequestModel[] {
-    return requests.filter(request => {
-      // Apply budget filter
-      const budgetInRange = request.budget >= this.budgetRange[0] && request.budget <= this.budgetRange[1];
-
-      // Apply date filter if set
-      let dateInRange = true;
-      if (this.dateRange && this.dateRange.length === 2 && this.dateRange[0] && this.dateRange[1]) {
-        const requestDate = new Date(request.targetDate);
-        const startDate = new Date(this.dateRange[0]);
-        const endDate = new Date(this.dateRange[1]);
-
-        // Set hours to 0 for proper comparison
-        startDate.setHours(0, 0, 0, 0);
-        endDate.setHours(23, 59, 59, 999);
-
-        dateInRange = requestDate >= startDate && requestDate <= endDate;
-      }
-
-      return budgetInRange && dateInRange;
-    });
+    return this.activeTab === 'mine' ? this.myRequests || [] : this.requests || [];
   }
 
   filter(type: string): void {
+    const startDate = this.dateRange && this.dateRange.length > 0 ? this.dateRange[0] : null;
+    const endDate = this.dateRange && this.dateRange.length > 1 ? this.dateRange[1] : null;
+
     this.requestService
-      .filter(this.currentFilter, this.currentSortCategory, this.currentSort, this.searchQuery, type)
+      .filter(this.currentFilter, this.currentSortCategory, this.currentSort, this.searchQuery, this.budgetRange[0], this.budgetRange[1], startDate, endDate, type)
       .subscribe(([requests, isOwningPrinter]: [RequestModel[], boolean]) => {
 
         if (this.isOwningPrinter === null) {
@@ -256,10 +238,6 @@ export class RequestsComponent implements OnInit {
   onFilterChange(event: { value: SelectItem }): void {
     console.log('Filter changed. New value:', event.value.value);
     this.currentFilter = event.value.value;
-    this.router.navigate([], { queryParams: { filter: this.currentFilter || null }, queryParamsHandling: 'merge' });
-
-    this.filter('all');
-    this.filter('mine');
   }
 
   onSortChange(event: { value: SelectItem }): void {
@@ -267,10 +245,6 @@ export class RequestsComponent implements OnInit {
     const [category, order] = event.value.value.split('-');
     this.currentSort = order;
     this.currentSortCategory = category;
-    this.router.navigate([], { queryParams: { sortCategory: this.currentSortCategory || null, sort: this.currentSort || null }, queryParamsHandling: 'merge' });
-
-    this.filter('all');
-    this.filter('mine');
   }
 
   copyToClipboard(text: string): void {
@@ -292,15 +266,14 @@ export class RequestsComponent implements OnInit {
     this.selectedSortOption = this.sortOptions.find(option => option.value === `${this.currentSortCategory}-${this.currentSort}`) || this.sortOptions[0];
   }
 
-  // Advanced filters methods
   clearAdvancedFilters(): void {
     this.budgetRange = [0, 10000];
     this.dateRange = null;
-    this.isAdvancedFiltering = false;
+    this.searchQuery = '';
 
-    // Remove filter query parameters
     this.router.navigate([], {
       queryParams: {
+        search: null,
         minBudget: null,
         maxBudget: null,
         startDate: null,
@@ -309,23 +282,22 @@ export class RequestsComponent implements OnInit {
       queryParamsHandling: 'merge'
     });
 
-    this.messageService.add({
-      severity: 'info',
-      summary: this.currentLanguage === 'fr' ? 'Filtres réinitialisés' : 'Filters cleared',
-      detail: this.currentLanguage === 'fr' ? 'Tous les filtres avancés ont été réinitialisés' : 'All advanced filters have been reset'
-    });
+    this.selectedFilterOption = this.filterOptions[0];
+    this.selectedSortOption = this.sortOptions[0];
+
+    this.filter('all');
+    this.filter('mine');
   }
 
   applyAdvancedFilters(): void {
-    this.isAdvancedFiltering = true;
 
-    // Save filter settings to query params for persistence
+    //budget range
     const queryParams: any = {
       minBudget: this.budgetRange[0],
       maxBudget: this.budgetRange[1]
     };
 
-    // Add date range if selected
+    //date range
     if (this.dateRange && this.dateRange.length === 2 && this.dateRange[0] && this.dateRange[1]) {
       queryParams.startDate = this.dateRange[0].toISOString().split('T')[0];
       queryParams.endDate = this.dateRange[1].toISOString().split('T')[0];
@@ -336,12 +308,7 @@ export class RequestsComponent implements OnInit {
       queryParamsHandling: 'merge'
     });
 
-    this.messageService.add({
-      severity: 'success',
-      summary: this.currentLanguage === 'fr' ? 'Filtres appliqués' : 'Filters applied',
-      detail: this.currentLanguage === 'fr'
-        ? `Budget: ${this.budgetRange[0]}$ - ${this.budgetRange[1]}$${this.dateRange ? ', Dates sélectionnées' : ''}`
-        : `Budget: ${this.budgetRange[0]}$ - ${this.budgetRange[1]}$${this.dateRange ? ', Date range selected' : ''}`
-    });
+    this.filter('all');
+    this.filter('mine');
   }
 }
