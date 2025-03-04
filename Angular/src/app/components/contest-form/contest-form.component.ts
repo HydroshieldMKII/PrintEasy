@@ -43,25 +43,23 @@ export class ContestFormComponent {
       const id = params['id'];
       this.isEdit = id ? true : false;
 
-      console.log('IsEdit:', this.isEdit);
-
       if (this.isEdit) {
         this.contestService.getContest(id).subscribe(contest => {
-          if (contest) {
-            this.imageUrl = contest.image;
-            this.noImagePreview = "";
-            this.currentStartDate = new Date(contest.startAt);
-            this.currentEndDate = contest.endAt ? new Date(contest.endAt) : null;
+          if (contest instanceof ContestModel) {
+            if (contest) {
+              this.imageUrl = contest.image;
+              this.noImagePreview = "";
+              this.currentStartDate = new Date(contest.startAt);
+              this.currentEndDate = contest.endAt ? new Date(contest.endAt) : null;
 
-            this.contestForm.patchValue({
-              theme: contest.theme,
-              description: contest.description,
-              limit: contest.submissionLimit,
-              startDate: new Date(contest.startAt),
-              endDate: contest.endAt ? new Date(contest.endAt) : null
-            });
-
-            console.log("ContestForm:", this.contestForm.value);
+              this.contestForm.patchValue({
+                theme: contest.theme,
+                description: contest.description,
+                limit: contest.submissionLimit,
+                startDate: new Date(contest.startAt),
+                endDate: contest.endAt ? new Date(contest.endAt) : null
+              });
+            }
           }
         });
       }
@@ -121,7 +119,7 @@ export class ContestFormComponent {
       console.log('Données du concours:', this.contestForm.value);
 
       const contestFormData = new FormData();
-      
+
       contestFormData.append('contest[theme]', this.contestForm.value.theme);
       contestFormData.append('contest[description]', this.contestForm.value.description || '');
       contestFormData.append('contest[submission_limit]', this.contestForm.value.limit);

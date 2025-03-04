@@ -1,4 +1,18 @@
-import { LikeModel } from "./like.model";
+import { LikeModel, LikeAPI } from "./like.model";
+
+export type SubmissionAPI = {
+    id: number;
+    user_id: number;
+    contest_id: number;
+    name: string;
+    description: string | null;
+    created_at: Date;
+    updated_at: Date;
+    image_url: string | null;
+    stl_url: string | null;
+    likes: LikeAPI[];
+    liked_by_current_user: boolean;
+}
 
 export class SubmissionModel {
     id: number;
@@ -39,19 +53,19 @@ export class SubmissionModel {
         this.liked = liked;
     }
 
-    static fromApi(data: any): SubmissionModel {
+    static fromApi(data: SubmissionAPI): SubmissionModel {
         return new SubmissionModel(
-            data?.['id'],
-            data?.['user_id'],
-            data?.['contest_id'],
-            data?.['name'],
-            data?.['description'],
-            new Date(data?.['created_at']),
-            new Date(data?.['updated_at']),
-            data?.['image_url'],
-            data?.['stl_url'],
-            data?.['likes']?.map((like: any) => new LikeModel(like?.['id'], like?.['user_id'], like?.['submission_id'])),
-            data?.['liked_by_current_user']
+            data?.id,
+            data?.user_id,
+            data?.contest_id,
+            data?.name,
+            data?.description,
+            new Date(data?.created_at),
+            new Date(data?.updated_at),
+            data?.image_url,
+            data?.stl_url,
+            data?.likes?.map((like: LikeAPI) => new LikeModel(like?.id, like?.user_id, like?.submission_id)),
+            data?.liked_by_current_user
         );
     }
 }

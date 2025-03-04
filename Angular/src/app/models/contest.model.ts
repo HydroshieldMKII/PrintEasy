@@ -1,4 +1,18 @@
-import { UserModel } from './user.model';
+import { UserModel, UserApi } from './user.model';
+
+export type ContestAPI = {
+    id: number;
+    theme: string;
+    description: string;
+    submission_limit: number;
+    start_at: Date;
+    end_at: Date | null;
+    image_url: string;
+    deleted_at: Date | null;
+    'finished?': boolean;
+    winner_user: UserApi | null;
+    'started?': boolean;
+}
 
 export class ContestModel {
     id: number;
@@ -39,7 +53,7 @@ export class ContestModel {
         this.started = started;
     }
 
-    static fromApi(data: any): ContestModel {
+    static fromApi(data: ContestAPI): ContestModel {
         return new ContestModel(
             data.id,
             data.theme,
