@@ -212,7 +212,7 @@
         "delete_error": "Échec de la suppression de la demande",
         "accepted": "Acceptée",
         "pending": "En attente",
-        "advanced_filters": "Filtres Avancés",
+        "advanced_filters": "Personnaliser",
         "budget_range": "Fourchette de Budget",
         "date_range": "Période de Date Cible",
         "select_date_range": "Sélectionner une période",

@@ -36,6 +36,7 @@ export class OrdersComponent {
   selectedSortOption : SelectItem | null = null;
   filterOptions : SelectItemGroup[] = []
   sortOptions : SelectItem[] = []
+  showAdvancedFilters: boolean = false;
   
   constructor() {
     this.translate.onLangChange.subscribe(() => {
@@ -49,7 +50,14 @@ export class OrdersComponent {
       .find(item => item.value == this.router.routerState.snapshot.root.queryParams["filter"]) ?? null;
     this.selectedSortOption = this.sortOptions.find(item => item.value == this.router.routerState.snapshot.root.queryParams["sort"]) ?? null;
 
+    if (this.selectedFilterOption || this.selectedSortOption){
+      this.showAdvancedFilters = true;
+    }
     this.updateUrl();
+  }
+
+  toggleAdvancedFilters(): void {
+    this.showAdvancedFilters = !this.showAdvancedFilters;
   }
 
   translateRefresh() {

@@ -72,16 +72,83 @@ i {
     width: 190px;
 }
 
-.ssf-container {
-    display: flex; 
-    flex-direction: row; 
-    gap: 10px;
+.advanced-filters {
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    margin-bottom: 1rem;
+}
+
+.filter-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.filter-content {
+    padding: 1rem;
+    transition: max-height 0.3s ease;
+}
+
+.filter-row {
+    display: flex;
     flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-end;
+    justify-content: flex-end;
+}
+
+.filter-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 160px;
+}
+
+.filter-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
     align-items: center;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    user-select: none;
+    border-bottom: 1px solid #e0e0e0;
+    transition: background-color 0.2s;
+    gap: 1rem;
+}
+
+.filter-header:hover {
+    background-color: #f0f0f0;
+}
+
+.filter-header.active {
+    background-color: #f0f8ff;
+    border-left: 3px solid #007bff;
+}
+
+.filter-header .search-container {
+    flex: 1;
+    min-width: 200px;
+}
+
+.filter-header .advanced-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
 }
 
 @media (max-width: 768px) {
     .ssf-container {
         flex-direction: column;
+    }
+
+    :host ::ng-deep .p-select {
+        width: 100% !important;
+        
+    }
+    :host ::ng-deep .filter-item {
+        flex: 1 !important;
+        max-width: 100% !important;
     }
 }
