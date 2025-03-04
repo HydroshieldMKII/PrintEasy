@@ -30,7 +30,7 @@ import { AvatarModule } from 'primeng/avatar';
   imports: [
     RouterOutlet, Menubar, MenubarModule, ButtonModule,
     ToastModule, BadgeModule, CommonModule, InputTextModule,
-    Ripple, AvatarModule, Menu, JsonPipe
+    Ripple, AvatarModule, Menu
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'

@@ -49,7 +49,7 @@ export class RequestModel {
             new Date(data.target_date),
             data.comment,
             data.stl_file_url,
-            (data.preset_requests ? data.preset_requests.map((preset: any) => RequestPresetModel.fromAPI(preset)) : []),
+            (data.preset_requests.map((preset: any) => RequestPresetModel.fromAPI(preset)) ?? []),
             UserModel.fromAPI(data.user),
             data.has_offers,
             data.accepted_at ? new Date(data.accepted_at) : null
