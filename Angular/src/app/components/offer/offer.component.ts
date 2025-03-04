@@ -8,7 +8,6 @@ import { OfferModalComponent } from '../offer-modal/offer-modal.component';
 import { ImportsModule } from '../../../imports';
 import { TranslatePipe } from '@ngx-translate/core';
 import { TranslateService } from '@ngx-translate/core';
-import { ApiResponseModel } from '../../models/api-response.model';
 import { OrderModel } from '../../models/order.model';
 import { OfferModel } from '../../models/offer.model';
 import { ApiResponseModel } from '../../models/api-response.model';
