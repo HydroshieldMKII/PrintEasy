@@ -4,8 +4,8 @@ import { PrinterModel } from "./printer.model";
 
 export type PrinterUserApi = {
     id: number;
-    user: UserApi | null;
-    printer: PrinterApi | null;
+    user: UserApi;
+    printer: PrinterApi;
     aquired_date: Date;
 }
 
@@ -27,10 +27,7 @@ export class PrinterUserModel {
         this.aquiredDate = aquiredDate;
     }
 
-    static fromAPI(data: any): PrinterUserModel | null {
-        if (!data) {
-            return null;
-        }
+    static fromAPI(data: any): PrinterUserModel {
         return new PrinterUserModel(
             data.id,
             UserModel.fromAPI(data.user),

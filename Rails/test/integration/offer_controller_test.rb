@@ -84,6 +84,7 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
 
     # Response format
     json_response = assert_nothing_raised { JSON.parse(response.body) }
+    p json_response
 
     # response content
     assert_equal 2, json_response['requests'][0]['id']
