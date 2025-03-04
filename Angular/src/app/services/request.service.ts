@@ -31,19 +31,6 @@ export class RequestService {
         6: 'carbon_fiber'
     };
 
-    private colorMap: Record<number, string> = {
-        1: 'red',
-        2: 'blue',
-        3: 'green',
-        4: 'yellow',
-        5: 'black',
-        6: 'white',
-        7: 'orange',
-        8: 'purple',
-        9: 'pink',
-        10: 'brown',
-        11: 'gray'
-    };
 
     constructor(
         private api: ApiRequestService,
@@ -60,7 +47,7 @@ export class RequestService {
         startDate: any,
         endDate: any,
         type: string
-    ): Observable<[RequestModel[], boolean]> {
+    ): Observable<[RequestModel[], boolean] | ApiResponseModel> {
         const params: any = {};
 
         if (filterParams) params.filter = filterParams;
@@ -73,7 +60,6 @@ export class RequestService {
         if (endDate) params.endDate = endDate.toISOString().split('T')[0]
         if (type) params.type = type;
 
-        console.log("Filter params: ", params);
         return this.fetchRequests(params);
     }
 
@@ -82,7 +68,6 @@ export class RequestService {
         return this.api.getRequest('api/printer_user').pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
-                    console.log("Printer user response: ", response.data);
                     return response.data;
                 }
                 return false;
@@ -90,53 +75,21 @@ export class RequestService {
         );
     }
 
-    getRequestById(id: number): Observable<RequestModel | null> {
+    getRequestById(id: number): Observable<RequestModel | ApiResponseModel> {
         console.log("fetching info for request ID: ", id);
         return this.api.getRequest(`api/request/${id}`).pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
-                    const request = response.data?.['request'];
-                    const user = new UserModel(
-                        request?.['user']?.['id'],
-                        request?.['user']?.['username'],
-                        request?.['user']?.['country']?.['name']
-                    );
-
-                    const presets = (request?.['preset_requests'] as any[]).map((preset: any) => {
-                        return new RequestPresetModel(
-                            preset?.['id'],
-                            preset?.['print_quality'],
-                            new ColorModel(
-                                preset?.['color']?.['id'],
-                                this.translateColor(preset?.['color']?.['id'])
-                            ),
-                            new FilamentModel(
-                                preset?.['filament']?.['id'],
-                                this.translateFilament(preset?.['filament']?.['id'])
-                            ),
-                            new PrinterModel(preset?.['printer']?.['id'], preset?.['printer']?.['model'])
-                        );
-                    });
-
-                    return new RequestModel(
-                        request?.['id'],
-                        request?.['name'],
-                        request?.['budget'],
-                        new Date(request?.['target_date']),
-                        request?.['comment'],
-                        request?.['stl_file_url'],
-                        presets,
-                        user,
-                        request?.['has_offer_made?'],
-                        request?.['accepted_at']
-                    );
+                    console.log("Request response: ", response.data);
+                    return RequestModel.fromAPI(response.data.request);
+                } else {
+                    return response;
                 }
-                return null;
             })
         );
     }
 
-    fetchRequests(params: any): Observable<[RequestModel[], boolean]> {
+    fetchRequests(params: any): Observable<[RequestModel[], boolean] | ApiResponseModel> {
         return this.api.getRequest('api/request', params).pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
@@ -209,15 +162,13 @@ export class RequestService {
         );
     }
 
-    // Helper function to translate a filament by ID
     private translateFilament(id: number): string {
         const key = this.filamentMap[id];
         return key ? this.translate.instant(`materials.${key}`) : `Unknown Filament (${id})`;
     }
 
-    // Helper function to translate a color by ID
     private translateColor(id: number): string {
-        const key = this.colorMap[id];
+        const key = ColorModel.colorMap[id];
         return key ? this.translate.instant(`colors.${key}`) : `Unknown Color (${id})`;
     }
 }

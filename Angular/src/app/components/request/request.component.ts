@@ -7,6 +7,7 @@ import { ImportsModule } from '../../../imports';
 import { MessageService } from 'primeng/api';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { TranslatePipe } from '@ngx-translate/core';
+import { ApiResponseModel } from '../../models/api-response.model';
 
 @Component({
   selector: 'app-request',
@@ -167,10 +168,8 @@ export class RequestsComponent implements OnInit {
   filter(type: string): void {
     const startDate = this.dateRange && this.dateRange[0] ? this.dateRange[0] : null;
     const endDate = this.dateRange && this.dateRange.length > 1 && this.dateRange[1] ? this.dateRange[1] : null;
-
     console.log('Filtering requests. Start date:', startDate, 'End date:', endDate, 'Type:', type);
     console.log('Filtering requests. Budget range:', this.budgetRange[0], this.budgetRange[1]);
-
     this.requestService
       .filter(
         this.currentFilter,
@@ -183,12 +182,18 @@ export class RequestsComponent implements OnInit {
         endDate,
         type
       )
-      .subscribe(([requests, isOwningPrinter]: [RequestModel[], boolean]) => {
+      .subscribe((result: [RequestModel[], boolean] | ApiResponseModel) => {
+        if ('errors' in result) {
+          console.error('Error fetching requests:', result.errors);
+          return;
+        }
+
+        const [requests, isOwningPrinter] = result;
+
         if (this.isOwningPrinter === null) {
           console.log('Is owning printer:', isOwningPrinter);
           this.isOwningPrinter = isOwningPrinter;
         }
-
         if (type === 'all') {
           this.requests = requests;
           console.log('Requests:', this.requests);
