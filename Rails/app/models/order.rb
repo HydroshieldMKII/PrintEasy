@@ -13,12 +13,58 @@ class Order < ApplicationRecord
   validate :not_two_order_with_the_same_request
   validate :user_owns_request
 
+  scope :search_by_name, ->(query) { joins(offer: :request).where('requests.name LIKE ?', "%#{query}%") if query.present? }
+  scope :status_filter, ->(status) { joins(:order_status).where(order_status: { id: OrderStatus.select('MAX(id)').group(:order_id) }).where(order_status: { status_name: status }) }
+  scope :review_filter, -> {joins(:review)}
+  scope :not_review_filter, -> {where.not(id: joins(:review).select(:id))}
+  scope :apply_sort, ->(sort) {
+    return order('offers.target_date DESC') unless sort.present?
+    field, direction = sort.split('-')
+    column = {
+      'name' => 'requests.name',
+      'date' => 'offers.target_date',
+      'price' => 'offers.price',
+    }.fetch(field, 'offers.target_date')
+    direction = direction == 'asc' ? 'ASC' : 'DESC'
+    joins(offer: :request).order("#{column} #{direction}")
+  }
+    
+
+  def self.fetch_for_user(params)
+    case params[:type]
+    when 'printer'
+      joins(offer: { printer_user: :user })
+      .where(users: { id: Current.user.id })
+      .search_by_name(params[:search])
+      .apply_filters(params[:filter])
+      .apply_sort(params[:sort])
+    else
+      joins(offer: { request: :user })
+      .where(users: { id: Current.user.id })
+      .search_by_name(params[:search])
+      .apply_filters(params[:filter])
+      .apply_sort(params[:sort])
+    end
+  end
+
+  def self.apply_filters(filter)
+    if ['Accepted', 'Printing', 'Printed', 'Shipped', 'Arrived', 'Cancelled'].include?(filter)
+      status_filter(filter)
+    elsif filter == 'reviewed'
+      review_filter
+    elsif filter == 'notReviewed'
+      not_review_filter
+    else
+      all
+    end
+  end
+
   def printer
-    offer.printer_user.user
+    offer&.printer_user&.user
   end
 
   def consumer
-    offer.request.user
+    offer&.request&.user
   end
 
   def available_status
@@ -30,13 +76,13 @@ class Order < ApplicationRecord
   def offer_exists
     if offer.nil?
       errors.add(:offer_id, 'Offer must exist')
-      throw :abort
+      return false
     end
     true
   end
 
   def not_the_same_user_for_offer_and_request
-    if offer.request.user == offer.printer_user.user
+    if consumer == printer
       errors.add(:offer_id, 'Consumer and printer cannot be the same user')
       return false
     end
@@ -44,8 +90,10 @@ class Order < ApplicationRecord
   end
 
   def not_two_order_with_the_same_request
-    # debugger
-    return unless request.offers.joins(:order).count.positive?
+    if request.nil?
+      return false
+    end
+    return true unless request.offers.joins(:order).count.positive?
 
     errors.add(:offer_id, 'Request already has an order')
     false
