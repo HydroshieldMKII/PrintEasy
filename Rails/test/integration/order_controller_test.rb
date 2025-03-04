@@ -25,6 +25,75 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
     assert_empty @parsed_response['errors']
   end
 
+  test 'should get index -> status filter' do 
+    sign_in users(:one)
+
+    assert_difference('Order.count', 0) do
+      get "/api/order/?filter=Accepted", as: :json
+    end
+
+    assert_response :success
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+    assert_equal 1, @parsed_response['orders'].length
+    tested_order = @parsed_response['orders'][0]
+    assert_empty @parsed_response['errors']
+    testOrder(tested_order)
+  end
+
+  test 'should get index -> review filter' do
+    sign_in users(:one)
+
+    assert_difference('Order.count', 0) do
+      get "/api/order/?filter=notReviewed", as: :json
+    end
+
+    assert_response :success
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+    assert_equal 6, @parsed_response['orders'].length
+    tested_order = @parsed_response['orders'][0]
+    assert_empty @parsed_response['errors']
+    testOrder(tested_order)
+  end
+
+  test 'should get index -> search filter' do
+    sign_in users(:one)
+
+    assert_difference('Order.count', 0) do
+      get "/api/order/?search=test", as: :json
+    end
+
+    assert_response :success
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+    assert_equal 7, @parsed_response['orders'].length
+    tested_order = @parsed_response['orders'][0]
+    assert_empty @parsed_response['errors']
+    testOrder(tested_order)
+  end
+
+  test 'should get index -> sort filter' do
+    sign_in users(:one)
+
+    assert_difference('Order.count', 0) do
+      get "/api/order/?sort=date-desc", as: :json
+    end
+
+    assert_response :success
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+    assert_equal 7, @parsed_response['orders'].length
+    tested_order = @parsed_response['orders'][0]
+    assert_empty @parsed_response['errors']
+    testOrder(tested_order)
+  end
+
+
   test 'should get show' do
     sign_in users(:one)
 
