@@ -6,7 +6,9 @@ export type PrinterUserApi = {
     id: number;
     user: UserApi;
     printer: PrinterApi;
-    aquired_date: Date;
+    acquired_date: Date;
+    last_review_image: string | null;
+    last_used: Date | null;
 }
 
 export class PrinterUserModel {
@@ -14,25 +16,33 @@ export class PrinterUserModel {
     user: UserModel;
     printer: PrinterModel;
     aquiredDate: Date;
+    lastReviewedImage: string | null = null;
+    lastUsed: Date | null = null;
 
     constructor(
         id: number,
         user: UserModel,
         printer: PrinterModel,
-        aquiredDate: Date
+        acquiredDate: Date,
+        lastReviewedImage: string | null,
+        lastUsed: Date | null
     ) {
         this.id = id;
         this.user = user;
         this.printer = printer;
-        this.aquiredDate = aquiredDate;
+        this.aquiredDate = acquiredDate;
+        this.lastReviewedImage = lastReviewedImage;
+        this.lastUsed = lastUsed;
     }
 
-    static fromAPI(data: any): PrinterUserModel {
+    static fromAPI(data: PrinterUserApi): PrinterUserModel {
         return new PrinterUserModel(
             data.id,
             UserModel.fromAPI(data.user),
             PrinterModel.fromAPI(data.printer),
-            new Date(data.aquired_date)
+            new Date(data.acquired_date),
+            data.last_review_image ?? null,
+            data.last_used ? new Date(data.last_used) : null
         );
     }
 }

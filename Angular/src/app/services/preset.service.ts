@@ -8,7 +8,7 @@ import { ApiRequestService } from './api.service';
 import { ApiResponseModel } from '../models/api-response.model';
 
 import { map, Observable, of } from 'rxjs';
-import { PrinterUserModel } from '../models/printer-user.model';
+import { PrinterUserModel, PrinterUserApi } from '../models/printer-user.model';
 import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({
@@ -114,12 +114,7 @@ export class PresetService {
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
                     console.log("Fetched Printer Users:", response.data);
-                    return (response.data as any[]).map(item => new PrinterUserModel(
-                        item.id,
-                        item.user,
-                        item.printer,
-                        new Date(item.acquired_date)
-                    ));
+                    return (response.data as PrinterUserApi[]).map(printerUser => PrinterUserModel.fromAPI(printerUser));
                 }
                 return [];
             })

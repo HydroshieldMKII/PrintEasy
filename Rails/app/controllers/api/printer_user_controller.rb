@@ -12,6 +12,9 @@ module Api
         include: {
           printer: {
             only: %i[id model]
+          },
+          user: {
+            include: { country: {}}
           }
         },
         methods: [:last_review_image, :last_used]
