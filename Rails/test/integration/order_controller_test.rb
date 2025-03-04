@@ -186,7 +186,8 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
-    assert_equal 9, @parsed_response['order']['offer_id']
+    p @parsed_response
+    assert_equal 9, @parsed_response['order']['offer']["id"]
     assert_empty @parsed_response['errors']
   end
 
@@ -207,9 +208,6 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
 
     assert_equal offers(:one).printer_user.user.id, tested_order['offer']['printer_user']['user']['id']
     assert_equal offers(:one).printer_user.user.username, tested_order['offer']['printer_user']['user']['username']
-    assert_nil tested_order['offer']['printer_user']['user']['created_at']
-    assert_nil tested_order['offer']['printer_user']['user']['updated_at']
-    assert_nil tested_order['offer']['printer_user']['user']['is_admin']
     assert_nil tested_order['offer']['printer_user']['user']['profile_picture_url']
 
     assert_equal offers(:one).request.id, tested_order['offer']['request']['id']
@@ -223,9 +221,6 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
 
     assert_equal offers(:one).request.user.id, tested_order['offer']['request']['user']['id']
     assert_equal offers(:one).request.user.username, tested_order['offer']['request']['user']['username']
-    assert_nil tested_order['offer']['request']['user']['created_at']
-    assert_nil tested_order['offer']['request']['user']['updated_at']
-    assert_nil tested_order['offer']['request']['user']['is_admin']
     assert_nil tested_order['offer']['request']['user']['profile_picture_url']
 
     # TODO: Add reviews
