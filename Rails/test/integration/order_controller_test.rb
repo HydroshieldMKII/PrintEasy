@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 require 'test_helper'
-#TODO: Add comments
-#TODO: refactor tests because of changes in everything
 
 class OrderControllerTest < ActionDispatch::IntegrationTest
   include Devise::Test::IntegrationHelpers
@@ -188,7 +186,6 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
-    p @parsed_response
     assert_equal 9, @parsed_response['order']['offer']["id"]
     assert_empty @parsed_response['errors']
   end
@@ -201,16 +198,29 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
     assert_equal offers(:one).id, tested_order['offer']['id']
     assert_equal offers(:one).print_quality, tested_order['offer']['print_quality']
     assert_equal offers(:one).price, tested_order['offer']['price']
+    assert_nil tested_order['offer']['created_at']
+    assert_nil tested_order['offer']['updated_at']
+    assert_nil tested_order['offer']['printer_user_id']
+    assert_nil tested_order['offer']['request_id']
+    assert_nil tested_order['offer']['color_id']
+    assert_nil tested_order['offer']['filament_id']
 
     assert_equal offers(:one).printer_user.id, tested_order['offer']['printer_user']['id']
     assert_equal offers(:one).printer_user.acquired_date.strftime('%a, %d %b %Y'),
-                 Date.parse(tested_order['offer']['printer_user']['acquired_date']).strftime('%a, %d %b %Y')
+        Date.parse(tested_order['offer']['printer_user']['acquired_date']).strftime('%a, %d %b %Y')
     assert_nil tested_order['offer']['printer_user']['printer_id']
     assert_nil tested_order['offer']['printer_user']['user_id']
 
     assert_equal offers(:one).printer_user.user.id, tested_order['offer']['printer_user']['user']['id']
     assert_equal offers(:one).printer_user.user.username, tested_order['offer']['printer_user']['user']['username']
     assert_nil tested_order['offer']['printer_user']['user']['profile_picture_url']
+    assert_nil tested_order['offer']['printer_user']['user']['country_id']
+
+    assert_equal offers(:one).printer_user.user.country.id, tested_order['offer']['printer_user']['user']['country']['id']
+    assert_equal offers(:one).printer_user.user.country.name, tested_order['offer']['printer_user']['user']['country']['name']
+
+    assert_equal offers(:one).printer_user.printer.id, tested_order['offer']['printer_user']['printer']['id']
+    assert_equal offers(:one).printer_user.printer.model, tested_order['offer']['printer_user']['printer']['model']
 
     assert_equal offers(:one).request.id, tested_order['offer']['request']['id']
     assert_equal offers(:one).request.budget, tested_order['offer']['request']['budget']
@@ -224,8 +234,28 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
     assert_equal offers(:one).request.user.id, tested_order['offer']['request']['user']['id']
     assert_equal offers(:one).request.user.username, tested_order['offer']['request']['user']['username']
     assert_nil tested_order['offer']['request']['user']['profile_picture_url']
+    assert_nil tested_order['offer']['request']['user']['country_id']
 
-    # TODO: Add reviews
+    assert_equal offers(:one).request.user.country.id, tested_order['offer']['request']['user']['country']['id']
+    assert_equal offers(:one).request.user.country.name, tested_order['offer']['request']['user']['country']['name']
+
+    assert_equal offers(:one).request.preset_requests[0].id, tested_order['offer']['request']['preset_requests'][0]['id']
+    assert_equal offers(:one).request.preset_requests[0].print_quality, tested_order['offer']['request']['preset_requests'][0]['print_quality']
+
+    assert_equal offers(:one).request.preset_requests[0].color.id, tested_order['offer']['request']['preset_requests'][0]['color']['id']
+    assert_equal offers(:one).request.preset_requests[0].color.name, tested_order['offer']['request']['preset_requests'][0]['color']['name']
+
+    assert_equal offers(:one).request.preset_requests[0].filament.id, tested_order['offer']['request']['preset_requests'][0]['filament']['id']
+    assert_equal offers(:one).request.preset_requests[0].filament.name, tested_order['offer']['request']['preset_requests'][0]['filament']['name']
+
+    assert_equal offers(:one).request.preset_requests[0].printer.id, tested_order['offer']['request']['preset_requests'][0]['printer']['id']
+    assert_equal offers(:one).request.preset_requests[0].printer.model, tested_order['offer']['request']['preset_requests'][0]['printer']['model']
+
+    assert_equal offers(:one).color.id, tested_order['offer']['color']['id']
+    assert_equal offers(:one).color.name, tested_order['offer']['color']['name']
+
+    assert_equal offers(:one).filament.id, tested_order['offer']['filament']['id']
+    assert_equal offers(:one).filament.name, tested_order['offer']['filament']['name']
 
     assert_equal 1, tested_order['order_status'].length
     tested_order_status = tested_order['order_status'][0]

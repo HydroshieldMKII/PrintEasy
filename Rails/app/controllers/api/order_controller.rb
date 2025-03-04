@@ -17,6 +17,7 @@ module Api
       if current_user == @order.consumer || current_user == @order.printer
         render json: {
           order: order_as_json(@order),
+          errors: {}
         }, status: :ok
       else
         render json: { errors: { order: ['You are not authorized to view this order'] } }, status: :forbidden
@@ -44,7 +45,7 @@ module Api
               except: %i[printer_id user_id],
               include: {
                 user: {
-                  except: %i[crountry_id],
+                  except: %i[country_id],
                   include: {country: {}},
                   methods: %i[profile_picture_url]
                 },
@@ -56,7 +57,7 @@ module Api
               methods: %i[stl_file_url],
               include: {
                 user: {
-                  except: %i[crountry_id],
+                  except: %i[country_id],
                   include: {country: {}},
                   methods: %i[profile_picture_url]
                 },

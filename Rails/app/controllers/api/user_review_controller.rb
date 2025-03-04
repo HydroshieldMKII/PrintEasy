@@ -9,7 +9,7 @@ module Api
         reviews: user_reviews.as_json(
           include: {
             user: {
-              except: %i[crountry_id],
+              except: %i[country_id],
               include: {country: {}},
               methods: %i[profile_picture_url]
             }
