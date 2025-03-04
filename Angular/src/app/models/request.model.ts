@@ -1,6 +1,7 @@
-import { RequestPresetModel } from './request-preset.model';
+import { RequestPresetModel, RequestPresetApi } from './request-preset.model';
 import { PresetModel } from './preset.model';
-import { UserModel } from './user.model';
+import { UserModel, UserApi } from './user.model';
+import { OfferModel, OfferApi } from './offer.model';
 
 export type RequestApi = {
     id: number;
@@ -9,8 +10,9 @@ export type RequestApi = {
     target_date: string;
     comment: string;
     stl_file_url: string;
-    preset_requests: RequestPresetModel[];
-    user: any;
+    preset_requests: RequestPresetApi[];
+    user: UserApi;
+    offers?: OfferApi[];
     has_offers: boolean;
     accepted_at: string | null;
 }

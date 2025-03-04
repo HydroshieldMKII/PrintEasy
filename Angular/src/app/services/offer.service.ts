@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
-import { RequestOfferModel } from '../models/request-offer.model';
-import { OfferModel } from '../models/offer.model';
+import { RequestOfferModel, RequestOfferApi } from '../models/request-offer.model';
+import { OfferModel, OfferApi } from '../models/offer.model';
 import { UserModel } from '../models/user.model';
 import { PrinterModel } from '../models/printer.model';
 import { FilamentModel } from '../models/filament.model';
@@ -56,8 +56,8 @@ export class OfferService {
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
                     console.log("Offers: ", response.data);
-                    return (response.data as any)?.['requests'].map((request: any) => {
-                        request.offers = request.offers.map((offer: any) => {
+                    return (response.data.requests as any)?.map((request: RequestOfferApi) => {
+                        request.offers = request.offers.map((offer: OfferApi) => {
                             offer.color.name = this.translateColor(offer.color.id);
                             offer.filament.name = this.translateFilament(offer.filament.id);
                             return offer;
@@ -70,20 +70,21 @@ export class OfferService {
         );
     }
 
-    getMyOffers(): Observable<OfferModel[]> {
+    getMyOffers(): Observable<RequestOfferModel[] | ApiResponseModel> {
         return this.api.getRequest('api/offer', { type: 'mine' }).pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
                     console.log("Offer: ", response.data);
-                    return (response.data as any)?.['requests'].map((request: any) => {
-                        request.offers.map((offer: any) => {
-                            offer.color.name = this.translateColor(offer.color.id);
-                            offer.filament.name = this.translateFilament(offer.filament.id);
-                        });
+                    return (response.data.requests as RequestOfferApi[])?.map((request: RequestOfferApi) => {
+                        // request.offers.map((offer: OfferApi) => {
+                        //     offer.color.name = this.translateColor(offer.color.id);
+                        //     offer.filament.name = this.translateFilament(offer.filament.id);
+                        // });
+                        console.log("Request: ", request);
                         return RequestOfferModel.fromAPI(request);
                     });
                 }
-                return [];
+                return response;
             })
         );
     }
@@ -93,41 +94,41 @@ export class OfferService {
         return this.api.getRequest(`api/offer/${id}`).pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
-                    // console.log("raw getOfferById to create from: ", response.data);
-                    const offer = response.data?.['offer'];
+                    // // console.log("raw getOfferById to create from: ", response.data);
+                    // const offer = response.data?.['offer'];
 
-                    const color = new ColorModel(
-                        offer?.['color']?.['id'],
-                        this.translateColor(offer?.['color']?.['id'])
-                    );
+                    // const color = new ColorModel(
+                    //     offer?.['color']?.['id'],
+                    //     this.translateColor(offer?.['color']?.['id'])
+                    // );
 
-                    const filament = new FilamentModel(
-                        offer?.['filament']?.['id'],
-                        this.translateFilament(offer?.['filament']?.['id'])
-                    );
+                    // const filament = new FilamentModel(
+                    //     offer?.['filament']?.['id'],
+                    //     this.translateFilament(offer?.['filament']?.['id'])
+                    // );
 
-                    return new OfferModel(
-                        offer?.['id'],
-                        offer?.['request'],
-                        new PrinterUserModel(
-                            offer?.['printer_user']?.['id'],
-                            new UserModel(
-                                offer?.['printer_user']?.['user']?.['id'],
-                                offer?.['printer_user']?.['user']?.['username'],
-                                offer?.['printer_user']?.['user']?.['country']?.['name']
-                            ),
-                            new PrinterModel(
-                                offer?.['printer_user']?.['printer']?.['id'],
-                                offer?.['printer_user']?.['printer']?.['model']
-                            ),
-                            new Date(offer?.['printer_user']?.['acquired_date'])
-                        ),
-                        color,
-                        filament,
-                        offer?.['price'],
-                        offer?.['print_quality'],
-                        offer?.['target_date']
-                    );
+                    // return new OfferModel(
+                    //     offer?.['id'],
+                    //     offer?.['request'],
+                    //     new PrinterUserModel(
+                    //         offer?.['printer_user']?.['id'],
+                    //         new UserModel(
+                    //             offer?.['printer_user']?.['user']?.['id'],
+                    //             offer?.['printer_user']?.['user']?.['username'],
+                    //             offer?.['printer_user']?.['user']?.['country']?.['name']
+                    //         ),
+                    //         new PrinterModel(
+                    //             offer?.['printer_user']?.['printer']?.['id'],
+                    //             offer?.['printer_user']?.['printer']?.['model']
+                    //         ),
+                    //         new Date(offer?.['printer_user']?.['acquired_date'])
+                    //     ),
+                    //     color,
+                    //     filament,
+                    //     offer?.['price'],
+                    //     offer?.['print_quality'],
+                    //     offer?.['target_date']
+                    // );
                 }
                 return null;
             })

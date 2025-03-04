@@ -1,4 +1,13 @@
-import { OfferModel } from "./offer.model";
+import { OfferApi, OfferModel } from "./offer.model";
+
+export type RequestOfferApi = {
+    id: number;
+    name: string;
+    budget: number;
+    comment: string;
+    target_date: string;
+    offers: OfferApi[];
+}
 
 export class RequestOfferModel {
     id: number;
@@ -9,11 +18,11 @@ export class RequestOfferModel {
     offers: OfferModel[];
 
     constructor(
-        id: number, 
-        name: string, 
-        budget: number, 
-        comment: string, 
-        targetDate: Date, 
+        id: number,
+        name: string,
+        budget: number,
+        comment: string,
+        targetDate: Date,
         offers: OfferModel[]
     ) {
         this.id = id;
@@ -24,17 +33,15 @@ export class RequestOfferModel {
         this.offers = offers;
     }
 
-    static fromAPI(data: any): RequestOfferModel | null {
-        if (!data) {
-            return null;
-        }
+    static fromAPI(data: RequestOfferApi): RequestOfferModel {
+        console.log(data);
         return new RequestOfferModel(
             data.id,
             data.name,
             data.budget,
             data.comment,
             new Date(data.target_date),
-            data.offers.map((offer: any) => OfferModel.fromAPI(offer))
+            data.offers.map((offer: OfferApi) => OfferModel.fromAPI(offer))
         );
     }
 }

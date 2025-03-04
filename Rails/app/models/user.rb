@@ -5,9 +5,9 @@ class User < ApplicationRecord
   has_many :presets, dependent: :destroy
   has_many :requests, dependent: :destroy
   has_many :submissions, dependent: :destroy
-  has_many :printer_user, dependent: :destroy
-  has_many :printers, through: :printer_user
-  has_many :offers, through: :printer_user
+  has_many :printer_users, dependent: :destroy
+  has_many :printers, through: :printer_users
+  has_many :offers, through: :printer_users
   has_many :likes
   has_many :liked_submissions, through: :likes, source: :submission
 

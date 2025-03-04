@@ -11,14 +11,14 @@ export type PrinterUserApi = {
 
 export class PrinterUserModel {
     id: number;
-    user: UserModel | null;
-    printer: PrinterModel | null;
+    user: UserModel;
+    printer: PrinterModel;
     aquiredDate: Date;
 
     constructor(
         id: number,
-        user: UserModel | null,
-        printer: PrinterModel | null,
+        user: UserModel,
+        printer: PrinterModel,
         aquiredDate: Date
     ) {
         this.id = id;
