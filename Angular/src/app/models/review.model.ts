@@ -15,8 +15,8 @@ export class ReviewModel {
         rating: number, 
         title: string, 
         description: string, 
-        created_at: Date, 
-        image_urls: ImageAttachmentModel[] = [], 
+        createdAt: Date, 
+        imageUrls: ImageAttachmentModel[] = [], 
         user: UserModel | null
     ) {
         this.id = id;
@@ -24,8 +24,8 @@ export class ReviewModel {
         this.rating = rating;
         this.description = description;
         this.user = user;
-        this.createdAt = created_at;
-        this.imageUrls = image_urls;
+        this.createdAt = createdAt;
+        this.imageUrls = imageUrls;
     }
 
     static fromAPI(data: any): ReviewModel | null {

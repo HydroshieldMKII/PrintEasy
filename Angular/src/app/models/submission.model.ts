@@ -15,26 +15,26 @@ export class SubmissionModel {
 
     constructor(
         id: number, 
-        user_id: number, 
-        contest_id: number, 
+        userId: number, 
+        contestId: number, 
         name: string, 
         description: string | null, 
-        created_at: Date, 
-        updated_at: Date, 
-        image_url: string | null, 
-        stl_url: string | null, 
+        createdAt: Date, 
+        updatedAt: Date, 
+        imageUrl: string | null, 
+        stlUrl: string | null, 
         likes: LikeModel[], 
         liked: boolean = false
     ) {
         this.id = id;
-        this.user_id = user_id;
-        this.contest_id = contest_id;
+        this.user_id = userId;
+        this.contest_id = contestId;
         this.name = name;
         this.description = description;
-        this.created_at = created_at;
-        this.updated_at = updated_at;
-        this.imageUrl = image_url;
-        this.stlUrl = stl_url;
+        this.created_at = createdAt;
+        this.updated_at = updatedAt;
+        this.imageUrl = imageUrl;
+        this.stlUrl = stlUrl;
         this.likes = likes;
         this.liked = liked;
     }

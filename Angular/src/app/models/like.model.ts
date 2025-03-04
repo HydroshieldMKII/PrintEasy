@@ -5,12 +5,12 @@ export class LikeModel {
 
     constructor(
         id: number, 
-        user_id: number, 
-        submission_id: number
+        userId: number, 
+        submissionId: number
     ) {
         this.id = id;
-        this.userId = user_id;
-        this.submissionId = submission_id;
+        this.userId = userId;
+        this.submissionId = submissionId;
     }
 
     static fromApi(data: any): LikeModel {

@@ -10,7 +10,7 @@ export class UserModel {
         id: number, 
         username: string, 
         country: string, 
-        profile_picture_url?: string, 
+        profilePictureUrl?: string, 
         createdAt?: Date, 
         isAdmin?: boolean
     ) {
@@ -18,7 +18,7 @@ export class UserModel {
         this.username = username;
         this.country = country;
         this.createdAt = createdAt;
-        this.profilePictureUrl = profile_picture_url;
+        this.profilePictureUrl = profilePictureUrl;
         this.isAdmin = isAdmin;
     }
 

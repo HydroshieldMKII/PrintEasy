@@ -19,25 +19,25 @@ export class OfferModel {
     constructor(
         id: number,
         request: RequestModel | null,
-        printer_user: PrinterUserModel | null,
+        printerUser: PrinterUserModel | null,
         color: ColorModel | null,
         filament: FilamentModel | null,
         price: number,
-        print_quality: number,
-        target_date: Date,
-        cancelled_at?: Date | null,
-        accepted_at?: Date | null
+        printQuality: number,
+        targetDate: Date,
+        cancelledAt?: Date | null,
+        acceptedAt?: Date | null
     ) {
         this.id = id;
         this.request = request;
-        this.printerUser = printer_user;
+        this.printerUser = printerUser;
         this.color = color;
         this.filament = filament;
         this.price = price;
-        this.printQuality = print_quality;
-        this.targetDate = target_date
-        this.cancelledAt = cancelled_at;
-        this.acceptedAt = accepted_at;
+        this.printQuality = printQuality;
+        this.targetDate = targetDate
+        this.cancelledAt = cancelledAt;
+        this.acceptedAt = acceptedAt;
     }
 
     static fromAPI(data: any): OfferModel | null {

@@ -11,12 +11,12 @@ export class PrinterUserModel {
         id: number,
         user: UserModel | null,
         printer: PrinterModel | null,
-        aquired_date: Date
+        aquiredDate: Date
     ) {
         this.id = id;
         this.user = user;
         this.printer = printer;
-        this.aquiredDate = aquired_date;
+        this.aquiredDate = aquiredDate;
     }
 
     static fromAPI(data: any): PrinterUserModel | null {

@@ -17,11 +17,11 @@ export class ContestModel {
         id: number, 
         theme: string, 
         description: string, 
-        submission_limit: number, 
-        start_at: Date, 
-        end_at: Date | null, 
+        submissionLimit: number, 
+        startAt: Date, 
+        endAt: Date | null, 
         image: string, 
-        deleted_at: Date | null, 
+        deletedAt: Date | null, 
         finished: boolean, 
         winnerUser: UserModel | null, 
         started: boolean
@@ -29,10 +29,10 @@ export class ContestModel {
         this.id = id;
         this.theme = theme;
         this.description = description;
-        this.submissionLimit = submission_limit;
-        this.startAt = start_at;
-        this.endAt = end_at;
-        this.deleteAt = deleted_at;
+        this.submissionLimit = submissionLimit;
+        this.startAt = startAt;
+        this.endAt = endAt;
+        this.deleteAt = deletedAt;
         this.image = image;
         this.finished = finished;
         this.winnerUser = winnerUser;

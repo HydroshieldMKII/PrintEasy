@@ -8,18 +8,18 @@ export class OrderStatusModel {
 
     constructor(
         id: number, 
-        status_name: string, 
+        statusName: string, 
         comment: string, 
-        created_at: Date, 
-        updated_at: Date, 
-        image_url: string
+        createdAt: Date, 
+        updatedAt: Date, 
+        imageUrl: string
     ) {
         this.id = id;
-        this.statusName = status_name;
+        this.statusName = statusName;
         this.comment = comment;
-        this.createdAt = created_at;
-        this.updatedAt = updated_at;
-        this.imageUrl = image_url;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.imageUrl = imageUrl;
     }
 
     static fromAPI(data: any): OrderStatusModel | null {

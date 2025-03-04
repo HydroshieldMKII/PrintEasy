@@ -11,15 +11,15 @@ export class OrderModel {
 
     constructor(
         id: number,
-        order_status: OrderStatusModel[],
+        orderStatus: OrderStatusModel[],
         offer: OfferModel | null,
-        available_status: string[],
+        availableStatus: string[],
         review: ReviewModel | null
     ) {
         this.id = id;
-        this.orderStatus = order_status;
+        this.orderStatus = orderStatus;
         this.offer = offer;
-        this.availableStatus = available_status;
+        this.availableStatus = availableStatus;
         this.review = review;
     }
 
