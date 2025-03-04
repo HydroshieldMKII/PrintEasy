@@ -1,7 +1,18 @@
+import { CountryApi, CountryModel } from './country.model';
+
+export type UserApi = {
+    id: number;
+    username: string;
+    country: CountryApi;
+    profile_picture_url: string | undefined;
+    created_at: string;
+    is_admin: boolean;
+}
+
 export class UserModel {
     id: number;
     username: string;
-    country: string;
+    country: CountryModel;
     createdAt?: Date;
     profilePictureUrl?: string;
     isAdmin?: boolean;
@@ -9,7 +20,7 @@ export class UserModel {
     constructor(
         id: number, 
         username: string, 
-        country: string, 
+        country: CountryModel, 
         profilePictureUrl?: string, 
         createdAt?: Date, 
         isAdmin?: boolean
@@ -22,14 +33,14 @@ export class UserModel {
         this.isAdmin = isAdmin;
     }
 
-    static fromAPI(data: any): UserModel | null {
+    static fromAPI(data: UserApi): UserModel | null {
         if (!data) {
             return null;
         }
         return new UserModel(
             data.id,
             data.username,
-            data.country,
+            CountryModel.fromAPI(data.country),
             data.profile_picture_url,
             new Date(data.created_at),
             data.is_admin

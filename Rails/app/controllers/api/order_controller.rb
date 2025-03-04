@@ -25,7 +25,8 @@ module Api
                   except: %i[printer_id user_id],
                   include: {
                     user: {
-                      except: %i[created_at updated_at is_admin],
+                      except: %i[crountry_id],
+                      include: {country: {}},
                       methods: %i[profile_picture_url]
                     }
                   }
@@ -35,7 +36,8 @@ module Api
                   methods: %i[stl_file_url],
                   include: {
                     user: {
-                      except: %i[created_at updated_at is_admin],
+                      except: %i[crountry_id],
+                      include: {country: {}},
                       methods: %i[profile_picture_url]
                     }
                   }
@@ -45,7 +47,8 @@ module Api
             review: {
               include: {
                 user: {
-                  except: %i[created_at updated_at is_admin],
+                  except: %i[crountry_id],
+                  include: {country: {}},
                   methods: %i[profile_picture_url]
                 }
               }
