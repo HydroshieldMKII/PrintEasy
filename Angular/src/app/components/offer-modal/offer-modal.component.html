@@ -20,33 +20,33 @@
       <div class="flex">
         <h3 class="font-medium text-gray-700">{{ 'offerForm.preset' | translate }}</h3>
         <div class="offer-form-field">
-          <p-dropdown
+          <p-select
           formControlName="preset"
           [options]="presets"
           optionLabel="label"
           [placeholder]="'offerForm.choose_preset' | translate"
           class="w-full"
-        ></p-dropdown>
+        ></p-select>
         </div>
 
         <div class="offer-form-field">
-          <p-dropdown
+          <p-select
           formControlName="color"
           [options]="colors"
           optionLabel="label"
           [placeholder]="'offerForm.select_color' | translate"
           class="w-full"
-        ></p-dropdown>
+        ></p-select>
         </div>
 
         <div class="offer-form-field">
-              <p-dropdown
+              <p-select
               formControlName="filament"
               [options]="filaments"
               optionLabel="label"
               [placeholder]="'offerForm.select_filament' | translate"
               class="w-full"
-            ></p-dropdown>
+            ></p-select>
         </div>  
 
         <div class="offer-form-field">
@@ -74,7 +74,7 @@
 
       <div class="flex space-y-3">
         <h3 class="font-medium text-gray-700">{{ 'offerForm.print' | translate }}</h3>
-        <p-dropdown
+        <p-select
           formControlName="printer"
           [options]="printers"
           optionLabel="label"
@@ -82,7 +82,7 @@
           class="w-full"
           [ngStyle]="{ 'margin-bottom': '10px' }"
           appendTo="body"
-        ></p-dropdown>
+        ></p-select>
 
         <div class="form-row">
           <div class="form-group">

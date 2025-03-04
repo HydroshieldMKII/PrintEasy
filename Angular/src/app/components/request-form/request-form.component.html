@@ -224,13 +224,13 @@
         <th>{{ 'requestForm.filament_type' | translate }}</th>
         <th>{{ 'requestForm.color' | translate }}</th>
         <th>{{ 'requestForm.print_quality' | translate }}</th>
-        <th style="width: 25%;">{{ 'requestForm.actions' | translate }}</th>
+        <th >{{ 'requestForm.actions' | translate }}</th>
       </tr>
     </ng-template>
     <ng-template #body let-preset let-ri="rowIndex">
       <tr [ngClass]="{ 'invalid': !isPresetValid(preset) }">
         <td>
-          <p-dropdown
+          <p-select
             [(ngModel)]="preset.printerModel.model"
             [options]="printers"
             optionLabel="label"
@@ -238,10 +238,10 @@
             placeholder="{{ 'requestForm.select_printer' | translate }}"
             [disabled]="isViewMode || request.hasOffers"
             appendTo="body"
-          ></p-dropdown>
+          ></p-select>
         </td>
         <td>
-          <p-dropdown
+          <p-select
             [(ngModel)]="preset.filamentType.name"
             [options]="filamentTypes"
             optionLabel="label"
@@ -249,10 +249,10 @@
             placeholder="{{ 'requestForm.select_filament' | translate }}"
             [disabled]="isViewMode || request.hasOffers"
             appendTo="body"
-          ></p-dropdown>
+          ></p-select>
         </td>
         <td>
-          <p-dropdown
+          <p-select
             [(ngModel)]="preset.color.name"
             [options]="colors"
             optionLabel="label"
@@ -260,7 +260,7 @@
             placeholder="{{ 'requestForm.select_color' | translate }}"
             [disabled]="isViewMode || request.hasOffers"
             appendTo="body"
-          ></p-dropdown>
+          ></p-select>
         </td>
         <td>
           <p-inputnumber 
