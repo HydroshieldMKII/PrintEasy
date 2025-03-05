@@ -143,17 +143,17 @@ class Offer < ApplicationRecord
       errors.add(:offer, 'Offer already accepted. Cannot reject')
       return false
     end
-  
+
     if rejected?
       errors.add(:offer, 'Offer already rejected')
       return false
     end
-  
+
     if request.user != Current.user
       errors.add(:offer, 'You are not allowed to reject this offer')
       return false
     end
-  
+
     update_column(:cancelled_at, Time.now)
   end
 
