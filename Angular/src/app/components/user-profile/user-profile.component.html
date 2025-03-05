@@ -9,21 +9,21 @@
         </div>
         <div class="profile-rating">
             <p-rating [readonly]="true" [stars]="5" [(ngModel)]="averageRating" class="big-stars"></p-rating>
-            <a href="#" class="reviews">{{ userReviews.length }} reviews</a>
+            <a href="#" class="reviews">{{ userReviews.length }} {{ 'user_profile.reviews' | translate }}</a>
         </div>
     </div>
 
     <div class="profile-details">
-        <p>{{ prints }} prints since {{ authService.currentUser?.createdAt | date:'MMM d, y' }}</p>
+        <p>{{ prints }} {{ 'user_profile.print_since' | translate }} {{ authService.currentUser?.createdAt | date:'MMM d, y' }}</p>
     </div>
 
 
     <p-tabs [value]="tab">
         <p-tablist>
-            <p-tab [value]="'contest-submissions'">Submissions</p-tab>
-            <p-tab [value]="'printers'">Printers</p-tab>
-            <p-tab [value]="'reviews'">Reviews</p-tab>
-            <p-tab [value]="'likes'">Likes</p-tab>
+            <p-tab [value]="'contest-submissions'">{{ 'user_profile.submissions_tab' | translate }}</p-tab>
+            <p-tab [value]="'printers'">{{ 'user_profile.printers_tab' | translate }}</p-tab>
+            <p-tab [value]="'reviews'">{{ 'user_profile.reviews_tab' | translate }}</p-tab>
+            <p-tab [value]="'likes'">{{ 'user_profile.likes_tab' | translate }}</p-tab>
         </p-tablist>
         <p-tabpanels>
             <p-tabpanel [value]="'contest-submissions'">
@@ -132,14 +132,14 @@
                     <div class="add-printer-card" (click)="showAddPrinterDialog()">
                         <div class="add-printer-content">
                             <i class="pi pi-plus-circle"></i>
-                            <p>Add Printer</p>
+                            <p>{{ 'user_profile.printer.add_printer' | translate }}</p>
                         </div>
                     </div>
                 </div>
             </p-tabpanel>
 
             <!-- Add/Edit Printer Dialog -->
-            <p-dialog header="{{isEditMode ? 'Edit Printer' : 'Add Printer'}}" [(visible)]="printerDialogVisible"
+            <p-dialog header="{{isEditMode ? ('user_profile.printer.edit_printer' | translate) : ('user_profile.printer.add_printer' | translate) }}" [(visible)]="printerDialogVisible"
                 [modal]="true" [style]="{'width': '30rem'}" [draggable]="false" class="printer-dialog" [resizable]="false">
                 <form [formGroup]="printerForm" (ngSubmit)="onPrinterSubmit()">
                     <div class="field">
@@ -147,9 +147,9 @@
                             <p-select formControlName="printer" [options]="availablePrinters" optionLabel="model"
                                  [style]="{width: '100%'}" appendTo="body">
                             </p-select>
-                            <label for="model">Printer Model</label>
+                            <label for="model">{{ 'user_profile.printer.printer_model' | translate }}</label>
                         </p-floatlabel>
-                        <p-message severity="error" variant="simple" size="small">Printer model is required</p-message>
+                        <p-message severity="error" variant="simple" size="small">{{ 'user_profile.printer.printer_model_required' | translate }}</p-message>
                     </div>
 
                     <div class="field">
@@ -157,10 +157,9 @@
                             <p-datepicker appendTo="body" formControlName="aquiredDate" [showIcon]="true"
                                 dateFormat="yy-mm-dd" [style]="{width: '100%'}" [maxDate]="today">
                             </p-datepicker>
-                            <label for="aquiredDate">Acquisition Date</label>
+                            <label for="aquiredDate">{{ 'user_profile.printer.acquisition_date' | translate }}</label>
                         </p-floatlabel>
-                        <p-message severity="error" variant="simple" size="small">Acquisition date is
-                            required</p-message>
+                        <p-message severity="error" variant="simple" size="small">{{ 'user_profile.printer.acquisition_date_required' | translate }}</p-message>
                     </div>
 
                     <div class="dialog-footer">

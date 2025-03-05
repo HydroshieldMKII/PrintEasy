@@ -4,6 +4,7 @@ import { ContestModel } from '../../models/contest.model';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { ContestService } from '../../services/contest.service';
 import { AuthService } from '../../services/authentication.service';
+import { TranslateService } from '@ngx-translate/core';
 
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
@@ -29,6 +30,7 @@ export class ContestComponent {
   contestService = inject(ContestService);
   authService = inject(AuthService);
   messageService = inject(MessageService);
+  translateService = inject(TranslateService);
 
   contests: ContestModel[] = [];
   id: number = 0;
@@ -42,16 +44,16 @@ export class ContestComponent {
   showAdvancedFilters: boolean = false;
 
   filterOptions: SelectItem[] = [
-    { label: 'All', value: '' },
-    { label: 'Active', value: 'active' },
-    { label: 'Finished', value: 'finished' }
+    { label: this.translateService.instant('contest.ssf.filter.all'), value: '' },
+    { label: this.translateService.instant('contest.ssf.filter.active'), value: 'active' },
+    { label: this.translateService.instant('contest.ssf.filter.inactive'), value: 'finished' }
   ];
   sortOptions: SelectItem[] = [
-    { label: 'None', value: '' },
-    { label: 'Submissions (Asc)', value: 'submissions-asc' },
-    { label: 'Submissions (Desc)', value: 'submissions-desc' },
-    { label: 'Start Date (Asc)', value: 'start_at-asc' },
-    { label: 'Start Date (Desc)', value: 'start_at-desc' },
+    { label: this.translateService.instant('contest.ssf.sort.none'), value: '' },
+    { label: this.translateService.instant('contest.ssf.sort.participants_asc'), value: 'submissions-asc' },
+    { label: this.translateService.instant('contest.ssf.sort.participants_desc'), value: 'submissions-desc' },
+    { label: this.translateService.instant('contest.ssf.sort.start_asc'), value: 'start_at-asc' },
+    { label: this.translateService.instant('contest.ssf.sort.start_desc'), value: 'start_at-desc' },
   ];
 
   selectedSortOption: SelectItem | null = null;

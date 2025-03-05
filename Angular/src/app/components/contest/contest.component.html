@@ -22,7 +22,7 @@
       </div>
 
       <div class="advanced-toggle" (click)="toggleAdvancedFilters()">
-        <span class="filter-title">Parametres</span>
+        <span class="filter-title">{{ 'global.advanced' | translate }}</span>
         <i class="pi"
           [ngClass]="{'pi-chevron-down': showAdvancedFilters, 'pi-chevron-right': !showAdvancedFilters}"></i>
       </div>
@@ -31,7 +31,7 @@
     <div class="filter-content" *ngIf="showAdvancedFilters">
       <div class="filter-row">
         <div class="filter-item participants-range">
-          <label>Participants range</label>
+          <label>{{ 'contest.participants_range' | translate }}</label>
           <div class="slider-wrapper">
             <p-slider [(ngModel)]="currentValue" (onSlideEnd)="onSlideEnd($event)" min="0" max="30" />
             <div class="range-values">
@@ -46,8 +46,8 @@
             <p-floatlabel variant="in">
               <p-select inputId="in_label" [options]="filterOptions" [(ngModel)]="selectedFilterOption"
                 name="selectedFilterOption" optionLabel="label" styleClass="w-full" variant="filled"
-                (onChange)="onFilterChange($event)" />
-              <label for="in_label">Filter</label>
+                (onChange)="onFilterChange($event)" appendTo="body" />
+              <label for="in_label">{{ 'global.filter' | translate }}</label>
             </p-floatlabel>
           </div>
         </div>
@@ -57,8 +57,8 @@
             <p-floatlabel variant="in">
               <p-select inputId="in_label" [options]="sortOptions" [(ngModel)]="selectedSortOption"
                 name="selectedSortOption" optionLabel="label" styleClass="w-full" variant="filled"
-                (onChange)="onSortChange($event)" />
-              <label for="in_label">Sort</label>
+                (onChange)="onSortChange($event)" appendTo="body" />
+              <label for="in_label">{{ 'global.sort' | translate }}</label>
             </p-floatlabel>
           </div>
         </div>

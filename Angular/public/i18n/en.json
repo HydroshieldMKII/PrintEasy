@@ -12,6 +12,9 @@
         "warning": "Warning",
         "info": "Information",
         "confirm": "Confirm",
+        "advanced": "Advanced",
+        "sort": "Sort",
+        "filter": "Filter",
         "errors": {
             "created_success": "Created successfully",
             "updated_success": "Updated successfully",
@@ -62,7 +65,22 @@
         "confirm_delete": "Confirm delete",
         "confirm_delete_message": "Are you sure you want to delete the contest? This action cannot be undone.",
         "button_contest_detail": "Contest details",
-        "search_text": "Search by theme"
+        "search_text": "Search by theme",
+        "participants_range": "Participants range",
+        "ssf": {
+            "sort": {
+                "none": "None",
+                "start_asc": "Start date (Asc)",
+                "start_desc": "Start date (Desc)",
+                "limit_asc": "Submission limit (Asc)",
+                "limit_desc": "Submission limit (Desc)"
+            },
+            "filter": {
+                "all": "All",
+                "active": "Active",
+                "ended": "Ended"
+            }
+        }
     },
     "contest_form": {
         "title_form": "Create a contest",
@@ -110,6 +128,21 @@
         "error_description_long": "Description must be at most 200 characters long",
         "error_image_required": "Image is required",
         "error_stl_required": "STL file is required"
+    },
+    "user_profile": {
+        "print_since": "prints since",
+        "reviews": "reviews",
+        "reviews_tab": "Reviews",
+        "printers_tab": "Printers",
+        "likes_tab": "Likes",
+        "printer": {
+            "printer_model": "Printer Model",
+            "acquisition_date": "Acquisition Date",
+            "edit_printer": "Edit Printer",
+            "add_printer": "Add Printer",
+            "printer_model_required": "Printer Model is required",
+            "acquisition_date_required": "Acquisition Date is required"
+        }
     },
     "orders": {
         "commands_tab": "Commands",

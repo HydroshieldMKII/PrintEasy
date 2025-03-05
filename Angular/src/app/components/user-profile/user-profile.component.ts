@@ -15,12 +15,13 @@ import { SubmissionModel } from '../../models/submission.model';
 import { UserContestSubmissionsModel } from '../../models/user-contest-submissions.model';
 import { ApiResponseModel } from '../../models/api-response.model';
 import { Renderer2 } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 
 
 @Component({
   selector: 'app-user-profile',
-  imports: [ImportsModule],
+  imports: [ImportsModule, TranslatePipe],
   templateUrl: './user-profile.component.html',
   styleUrl: './user-profile.component.css'
 })

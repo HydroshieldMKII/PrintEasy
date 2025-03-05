@@ -93,7 +93,7 @@
 
               <div *ngIf="!imageUrl">
                 <p-message severity="warn" styleClass="error-file">
-                  Image is required
+                  {{ 'contest_form.error_image_required' | translate }}
                 </p-message>
               </div>
             </div>
