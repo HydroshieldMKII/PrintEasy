@@ -64,7 +64,7 @@ export class RequestModel {
             (data?.preset_requests?.map((preset: any) => RequestPresetModel.fromAPI(preset)) ?? []),
             UserModel.fromAPI(data.user),
             data.has_offers,
-            data.accepted_at ? new Date(data.accepted_at) : null
+            data.accepted_at ? new Date(data.accepted_at + 'T00:00:00') : null
         );
     }
 }

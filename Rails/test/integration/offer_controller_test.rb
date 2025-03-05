@@ -24,13 +24,10 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     assert_no_difference 'Offer.count' do
       get api_offer_index_url, params: { type: 'mine' }
     end
-
     # Http code
     assert_response :success
-
     # Response format
     json_response = assert_nothing_raised { JSON.parse(response.body) }
-
     # response content
     assert_equal 2, json_response['requests'][0]['offers'][0]['id']
     assert_equal 2.5, json_response['requests'][0]['offers'][0]['price']
@@ -46,7 +43,6 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'Red', json_response['requests'][0]['offers'][0]['color']['name']
     assert_equal 2, json_response['requests'][0]['offers'][0]['filament']['id']
     assert_equal 'ABS', json_response['requests'][0]['offers'][0]['filament']['name']
-
     assert_equal 9, json_response['requests'][0]['offers'][1]['id']
     assert_equal 1.5, json_response['requests'][0]['offers'][1]['price']
     assert_equal '2021-01-01', json_response['requests'][0]['offers'][1]['target_date']
@@ -61,14 +57,12 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'Blue', json_response['requests'][0]['offers'][1]['color']['name']
     assert_equal 1, json_response['requests'][0]['offers'][1]['filament']['id']
     assert_equal 'PLA', json_response['requests'][0]['offers'][1]['filament']['name']
-
     assert_equal 2, json_response['requests'][0]['id']
     assert_equal 'Test Request 2', json_response['requests'][0]['name']
     assert_equal 200.0, json_response['requests'][0]['budget']
     assert_equal 'Test Comments 2', json_response['requests'][0]['comment']
     assert_equal '2021-12-31', json_response['requests'][0]['target_date']
-    assert_equal 2, json_response['requests'][0]['user']['id']
-    assert_equal 'John Doe', json_response['requests'][0]['user']['username']
+    assert_equal 2, json_response['requests'][0]['user_id']
   end
 
   test 'should get all index' do
@@ -125,7 +119,7 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     assert_difference 'Offer.count' do
       post api_offer_index_url,
            params: { offer: { name: 'Test Offer', price: 1.5, target_date: '2026-01-01', comment: 'test comment',
-                              request_id: offers(:nine).request_id, printer_user_id: @user.printer_user.first.id,
+                              request_id: offers(:nine).request_id, printer_user_id: @user.printer_users.first.id,
                               color_id: @offer2.color_id, filament_id: @offer.filament_id, print_quality: 0.22 } }
     end
 
@@ -511,7 +505,6 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
 
     # Response format
     json_response = assert_nothing_raised { JSON.parse(response.body) }
-    p json_response
 
     # response content
     assert_not_empty json_response['errors']

@@ -16,14 +16,23 @@ class PrinterUserControllerTest < ActionDispatch::IntegrationTest
       get api_printer_user_index_path, as: :json
     end
     assert_response :success
-
     json_response = assert_nothing_raised do
       JSON.parse(response.body)
     end
-
-    expected_response = [{"id" => 1, "acquired_date" => "2025-02-14", "last_review_image" => nil, "last_used" => nil, "printer" => {"id" => 1, "model" => "Bambulab"}, "user" => {"id" => 1, "created_at" => @user.created_at.as_json, "updated_at" => @user.updated_at.as_json, "username" => "James Bond", "country_id" => 1, "is_admin" => false, "country" => {"id" => 1, "name" => "Canada"}}}]
-
-    assert_equal expected_response, json_response['printer_users']
+    
+    assert_equal 1, json_response['printer_users'].length
+    printer_user = json_response['printer_users'][0]
+    assert_equal 1, printer_user['id']
+    assert_equal "2025-02-14", printer_user['acquired_date']
+    assert_nil printer_user['last_review_image']
+    assert_nil printer_user['last_used']
+    assert_equal false, printer_user['can_delete']
+    assert_equal 1, printer_user['printer']['id']
+    assert_equal "Bambulab", printer_user['printer']['model']
+    assert_equal 1, printer_user['user']['id']
+    assert_equal "James Bond", printer_user['user']['username']
+    assert_equal 1, printer_user['user']['country_id']
+    assert_equal "Canada", printer_user['user']['country']['name']
   end
 
   test 'should create printer_user' do

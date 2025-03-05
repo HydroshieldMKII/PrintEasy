@@ -31,7 +31,7 @@ export class RequestPresetModel {
         this.printerModel = printerModel;
     }
 
-    static fromAPI(data: any): RequestPresetModel {
+    static fromAPI(data: RequestPresetApi): RequestPresetModel {
         return new RequestPresetModel(
             data.id,
             data.print_quality,

@@ -11,7 +11,7 @@ export type OfferApi = {
     filament: FilamentApi;
     price: number;
     print_quality: number;
-    target_date: string;
+    target_date: Date;
     cancelled_at?: Date | null;
     accepted_at?: Date | null;
 }
@@ -53,6 +53,18 @@ export class OfferModel {
     }
 
     static fromAPI(data: OfferApi): OfferModel {
+        const adjustTimezone = (dateString: Date | null | undefined): Date | null => {
+            if (!dateString) return null;
+            const date = new Date(dateString);
+            date.setMinutes(date.getMinutes() + date.getTimezoneOffset());
+
+            return date;
+        };
+
+        const targetDate = adjustTimezone(data.target_date);
+        const cancelledAt = adjustTimezone(data.cancelled_at);
+        const acceptedAt = adjustTimezone(data.accepted_at);
+
         return new OfferModel(
             data.id,
             PrinterUserModel.fromAPI(data.printer_user),
@@ -60,10 +72,10 @@ export class OfferModel {
             FilamentModel.fromAPI(data.filament),
             data.price,
             data.print_quality,
-            new Date(data.target_date),
+            targetDate!,
             data.request ? RequestModel.fromAPI(data.request) : null,
-            data.cancelled_at ? new Date(data.cancelled_at) : null,
-            data.accepted_at ? new Date(data.accepted_at) : null
+            cancelledAt,
+            acceptedAt
         );
     }
 }

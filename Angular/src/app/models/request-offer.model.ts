@@ -40,7 +40,7 @@ export class RequestOfferModel {
             data.name,
             data.budget,
             data.comment,
-            new Date(data.target_date),
+            new Date(data.target_date + 'T00:00:00'),
             data.offers.map((offer: OfferApi) => OfferModel.fromAPI(offer))
         );
     }

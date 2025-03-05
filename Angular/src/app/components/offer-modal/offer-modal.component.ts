@@ -176,7 +176,7 @@ export class OfferModalComponent implements OnChanges {
       formData.append('offer[filament_id]', formValues.filament.id.toString());
       formData.append('offer[price]', formValues.price.toString());
       formData.append('offer[print_quality]', formValues.quality.toString());
-      formData.append('offer[target_date]', formValues.targetDate.toISOString());
+      formData.append('offer[target_date]', formValues.targetDate);
 
       let submitObs;
       if (this.offerIdToEdit) {

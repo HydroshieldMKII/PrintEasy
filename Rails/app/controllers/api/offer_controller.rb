@@ -65,7 +65,7 @@ module Api
 
     def offer_params
       params.require(:offer).permit(
-        :request_id, :printer_users_id, :color_id, :filament_id,
+        :request_id, :printer_user_id, :color_id, :filament_id,
         :price, :print_quality, :target_date
       )
     end
