@@ -78,27 +78,27 @@
                   <ng-template #actionButtons>
                     <div class="flex gap-2">
                       <!-- Mine tab buttons -->
-                      <ng-container *ngIf="activeTab === 'mine'">
+                        <ng-container *ngIf="activeTab === 'mine'">
                         <button pButton type="button" icon="pi pi-pencil" 
-                                [title]="'offer.edit_offer' | translate"
-                                (click)="editOffer(offer)"></button>
+                            pTooltip="{{ 'offer.edit_offer' | translate }}" tooltipPosition="top"
+                            (click)="editOffer(offer)"></button>
                         <button pButton type="button" icon="pi pi-trash" 
-                                [title]="'offer.cancel_offer' | translate" 
-                                severity="danger"
-                                (click)="cancelOffer(offer, request)"></button>
-                      </ng-container>
-                      
-                      <!-- All tab buttons -->
-                      <ng-container *ngIf="activeTab === 'all'">
+                            pTooltip="{{ 'offer.cancel_offer' | translate }}" tooltipPosition="top"
+                            severity="danger"
+                            (click)="cancelOffer(offer, request)"></button>
+                        </ng-container>
+                        
+                        <!-- All tab buttons -->
+                        <ng-container *ngIf="activeTab === 'all'">
                         <button pButton type="button" icon="pi pi-check" 
-                                [title]="'offer.accept_offer' | translate" 
-                                severity="success"
-                                (click)="showAcceptOffer(offer)"></button>
+                            pTooltip="{{ 'offer.accept_offer' | translate }}" tooltipPosition="top"
+                            severity="success"
+                            (click)="showAcceptOffer(offer)"></button>
                         <button pButton type="button" icon="pi pi-times" 
-                                [title]="'offer.refuse_offer' | translate" 
-                                severity="danger"
-                                (click)="showRefuseOffer(offer)"></button>
-                      </ng-container>
+                            pTooltip="{{ 'offer.refuse_offer' | translate }}" tooltipPosition="top"
+                            severity="danger"
+                            (click)="showRefuseOffer(offer)"></button>
+                        </ng-container>
                     </div>
                   </ng-template>
                 </td>

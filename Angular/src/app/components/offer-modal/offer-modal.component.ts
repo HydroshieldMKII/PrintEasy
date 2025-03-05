@@ -12,6 +12,7 @@ import { FilamentModel } from '../../models/filament.model';
 import { PrinterUserModel } from '../../models/printer-user.model';
 import { MessageService } from 'primeng/api';
 import { TranslatePipe } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 
 
 @Component({
@@ -40,7 +41,7 @@ export class OfferModalComponent implements OnChanges {
   colors: { label: string, value: string, id: number }[] = [];
   filaments: { label: string, value: string, id: number }[] = [];
 
-  constructor(private fb: FormBuilder, private presetService: PresetService, private offerService: OfferService, private messageService: MessageService, private printerUserService: PrinterUserService) {
+  constructor(private fb: FormBuilder, private presetService: PresetService, private offerService: OfferService, private messageService: MessageService, private printerUserService: PrinterUserService, private translate: TranslateService) {
     this.dateValidator = this.dateValidator.bind(this);
 
     this.offerForm = this.fb.group({
@@ -99,6 +100,21 @@ export class OfferModalComponent implements OnChanges {
       this.colors = colors.map(color => {
         return { label: color.name, value: color.name, id: color.id };
       });
+    });
+
+    this.translate.onLangChange.subscribe(() => {
+      this.translateRefresh();
+    });
+    this.translateRefresh();
+  }
+
+  translateRefresh() {
+    this.colors = this.colors.map(color => {
+      return { label: this.translateColor(color.id), value: color.value, id: color.id };
+    });
+
+    this.filaments = this.filaments.map(filament => {
+      return { label: this.translateFilament(filament.id), value: filament.value, id: filament.id };
     });
   }
 
@@ -216,11 +232,24 @@ export class OfferModalComponent implements OnChanges {
       printers: this.printerUserService.getPrinterUsers(),
       filaments: this.presetService.getAllFilaments()
     }).subscribe(({ colors, printers, filaments }) => {
-      this.colors = colors.map(color => ({ label: color.name, value: color.name, id: color.id }));
+      this.colors = colors.map(color => ({
+        label: this.translateColor(color.id),
+        value: color.name,
+        id: color.id
+      }));
       this.printers = printers.map(printerUser => {
-        return { label: `${printerUser.printer.model}`, value: printerUser.printer.model, id: printerUser.printer.id, idPrinterUser: printerUser.id };
+        return {
+          label: `${printerUser.printer.model}`,
+          value: printerUser.printer.model,
+          id: printerUser.printer.id,
+          idPrinterUser: printerUser.id
+        };
       });
-      this.filaments = filaments.map(filament => ({ label: filament.name, value: filament.name, id: filament.id }));
+      this.filaments = filaments.map(filament => ({
+        label: this.translateFilament(filament.id),
+        value: filament.name,
+        id: filament.id
+      }));
 
       if (this.offerIdToEdit) {
         this.offerService.getOfferById(this.offerIdToEdit).subscribe((offer: any) => {
@@ -264,5 +293,15 @@ export class OfferModalComponent implements OnChanges {
     if (!this.presetToEdit) {
       this.offerForm.reset();
     }
+  }
+
+  private translateFilament(id: number): string {
+    const key = FilamentModel.filamentMap[id];
+    return key ? this.translate.instant(`materials.${key}`) : `Unknown Filament (${id})`;
+  }
+
+  private translateColor(id: number): string {
+    const key = ColorModel.colorMap[id];
+    return key ? this.translate.instant(`colors.${key}`) : `Unknown Color (${id})`;
   }
 }

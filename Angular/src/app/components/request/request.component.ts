@@ -10,6 +10,8 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ApiResponseModel } from '../../models/api-response.model';
 import { SliderChangeEvent, SliderSlideEndEvent } from 'primeng/slider';
+import { FilamentModel } from '../../models/filament.model';
+import { ColorModel } from '../../models/color.model';
 
 @Component({
   selector: 'app-request',
@@ -97,6 +99,24 @@ export class RequestsComponent implements OnInit {
 
     this.selectedFilterOption = this.filterOptions.find(option => option.value === this.currentFilter) || null;
     this.selectedSortOption = this.sortOptions.find(option => option.value === `${this.currentSortCategory}-${this.currentSort}`) || null;
+
+    if (this.requests) {
+      this.requests.forEach(request => {
+        request.presets.forEach(preset => {
+          preset.color.name = this.translateColor(preset.color.id);
+          preset.filamentType.name = this.translateFilament(preset.filamentType.id);
+        });
+      });
+    }
+
+    if (this.myRequests) {
+      this.myRequests.forEach(request => {
+        request.presets.forEach(preset => {
+          preset.color.name = this.translateColor(preset.color.id);
+          preset.filamentType.name = this.translateFilament(preset.filamentType.id);
+        });
+      });
+    }
   }
 
   ngOnInit(): void {
@@ -313,8 +333,7 @@ export class RequestsComponent implements OnInit {
     this.selectedFilterOption = null
     this.selectedSortOption = null
 
-    this.filter('all');
-    this.filter('mine');
+    this.refreshData();
   }
 
   applyAdvancedFilters(): void {
@@ -357,7 +376,16 @@ export class RequestsComponent implements OnInit {
       queryParamsHandling: 'merge'
     });
 
-    this.filter('all');
-    this.filter('mine');
+    this.refreshData();
+  }
+
+  private translateFilament(id: number): string {
+    const key = FilamentModel.filamentMap[id];
+    return key ? this.translate.instant(`materials.${key}`) : `Unknown Filament (${id})`;
+  }
+
+  private translateColor(id: number): string {
+    const key = ColorModel.colorMap[id];
+    return key ? this.translate.instant(`colors.${key}`) : `Unknown Color (${id})`;
   }
 }

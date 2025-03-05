@@ -12,6 +12,8 @@ import { OrderModel } from '../../models/order.model';
 import { OfferModel } from '../../models/offer.model';
 import { ApiResponseModel } from '../../models/api-response.model';
 import { RequestOfferModel } from '../../models/request-offer.model';
+import { FilamentModel } from '../../models/filament.model';
+import { ColorModel } from '../../models/color.model';
 
 @Component({
   selector: 'app-offer',
@@ -73,6 +75,31 @@ export class OffersComponent {
 
         console.log("my offers:", response);
         this.myOffers = response as RequestOfferModel[];
+      });
+    }
+
+    this.translate.onLangChange.subscribe(() => {
+      this.translateRefresh();
+    });
+    this.translateRefresh();
+  }
+
+  translateRefresh(): void {
+    if (this.offers) {
+      this.offers.forEach((request: RequestOfferModel) => {
+        request.offers.forEach((offer: OfferModel) => {
+          offer.color.name = this.translateColor(offer.color.id);
+          offer.filament.name = this.translateFilament(offer.filament.id);
+        });
+      });
+    }
+
+    if (this.myOffers) {
+      this.myOffers.forEach((request: RequestOfferModel) => {
+        request.offers.forEach((offer: OfferModel) => {
+          offer.color.name = this.translateColor(offer.color.id);
+          offer.filament.name = this.translateFilament(offer.filament.id);
+        });
       });
     }
   }
@@ -231,5 +258,15 @@ export class OffersComponent {
         });
       }
     });
+  }
+
+  private translateFilament(id: number): string {
+    const key = FilamentModel.filamentMap[id];
+    return key ? this.translate.instant(`materials.${key}`) : `Unknown Filament (${id})`;
+  }
+
+  private translateColor(id: number): string {
+    const key = ColorModel.colorMap[id];
+    return key ? this.translate.instant(`colors.${key}`) : `Unknown Color (${id})`;
   }
 }
