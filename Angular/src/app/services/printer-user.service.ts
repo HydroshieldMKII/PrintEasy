@@ -24,7 +24,6 @@ export class PrinterUserService {
     return this.api.getRequest('api/printer_user').pipe(
       map(response => {
         if (response.status === 200) {
-          console.log('Printer Users:', response.data);
           return response.data.printer_users.map((data: PrinterUserApi) => PrinterUserModel.fromAPI(data));
         } else {
           return [];

@@ -80,7 +80,6 @@ export class UserProfileComponent implements OnInit {
         return;
       }
       this.userReviews = response;
-      console.log("reviews", this.userReviews)
       this.averageRating = this.userReviews.reduce((acc, review) => acc + review.rating, 0) / this.userReviews.length;
     });
   }
@@ -92,7 +91,6 @@ export class UserProfileComponent implements OnInit {
 
   loadPrinterUsers() {
     this.printerUserService.getPrinterUsers().subscribe(printerUsers => {
-      console.log(printerUsers);
       this.printerUsers = printerUsers;
     });
   }
@@ -171,7 +169,6 @@ export class UserProfileComponent implements OnInit {
           });
           this.loadPrinterUsers();
         } else {
-          console.error('Error:', response.errors);
           this.messageService.add({
             severity: 'error',
             summary: 'Error',
@@ -180,7 +177,6 @@ export class UserProfileComponent implements OnInit {
         }
       },
       error: (error) => {
-        console.error('Submission error:', error);
         this.messageService.add({
           severity: 'error',
           summary: 'Error',

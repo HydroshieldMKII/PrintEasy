@@ -64,7 +64,6 @@ export class RequestService {
     }
 
     getRequestById(id: number): Observable<RequestModel | ApiResponseModel> {
-        console.log("fetching info for request ID: ", id);
         return this.api.getRequest(`api/request/${id}`).pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
@@ -101,13 +100,12 @@ export class RequestService {
     }
 
     createRequest(request: FormData): Observable<ApiResponseModel> {
-        console.log("Creating request: ", request);
         return this.api.postRequest('api/request', {}, request).pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 201) {
                     this.messageService.add({ severity: 'success', summary: this.translate.instant('requestForm.created'), detail: this.translate.instant('requestForm.created_message') });
                 } else {
-                    console.log("Request creation failed: ", response);
+
                     this.messageService.add({ severity: 'error', summary: this.translate.instant('requestForm.error'), detail: this.translate.instant('requestForm.error_message') });
                 }
                 return response;
@@ -146,7 +144,6 @@ export class RequestService {
                         detail: this.translate.instant('requestForm.update_success')
                     });
                 } else {
-                    console.log("Request update failed: ", response);
                     this.messageService.add({
                         severity: 'error',
                         summary: this.translate.instant('global.error'),

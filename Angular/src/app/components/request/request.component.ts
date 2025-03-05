@@ -149,7 +149,6 @@ export class RequestsComponent implements OnInit {
   }
 
   onTabChange(tab: string): void {
-    console.log('Tab changed:', tab);
     this.activeTab = tab;
     this.router.navigate([], { queryParams: { tab: this.activeTab }, queryParamsHandling: 'merge' });
 
@@ -168,8 +167,6 @@ export class RequestsComponent implements OnInit {
   filter(type: string): void {
     const startDate = this.dateRange && this.dateRange[0] ? this.dateRange[0] : null;
     const endDate = this.dateRange && this.dateRange.length > 1 && this.dateRange[1] ? this.dateRange[1] : null;
-    console.log('Filtering requests. Start date:', startDate, 'End date:', endDate, 'Type:', type);
-    console.log('Filtering requests. Budget range:', this.budgetRange[0], this.budgetRange[1]);
     this.requestService
       .filter(
         this.currentFilter,
@@ -183,25 +180,19 @@ export class RequestsComponent implements OnInit {
         type
       )
       .subscribe((result: [RequestModel[], boolean] | ApiResponseModel) => {
-        if ('errors' in result) {
-          console.error('Error fetching requests:', result.errors);
+        if (result instanceof ApiResponseModel) {
           return;
         }
 
         const [requests, isOwningPrinter] = result;
 
         if (this.isOwningPrinter === null) {
-          console.log('Is owning printer:', isOwningPrinter);
           this.isOwningPrinter = isOwningPrinter;
         }
         if (type === 'all') {
           this.requests = requests;
-          console.log('Requests:', this.requests);
         } else if (type === 'mine') {
           this.myRequests = requests;
-          console.log('My requests:', this.myRequests);
-        } else {
-          console.error('Invalid filter type:', type);
         }
       });
   }
@@ -226,7 +217,6 @@ export class RequestsComponent implements OnInit {
   }
 
   downloadRequest(downloadUrl: string): void {
-    console.log('Download request:', downloadUrl);
     window.open(downloadUrl, '_blank');
   }
 
@@ -246,7 +236,6 @@ export class RequestsComponent implements OnInit {
   }
 
   onSearch(): void {
-    console.log('Search query:', this.searchQuery);
     this.router.navigate([], { queryParams: { search: this.searchQuery || null }, queryParamsHandling: 'merge' });
 
     this.filter('all');
@@ -254,20 +243,17 @@ export class RequestsComponent implements OnInit {
   }
 
   onFilterChange(event: { value: SelectItem }): void {
-    console.log('Filter changed. New value:', event.value.value);
     this.currentFilter = event.value.value;
   }
 
   onSortChange(event: { value: SelectItem }): void {
-    console.log('Sort changed. New value:', event.value.value);
     const [category, order] = event.value.value.split('-');
     this.currentSort = order;
     this.currentSortCategory = category;
   }
 
-  copyToClipboard(text: string): void {
-    const fullUrl = new URL(text, window.location.origin).href;
-    console.log('Copied to clipboard:', fullUrl);
+  copyToClipboard(pathUrl: string): void {
+    const fullUrl = new URL(pathUrl, window.location.origin).href;
     this.clipboard.copy(fullUrl);
     this.messageService.add({
       severity: 'success',
@@ -322,8 +308,6 @@ export class RequestsComponent implements OnInit {
       minBudget: this.budgetRange[0],
       maxBudget: this.budgetRange[1]
     };
-
-    console.log('Applying advanced filters. Budget range:', this.budgetRange, 'Date range:', this.dateRange, 'Search query:', this.searchQuery);
 
     if (this.dateRange && this.dateRange.length >= 1 && this.dateRange[0]) {
       queryParams.startDate = this.dateRange[0].toISOString().split('T')[0];

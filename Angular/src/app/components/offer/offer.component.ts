@@ -30,11 +30,11 @@ export class OffersComponent {
   offerToAccept: OfferModel | null = null;
 
   refuseDialogVisible: boolean = false;
-  offerToRefuse: any | null = null;
+  offerToRefuse: OfferModel | null = null;
 
   deleteDialogVisible: boolean = false;
-  offerToDelete: any | null = null;
-  requestToDelete: any | null = null;
+  offerToDelete: OfferModel | null = null;
+  requestToDelete: RequestOfferModel | null = null;
   isOwningPrinter: boolean | null = null;
 
   get currentRequests(): RequestOfferModel[] {
@@ -112,13 +112,13 @@ export class OffersComponent {
   confirmDelete(): void {
     if (this.offerToDelete !== null && this.requestToDelete !== null) {
       this.offerService.deleteOffer(this.offerToDelete.id).subscribe((response) => {
-        if (response.status === 200) {
+        if (response.status === 200 && this.requestToDelete !== null) {
           this.requestToDelete.offers = this.requestToDelete.offers.filter((offer: OfferModel) => offer !== this.offerToDelete);
 
           console.log("Offer deleted:", response);
           console.log("Request:", this.requestToDelete);
 
-          if (this.requestToDelete.offers.length === 0) {
+          if (this.requestToDelete && this.requestToDelete.offers.length === 0) {
             this.myOffers = this.myOffers?.filter(request => request !== this.requestToDelete) || null;
           }
         } else {
@@ -144,14 +144,14 @@ export class OffersComponent {
     this.offerModalVisible = true;
   }
 
-  cancelOffer(offer: any, request: any): void {
+  cancelOffer(offer: OfferModel, request: any): void {
     console.log("Canceling:", offer);
     this.offerToDelete = offer;
     this.requestToDelete = request;
     this.deleteDialogVisible = true;
   }
 
-  showAcceptOffer(offer: any): void {
+  showAcceptOffer(offer: OfferModel): void {
     this.offerToAccept = offer;
     this.acceptDialogVisible = true;
   }
@@ -194,8 +194,8 @@ export class OffersComponent {
     this.refuseDialogVisible = true;
   }
 
-  onOfferUpdated(offer: any): void {
-    console.log("Offer updated from offer list:", offer);
+  onOfferUpdated(updated: boolean): void {
+    console.log("Offer updated from offer list:", updated);
     this.offerIdToEdit = null;
     this.offerService.getMyOffers().subscribe((offers) => {
       if (offers instanceof ApiResponseModel) {
@@ -207,6 +207,8 @@ export class OffersComponent {
   }
 
   confirmRefuse(): void {
+    if (!this.offerToRefuse?.id) return;
+
     this.offerService.refuseOffer(this.offerToRefuse.id).subscribe((response) => {
       if (response.status === 200) {
         this.offerToRefuse = null;

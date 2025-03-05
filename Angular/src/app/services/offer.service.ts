@@ -55,7 +55,6 @@ export class OfferService {
         return this.api.getRequest('api/offer', { type: 'all' }).pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
-                    console.log("Offers: ", response.data);
                     return (response.data.requests as any)?.map((request: RequestOfferApi) => {
                         request.offers = request.offers.map((offer: OfferApi) => {
                             offer.color.name = this.translateColor(offer.color.id);
@@ -74,13 +73,11 @@ export class OfferService {
         return this.api.getRequest('api/offer', { type: 'mine' }).pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
-                    console.log("Offer: ", response.data);
                     return (response.data.requests as RequestOfferApi[])?.map((request: RequestOfferApi) => {
-                        // request.offers.map((offer: OfferApi) => {
-                        //     offer.color.name = this.translateColor(offer.color.id);
-                        //     offer.filament.name = this.translateFilament(offer.filament.id);
-                        // });
-                        console.log("Request: ", request);
+                        request.offers.map((offer: OfferApi) => {
+                            offer.color.name = this.translateColor(offer.color.id);
+                            offer.filament.name = this.translateFilament(offer.filament.id);
+                        });
                         return RequestOfferModel.fromAPI(request);
                     });
                 }
@@ -90,10 +87,11 @@ export class OfferService {
     }
 
     getOfferById(id: number): Observable<OfferModel | ApiResponseModel> {
-        console.log("fetching info for offer ID: ", id);
         return this.api.getRequest(`api/offer/${id}`).pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
+                    response.data.offer.color.name = this.translateColor(response.data.offer.color.id);
+                    response.data.offer.filament.name = this.translateFilament(response.data.offer.filament.id);
                     return OfferModel.fromAPI(response.data.offer as OfferApi);
                 }
                 return response;
@@ -102,7 +100,6 @@ export class OfferService {
     }
 
     createOffer(offer: FormData): Observable<ApiResponseModel> {
-        console.log("Creating request: ", offer);
         return this.api.postRequest('api/offer', {}, offer).pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 201) {
@@ -118,7 +115,6 @@ export class OfferService {
                         detail: this.translate.instant('offer.error_already_exists')
                     });
                 } else {
-                    console.log("Error: ", response);
                     this.messageService.add({
                         severity: 'error',
                         summary: this.translate.instant('global.error'),
@@ -162,7 +158,6 @@ export class OfferService {
                         detail: this.translate.instant('offer.updated')
                     });
                 } else {
-                    console.log("Error: ", response);
                     if (response.status === 422 && response.errors['request'] == 'This offer already exists') {
                         this.messageService.add({
                             severity: 'error',
@@ -192,7 +187,6 @@ export class OfferService {
                         detail: this.translate.instant('offer.refuse_success')
                     });
                 } else {
-                    console.log("Error: ", response);
                     this.messageService.add({
                         severity: 'error',
                         summary: this.translate.instant('global.error'),

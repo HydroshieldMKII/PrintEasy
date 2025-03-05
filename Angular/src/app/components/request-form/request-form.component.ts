@@ -26,7 +26,7 @@ import { ApiResponseModel } from '../../models/api-response.model';
   templateUrl: './request-form.component.html',
   styleUrl: './request-form.component.css'
 })
-export class RequestFormComponent implements OnInit, OnChanges {
+export class RequestFormComponent implements OnInit {
   isEditMode = false;
   isNewMode = false;
   isViewMode = false;
@@ -105,7 +105,6 @@ export class RequestFormComponent implements OnInit, OnChanges {
     }
 
     if (this.isEditMode || this.isNewMode) {
-      console.log('Loading all presets for edit...');
       this.presetService.getAllPrinters().subscribe((printers) => {
         this.printers = printers.map((printer: PrinterModel) => ({
           label: printer.model,
@@ -134,36 +133,30 @@ export class RequestFormComponent implements OnInit, OnChanges {
     if ((this.isEditMode || this.isViewMode) && this.id !== null) {
       this.requestService.getRequestById(this.id).subscribe((response) => {
         if (response instanceof ApiResponseModel) {
-          console.error('An error occured while fetching data:', response);
           this.router.navigate(['/requests']);
           return;
         }
 
         if (response instanceof RequestModel) {
           this.request = response;
-          console.log('Request loaded:', this.request);
           this.isMine = response.user?.id === this.authService.currentUser?.id;
 
           if (this.isViewMode) {
-            console.log('Loading only preset info...');
             this.colors = this.request.presets.map((preset: RequestPresetModel) => ({
               label: preset.color.name,
               value: preset.color.name,
               id: preset.color.id
             }));
-            console.log('Colors detected:', this.colors);
             this.filamentTypes = this.request.presets.map((preset: RequestPresetModel) => ({
               label: preset.filamentType.name,
               value: preset.filamentType.name,
               id: preset.filamentType.id
             }));
-            console.log('Filament types detected:', this.filamentTypes);
             this.printers = this.request.presets.map((preset: RequestPresetModel) => ({
               label: preset.printerModel.model,
               value: preset.printerModel.model,
               id: preset.printerModel.id
             }));
-            console.log('Printers detected:', this.printers);
           }
 
           if (this.isMine && this.isViewMode) {
@@ -179,8 +172,7 @@ export class RequestFormComponent implements OnInit, OnChanges {
             targetDate: [{ value: new Date(this.request.targetDate).toISOString().substring(0, 10), disabled: this.isViewMode || this.request.hasOfferAccepted }, [Validators.required, this.dateValidator]],
             comment: [{ value: this.request.comment, disabled: this.isViewMode || this.request.hasOfferAccepted }, Validators.maxLength(200)]
           });
-        } else { //Not instance of RequestModel
-          console.error('Invalid request data received:', response);
+        } else {
           this.router.navigate(['/requests']);
         }
       });
@@ -216,13 +208,11 @@ export class RequestFormComponent implements OnInit, OnChanges {
   }
 
   onFileUpload(event: FileSelectEvent): void {
-    console.log('File uploaded:', event);
     const file = event.files[0];
     this.uploadedFile = file;
     const reader = new FileReader();
     reader.onloadend = () => {
       this.uploadedFileBlob = reader.result;
-      console.log('File loaded:', this.uploadedFileBlob);
     };
     reader.readAsArrayBuffer(file);
   }
@@ -230,12 +220,6 @@ export class RequestFormComponent implements OnInit, OnChanges {
 
   submitRequest(): void {
     if (this.form.invalid) {
-      console.log('Invalid form:', this.form);
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Please fix the errors in the form before submitting.'
-      });
       return;
     }
 
@@ -262,16 +246,8 @@ export class RequestFormComponent implements OnInit, OnChanges {
       return;
     }
 
-    // for (const [key, value] of formData.entries()) {
-    //   console.log(`${key}: ${value}`);
-    // }
-
     if (this.isEditMode) {
-      this.requestService.updateRequest(this.request.id, formData).subscribe(response => {
-        // if (response.status === 200) {
-        //   this.router.navigate(['/requests/view', this.request.id]);
-        // }
-      });
+      this.requestService.updateRequest(this.request.id, formData).subscribe(response => { });
     } else if (this.isNewMode) {
       this.requestService.createRequest(formData).subscribe(response => {
         if (response.status === 201) {
@@ -290,7 +266,7 @@ export class RequestFormComponent implements OnInit, OnChanges {
         const printer = this.printers.find((p: any) => p.label === preset.printerModel.model);
         const filament = this.filamentTypes.find((f: any) => f.label === preset.filamentType.name);
         const color = this.colors.find((c: any) => c.label === preset.color.name);
-        console.log('Preset:', preset);
+
         if (printer && filament && color && preset.printQuality && this.isPresetValid(preset)) {
           if (preset.id) {
             formData.append(`request[preset_requests_attributes][${presetIndex}][id]`, preset.id.toString());
@@ -302,7 +278,6 @@ export class RequestFormComponent implements OnInit, OnChanges {
           presetIndex++;
         } else {
           hasError = true;
-          console.error('Invalid preset:', preset);
         }
       }
     }
@@ -384,19 +359,14 @@ export class RequestFormComponent implements OnInit, OnChanges {
 
   showOfferModal(preset?: any): void {
     this.offerModalVisible = true;
-
-    console.log('Editing preset from form:', preset);
     this.presetModalToEdit = preset;
-
   }
 
   hideOfferModal(): void {
     this.offerModalVisible = false;
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    console.log('Changes in request form:', changes);
-  }
+
 
 
   // Drag and drop
@@ -426,7 +396,6 @@ export class RequestFormComponent implements OnInit, OnChanges {
         const reader = new FileReader();
         reader.onloadend = () => {
           this.uploadedFileBlob = reader.result;
-          console.log('File loaded:', this.uploadedFileBlob);
         };
         reader.readAsArrayBuffer(file);
       }

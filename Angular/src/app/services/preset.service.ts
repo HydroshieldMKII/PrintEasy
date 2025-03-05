@@ -27,7 +27,6 @@ export class PresetService {
         return this.api.getRequest('api/preset').pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
-                    console.log("Fetched Presets:", response.data);
                     return (response.data as any[]).map(item => ({
                         id: item.id,
                         printQuality: item.print_quality,
@@ -48,14 +47,12 @@ export class PresetService {
 
     getAllColors(): Observable<ColorModel[]> {
         if (this.cachedColors) {
-            console.log("Returning cached colors");
             return of(this.cachedColors);
         }
 
         return this.api.getRequest('api/color').pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
-                    console.log("Fetched Colors:", response.data);
                     this.cachedColors = (response.data as ColorModel[]).map(color => ({
                         id: color.id,
                         name: this.translateColor(color.id)
@@ -69,14 +66,12 @@ export class PresetService {
 
     getAllFilaments(): Observable<FilamentModel[]> {
         if (this.cachedFilaments) {
-            console.log("Returning cached filaments");
             return of(this.cachedFilaments);
         }
 
         return this.api.getRequest('api/filament').pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
-                    console.log("Fetched Filaments:", response.data);
                     this.cachedFilaments = (response.data as FilamentModel[]).map(filament => ({
                         ...filament,
                         name: this.translateFilament(filament.id)
@@ -90,14 +85,12 @@ export class PresetService {
 
     getAllPrinters(): Observable<PrinterModel[]> {
         if (this.cachedPrinters) {
-            console.log("Returning cached printers");
             return of(this.cachedPrinters);
         }
 
         return this.api.getRequest('api/printer').pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
-                    console.log("Fetched Printers:", response.data);
                     this.cachedPrinters = response.data as PrinterModel[];
                     return this.cachedPrinters;
                 }

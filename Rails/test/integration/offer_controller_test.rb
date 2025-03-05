@@ -502,9 +502,9 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     sign_in @user
 
     # Database changes
-    # assert_no_difference 'Offer.count' do
-    delete api_offer_url(offer)
-    # end
+    assert_no_difference 'Offer.count' do
+      delete api_offer_url(offer)
+    end
 
     # Http code
     assert_response :unprocessable_entity
