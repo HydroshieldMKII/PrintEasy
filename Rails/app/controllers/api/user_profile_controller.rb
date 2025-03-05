@@ -1,0 +1,15 @@
+module Api
+    class UserProfileController < AuthenticatedController
+        def show
+            user = User.find(params[:id])
+            render json: {
+                user: user.as_json(
+                    except: %i[country_id],
+                    include: {country: {only: %i[id name]}},
+                    methods: %i[profile_picture_url]
+                ),
+                errors: {}
+            }, status: :ok
+        end
+    end
+end

@@ -34,6 +34,7 @@ export class UserModel {
     }
 
     static fromAPI(data: UserApi): UserModel {
+        console.log("FRM API USER", data.country);
         return new UserModel(
             data.id,
             data.username,

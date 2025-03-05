@@ -15,11 +15,12 @@ import { SubmissionModel } from '../../models/submission.model';
 import { LikeModel } from '../../models/like.model';
 import { UserContestSubmissionsModel } from '../../models/user-contest-submissions.model';
 import { ApiResponseModel } from '../../models/api-response.model';
+import { UserProfileService } from '../../services/user-profile.service';
+import { UserModel } from '../../models/user.model';
 import { Renderer2 } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ResolveEnd } from '@angular/router';
-
-
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-user-profile',
@@ -35,7 +36,9 @@ export class UserProfileComponent implements OnInit {
   readonly presetService = inject(PresetService);
   readonly messageService = inject(MessageService);
   readonly printerUserService = inject(PrinterUserService);
+  readonly userProfileService = inject(UserProfileService);
   readonly fb = inject(FormBuilder);
+  readonly router = inject(ActivatedRoute);
 
   userContestSubmissions: UserContestSubmissionsModel[] = [];
   responsiveOptions: any[] | undefined;
@@ -56,6 +59,17 @@ export class UserProfileComponent implements OnInit {
   today = new Date();
 
   constructor(private renderer: Renderer2) {
+    if (this.router.snapshot.params["id"]) {
+      this.userProfileService.getUserProfile(this.router.snapshot.params["id"]).subscribe((response: UserModel | ApiResponseModel) => {
+        if (response instanceof ApiResponseModel) {
+          // this.router.navigate(['/404']);
+          return;
+        }
+        // this.userProfile = response
+        console.log(response);
+      });
+    }
+
     this.printerForm = this.fb.group({
       printer: [null, Validators.required],
       aquiredDate: [null, Validators.required]

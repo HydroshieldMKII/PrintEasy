@@ -92,7 +92,7 @@ export const routes: Routes = [
     ]
   },
   {
-    path: 'profile',
+    path: 'profile/:id',
     component: UserProfileComponent,
     title: 'Profile',
   },
