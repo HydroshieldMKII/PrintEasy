@@ -12,6 +12,10 @@
         "warning": "Avertissement",
         "info": "Information",
         "confirm": "Confirmer",
+        "advanced": "Personnaliser",
+        "sort": "Trier par",
+        "filter": "Filtrer par",
+        "confirm_delete": "Confirmer la suppression",
         "errors": {
             "created_success": "Créé avec succès",
             "updated_success": "Mis à jour avec succès",
@@ -73,7 +77,22 @@
         "confirm_delete": "Confirmer la suppression",
         "confirm_delete_message": "Êtes-vous sûr de vouloir supprimer le concours ? Cette action ne peut pas être annulée.",
         "button_contest_detail": "Détails du concours",
-        "search_text": "Rechercher par thème"
+        "search_text": "Rechercher par thème",
+        "participants_range": "Participants",
+        "ssf": {
+            "sort": {
+                "none": "Aucun",
+                "participants_asc": "Soumissions (Asc)",
+                "participants_desc": "Soumissions (Desc)",
+                "start_asc": "Date de début (Asc)",
+                "start_desc": "Date de début (Desc)"
+            },
+            "filter": {
+                "all": "Tous",
+                "active": "Commencer",
+                "inactive": "Terminer"
+            }
+        }
     },
     "contest_form": {
         "title_form": "Créer un concours",
@@ -121,6 +140,30 @@
         "error_description_long": "La description doit contenir au plus 200 caractères",
         "error_image_required": "L'image est requise",
         "error_stl_required": "Le fichier STL est requis"
+    },
+    "user_profile": {
+        "print_since": "impressions depuis le",
+        "reviews": "avis",
+        "reviews_tab": "Avis",
+        "printers_tab": "Imprimantes",
+        "submissions_tab": "Soumissions",
+        "likes_tab": "J'aime",
+        "printer": {
+            "printer_model": "Modèle d'imprimante",
+            "acquisition_date": "Date d'acquisition",
+            "edit_printer": "Modifier l'imprimante",
+            "add_printer": "Ajouter une imprimante",
+            "printer_model_required": "Le modèle d'imprimante est requis",
+            "acquisition_date_required": "La date d'acquisition est requise",
+            "no_print_review": "Pas d'avis sur l'imprimante",
+            "acquired_on": "Acquis le",
+            "last_used_on": "Dernière utilisation le",
+            "never_used": "Jamais utilisé",
+            "edit_active_offers": "Vous ne pouvez pas modifier l'imprimante car vous avez des offres actives",
+            "delete_active_offers": "Impossible de supprimer l'imprimante avec des offres actives",
+            "delete_printer": "Supprimer l'imprimante",
+            "confirm_delete_message": "Êtes-vous sûr de vouloir supprimer l'imprimante ? Cette action ne peut pas être annulée."
+        }
     },
     "orders": {
         "commands_tab": "Commandes",

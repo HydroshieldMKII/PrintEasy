@@ -20,23 +20,23 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
 
     assert_equal 5, @parsed_response['contests'].count
 
-    assert_equal contests(:contest_five).id, @parsed_response['contests'][0]['id']
-    assert_equal contests(:contest_five).theme, @parsed_response['contests'][0]['theme']
-    assert_equal contests(:contest_five).description, @parsed_response['contests'][0]['description']
-    assert_equal contests(:contest_five).submission_limit, @parsed_response['contests'][0]['submission_limit']
-    assert_equal contests(:contest_five).start_at, @parsed_response['contests'][0]['start_at']
-    assert_equal contests(:contest_five).end_at, @parsed_response['contests'][0]['end_at']
-    assert_equal contests(:contest_five).deleted_at, @parsed_response['contests'][0]['deleted_at']
-    assert_equal contests(:contest_five).image_url, @parsed_response['contests'][0]['image_url']
+    assert_equal contests(:contest_four).id, @parsed_response['contests'][0]['id']
+    assert_equal contests(:contest_four).theme, @parsed_response['contests'][0]['theme']
+    assert_equal contests(:contest_four).description, @parsed_response['contests'][0]['description']
+    assert_equal contests(:contest_four).submission_limit, @parsed_response['contests'][0]['submission_limit']
+    assert_equal contests(:contest_four).start_at, @parsed_response['contests'][0]['start_at']
+    assert_equal contests(:contest_four).end_at, @parsed_response['contests'][0]['end_at']
+    assert_equal contests(:contest_four).deleted_at, @parsed_response['contests'][0]['deleted_at']
+    assert_equal contests(:contest_four).image_url, @parsed_response['contests'][0]['image_url']
 
-    assert_equal contests(:contest_four).id, @parsed_response['contests'][1]['id']
-    assert_equal contests(:contest_four).theme, @parsed_response['contests'][1]['theme']
-    assert_equal contests(:contest_four).description, @parsed_response['contests'][1]['description']
-    assert_equal contests(:contest_four).submission_limit, @parsed_response['contests'][1]['submission_limit']
-    assert_equal contests(:contest_four).start_at, @parsed_response['contests'][1]['start_at']
-    assert_equal contests(:contest_four).end_at, @parsed_response['contests'][1]['end_at']
-    assert_equal contests(:contest_four).deleted_at, @parsed_response['contests'][1]['deleted_at']
-    assert_equal contests(:contest_four).image_url, @parsed_response['contests'][1]['image_url']
+    assert_equal contests(:contest_five).id, @parsed_response['contests'][1]['id']
+    assert_equal contests(:contest_five).theme, @parsed_response['contests'][1]['theme']
+    assert_equal contests(:contest_five).description, @parsed_response['contests'][1]['description']
+    assert_equal contests(:contest_five).submission_limit, @parsed_response['contests'][1]['submission_limit']
+    assert_equal contests(:contest_five).start_at, @parsed_response['contests'][1]['start_at']
+    assert_equal contests(:contest_five).end_at, @parsed_response['contests'][1]['end_at']
+    assert_equal contests(:contest_five).deleted_at, @parsed_response['contests'][1]['deleted_at']
+    assert_equal contests(:contest_five).image_url, @parsed_response['contests'][1]['image_url']
   end
 
   test 'should get show' do
@@ -751,7 +751,7 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
 
     test "should filter by participants" do
       assert_difference('Contest.count', 0) do
-        get api_contest_index_url, params: { participants: 1 }
+        get api_contest_index_url, params: { participants_min: 1, participants_max: 1 }
       end
 
       assert_nothing_raised do

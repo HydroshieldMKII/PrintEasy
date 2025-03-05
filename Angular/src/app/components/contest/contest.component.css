@@ -200,7 +200,7 @@ h2 {
 }
 
 :host ::ng-deep .p-select {
-    width: 187px;
+    width: 200px;
 }
 
 :host ::ng-deep .p-select-label {
@@ -349,6 +349,9 @@ h2 {
         text-align: center;
     }
 
+    .search-mobile {
+        width: 100%;
+    }
 
     .contest-image {
         margin-right: 0;
