@@ -10,6 +10,7 @@ export type PrinterUserApi = {
     acquired_date: Date;
     last_review_image: string | null;
     last_used: Date | null;
+    can_delete: boolean | null;
 }
 
 export class PrinterUserModel {
@@ -19,6 +20,7 @@ export class PrinterUserModel {
     aquiredDate: Date;
     lastReviewedImage: string | null = null;
     lastUsed: Date | null = null;
+    canDelete: boolean | null = null;
 
     constructor(
         id: number,
@@ -26,7 +28,8 @@ export class PrinterUserModel {
         printer: PrinterModel,
         acquiredDate: Date,
         lastReviewedImage: string | null,
-        lastUsed: Date | null
+        lastUsed: Date | null,
+        canDelete: boolean | null = null
     ) {
         this.id = id;
         this.user = user;
@@ -34,6 +37,7 @@ export class PrinterUserModel {
         this.aquiredDate = acquiredDate;
         this.lastReviewedImage = lastReviewedImage;
         this.lastUsed = lastUsed;
+        this.canDelete = canDelete;
     }
 
     static fromAPI(data: PrinterUserApi): PrinterUserModel {
@@ -43,7 +47,8 @@ export class PrinterUserModel {
             PrinterModel.fromAPI(data.printer),
             new Date(data.acquired_date + 'T00:00:00'),
             data.last_review_image ?? null,
-            data.last_used ? new Date(data.last_used) : null
+            data.last_used ? new Date(data.last_used) : null,
+            data.can_delete ?? null
         );
     }
 

@@ -86,7 +86,15 @@
 
             <p-tabpanel [value]="'printers'">
                 <div class="printers-container">
+                    <div class="add-printer-card" (click)="showAddPrinterDialog()">
+                        <div class="add-printer-content">
+                            <i class="pi pi-plus-circle"></i>
+                            <p>Add Printer</p>
+                        </div>
+                    </div>
+
                     <div *ngFor="let printerUser of printerUsers" class="printer-card">
+                        
                         <div class="card-header">
                             <h3>{{ printerUser.printer.model }}</h3>
                         </div>
@@ -120,19 +128,14 @@
                         <div class="card-actions">
                             <div class="button-group">
                                 <p-button type="button" icon="pi pi-pencil" severity="primary"
-                                    (click)="editPrinter(printerUser)">
+                                    (click)="editPrinter(printerUser)" [disabled]="!printerUser.canDelete"
+                                    pTooltip="{{printerUser.canDelete ? 'Edit printer' : 'Cannot edit printer with active offers'}}" tooltipPosition="top">
                                 </p-button>
                                 <p-button type="button" icon="pi pi-trash" severity="danger"
-                                    (click)="showDeleteDialog(printerUser)">
+                                    (click)="showDeleteDialog(printerUser)" [disabled]="!printerUser.canDelete"
+                                    pTooltip="{{printerUser.canDelete ? 'Delete printer' : 'Cannot delete printer with active offers'}}" tooltipPosition="top">
                                 </p-button>
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="add-printer-card" (click)="showAddPrinterDialog()">
-                        <div class="add-printer-content">
-                            <i class="pi pi-plus-circle"></i>
-                            <p>Add Printer</p>
                         </div>
                     </div>
                 </div>

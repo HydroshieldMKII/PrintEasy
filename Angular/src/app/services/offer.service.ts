@@ -51,7 +51,7 @@ export class OfferService {
         private translate: TranslateService
     ) { }
 
-    getOffers(): Observable<OfferModel[]> {
+    getOffers(): Observable<RequestOfferModel[] | ApiResponseModel> {
         return this.api.getRequest('api/offer', { type: 'all' }).pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
@@ -65,7 +65,7 @@ export class OfferService {
                         return RequestOfferModel.fromAPI(request);
                     });
                 }
-                return [];
+                return response;
             })
         );
     }

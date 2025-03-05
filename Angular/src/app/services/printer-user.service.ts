@@ -48,4 +48,12 @@ export class PrinterUserService {
       })
     );
   }
+
+  deletePrinterUser(id: number): Observable<ApiResponseModel> {
+    return this.api.deleteRequest(`api/printer_user/${id}`).pipe(
+      map(response => {
+        return response;
+      })
+    );
+  }
 }

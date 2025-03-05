@@ -4,6 +4,7 @@ class PrinterUser < ApplicationRecord
   belongs_to :printer
   belongs_to :user
   has_many :offers, dependent: :destroy
+  before_destroy :can_destroy?, prepend: true
   
   validates :acquired_date, presence: true
   validates :acquired_date, comparison: { less_than_or_equal_to: -> { Date.current }, message: 'cannot be in the future' }, if: -> { acquired_date.present? }
@@ -26,17 +27,34 @@ class PrinterUser < ApplicationRecord
 
   def last_used
     latest_printed_offer = offers.joins(order: :order_status)
-      .where(order_status: { status_name: 'Printed' })
+      .where(order_status: { status_name: ['Printing', 'Printed'] })
       .order('order_status.created_at DESC')
       .first
 
+      # debugger
+
     return nil unless latest_printed_offer
   
-    printed_status = latest_printed_offer.order_status
-      .where(status_name: 'Printed')
+    printed_status = latest_printed_offer.order.order_status
+      .where(status_name: ['Printing', 'Printed'])
       .order(created_at: :desc)
       .first
       
     printed_status.created_at
+  end
+
+  def can_delete
+    offers.empty? && offers.joins(:order).empty?
+  end
+
+  private
+
+  def can_destroy?
+    return if offers.empty?
+
+    if offers.joins(:order).exists?
+      errors.add(:base, 'Cannot delete printer user with orders')
+      throw(:abort)
+    end
   end
 end
