@@ -4,13 +4,77 @@
     [buttonProps]="{ severity: 'success', rounded: true }" (onClick)="newContest()" />
   }
 
-  <h2>{{ 'contest.title_page' | translate }}</h2>
-  <p [innerHTML]="'contest.description_page' | translate"></p>
+  <div class="contest-header">
+    <h2>{{ 'contest.title_page' | translate }}</h2>
+    <p [innerHTML]="'contest.description_page' | translate"></p>
+  </div>
 
-  <div class="search-container">
-    <div [class]="sliderClass">
-      <p>{{ currentValue }}</p>
-      <p-slider [(ngModel)]="currentValue" (onSlideEnd)="onSlideEnd($event)" min="0" max="30" />
+  <div class="advanced-filters mb-4">
+    <div class="filter-header">
+      <div>
+        <div class="p-input-icon-right">
+          <i class="pi pi-search"></i>
+          <form (submit)="onSearch()">
+            <input class="search-bar" type="text" pInputText [(ngModel)]="currentQuery" name="searchTerm"
+              placeholder="{{ 'contest.search_text' | translate }}" />
+          </form>
+        </div>
+      </div>
+
+      <div class="advanced-toggle" (click)="toggleAdvancedFilters()">
+        <span class="filter-title">Parametres</span>
+        <i class="pi"
+          [ngClass]="{'pi-chevron-down': showAdvancedFilters, 'pi-chevron-right': !showAdvancedFilters}"></i>
+      </div>
+    </div>
+
+    <div class="filter-content" *ngIf="showAdvancedFilters">
+      <div class="filter-row">
+        <div class="filter-item participants-range">
+          <label>Participants range</label>
+          <div class="slider-wrapper">
+            <p-slider [(ngModel)]="currentValue" (onSlideEnd)="onSlideEnd($event)" min="0" max="30" />
+            <div class="range-values">
+              <span>0</span>
+              <span>{{ currentValue }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="filter-item">
+          <div>
+            <p-floatlabel variant="in">
+              <p-select inputId="in_label" [options]="filterOptions" [(ngModel)]="selectedFilterOption"
+                name="selectedFilterOption" optionLabel="label" styleClass="w-full" variant="filled"
+                (onChange)="onFilterChange($event)" />
+              <label for="in_label">Filter</label>
+            </p-floatlabel>
+          </div>
+        </div>
+
+        <div class="filter-item">
+          <div>
+            <p-floatlabel variant="in">
+              <p-select inputId="in_label" [options]="sortOptions" [(ngModel)]="selectedSortOption"
+                name="selectedSortOption" optionLabel="label" styleClass="w-full" variant="filled"
+                (onChange)="onSortChange($event)" />
+              <label for="in_label">Sort</label>
+            </p-floatlabel>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- <div class="search-container">
+    <div class="flex">
+      <div class="slider-wrapper">
+        <p-slider [(ngModel)]="currentValue" (onSlideEnd)="onSlideEnd($event)" min="0" max="30" />
+        <div class="range-values">
+          <span>0</span>
+          <span>{{ currentValue }}</span>
+        </div>
+      </div>
     </div>
 
     <p-floatlabel variant="in">
@@ -30,7 +94,7 @@
       <input class="search-bar" type="text" pInputText [(ngModel)]="currentQuery" name="searchTerm"
         placeholder="{{ 'contest.search_text' | translate }}" />
     </form>
-  </div>
+  </div> -->
 
   <div class="contest-list">
     <div *ngFor="let contest of contests" class="card" [ngStyle]="{ opacity: contest.finished ? '0.5' : '1' }">
@@ -41,7 +105,8 @@
           <p class="contest-description">{{ contest.description ? (contest.description.length > 30 ?
             (contest.description | slice:0:30) + '...' : contest.description) : '' }}</p>
           <p *ngIf="contest.finished && contest.winnerUser">
-            <i class="pi pi-trophy"></i><span> {{ 'contest.winner' | translate }}:</span> {{ contest.winnerUser.username
+            <i class="pi pi-trophy"></i><span> {{ 'contest.winner' | translate }}:</span> {{
+            contest.winnerUser.username
             }}
           </p>
           <p *ngIf="!contest.finished || !contest.winnerUser">
