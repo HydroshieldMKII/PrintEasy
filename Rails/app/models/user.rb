@@ -34,7 +34,7 @@ class User < ApplicationRecord
       {
         contest: contest_data,
         submissions: contest.submissions.where(user_id: id)
-                            .as_json(include: :likes, methods: %i[image_url stl_url])
+                            .as_json(include: :likes, methods: %i[image_url stl_url liked_by_current_user])
       }
     end
   end

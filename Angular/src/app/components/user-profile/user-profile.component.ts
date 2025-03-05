@@ -12,6 +12,7 @@ import { ReviewService } from '../../services/review.service';
 import { LikeService } from '../../services/like.service';
 import { ReviewModel } from '../../models/review.model';
 import { SubmissionModel } from '../../models/submission.model';
+import { LikeModel } from '../../models/like.model';
 import { UserContestSubmissionsModel } from '../../models/user-contest-submissions.model';
 import { ApiResponseModel } from '../../models/api-response.model';
 import { Renderer2 } from '@angular/core';
@@ -198,8 +199,16 @@ export class UserProfileComponent implements OnInit {
   onLike(submission: SubmissionModel) {
     if (submission.liked) {
       const like = submission.likes.find(like => like.userId === this.authService.currentUser?.id);
-      this.likeService.deleteLike(like?.id).subscribe(() => {
-        this.userLikes = this.userLikes.filter(like => like.id !== submission.id);
+      this.likeService.deleteLike(like?.id).subscribe((response) => {
+        const deletedLike = LikeModel.fromApi(response.data.like);
+        submission.likes = submission.likes.filter(l => l.id !== deletedLike.id);
+        submission.liked = false;
+      });
+    } else {
+      this.likeService.createLike(submission.id).subscribe((response) => {
+        const newLike = LikeModel.fromApi(response.data.like);
+        submission.likes.push(newLike);
+        submission.liked = true;
       });
     }
   }

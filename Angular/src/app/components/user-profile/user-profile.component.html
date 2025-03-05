@@ -57,14 +57,12 @@
                                                 }}</span>
 
                                             <!-- Bouton Like -->
-                                            <!-- <p-button 
+                                            <p-button 
                                                 [icon]="product.liked ? 'pi pi-heart-fill' : 'pi pi-heart'"
                                                 [severity]="product.liked ? 'danger' : 'secondary'"
                                                 [outlined]="!product.liked"
-                                                (click)="toggleLike(product)"
-                                            /> -->
-
-                                            <p-button icon="pi pi-heart" severity="secondary" />
+                                                (click)="onLike(product)"
+                                            />
 
                                             <!-- Bouton Download -->
                                             <p-button icon="pi pi-download" severity="primary" />
