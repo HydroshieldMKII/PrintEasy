@@ -3,7 +3,8 @@
         <h1 class="header-item">Welcome to PrintEasy!</h1>
         <img class="header-item" src="https://cdn.discordapp.com/attachments/1186372312900059179/1336734252863062128/DALLE_2025-02-05_11.20.16_-_A_professional_and_modern_transparent_logo_for_a_3D_printing_website_called_PrintEasy._The_design_should_feature_a_stylized_3D_printer_or_a_filament.png?ex=67c9cc49&is=67c87ac9&hm=7b455f4f8acb5d215583d3fe87f873b779e2e63f67f78b30053ed6f55cc6334a&">
     </div>
-    <div class="section">
+
+    <div class="section" *ngIf="requests.length > 0">
         <h2>Latest Requests</h2>
         <hr>
         <div class="list">
@@ -38,7 +39,7 @@
         </div>
     </div>
 
-    <div class="section">
+    <div class="section" *ngIf="requests.length > 0">
         <h2>Latest Contests</h2>
         <hr>
         <div class="list">
@@ -71,7 +72,7 @@
         </div>
     </div>
 
-    <div class="section">
+    <div class="section" *ngIf="requests.length > 0">
         <h2>Latest Submissions</h2>
         <hr>
         <div class="list">
