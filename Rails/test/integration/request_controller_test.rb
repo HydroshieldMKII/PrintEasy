@@ -101,6 +101,8 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
     assert_empty json_response['errors']
   end
 
+  ### INDEX (SSF) ACTION ###
+
   test 'should sort requests by name in ascending order' do
     get api_request_index_url, params: { type: 'mine', sort: 'asc', sortCategory: 'name' }
     assert_response :success

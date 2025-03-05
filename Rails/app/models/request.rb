@@ -129,7 +129,8 @@ class Request < ApplicationRecord
             color: { only: %i[id name] },
             filament: { only: %i[id name] },
             printer: { only: %i[id model] }
-          }
+          },
+          methods: [:has_matching_offer_by_current_user?]
         },
         user: {
           only: %i[id username],
@@ -153,7 +154,8 @@ class Request < ApplicationRecord
             color: { only: %i[id name] },
             filament: { only: %i[id name] },
             printer: { only: %i[id model] }
-          }
+          },
+          methods: [:has_matching_offer_by_current_user?]
         },
         user: {
           only: %i[id username],
