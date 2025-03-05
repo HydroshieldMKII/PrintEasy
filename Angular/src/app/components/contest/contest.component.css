@@ -349,6 +349,9 @@ h2 {
         text-align: center;
     }
 
+    .search-mobile {
+        width: 100%;
+    }
 
     .contest-image {
         margin-right: 0;

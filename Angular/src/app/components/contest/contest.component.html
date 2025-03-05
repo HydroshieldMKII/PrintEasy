@@ -11,12 +11,14 @@
 
   <div class="advanced-filters mb-4">
     <div class="filter-header">
-      <div>
+      <div class="search-mobile">
         <div class="p-input-icon-right">
           <i class="pi pi-search"></i>
           <form (submit)="onSearch()">
-            <input class="search-bar" type="text" pInputText [(ngModel)]="currentQuery" name="searchTerm"
-              placeholder="{{ 'contest.search_text' | translate }}" />
+            <p-float-label variant="in">
+              <input class="search-bar" type="text" pInputText [(ngModel)]="currentQuery" name="searchTerm" />
+              <label for="searchTerm">{{ 'contest.search_text' | translate }}</label>
+            </p-float-label>
           </form>
         </div>
       </div>
