@@ -31,6 +31,7 @@ Rails.application.routes.draw do
     resources :filament
     resources :submission
     resources :preset
+    resources :home
     resources :user_contest_submissions, only: [:index]
     resources :like, only: %i[index create destroy]
   end
