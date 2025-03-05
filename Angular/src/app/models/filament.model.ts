@@ -30,4 +30,13 @@ export class FilamentModel {
             data.name
         );
     }
+
+    static filamentMap: Record<number, string> = {
+        1: 'petg',
+        2: 'tpu',
+        3: 'nylon',
+        4: 'wood',
+        5: 'metal',
+        6: 'carbon_fiber'
+    };
 }

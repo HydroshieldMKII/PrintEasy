@@ -14,6 +14,7 @@ import { ReviewModel } from '../../models/review.model';
 import { SubmissionModel } from '../../models/submission.model';
 import { UserContestSubmissionsModel } from '../../models/user-contest-submissions.model';
 import { Renderer2 } from '@angular/core';
+import { ResolveEnd } from '@angular/router';
 
 
 
@@ -90,6 +91,7 @@ export class UserProfileComponent implements OnInit {
 
   loadPrinterUsers() {
     this.printerUserService.getPrinterUsers().subscribe(printerUsers => {
+      console.log(printerUsers);
       this.printerUsers = printerUsers;
     });
   }
@@ -124,30 +126,42 @@ export class UserProfileComponent implements OnInit {
 
   confirmDelete() {
     if (this.printerToDelete) {
-      this.printerUsers = this.printerUsers.filter(p => p.id !== this.printerToDelete?.id);
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Success',
-        detail: 'Printer deleted successfully'
+      this.printerUserService.deletePrinterUser(this.printerToDelete.id).subscribe(response => {
+        if (response.status === 200) {
+          this.printerUsers = this.printerUsers.filter(p => p.id !== this.printerToDelete?.id);
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Printer deleted successfully'
+          });
+          this.deleteDialogVisible = false;
+          this.printerToDelete = null;
+        } else if (response.errors?.['base'] == "Cannot delete printer user with orders") {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Cannot delete printer user with orders'
+          });
+          this.deleteDialogVisible = false;
+          this.printerToDelete = null;
+        }
       });
-      this.deleteDialogVisible = false;
-      this.printerToDelete = null;
     }
   }
 
   onPrinterSubmit() {
     if (!this.printerForm.valid) return;
-  
-    const submitAction$ = this.isEditMode && this.printerUserEdit 
+
+    const submitAction$ = this.isEditMode && this.printerUserEdit
       ? this.printerUserService.updatePrinterUser(this.printerForm, this.printerUserEdit.id)
       : this.printerUserService.createPrinterUser(this.printerForm);
-  
+
     submitAction$.subscribe({
       next: (response) => {
-        const isSuccessful = this.isEditMode 
-          ? response.status === 200 
+        const isSuccessful = this.isEditMode
+          ? response.status === 200
           : response.status === 201;
-  
+
         if (isSuccessful) {
           this.messageService.add({
             severity: 'success',

@@ -21,30 +21,6 @@ export class PresetService {
     private cachedFilaments: FilamentModel[] | null = null;
     private cachedPrinters: PrinterModel[] | null = null;
 
-    // Mapping for translation keys
-    private filamentMap: Record<number, string> = {
-        1: 'petg',
-        2: 'tpu',
-        3: 'nylon',
-        4: 'wood',
-        5: 'metal',
-        6: 'carbon_fiber'
-    };
-
-    private colorMap: Record<number, string> = {
-        1: 'red',
-        2: 'blue',
-        3: 'green',
-        4: 'yellow',
-        5: 'black',
-        6: 'white',
-        7: 'orange',
-        8: 'purple',
-        9: 'pink',
-        10: 'brown',
-        11: 'gray'
-    };
-
     constructor(private api: ApiRequestService, private translate: TranslateService) { }
 
     getAllPresets(): Observable<PresetModel[]> {
@@ -80,7 +56,10 @@ export class PresetService {
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
                     console.log("Fetched Colors:", response.data);
-                    this.cachedColors = (response.data as ColorModel[]).map(color => new ColorModel(color.id, color.name));
+                    this.cachedColors = (response.data as ColorModel[]).map(color => ({
+                        id: color.id,
+                        name: this.translateColor(color.id)
+                    }));
                     return this.cachedColors;
                 }
                 return [];
@@ -109,18 +88,6 @@ export class PresetService {
         );
     }
 
-    getPrinterUsers(): Observable<PrinterUserModel[]> {
-        return this.api.getRequest('api/printer_user').pipe(
-            map((response: ApiResponseModel) => {
-                if (response.status === 200) {
-                    console.log("Fetched Printer Users:", response.data);
-                    return (response.data as PrinterUserApi[]).map(printerUser => PrinterUserModel.fromAPI(printerUser));
-                }
-                return [];
-            })
-        );
-    }
-
     getAllPrinters(): Observable<PrinterModel[]> {
         if (this.cachedPrinters) {
             console.log("Returning cached printers");
@@ -140,12 +107,12 @@ export class PresetService {
     }
 
     private translateFilament(id: number): string {
-        const key = this.filamentMap[id];
+        const key = FilamentModel.filamentMap[id];
         return key ? this.translate.instant(`materials.${key}`) : `Unknown Filament (${id})`;
     }
 
     private translateColor(id: number): string {
-        const key = this.colorMap[id];
+        const key = ColorModel.colorMap[id];
         return key ? this.translate.instant(`colors.${key}`) : `Unknown Color (${id})`;
     }
 }
