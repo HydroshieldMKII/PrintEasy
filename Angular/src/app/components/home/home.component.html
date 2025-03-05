@@ -1,11 +1,11 @@
 <div style="padding: 10px;">
     <div class="page-header">
-        <h1 class="header-item">Welcome to PrintEasy!</h1>
+        <h1 class="header-item">{{'home.title' | translate}}</h1>
         <img class="header-item" src="https://cdn.discordapp.com/attachments/1186372312900059179/1336734252863062128/DALLE_2025-02-05_11.20.16_-_A_professional_and_modern_transparent_logo_for_a_3D_printing_website_called_PrintEasy._The_design_should_feature_a_stylized_3D_printer_or_a_filament.png?ex=67c9cc49&is=67c87ac9&hm=7b455f4f8acb5d215583d3fe87f873b779e2e63f67f78b30053ed6f55cc6334a&">
     </div>
 
     <div class="section" *ngIf="requests.length > 0">
-        <h2>Latest Requests</h2>
+        <h2>{{'home.request_header' | translate}}</h2>
         <hr>
         <div class="list">
             <div *ngFor="let request of requests">
@@ -20,17 +20,17 @@
                     <ng-template #title>{{request.name}}</ng-template>
                     <ng-template #subtitle>
                         <div class="h-row">
-                            <p class="card-content-label">By :</p>
+                            <p class="card-content-label">{{'home.by_label' | translate}}</p>
                             <p>{{request.user?.username}}</p>
                         </div>
                     </ng-template>
                     <ng-template #content>
                         <div class="h-row">
-                            <p class="card-content-label">Budget :</p>
+                            <p class="card-content-label">{{'home.budget_label' | translate}}</p>
                             <p>{{request.budget | currency}}</p>
                         </div>
                         <div class="h-row">
-                            <p class="card-content-label">Due for :</p>
+                            <p class="card-content-label">{{'home.target_date_label' | translate}}</p>
                             <p>{{request.targetDate | date}}</p>
                         </div>
                     </ng-template>
@@ -40,7 +40,7 @@
     </div>
 
     <div class="section" *ngIf="requests.length > 0">
-        <h2>Latest Contests</h2>
+        <h2>{{'home.contest_header' | translate}}</h2>
         <hr>
         <div class="list">
             <div *ngFor="let contest of contests">
@@ -56,14 +56,14 @@
                     <ng-template #title>{{contest.theme}}</ng-template>
                     <ng-template #subtitle>
                         <div class="h-row">
-                            <p class="card-content-label" *ngIf="contest.endAt">Ends at :</p>
+                            <p class="card-content-label" *ngIf="contest.endAt">{{'home.end_date_label' | translate}}</p>
                             <p *ngIf="contest.endAt">{{contest.endAt | date}}</p>
-                            <p class="card-content-label" *ngIf="!contest.endAt">Never ends</p>
+                            <p class="card-content-label" *ngIf="!contest.endAt">{{'home.no_end_date_label' | translate}}</p>
                         </div>
                     </ng-template>
                     <ng-template #content>
                         <div class="h-row">
-                            <p class="card-content-label">Submissions per user :</p>
+                            <p class="card-content-label">{{'home.number_submissions' | translate}}</p>
                             <p>{{contest.submissionLimit}}</p>
                         </div>
                     </ng-template>
@@ -73,7 +73,7 @@
     </div>
 
     <div class="section" *ngIf="requests.length > 0">
-        <h2>Latest Submissions</h2>
+        <h2>{{'home.submissions_header' | translate}}</h2>
         <hr>
         <div class="list">
             <div *ngFor="let submission of submissions">
@@ -89,13 +89,13 @@
                     <ng-template #title>{{submission.name}}</ng-template>
                     <ng-template #subtitle>
                         <div class="h-row">
-                            <p class="card-content-label">By :</p>
+                            <p class="card-content-label">{{'home.by_label' | translate}}</p>
                             <p>{{submission.user?.username}}</p>
                         </div>
                     </ng-template>
                     <ng-template #content>
                         <div class="h-row">
-                            <p class="card-content-label">Created at :</p>
+                            <p class="card-content-label">{{'home.created_at_label' | translate}}</p>
                             <p>{{submission.created_at | date}}</p>
                         </div>
                     </ng-template>

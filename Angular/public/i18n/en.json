@@ -40,6 +40,19 @@
             "country-desc": "Country (descending)"
         }
     },
+    "home": {
+        "title": "Welcome to PrintEasy!",
+        "request_header": "Latest Requests",
+        "contest_header": "Latest Contests",
+        "submissions_header": "Latest Submissions",
+        "by_label": "By :",
+        "budget_label": "Budget :",
+        "target_date_label": "Due for :",
+        "end_date_label": "Ends at :",
+        "no_end_date_label": "Never ends",
+        "number_submissions": "Submissions per user :",
+        "created_at_label": "Created at :"
+    },
     "login": {
         "title": "Login",
         "username": "Username",

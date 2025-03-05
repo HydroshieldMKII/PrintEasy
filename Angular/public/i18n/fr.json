@@ -40,6 +40,19 @@
             "country-desc": "Pays (décroissant)"
         }
     },
+    "home": {
+        "title": "Bienvenue chez PrintEasy!",
+        "request_header": "Dernières demandes",
+        "contest_header": "Derniers concours",
+        "submissions_header": "Dernières soumissions",
+        "by_label": "Par :",
+        "budget_label": "Budget :",
+        "target_date_label": "Date d'échéance :",
+        "end_date_label": "Se termine le :",
+        "no_end_date_label": "Ne se termine jamais",
+        "number_submissions": "Soumissions par utilisateur :",
+        "created_at_label": "Créé le :"
+    },
     "login": {
         "title": "Connexion",
         "username": "Nom d'utilisateur",
