@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 module Api
   class HomeController < AuthenticatedController
     def index
-      render json: { 
+      render json: {
         requests: last_requests.as_json(
           except: %i[user_id created_at updated_at],
           include: {
@@ -28,11 +30,11 @@ module Api
               include: { country: {} }
             },
             likes: {}
-          }, 
+          },
           methods: %i[stl_url image_url liked_by_current_user]
         ),
         contests: last_contests.as_json(
-          include: :submissions, 
+          include: :submissions,
           methods: %i[image_url finished? started? winner_user]
         )
       }, status: :ok

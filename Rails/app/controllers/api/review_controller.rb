@@ -58,13 +58,13 @@ module Api
 
     def review_as_json(review)
       review.as_json(
-        methods: %i[image_urls], 
-        include: { 
-          user: { 
-            except: %i[country_id], 
-            include: { country: {} }, 
-            methods: %i[profile_picture_url] 
-          } 
+        methods: %i[image_urls],
+        include: {
+          user: {
+            except: %i[country_id],
+            include: { country: {} },
+            methods: %i[profile_picture_url]
+          }
         }
       )
     end

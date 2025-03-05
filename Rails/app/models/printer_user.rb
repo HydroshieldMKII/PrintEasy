@@ -5,20 +5,22 @@ class PrinterUser < ApplicationRecord
   belongs_to :user
   has_many :offers, dependent: :destroy
   before_destroy :can_destroy?, prepend: true
-  
+
   validates :acquired_date, presence: true
-  validates :acquired_date, comparison: { less_than_or_equal_to: -> { Date.current }, message: 'cannot be in the future' }, if: -> { acquired_date.present? }
+  validates :acquired_date, comparison: { less_than_or_equal_to: lambda {
+    Date.current
+  }, message: 'cannot be in the future' }, if: -> { acquired_date.present? }
 
   def last_review_image
     completed_offer = offers
-      .joins(order: [:review, :order_status, { review: :images_attachments }])
-      .where(order_status: { status_name: ['Printed', 'Shipped', 'Arrived'] })
-      .where("reviews.id IS NOT NULL")
-      .order("reviews.created_at DESC")
-      .first
-                         
+                      .joins(order: [:review, :order_status, { review: :images_attachments }])
+                      .where(order_status: { status_name: %w[Printed Shipped Arrived] })
+                      .where('reviews.id IS NOT NULL')
+                      .order('reviews.created_at DESC')
+                      .first
+
     return nil unless completed_offer && completed_offer.order.review.images.attached?
-  
+
     review = completed_offer.order.review
     image = review.images.first
 
@@ -27,19 +29,19 @@ class PrinterUser < ApplicationRecord
 
   def last_used
     latest_printed_offer = offers.joins(order: :order_status)
-      .where(order_status: { status_name: ['Printing', 'Printed'] })
-      .order('order_status.created_at DESC')
-      .first
+                                 .where(order_status: { status_name: %w[Printing Printed] })
+                                 .order('order_status.created_at DESC')
+                                 .first
 
-      # debugger
+    # debugger
 
     return nil unless latest_printed_offer
-  
+
     printed_status = latest_printed_offer.order.order_status
-      .where(status_name: ['Printing', 'Printed'])
-      .order(created_at: :desc)
-      .first
-      
+                                         .where(status_name: %w[Printing Printed])
+                                         .order(created_at: :desc)
+                                         .first
+
     printed_status.created_at
   end
 
@@ -52,9 +54,9 @@ class PrinterUser < ApplicationRecord
   def can_destroy?
     return if offers.empty?
 
-    if offers.joins(:order).exists?
-      errors.add(:base, 'Cannot delete printer user with orders')
-      throw(:abort)
-    end
+    return unless offers.joins(:order).exists?
+
+    errors.add(:base, 'Cannot delete printer user with orders')
+    throw(:abort)
   end
 end

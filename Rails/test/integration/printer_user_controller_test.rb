@@ -19,20 +19,20 @@ class PrinterUserControllerTest < ActionDispatch::IntegrationTest
     json_response = assert_nothing_raised do
       JSON.parse(response.body)
     end
-    
+
     assert_equal 1, json_response['printer_users'].length
     printer_user = json_response['printer_users'][0]
     assert_equal 1, printer_user['id']
-    assert_equal "2025-02-14", printer_user['acquired_date']
+    assert_equal '2025-02-14', printer_user['acquired_date']
     assert_nil printer_user['last_review_image']
     assert_nil printer_user['last_used']
     assert_equal false, printer_user['can_delete']
     assert_equal 1, printer_user['printer']['id']
-    assert_equal "Bambulab", printer_user['printer']['model']
+    assert_equal 'Bambulab', printer_user['printer']['model']
     assert_equal 1, printer_user['user']['id']
-    assert_equal "James Bond", printer_user['user']['username']
+    assert_equal 'James Bond', printer_user['user']['username']
     assert_equal 1, printer_user['user']['country_id']
-    assert_equal "Canada", printer_user['user']['country']['name']
+    assert_equal 'Canada', printer_user['user']['country']['name']
   end
 
   test 'should create printer_user' do
@@ -45,12 +45,12 @@ class PrinterUserControllerTest < ActionDispatch::IntegrationTest
     json_response = assert_nothing_raised do
       JSON.parse(response.body)
     end
-    
+
     assert_equal printers(:two).id, json_response['printer_user']['printer']['id']
     assert_equal 10.days.ago.to_date, json_response['printer_user']['acquired_date'].to_date
   end
 
-  test "should update printer_user" do
+  test 'should update printer_user' do
     patch api_printer_user_path(@printer_user_one), params: { printer_user: { acquired_date: 5.days.ago } }
 
     assert_response :success
@@ -76,7 +76,7 @@ class PrinterUserControllerTest < ActionDispatch::IntegrationTest
     assert_equal @printer_user_one.id, json_response['printer_user']['id']
   end
 
-  test "should not destroy printer_user if not owner" do
+  test 'should not destroy printer_user if not owner' do
     assert_difference 'PrinterUser.count', 0 do
       delete api_printer_user_path(@printer_user_two)
     end
@@ -101,7 +101,7 @@ class PrinterUserControllerTest < ActionDispatch::IntegrationTest
       JSON.parse(response.body)
     end
 
-    assert_equal ["must exist"], json_response['errors']['printer']
+    assert_equal ['must exist'], json_response['errors']['printer']
   end
 
   test 'should not create printer_user with invalid acquired_date' do
@@ -120,7 +120,8 @@ class PrinterUserControllerTest < ActionDispatch::IntegrationTest
 
   test 'should not create printer_user with acquired_date in the future' do
     assert_difference 'PrinterUser.count', 0 do
-      post api_printer_user_index_path, params: { printer_user: { printer_id: printers(:two).id, acquired_date: Time.now + 10.days } }
+      post api_printer_user_index_path,
+           params: { printer_user: { printer_id: printers(:two).id, acquired_date: Time.now + 10.days } }
     end
 
     assert_response :unprocessable_entity
@@ -129,12 +130,13 @@ class PrinterUserControllerTest < ActionDispatch::IntegrationTest
       JSON.parse(response.body)
     end
 
-    assert_equal ["cannot be in the future"], json_response['errors']['acquired_date']
+    assert_equal ['cannot be in the future'], json_response['errors']['acquired_date']
   end
 
   test 'should not update printer_user with invalid printer_id' do
     assert_difference 'PrinterUser.count', 0 do
-      patch api_printer_user_path(@printer_user_one), params: { printer_user: { printer_id: 0, acquired_date: Time.now - 10.days } }
+      patch api_printer_user_path(@printer_user_one),
+            params: { printer_user: { printer_id: 0, acquired_date: Time.now - 10.days } }
     end
 
     assert_response :unprocessable_entity
@@ -143,7 +145,7 @@ class PrinterUserControllerTest < ActionDispatch::IntegrationTest
       JSON.parse(response.body)
     end
 
-    assert_equal ["must exist"], json_response['errors']['printer']
+    assert_equal ['must exist'], json_response['errors']['printer']
   end
 
   test 'should not update printer_user with future acquired_date' do
@@ -157,7 +159,7 @@ class PrinterUserControllerTest < ActionDispatch::IntegrationTest
       JSON.parse(response.body)
     end
 
-    assert_equal ["cannot be in the future"], json_response['errors']['acquired_date']
+    assert_equal ['cannot be in the future'], json_response['errors']['acquired_date']
   end
 
   test 'should not update printer_user with invalid acquired_date' do
@@ -215,7 +217,7 @@ class PrinterUserControllerTest < ActionDispatch::IntegrationTest
       JSON.parse(response.body)
     end
 
-    assert_equal ["Invalid login credentials"], json_response['errors']['connection']
+    assert_equal ['Invalid login credentials'], json_response['errors']['connection']
   end
 
   test 'should not create printer_user if not signed in' do
@@ -231,7 +233,7 @@ class PrinterUserControllerTest < ActionDispatch::IntegrationTest
       JSON.parse(response.body)
     end
 
-    assert_equal ["Invalid login credentials"], json_response['errors']['connection']
+    assert_equal ['Invalid login credentials'], json_response['errors']['connection']
   end
 
   test 'should not update printer_user if not signed in' do
@@ -247,7 +249,7 @@ class PrinterUserControllerTest < ActionDispatch::IntegrationTest
       JSON.parse(response.body)
     end
 
-    assert_equal ["Invalid login credentials"], json_response['errors']['connection']
+    assert_equal ['Invalid login credentials'], json_response['errors']['connection']
   end
 
   test 'should not get index if not signed in' do
@@ -263,6 +265,6 @@ class PrinterUserControllerTest < ActionDispatch::IntegrationTest
       JSON.parse(response.body)
     end
 
-    assert_equal ["Invalid login credentials"], json_response['errors']['connection']
+    assert_equal ['Invalid login credentials'], json_response['errors']['connection']
   end
 end

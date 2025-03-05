@@ -80,10 +80,10 @@ class Offer < ApplicationRecord
         printer_user: {
           only: %i[id],
           include: {
-            user: { 
+            user: {
               only: %i[id username],
               include: { country: {} }
-             },
+            },
             printer: { only: %i[id model] }
           }
         },
@@ -114,7 +114,7 @@ class Offer < ApplicationRecord
             printer_user: {
               only: [:id],
               include: {
-                user: { 
+                user: {
                   only: %i[id username],
                   include: { country: {} }
                 },
@@ -169,10 +169,10 @@ class Offer < ApplicationRecord
       throw(:abort)
     end
 
-    if rejected?
-      errors.add(:offer, 'Offer already rejected. Cannot delete')
-      throw(:abort)
-    end
+    return unless rejected?
+
+    errors.add(:offer, 'Offer already rejected. Cannot delete')
+    throw(:abort)
   end
 
   def accepted_at

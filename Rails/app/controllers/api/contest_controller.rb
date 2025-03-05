@@ -7,19 +7,21 @@ module Api
     def index
       @contests = Contest.contests_order(current_user, params)
 
-      render json: { 
-        contests: @contests.as_json(include: :submissions, methods: %i[image_url finished? started? winner_user]), errors: {} 
-        }, 
-        status: :ok
+      render json: {
+               contests: @contests.as_json(include: :submissions,
+                                           methods: %i[image_url finished? started?
+                                                       winner_user]), errors: {}
+             },
+             status: :ok
     end
 
     def show
       @contest = Contest.find(params[:id])
 
-      render json: { 
-        contest: @contest.as_json(include: :submissions, methods: %i[image_url finished? started? winner_user]), errors: {} 
-        },
-        status: :ok
+      render json: {
+               contest: @contest.as_json(include: :submissions, methods: %i[image_url finished? started? winner_user]), errors: {}
+             },
+             status: :ok
     end
 
     def create
@@ -27,9 +29,11 @@ module Api
 
       if @contest.save
         render json: {
-           contest: @contest.as_json(include: :submissions, methods: %i[image_url finished? started? winner_user]), errors: {} 
-           },
-          status: :created
+                 contest: @contest.as_json(include: :submissions,
+                                           methods: %i[image_url finished? started?
+                                                       winner_user]), errors: {}
+               },
+               status: :created
       else
         render json: { errors: @contest.errors.as_json }, status: :unprocessable_entity
       end
@@ -40,9 +44,11 @@ module Api
 
       if @contest.update(contest_params)
         render json: {
-           contest: @contest.as_json(include: :submissions, methods: %i[image_url finished? started? winner_user]), errors: {} 
-           },
-          status: :ok
+                 contest: @contest.as_json(include: :submissions,
+                                           methods: %i[image_url finished? started?
+                                                       winner_user]), errors: {}
+               },
+               status: :ok
       else
         render json: { errors: @contest.errors.as_json }, status: :unprocessable_entity
       end
@@ -54,9 +60,11 @@ module Api
 
       if deleted
         render json: {
-           contest: @contest.as_json(include: :submissions, methods: %i[image_url finished? started? winner_user]), errors: {} 
-           }, 
-           status: :ok
+                 contest: @contest.as_json(include: :submissions,
+                                           methods: %i[image_url finished? started?
+                                                       winner_user]), errors: {}
+               },
+               status: :ok
       else
         render json: { errors: @contest.errors.as_json }, status: :unprocessable_entity
       end

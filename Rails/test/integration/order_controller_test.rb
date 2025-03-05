@@ -25,11 +25,11 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
     assert_empty @parsed_response['errors']
   end
 
-  test 'should get index -> status filter' do 
+  test 'should get index -> status filter' do
     sign_in users(:one)
 
     assert_difference('Order.count', 0) do
-      get "/api/order/?filter=Accepted", as: :json
+      get '/api/order/?filter=Accepted', as: :json
     end
 
     assert_response :success
@@ -46,7 +46,7 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
     sign_in users(:one)
 
     assert_difference('Order.count', 0) do
-      get "/api/order/?filter=notReviewed", as: :json
+      get '/api/order/?filter=notReviewed', as: :json
     end
 
     assert_response :success
@@ -63,7 +63,7 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
     sign_in users(:one)
 
     assert_difference('Order.count', 0) do
-      get "/api/order/?search=test", as: :json
+      get '/api/order/?search=test', as: :json
     end
 
     assert_response :success
@@ -80,7 +80,7 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
     sign_in users(:one)
 
     assert_difference('Order.count', 0) do
-      get "/api/order/?sort=date-desc", as: :json
+      get '/api/order/?sort=date-desc', as: :json
     end
 
     assert_response :success
@@ -92,7 +92,6 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
     assert_empty @parsed_response['errors']
     testOrder(tested_order)
   end
-
 
   test 'should get show' do
     sign_in users(:one)
@@ -185,7 +184,8 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
       @parsed_response = JSON.parse(response.body)
     end
     assert_equal ['must exist'], @parsed_response['errors']['offer']
-    assert_equal ["can't be blank", "Offer must exist", "Consumer and printer cannot be the same user", "User is not owner of request"], @parsed_response['errors']['offer_id']
+    assert_equal ["can't be blank", 'Offer must exist', 'Consumer and printer cannot be the same user', 'User is not owner of request'],
+                 @parsed_response['errors']['offer_id']
   end
 
   test "should not get create -> offer_id doesn't exist" do
@@ -255,7 +255,7 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
-    assert_equal 9, @parsed_response['order']['offer']["id"]
+    assert_equal 9, @parsed_response['order']['offer']['id']
     assert_empty @parsed_response['errors']
   end
 
@@ -276,7 +276,7 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
 
     assert_equal offers(:one).printer_user.id, tested_order['offer']['printer_user']['id']
     assert_equal offers(:one).printer_user.acquired_date.strftime('%a, %d %b %Y'),
-        Date.parse(tested_order['offer']['printer_user']['acquired_date']).strftime('%a, %d %b %Y')
+                 Date.parse(tested_order['offer']['printer_user']['acquired_date']).strftime('%a, %d %b %Y')
     assert_nil tested_order['offer']['printer_user']['printer_id']
     assert_nil tested_order['offer']['printer_user']['user_id']
 
@@ -309,16 +309,23 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
     assert_equal offers(:one).request.user.country.name, tested_order['offer']['request']['user']['country']['name']
 
     assert_equal offers(:one).request.preset_requests[0].id, tested_order['offer']['request']['preset_requests'][0]['id']
-    assert_equal offers(:one).request.preset_requests[0].print_quality, tested_order['offer']['request']['preset_requests'][0]['print_quality']
+    assert_equal offers(:one).request.preset_requests[0].print_quality,
+                 tested_order['offer']['request']['preset_requests'][0]['print_quality']
 
-    assert_equal offers(:one).request.preset_requests[0].color.id, tested_order['offer']['request']['preset_requests'][0]['color']['id']
-    assert_equal offers(:one).request.preset_requests[0].color.name, tested_order['offer']['request']['preset_requests'][0]['color']['name']
+    assert_equal offers(:one).request.preset_requests[0].color.id,
+                 tested_order['offer']['request']['preset_requests'][0]['color']['id']
+    assert_equal offers(:one).request.preset_requests[0].color.name,
+                 tested_order['offer']['request']['preset_requests'][0]['color']['name']
 
-    assert_equal offers(:one).request.preset_requests[0].filament.id, tested_order['offer']['request']['preset_requests'][0]['filament']['id']
-    assert_equal offers(:one).request.preset_requests[0].filament.name, tested_order['offer']['request']['preset_requests'][0]['filament']['name']
+    assert_equal offers(:one).request.preset_requests[0].filament.id,
+                 tested_order['offer']['request']['preset_requests'][0]['filament']['id']
+    assert_equal offers(:one).request.preset_requests[0].filament.name,
+                 tested_order['offer']['request']['preset_requests'][0]['filament']['name']
 
-    assert_equal offers(:one).request.preset_requests[0].printer.id, tested_order['offer']['request']['preset_requests'][0]['printer']['id']
-    assert_equal offers(:one).request.preset_requests[0].printer.model, tested_order['offer']['request']['preset_requests'][0]['printer']['model']
+    assert_equal offers(:one).request.preset_requests[0].printer.id,
+                 tested_order['offer']['request']['preset_requests'][0]['printer']['id']
+    assert_equal offers(:one).request.preset_requests[0].printer.model,
+                 tested_order['offer']['request']['preset_requests'][0]['printer']['model']
 
     assert_equal offers(:one).color.id, tested_order['offer']['color']['id']
     assert_equal offers(:one).color.name, tested_order['offer']['color']['name']

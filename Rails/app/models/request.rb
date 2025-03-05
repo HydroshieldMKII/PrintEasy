@@ -51,8 +51,8 @@ class Request < ApplicationRecord
   }
   scope :by_date_range, lambda { |start_date, end_date|
     if start_date.present? && end_date.present?
-      where('requests.target_date > ? AND requests.target_date <= ?', 
-            start_date.to_date.beginning_of_day, 
+      where('requests.target_date > ? AND requests.target_date <= ?',
+            start_date.to_date.beginning_of_day,
             end_date.to_date.end_of_day)
     elsif start_date.present?
       where('requests.target_date >= ?', start_date.to_date.end_of_day)
@@ -80,31 +80,29 @@ class Request < ApplicationRecord
 
   def self.fetch_for_user(params)
     requests = case params[:type]
-    when 'all'
-      if Current.user.printers.exists?
-        with_associations
-          .where.not(user: Current.user)
-          .not_accepted
-          .search_by_name(params[:search])
-          .apply_filter(params[:filter])
-          .sorted(params[:sortCategory], params[:sort])
-      else
-        none
-      end
-    when 'mine'
-      Current.user.requests
-             .with_associations
-             .search_by_name(params[:search])
-             .apply_filter(params[:filter])
-             .sorted(params[:sortCategory], params[:sort])
-    else
-      none
-    end
+               when 'all'
+                 if Current.user.printers.exists?
+                   with_associations
+                     .where.not(user: Current.user)
+                     .not_accepted
+                     .search_by_name(params[:search])
+                     .apply_filter(params[:filter])
+                     .sorted(params[:sortCategory], params[:sort])
+                 else
+                   none
+                 end
+               when 'mine'
+                 Current.user.requests
+                        .with_associations
+                        .search_by_name(params[:search])
+                        .apply_filter(params[:filter])
+                        .sorted(params[:sortCategory], params[:sort])
+               else
+                 none
+               end
 
     requests = requests.by_budget_range(params[:minBudget], params[:maxBudget])
-    requests = requests.by_date_range(params[:startDate], params[:endDate])
-    
-    requests
+    requests.by_date_range(params[:startDate], params[:endDate])
   end
 
   def self.apply_filter(filter)
@@ -211,10 +209,10 @@ class Request < ApplicationRecord
       throw(:abort)
     end
 
-    if has_offer_accepted?
-      errors.add(:base, 'Cannot delete request with accepted offers')
-      throw(:abort)
-    end
+    return unless has_offer_accepted?
+
+    errors.add(:base, 'Cannot delete request with accepted offers')
+    throw(:abort)
   end
 
   def can_update?

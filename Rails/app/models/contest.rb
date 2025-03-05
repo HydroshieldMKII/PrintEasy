@@ -9,48 +9,48 @@ class Contest < ApplicationRecord
     where('start_at <= ?', Time.now)
   }
 
-  scope :search, -> (search) {
+  scope :search, lambda { |search|
     where('theme LIKE ?', "%#{search}%")
   }
 
-  scope :active, ->(params) {
-    return if !params.key?(:active)
+  scope :active, lambda { |params|
+    return unless params.key?(:active)
 
     where('start_at <= ? AND (end_at IS NULL OR end_at >= ?)', Time.now, Time.now)
   }
 
-  scope :finished, ->(params) {
-    return if !params.key?(:finished)
+  scope :finished, lambda { |params|
+    return unless params.key?(:finished)
 
     where('end_at < ?', Time.now)
   }
 
-  scope :with_participants, ->(participants_min, participants_max) {
+  scope :with_participants, lambda { |participants_min, participants_max|
     return if participants_min.blank? && participants_max.blank?
 
     left_joins(:submissions)
-    .joins("LEFT JOIN users ON users.id = submissions.user_id")
-    .group("contests.id")
-    .having("COUNT(DISTINCT users.id) >= ? AND COUNT(DISTINCT users.id) <= ?", participants_min, participants_max)
+      .joins('LEFT JOIN users ON users.id = submissions.user_id')
+      .group('contests.id')
+      .having('COUNT(DISTINCT users.id) >= ? AND COUNT(DISTINCT users.id) <= ?', participants_min, participants_max)
   }
-  
-  scope :sort_by_submissions, -> (direction_params) {
+
+  scope :sort_by_submissions, lambda { |direction_params|
     return if direction_params.blank?
 
-    direction = %w[asc desc].include?(direction_params) ? direction_params : "desc"
+    direction = %w[asc desc].include?(direction_params) ? direction_params : 'desc'
     left_joins(:submissions)
       .group(:id)
       .order("COUNT(submissions.id) #{direction.upcase}")
   }
-  
-  scope :sort_by_date, -> (category, sort) {
+
+  scope :sort_by_date, lambda { |category, sort|
     return if sort.blank? || category.blank?
-    
+
     allowed_columns = %w[start_at end_at]
     allowed_directions = %w[asc desc]
 
-    column = allowed_columns.include?(category) ? category : "start_at"
-    direction = allowed_directions.include?(sort) ? sort : "asc"
+    column = allowed_columns.include?(category) ? category : 'start_at'
+    direction = allowed_directions.include?(sort) ? sort : 'asc'
 
     order(Arel.sql('IF(contests.end_at IS NOT NULL AND contests.end_at < CURRENT_DATE, 1, 0)'), column => direction)
   }
@@ -88,25 +88,23 @@ class Contest < ApplicationRecord
                      .order('COUNT(likes.id) DESC, submissions.created_at ASC')
                      .first
 
-    top_submission&.user.as_json(include: :country, except: %i[country_id])
+    top_submission&.user&.as_json(include: :country, except: %i[country_id])
   end
 
   def self.contests_order(user, params)
-    contests = user.accessible_contests
-                    .search(params[:search])
-                    .active(params)
-                    .finished(params)
-                    .with_participants(params[:participants_min], params[:participants_max])
-                    .sort_by_submissions(params[:sort_by_submissions])
-                    .sort_by_date(params[:category], params[:sort])
-                    .where('start_at <= ?', Time.now)
-                    .order(Arel.sql('
-                      CASE 
-                        WHEN contests.end_at IS NOT NULL AND contests.end_at < CURRENT_DATE THEN 1 
-                        ELSE 0 
-                      END, contests.start_at')
-                    )
-    contests
+    user.accessible_contests
+        .search(params[:search])
+        .active(params)
+        .finished(params)
+        .with_participants(params[:participants_min], params[:participants_max])
+        .sort_by_submissions(params[:sort_by_submissions])
+        .sort_by_date(params[:category], params[:sort])
+        .where('start_at <= ?', Time.now)
+        .order(Arel.sql('
+                      CASE
+                        WHEN contests.end_at IS NOT NULL AND contests.end_at < CURRENT_DATE THEN 1
+                        ELSE 0
+                      END, contests.start_at'))
   end
 
   def users_with_submissions(current_user)

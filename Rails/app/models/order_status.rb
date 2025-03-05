@@ -157,6 +157,7 @@ class OrderStatus < ApplicationRecord
   def can_destroy?
     if %w[Accepted Cancelled Arrived Shipped].include?(status_name)
       return true if status_name == 'Accepted' && order.order_status.where(status_name: 'Accepted').count > 1
+
       errors.add(:order_status, 'Cannot delete the status')
       throw :abort
     end

@@ -714,260 +714,260 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
 
-      assert_nil @parsed_response['contest']['deleted_at']
-      assert_equal contests(:contest_one).id, @parsed_response['contest']['id']
+    assert_nil @parsed_response['contest']['deleted_at']
+    assert_equal contests(:contest_one).id, @parsed_response['contest']['id']
+  end
+
+  test 'should filter contest by finished' do
+    assert_difference('Contest.count', 0) do
+      get api_contest_index_url, params: { finished: true }
     end
 
-    test "should filter contest by finished" do
-      assert_difference('Contest.count', 0) do
-        get api_contest_index_url, params: { finished: true }
-      end
-
-      assert_nothing_raised do
-        @parsed_response = JSON.parse(response.body)
-      end
-
-      assert_response :success
-
-      assert_equal 1, @parsed_response['contests'].count
-      assert Time.now > @parsed_response['contests'][0]['end_at'].to_datetime
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
     end
 
-    test "should filter contest by active" do
-      assert_difference('Contest.count', 0) do
-        get api_contest_index_url, params: { active: true }
-      end
+    assert_response :success
 
-      assert_nothing_raised do
-        @parsed_response = JSON.parse(response.body)
-      end
+    assert_equal 1, @parsed_response['contests'].count
+    assert Time.now > @parsed_response['contests'][0]['end_at'].to_datetime
+  end
 
-      assert_response :success
-
-      assert_equal 2, @parsed_response['contests'].count
-      assert Time.now < @parsed_response['contests'][0]['end_at'].to_datetime
-      assert Time.now < @parsed_response['contests'][1]['end_at'].to_datetime
+  test 'should filter contest by active' do
+    assert_difference('Contest.count', 0) do
+      get api_contest_index_url, params: { active: true }
     end
 
-    test "should filter by participants" do
-      assert_difference('Contest.count', 0) do
-        get api_contest_index_url, params: { participants_min: 1, participants_max: 1 }
-      end
-
-      assert_nothing_raised do
-        @parsed_response = JSON.parse(response.body)
-      end
-
-      assert_response :success
-
-      assert_equal 4, @parsed_response['contests'].count
-      assert_equal 1, @parsed_response['contests'][0]["submissions"].map { |s| s["user_id"] }.uniq.count
-      assert_equal 1, @parsed_response['contests'][1]["submissions"].map { |s| s["user_id"] }.uniq.count
-      assert_equal 1, @parsed_response['contests'][2]["submissions"].map { |s| s["user_id"] }.uniq.count
-      assert_equal 1, @parsed_response['contests'][3]["submissions"].map { |s| s["user_id"] }.uniq.count
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
     end
 
-    test "should sort by submissions asc" do
-      assert_difference('Contest.count', 0) do
-        get api_contest_index_url, params: { sort_by_submissions: "asc" }
-      end
+    assert_response :success
 
-      assert_nothing_raised do
-        @parsed_response = JSON.parse(response.body)
-      end
+    assert_equal 2, @parsed_response['contests'].count
+    assert Time.now < @parsed_response['contests'][0]['end_at'].to_datetime
+    assert Time.now < @parsed_response['contests'][1]['end_at'].to_datetime
+  end
 
-      assert_response :success
-
-      assert_equal 5, @parsed_response['contests'].count
-      assert_equal 0, @parsed_response['contests'][0]["submissions"].count
-      assert_equal 1, @parsed_response['contests'][1]["submissions"].count
-      assert_equal 1, @parsed_response['contests'][2]["submissions"].count
-      assert_equal 1, @parsed_response['contests'][3]["submissions"].count
-      assert_equal 1, @parsed_response['contests'][4]["submissions"].count
+  test 'should filter by participants' do
+    assert_difference('Contest.count', 0) do
+      get api_contest_index_url, params: { participants_min: 1, participants_max: 1 }
     end
 
-    test "should sort by submissions desc" do
-      assert_difference('Contest.count', 0) do
-        get api_contest_index_url, params: { sort_by_submissions: "desc" }
-      end
-
-      assert_nothing_raised do
-        @parsed_response = JSON.parse(response.body)
-      end
-
-      assert_response :success
-
-      assert_equal 5, @parsed_response['contests'].count
-      assert_equal 1, @parsed_response['contests'][0]["submissions"].count
-      assert_equal 1, @parsed_response['contests'][1]["submissions"].count
-      assert_equal 1, @parsed_response['contests'][2]["submissions"].count
-      assert_equal 1, @parsed_response['contests'][3]["submissions"].count
-      assert_equal 0, @parsed_response['contests'][4]["submissions"].count
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
     end
 
-    test "should sort by date asc" do
-      assert_difference('Contest.count', 0) do
-        get api_contest_index_url, params: { sort: "asc", category: "start_at" }
-      end
+    assert_response :success
 
-      assert_nothing_raised do
-        @parsed_response = JSON.parse(response.body)
-      end
+    assert_equal 4, @parsed_response['contests'].count
+    assert_equal 1, @parsed_response['contests'][0]['submissions'].map { |s| s['user_id'] }.uniq.count
+    assert_equal 1, @parsed_response['contests'][1]['submissions'].map { |s| s['user_id'] }.uniq.count
+    assert_equal 1, @parsed_response['contests'][2]['submissions'].map { |s| s['user_id'] }.uniq.count
+    assert_equal 1, @parsed_response['contests'][3]['submissions'].map { |s| s['user_id'] }.uniq.count
+  end
 
-      assert_response :success
-
-      assert_equal 5, @parsed_response['contests'].count
-      assert @parsed_response['contests'][0]['start_at'].to_datetime <= @parsed_response['contests'][1]['start_at'].to_datetime
-      assert @parsed_response['contests'][1]['start_at'].to_datetime <= @parsed_response['contests'][2]['start_at'].to_datetime
-      assert @parsed_response['contests'][2]['start_at'].to_datetime <= @parsed_response['contests'][3]['start_at'].to_datetime
-      assert @parsed_response['contests'][3]['start_at'].to_datetime >= @parsed_response['contests'][4]['start_at'].to_datetime
-      assert_equal true, @parsed_response['contests'][4]["finished?"]
+  test 'should sort by submissions asc' do
+    assert_difference('Contest.count', 0) do
+      get api_contest_index_url, params: { sort_by_submissions: 'asc' }
     end
 
-    test "should sort by date desc" do
-      assert_difference('Contest.count', 0) do
-        get api_contest_index_url, params: { sort: "desc", category: "start_at" }
-      end
-
-      assert_nothing_raised do
-        @parsed_response = JSON.parse(response.body)
-      end
-
-      assert_response :success
-
-      assert_equal 5, @parsed_response['contests'].count
-      assert @parsed_response['contests'][0]['start_at'].to_datetime >= @parsed_response['contests'][1]['start_at'].to_datetime
-      assert @parsed_response['contests'][1]['start_at'].to_datetime >= @parsed_response['contests'][2]['start_at'].to_datetime
-      assert @parsed_response['contests'][2]['start_at'].to_datetime >= @parsed_response['contests'][3]['start_at'].to_datetime
-      assert @parsed_response['contests'][3]['start_at'].to_datetime >= @parsed_response['contests'][4]['start_at'].to_datetime
-      assert @parsed_response['contests'][4]['start_at'].to_datetime >= @parsed_response['contests'][3]['start_at'].to_datetime
-      assert_equal true, @parsed_response['contests'][4]["finished?"]
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
     end
 
-    test "should sort by default category if wrong category" do
-      assert_difference('Contest.count', 0) do
-        get api_contest_index_url, params: { sort: "asc", category: "start" }
-      end
+    assert_response :success
 
-      assert_nothing_raised do
-        @parsed_response = JSON.parse(response.body)
-      end
+    assert_equal 5, @parsed_response['contests'].count
+    assert_equal 0, @parsed_response['contests'][0]['submissions'].count
+    assert_equal 1, @parsed_response['contests'][1]['submissions'].count
+    assert_equal 1, @parsed_response['contests'][2]['submissions'].count
+    assert_equal 1, @parsed_response['contests'][3]['submissions'].count
+    assert_equal 1, @parsed_response['contests'][4]['submissions'].count
+  end
 
-      assert_response :success
-
-      assert_equal 5, @parsed_response['contests'].count
-      assert @parsed_response['contests'][0]['start_at'].to_datetime <= @parsed_response['contests'][1]['start_at'].to_datetime
-      assert @parsed_response['contests'][1]['start_at'].to_datetime <= @parsed_response['contests'][2]['start_at'].to_datetime
-      assert @parsed_response['contests'][2]['start_at'].to_datetime <= @parsed_response['contests'][3]['start_at'].to_datetime
-      assert @parsed_response['contests'][3]['start_at'].to_datetime >= @parsed_response['contests'][4]['start_at'].to_datetime
-      assert_equal true, @parsed_response['contests'][4]["finished?"]
+  test 'should sort by submissions desc' do
+    assert_difference('Contest.count', 0) do
+      get api_contest_index_url, params: { sort_by_submissions: 'desc' }
     end
 
-    test "should sort by default asc if wrong sort" do
-      assert_difference('Contest.count', 0) do
-        get api_contest_index_url, params: { sort: "wrong", category: "start_at" }
-      end
-
-      assert_nothing_raised do
-        @parsed_response = JSON.parse(response.body)
-      end
-
-      assert_response :success
-
-      assert_equal 5, @parsed_response['contests'].count
-      assert @parsed_response['contests'][0]['start_at'].to_datetime <= @parsed_response['contests'][1]['start_at'].to_datetime
-      assert @parsed_response['contests'][1]['start_at'].to_datetime <= @parsed_response['contests'][2]['start_at'].to_datetime
-      assert @parsed_response['contests'][2]['start_at'].to_datetime <= @parsed_response['contests'][3]['start_at'].to_datetime
-      assert @parsed_response['contests'][3]['start_at'].to_datetime >= @parsed_response['contests'][4]['start_at'].to_datetime
-      assert_equal true, @parsed_response['contests'][4]["finished?"]
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
     end
 
-    test "should sort by default desc if wrong sort_by_submissions" do
-      assert_difference('Contest.count', 0) do
-        get api_contest_index_url, params: { sort_by_submissions: "wrong" }
-      end
+    assert_response :success
 
-      assert_nothing_raised do
-        @parsed_response = JSON.parse(response.body)
-      end
+    assert_equal 5, @parsed_response['contests'].count
+    assert_equal 1, @parsed_response['contests'][0]['submissions'].count
+    assert_equal 1, @parsed_response['contests'][1]['submissions'].count
+    assert_equal 1, @parsed_response['contests'][2]['submissions'].count
+    assert_equal 1, @parsed_response['contests'][3]['submissions'].count
+    assert_equal 0, @parsed_response['contests'][4]['submissions'].count
+  end
 
-      assert_response :success
-
-      assert_equal 5, @parsed_response['contests'].count
-      assert_equal 1, @parsed_response['contests'][0]["submissions"].count
-      assert_equal 1, @parsed_response['contests'][1]["submissions"].count
-      assert_equal 1, @parsed_response['contests'][2]["submissions"].count
-      assert_equal 1, @parsed_response['contests'][3]["submissions"].count
-      assert_equal 0, @parsed_response['contests'][4]["submissions"].count
+  test 'should sort by date asc' do
+    assert_difference('Contest.count', 0) do
+      get api_contest_index_url, params: { sort: 'asc', category: 'start_at' }
     end
 
-    test "should not filter by participants if wrong participants parameters" do
-      assert_difference('Contest.count', 0) do
-        get api_contest_index_url, params: { participant: 1 }
-      end
-
-      assert_nothing_raised do
-        @parsed_response = JSON.parse(response.body)
-      end
-
-      assert_response :success
-
-      assert_equal 5, @parsed_response['contests'].count
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
     end
 
-    test "should not filter by finished if wrong finished parameters" do
-      assert_difference('Contest.count', 0) do
-        get api_contest_index_url, params: { finish: true }
-      end
+    assert_response :success
 
-      assert_nothing_raised do
-        @parsed_response = JSON.parse(response.body)
-      end
+    assert_equal 5, @parsed_response['contests'].count
+    assert @parsed_response['contests'][0]['start_at'].to_datetime <= @parsed_response['contests'][1]['start_at'].to_datetime
+    assert @parsed_response['contests'][1]['start_at'].to_datetime <= @parsed_response['contests'][2]['start_at'].to_datetime
+    assert @parsed_response['contests'][2]['start_at'].to_datetime <= @parsed_response['contests'][3]['start_at'].to_datetime
+    assert @parsed_response['contests'][3]['start_at'].to_datetime >= @parsed_response['contests'][4]['start_at'].to_datetime
+    assert_equal true, @parsed_response['contests'][4]['finished?']
+  end
 
-      assert_response :success
-
-      assert_equal 5, @parsed_response['contests'].count
+  test 'should sort by date desc' do
+    assert_difference('Contest.count', 0) do
+      get api_contest_index_url, params: { sort: 'desc', category: 'start_at' }
     end
 
-    test "should not filter by active if wrong active parameters" do
-      assert_difference('Contest.count', 0) do
-        get api_contest_index_url, params: { actives: true }
-      end
-
-      assert_nothing_raised do
-        @parsed_response = JSON.parse(response.body)
-      end
-
-      assert_response :success
-
-      assert_equal 5, @parsed_response['contests'].count
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
     end
 
-    test "should search by theme" do
-      assert_difference('Contest.count', 0) do
-        get api_contest_index_url, params: { search: "test" }
-      end
+    assert_response :success
 
-      assert_nothing_raised do
-        @parsed_response = JSON.parse(response.body)
-      end
+    assert_equal 5, @parsed_response['contests'].count
+    assert @parsed_response['contests'][0]['start_at'].to_datetime >= @parsed_response['contests'][1]['start_at'].to_datetime
+    assert @parsed_response['contests'][1]['start_at'].to_datetime >= @parsed_response['contests'][2]['start_at'].to_datetime
+    assert @parsed_response['contests'][2]['start_at'].to_datetime >= @parsed_response['contests'][3]['start_at'].to_datetime
+    assert @parsed_response['contests'][3]['start_at'].to_datetime >= @parsed_response['contests'][4]['start_at'].to_datetime
+    assert @parsed_response['contests'][4]['start_at'].to_datetime >= @parsed_response['contests'][3]['start_at'].to_datetime
+    assert_equal true, @parsed_response['contests'][4]['finished?']
+  end
 
-      assert_response :success
-
-      assert_equal 5, @parsed_response['contests'].count
+  test 'should sort by default category if wrong category' do
+    assert_difference('Contest.count', 0) do
+      get api_contest_index_url, params: { sort: 'asc', category: 'start' }
     end
 
-    test "should not search by theme if wrong search parameters" do
-      assert_difference('Contest.count', 0) do
-        get api_contest_index_url, params: { searchs: "test" }
-      end
-
-      assert_nothing_raised do
-        @parsed_response = JSON.parse(response.body)
-      end
-
-      assert_response :success
-
-      assert_equal 5, @parsed_response['contests'].count
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
     end
+
+    assert_response :success
+
+    assert_equal 5, @parsed_response['contests'].count
+    assert @parsed_response['contests'][0]['start_at'].to_datetime <= @parsed_response['contests'][1]['start_at'].to_datetime
+    assert @parsed_response['contests'][1]['start_at'].to_datetime <= @parsed_response['contests'][2]['start_at'].to_datetime
+    assert @parsed_response['contests'][2]['start_at'].to_datetime <= @parsed_response['contests'][3]['start_at'].to_datetime
+    assert @parsed_response['contests'][3]['start_at'].to_datetime >= @parsed_response['contests'][4]['start_at'].to_datetime
+    assert_equal true, @parsed_response['contests'][4]['finished?']
+  end
+
+  test 'should sort by default asc if wrong sort' do
+    assert_difference('Contest.count', 0) do
+      get api_contest_index_url, params: { sort: 'wrong', category: 'start_at' }
+    end
+
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+
+    assert_response :success
+
+    assert_equal 5, @parsed_response['contests'].count
+    assert @parsed_response['contests'][0]['start_at'].to_datetime <= @parsed_response['contests'][1]['start_at'].to_datetime
+    assert @parsed_response['contests'][1]['start_at'].to_datetime <= @parsed_response['contests'][2]['start_at'].to_datetime
+    assert @parsed_response['contests'][2]['start_at'].to_datetime <= @parsed_response['contests'][3]['start_at'].to_datetime
+    assert @parsed_response['contests'][3]['start_at'].to_datetime >= @parsed_response['contests'][4]['start_at'].to_datetime
+    assert_equal true, @parsed_response['contests'][4]['finished?']
+  end
+
+  test 'should sort by default desc if wrong sort_by_submissions' do
+    assert_difference('Contest.count', 0) do
+      get api_contest_index_url, params: { sort_by_submissions: 'wrong' }
+    end
+
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+
+    assert_response :success
+
+    assert_equal 5, @parsed_response['contests'].count
+    assert_equal 1, @parsed_response['contests'][0]['submissions'].count
+    assert_equal 1, @parsed_response['contests'][1]['submissions'].count
+    assert_equal 1, @parsed_response['contests'][2]['submissions'].count
+    assert_equal 1, @parsed_response['contests'][3]['submissions'].count
+    assert_equal 0, @parsed_response['contests'][4]['submissions'].count
+  end
+
+  test 'should not filter by participants if wrong participants parameters' do
+    assert_difference('Contest.count', 0) do
+      get api_contest_index_url, params: { participant: 1 }
+    end
+
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+
+    assert_response :success
+
+    assert_equal 5, @parsed_response['contests'].count
+  end
+
+  test 'should not filter by finished if wrong finished parameters' do
+    assert_difference('Contest.count', 0) do
+      get api_contest_index_url, params: { finish: true }
+    end
+
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+
+    assert_response :success
+
+    assert_equal 5, @parsed_response['contests'].count
+  end
+
+  test 'should not filter by active if wrong active parameters' do
+    assert_difference('Contest.count', 0) do
+      get api_contest_index_url, params: { actives: true }
+    end
+
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+
+    assert_response :success
+
+    assert_equal 5, @parsed_response['contests'].count
+  end
+
+  test 'should search by theme' do
+    assert_difference('Contest.count', 0) do
+      get api_contest_index_url, params: { search: 'test' }
+    end
+
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+
+    assert_response :success
+
+    assert_equal 5, @parsed_response['contests'].count
+  end
+
+  test 'should not search by theme if wrong search parameters' do
+    assert_difference('Contest.count', 0) do
+      get api_contest_index_url, params: { searchs: 'test' }
+    end
+
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+
+    assert_response :success
+
+    assert_equal 5, @parsed_response['contests'].count
+  end
 end
