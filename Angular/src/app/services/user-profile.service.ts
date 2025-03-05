@@ -18,7 +18,6 @@ export class UserProfileService {
   getUserProfile(id: number): Observable<UserModel | ApiResponseModel> {
     return this.api.getRequest(`/api/user_profile/${id}`).pipe(
       map((response: ApiResponseModel) => {
-        console.log("GetUserPrfile", response);
         if (response.status === 200) {
           console.log(response);
           return UserModel.fromAPI(response.data.user);

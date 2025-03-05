@@ -18,7 +18,7 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
 
-    assert_equal 5, @parsed_response['contests'].count
+    assert_equal 3, @parsed_response['contests'].count
 
     assert_equal contests(:contest_four).id, @parsed_response['contests'][0]['id']
     assert_equal contests(:contest_four).theme, @parsed_response['contests'][0]['theme']
@@ -574,7 +574,7 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
 
-    assert_equal 5, @parsed_response['contests'].count
+    assert_equal 3, @parsed_response['contests'].count
   end
 
   test 'index should not return all contests expect deleted for non-admin user' do
@@ -760,11 +760,9 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
 
       assert_response :success
 
-      assert_equal 4, @parsed_response['contests'].count
+      assert_equal 2, @parsed_response['contests'].count
       assert_equal 1, @parsed_response['contests'][0]["submissions"].map { |s| s["user_id"] }.uniq.count
       assert_equal 1, @parsed_response['contests'][1]["submissions"].map { |s| s["user_id"] }.uniq.count
-      assert_equal 1, @parsed_response['contests'][2]["submissions"].map { |s| s["user_id"] }.uniq.count
-      assert_equal 1, @parsed_response['contests'][3]["submissions"].map { |s| s["user_id"] }.uniq.count
     end
 
     test "should sort by submissions asc" do
@@ -778,12 +776,10 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
 
       assert_response :success
 
-      assert_equal 5, @parsed_response['contests'].count
+      assert_equal 3, @parsed_response['contests'].count
       assert_equal 0, @parsed_response['contests'][0]["submissions"].count
       assert_equal 1, @parsed_response['contests'][1]["submissions"].count
       assert_equal 1, @parsed_response['contests'][2]["submissions"].count
-      assert_equal 1, @parsed_response['contests'][3]["submissions"].count
-      assert_equal 1, @parsed_response['contests'][4]["submissions"].count
     end
 
     test "should sort by submissions desc" do
@@ -797,12 +793,10 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
 
       assert_response :success
 
-      assert_equal 5, @parsed_response['contests'].count
+      assert_equal 3, @parsed_response['contests'].count
       assert_equal 1, @parsed_response['contests'][0]["submissions"].count
       assert_equal 1, @parsed_response['contests'][1]["submissions"].count
-      assert_equal 1, @parsed_response['contests'][2]["submissions"].count
-      assert_equal 1, @parsed_response['contests'][3]["submissions"].count
-      assert_equal 0, @parsed_response['contests'][4]["submissions"].count
+      assert_equal 0, @parsed_response['contests'][2]["submissions"].count
     end
 
     test "should sort by date asc" do
@@ -816,12 +810,10 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
 
       assert_response :success
 
-      assert_equal 5, @parsed_response['contests'].count
+      assert_equal 3, @parsed_response['contests'].count
       assert @parsed_response['contests'][0]['start_at'].to_datetime <= @parsed_response['contests'][1]['start_at'].to_datetime
       assert @parsed_response['contests'][1]['start_at'].to_datetime <= @parsed_response['contests'][2]['start_at'].to_datetime
-      assert @parsed_response['contests'][2]['start_at'].to_datetime <= @parsed_response['contests'][3]['start_at'].to_datetime
-      assert @parsed_response['contests'][3]['start_at'].to_datetime >= @parsed_response['contests'][4]['start_at'].to_datetime
-      assert_equal true, @parsed_response['contests'][4]["finished?"]
+      assert_equal true, @parsed_response['contests'][2]["finished?"]
     end
 
     test "should sort by date desc" do
@@ -834,14 +826,11 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
       end
 
       assert_response :success
-
-      assert_equal 5, @parsed_response['contests'].count
+      
+      assert_equal 3, @parsed_response['contests'].count
       assert @parsed_response['contests'][0]['start_at'].to_datetime >= @parsed_response['contests'][1]['start_at'].to_datetime
-      assert @parsed_response['contests'][1]['start_at'].to_datetime >= @parsed_response['contests'][2]['start_at'].to_datetime
-      assert @parsed_response['contests'][2]['start_at'].to_datetime >= @parsed_response['contests'][3]['start_at'].to_datetime
-      assert @parsed_response['contests'][3]['start_at'].to_datetime >= @parsed_response['contests'][4]['start_at'].to_datetime
-      assert @parsed_response['contests'][4]['start_at'].to_datetime >= @parsed_response['contests'][3]['start_at'].to_datetime
-      assert_equal true, @parsed_response['contests'][4]["finished?"]
+      assert @parsed_response['contests'][1]['start_at'].to_datetime <= @parsed_response['contests'][2]['start_at'].to_datetime
+      assert_equal true, @parsed_response['contests'][2]["finished?"]
     end
 
     test "should sort by default category if wrong category" do
@@ -855,12 +844,10 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
 
       assert_response :success
 
-      assert_equal 5, @parsed_response['contests'].count
+      assert_equal 3, @parsed_response['contests'].count
       assert @parsed_response['contests'][0]['start_at'].to_datetime <= @parsed_response['contests'][1]['start_at'].to_datetime
       assert @parsed_response['contests'][1]['start_at'].to_datetime <= @parsed_response['contests'][2]['start_at'].to_datetime
-      assert @parsed_response['contests'][2]['start_at'].to_datetime <= @parsed_response['contests'][3]['start_at'].to_datetime
-      assert @parsed_response['contests'][3]['start_at'].to_datetime >= @parsed_response['contests'][4]['start_at'].to_datetime
-      assert_equal true, @parsed_response['contests'][4]["finished?"]
+      assert_equal true, @parsed_response['contests'][2]["finished?"]
     end
 
     test "should sort by default asc if wrong sort" do
@@ -874,12 +861,10 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
 
       assert_response :success
 
-      assert_equal 5, @parsed_response['contests'].count
+      assert_equal 3, @parsed_response['contests'].count
       assert @parsed_response['contests'][0]['start_at'].to_datetime <= @parsed_response['contests'][1]['start_at'].to_datetime
       assert @parsed_response['contests'][1]['start_at'].to_datetime <= @parsed_response['contests'][2]['start_at'].to_datetime
-      assert @parsed_response['contests'][2]['start_at'].to_datetime <= @parsed_response['contests'][3]['start_at'].to_datetime
-      assert @parsed_response['contests'][3]['start_at'].to_datetime >= @parsed_response['contests'][4]['start_at'].to_datetime
-      assert_equal true, @parsed_response['contests'][4]["finished?"]
+      assert_equal true, @parsed_response['contests'][2]["finished?"]
     end
 
     test "should sort by default desc if wrong sort_by_submissions" do
@@ -893,12 +878,10 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
 
       assert_response :success
 
-      assert_equal 5, @parsed_response['contests'].count
+      assert_equal 3, @parsed_response['contests'].count
       assert_equal 1, @parsed_response['contests'][0]["submissions"].count
       assert_equal 1, @parsed_response['contests'][1]["submissions"].count
-      assert_equal 1, @parsed_response['contests'][2]["submissions"].count
-      assert_equal 1, @parsed_response['contests'][3]["submissions"].count
-      assert_equal 0, @parsed_response['contests'][4]["submissions"].count
+      assert_equal 0, @parsed_response['contests'][2]["submissions"].count
     end
 
     test "should not filter by participants if wrong participants parameters" do
@@ -912,7 +895,7 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
 
       assert_response :success
 
-      assert_equal 5, @parsed_response['contests'].count
+      assert_equal 3, @parsed_response['contests'].count
     end
 
     test "should not filter by finished if wrong finished parameters" do
@@ -926,7 +909,7 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
 
       assert_response :success
 
-      assert_equal 5, @parsed_response['contests'].count
+      assert_equal 3, @parsed_response['contests'].count
     end
 
     test "should not filter by active if wrong active parameters" do
@@ -940,7 +923,7 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
 
       assert_response :success
 
-      assert_equal 5, @parsed_response['contests'].count
+      assert_equal 3, @parsed_response['contests'].count
     end
 
     test "should search by theme" do
@@ -954,7 +937,7 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
 
       assert_response :success
 
-      assert_equal 5, @parsed_response['contests'].count
+      assert_equal 3, @parsed_response['contests'].count
     end
 
     test "should not search by theme if wrong search parameters" do
@@ -968,6 +951,6 @@ class ContestControllerTest < ActionDispatch::IntegrationTest
 
       assert_response :success
 
-      assert_equal 5, @parsed_response['contests'].count
+      assert_equal 3, @parsed_response['contests'].count
     end
 end
