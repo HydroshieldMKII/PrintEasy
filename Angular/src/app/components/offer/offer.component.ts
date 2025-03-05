@@ -27,7 +27,7 @@ export class OffersComponent {
   offerIdToEdit: number | null = null;
 
   acceptDialogVisible: boolean = false;
-  offerToAccept: any | null = null;
+  offerToAccept: OfferModel | null = null;
 
   refuseDialogVisible: boolean = false;
   offerToRefuse: any | null = null;
@@ -37,7 +37,7 @@ export class OffersComponent {
   requestToDelete: any | null = null;
   isOwningPrinter: boolean | null = null;
 
-  get currentRequests(): any[] {
+  get currentRequests(): RequestOfferModel[] {
     return this.activeTab === 'mine' ? this.myOffers || [] : this.offers || [];
   }
 
@@ -54,7 +54,12 @@ export class OffersComponent {
     this.router.navigate([], { queryParams: { tab: this.activeTab }, queryParamsHandling: 'merge' });
 
     if (this.activeTab === 'all') {
-      this.offerService.getOffers().subscribe((requests: any[]) => {
+      this.offerService.getOffers().subscribe((requests: RequestOfferModel[] | ApiResponseModel) => {
+        if (requests instanceof ApiResponseModel) {
+          console.log("Error getting my offers:", requests);
+          return;
+        }
+
         console.log("all offers:", requests);
         this.offers = requests;
       });
@@ -76,7 +81,11 @@ export class OffersComponent {
     this.activeTab = tab;
     this.router.navigate([], { queryParams: { tab: this.activeTab }, queryParamsHandling: 'merge' });
     if (this.activeTab === 'all' && !this.offers) {
-      this.offerService.getOffers().subscribe((requests: any[]) => {
+      this.offerService.getOffers().subscribe((requests: RequestOfferModel[] | ApiResponseModel) => {
+        if (requests instanceof ApiResponseModel) {
+          console.log("Error getting my offers:", requests);
+          return;
+        }
         this.offers = requests;
       });
     }
@@ -95,7 +104,7 @@ export class OffersComponent {
     window.open(downloadUrl, '_blank');
   }
 
-  showDeleteDialog(offer: any): void {
+  showDeleteDialog(offer: OfferModel): void {
     this.offerToDelete = offer;
     this.deleteDialogVisible = true;
   }
@@ -104,15 +113,13 @@ export class OffersComponent {
     if (this.offerToDelete !== null && this.requestToDelete !== null) {
       this.offerService.deleteOffer(this.offerToDelete.id).subscribe((response) => {
         if (response.status === 200) {
-          const index = this.requestToDelete.offers.indexOf(this.offerToDelete);
-          if (index !== -1) {
-            this.requestToDelete.offers.splice(index, 1);
-            if (this.requestToDelete.offers.length === 0) {
-              const requestIndex = this.currentRequests.indexOf(this.requestToDelete);
-              if (requestIndex !== -1) {
-                this.currentRequests.splice(requestIndex, 1);
-              }
-            }
+          this.requestToDelete.offers = this.requestToDelete.offers.filter((offer: OfferModel) => offer !== this.offerToDelete);
+
+          console.log("Offer deleted:", response);
+          console.log("Request:", this.requestToDelete);
+
+          if (this.requestToDelete.offers.length === 0) {
+            this.myOffers = this.myOffers?.filter(request => request !== this.requestToDelete) || null;
           }
         } else {
           console.log("Error deleting offer:", response);
@@ -150,14 +157,16 @@ export class OffersComponent {
   }
 
   confirmAccept(): void {
-    console.log("Accepting id:", this.offerToAccept.id);
+    console.log("Accepting id:", this.offerToAccept?.id);
+    if (!this.offerToAccept?.id) return;
+
     this.orderService.createOrder(this.offerToAccept.id).subscribe((response: ApiResponseModel | OrderModel) => {
       if (response instanceof OrderModel) {
         this.messageService.add({ severity: 'success', summary: this.translate.instant('global.success'), detail: this.translate.instant('offer.accept_success') });
         this.offerToAccept = null;
         this.acceptDialogVisible = false;
 
-        this.offerService.getMyOffers().subscribe((offers: any) => {
+        this.offerService.getMyOffers().subscribe((offers: RequestOfferModel[] | ApiResponseModel) => {
           if (offers instanceof ApiResponseModel) {
             console.log("Error getting my offers:", offers);
             return;
@@ -165,8 +174,12 @@ export class OffersComponent {
           this.myOffers = offers;
         });
 
-        this.offerService.getOffers().subscribe((offers: any[]) => {
-          this.offers = offers;
+        this.offerService.getOffers().subscribe((offers: RequestOfferModel[] | ApiResponseModel) => {
+          if (offers instanceof ApiResponseModel) {
+            console.log("Error getting my offers:", offers);
+            return;
+          }
+          this.offers = offers as unknown as RequestOfferModel[];
         });
       } else {
         this.messageService.add({ severity: 'error', summary: this.translate.instant('global.error'), detail: this.translate.instant('offer.accept_error') });
@@ -174,7 +187,7 @@ export class OffersComponent {
     });
   }
 
-  showRefuseOffer(offer: any): void {
+  showRefuseOffer(offer: OfferModel): void {
     console.log("Rejecting id:", offer.id);
 
     this.offerToRefuse = offer;
@@ -207,7 +220,11 @@ export class OffersComponent {
           this.myOffers = response as RequestOfferModel[];
         });
 
-        this.offerService.getOffers().subscribe((offers: any[]) => {
+        this.offerService.getOffers().subscribe((offers: RequestOfferModel[] | ApiResponseModel) => {
+          if (offers instanceof ApiResponseModel) {
+            console.log("Error getting my offers:", offers);
+            return;
+          }
           this.offers = offers;
         });
       }

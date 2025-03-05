@@ -4,6 +4,7 @@ import { FormGroup, FormBuilder, Validators, AbstractControl } from '@angular/fo
 import { forkJoin } from 'rxjs';
 import { DropdownModule } from 'primeng/dropdown';
 import { PresetService } from '../../services/preset.service';
+import { PrinterUserService } from '../../services/printer-user.service';
 import { OfferService } from '../../services/offer.service';
 import { PresetModel } from '../../models/preset.model';
 import { ColorModel } from '../../models/color.model';
@@ -39,7 +40,7 @@ export class OfferModalComponent implements OnChanges {
   colors: { label: string, value: string, id: number }[] = [];
   filaments: { label: string, value: string, id: number }[] = [];
 
-  constructor(private fb: FormBuilder, private presetService: PresetService, private offerService: OfferService, private messageService: MessageService) {
+  constructor(private fb: FormBuilder, private presetService: PresetService, private offerService: OfferService, private messageService: MessageService, private printerUserService: PrinterUserService) {
     this.dateValidator = this.dateValidator.bind(this);
 
     this.offerForm = this.fb.group({
@@ -82,9 +83,8 @@ export class OfferModalComponent implements OnChanges {
       console.log('Presets:', this.presets);
     });
 
-    this.presetService.getPrinterUsers().subscribe((printerUsers: PrinterUserModel[]) => {
+    this.printerUserService.getPrinterUsers().subscribe((printerUsers: PrinterUserModel[]) => {
       this.printers = printerUsers.map(printerUser => {
-        const formattedDate = new Date(printerUser.aquiredDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
         return { label: `${printerUser?.printer?.model}`, value: printerUser?.printer?.model, id: printerUser?.printer?.id, idPrinterUser: printerUser.id };
       });
     });
@@ -213,13 +213,12 @@ export class OfferModalComponent implements OnChanges {
   ngOnChanges() {
     forkJoin({
       colors: this.presetService.getAllColors(),
-      printers: this.presetService.getPrinterUsers(),
+      printers: this.printerUserService.getPrinterUsers(),
       filaments: this.presetService.getAllFilaments()
     }).subscribe(({ colors, printers, filaments }) => {
       this.colors = colors.map(color => ({ label: color.name, value: color.name, id: color.id }));
       this.printers = printers.map(printerUser => {
-        const formattedDate = new Date(printerUser.aquiredDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-        return { label: `${printerUser?.printer?.model}`, value: printerUser?.printer?.model, id: printerUser?.printer?.id, idPrinterUser: printerUser.id };
+        return { label: `${printerUser.printer.model}`, value: printerUser.printer.model, id: printerUser.printer.id, idPrinterUser: printerUser.id };
       });
       this.filaments = filaments.map(filament => ({ label: filament.name, value: filament.name, id: filament.id }));
 

@@ -183,38 +183,50 @@
                 <div class="flex gap-2">
                   <p-button
                     icon="pi pi-arrow-right"
-                    title="{{ 'request.see_details' | translate }}"
+                    pTooltip="{{ 'request.see_details' | translate }}"
+                    tooltipPosition="top"
                     routerLink="/requests/view/{{ request.id }}"
                     *ngIf="tab === 'all'"
                   ></p-button>
                   <p-button
                     *ngIf="tab === 'mine' && !request.acceptedAt"
                     icon="pi pi-pencil"
-                    title="{{ 'request.edit' | translate }}"
+                    pTooltip="{{ 'request.edit' | translate }}"
+                    tooltipPosition="top"
                     routerLink="/requests/edit/{{ request.id }}"
                   ></p-button>
                   <p-button
                   *ngIf="tab === 'mine' && request.acceptedAt"
                   icon="pi pi-pencil"
-                  title="{{ 'request.edit_disabled' | translate }}"
+                  pTooltip="{{ 'request.edit_disabled' | translate }}"
+                  tooltipPosition="top"
                   [disabled]="true"
                 ></p-button>
                   <p-button
                     *ngIf="tab === 'mine' && !request.acceptedAt"
                     icon="pi pi-trash"
-                    title="{{ 'request.delete' | translate }}"
+                    pTooltip="{{ 'request.delete' | translate }}"
+                    tooltipPosition="top"
                     (onClick)="showDeleteDialog(request)"
                   ></p-button>
                   <p-button
                   *ngIf="tab === 'mine' && request.acceptedAt"
                   icon="pi pi-trash"
-                  title="{{ 'request.delete_disabled' | translate }}"
+                  pTooltip="{{ 'request.delete_disabled' | translate }}"
+                  tooltipPosition="top"
                   [disabled]="true"
                 ></p-button>
-                  <a [href]="request.stlFileUrl" class="p-button" download style="text-decoration: none;"><i class="pi pi-download"></i></a>
+                  <p-button
+                  icon="pi pi-download"
+                  pTooltip="{{ 'request.download' | translate }}"
+                  tooltipPosition="top"
+                  (click)="downloadRequest(request.stlFileUrl)"
+                  >
+                  </p-button>
                   <p-button
                     icon="pi pi-share-alt"
-                    title="{{ 'request.share' | translate }}"
+                    pTooltip="{{ 'request.share' | translate }}"
+                    tooltipPosition="top"
                     (click)="copyToClipboard('requests/view/' + request.id)"
                   ></p-button>
                 </div>

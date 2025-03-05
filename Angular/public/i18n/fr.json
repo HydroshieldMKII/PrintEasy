@@ -255,7 +255,8 @@
         "date_range": "Période de Date Cible",
         "select_date_range": "Sélectionner une période",
         "clear_filters": "Effacer les Filtres",
-        "apply_filters": "Appliquer les Filtres"
+        "apply_filters": "Appliquer les Filtres",
+        "download": "Télécharger"
     },
     "requestForm": {
         "edit_request": "Modifier la demande",

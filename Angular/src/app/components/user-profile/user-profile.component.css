@@ -300,6 +300,7 @@ h2 {
     display: flex;
     align-items: center;
     justify-content: center;
+    border-radius: 5px;
 }
 
 /* Printer user */
@@ -390,6 +391,7 @@ h2 {
     color: #666;
     margin: 0 0 8px 0;
     font-size: 0.9rem;
+    margin: 10px
 }
 
 .acquisition-date i,

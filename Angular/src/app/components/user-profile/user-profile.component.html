@@ -86,7 +86,15 @@
 
             <p-tabpanel [value]="'printers'">
                 <div class="printers-container">
+                    <div class="add-printer-card" (click)="showAddPrinterDialog()">
+                        <div class="add-printer-content">
+                            <i class="pi pi-plus-circle"></i>
+                            <p>Add Printer</p>
+                        </div>
+                    </div>
+
                     <div *ngFor="let printerUser of printerUsers" class="printer-card">
+                        
                         <div class="card-header">
                             <h3>{{ printerUser.printer.model }}</h3>
                         </div>
@@ -120,10 +128,12 @@
                         <div class="card-actions">
                             <div class="button-group">
                                 <p-button type="button" icon="pi pi-pencil" severity="primary"
-                                    (click)="editPrinter(printerUser)">
+                                    (click)="editPrinter(printerUser)" [disabled]="!printerUser.canDelete"
+                                    pTooltip="{{printerUser.canDelete ? 'Edit printer' : 'Cannot edit printer with active offers'}}" tooltipPosition="top">
                                 </p-button>
                                 <p-button type="button" icon="pi pi-trash" severity="danger"
-                                    (click)="showDeleteDialog(printerUser)">
+                                    (click)="showDeleteDialog(printerUser)" [disabled]="!printerUser.canDelete"
+                                    pTooltip="{{printerUser.canDelete ? 'Delete printer' : 'Cannot delete printer with active offers'}}" tooltipPosition="top">
                                 </p-button>
                             </div>
                         </div>
@@ -210,19 +220,22 @@
             <p-tabpanel [value]="'reviews'">
                 <div class="review-list">
                     <div *ngFor="let review of userReviews">
-                        <p-card [style]="{ width: '20rem', overflow: 'hidden', height: '100%' }">
+                        <p-card [style]="{ width: '22rem', overflow: 'hidden', height: '100%' }">
                             <ng-template #header>
-                                <p-galleria [value]="review.imageUrls" [numVisible]="5" [showItemNavigators]="true"
-                                    [showThumbnails]="false" [showIndicatorsOnItem]="true"
-                                    [indicatorsPosition]="'bottom'" [showIndicators]="true"
-                                    [containerStyle]="{'max-width': '100%', 'height': '300px'}">
-                                    <ng-template #item let-image>
-                                        <img [src]="image.url" class="carousel-image">
-                                    </ng-template>
-                                </p-galleria>
-                                <div *ngIf="review.imageUrls.length == 0" class="empty-carousel">
-                                    <i class="pi pi-images" style="font-size: 2.5rem;"></i>
+                                <div style="padding: 20px;">
+                                    <p-galleria [value]="review.imageUrls" [numVisible]="5" [showItemNavigators]="true"
+                                        [showThumbnails]="false" [showIndicatorsOnItem]="true"
+                                        [indicatorsPosition]="'bottom'" [showIndicators]="true"
+                                        [containerStyle]="{'max-width': '100%', 'height': '300px'}">
+                                        <ng-template #item let-image>
+                                            <img [src]="image.url" class="carousel-image">
+                                        </ng-template>
+                                    </p-galleria>
+                                    <div *ngIf="review.imageUrls.length == 0" class="empty-carousel">
+                                        <i class="pi pi-images" style="font-size: 2.5rem;"></i>
+                                    </div>
                                 </div>
+                                
                             </ng-template>
                             <ng-template #title> {{review.title}} </ng-template>
                             <ng-template #subtitle> {{review.createdAt | date}} </ng-template>

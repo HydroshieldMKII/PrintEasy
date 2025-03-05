@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { RequestModel, RequestApi } from '../models/request.model';
-import { RequestPresetModel } from '../models/request-preset.model';
+import { RequestPresetApi, RequestPresetModel } from '../models/request-preset.model';
 import { UserModel } from '../models/user.model';
 import { PrinterModel } from '../models/printer.model';
 import { FilamentModel } from '../models/filament.model';
@@ -44,8 +44,8 @@ export class RequestService {
         searchParams: string,
         minBudget: number,
         maxBudget: number,
-        startDate: any,
-        endDate: any,
+        startDate: Date,
+        endDate: Date,
         type: string
     ): Observable<[RequestModel[], boolean] | ApiResponseModel> {
         const params: any = {};
@@ -63,24 +63,16 @@ export class RequestService {
         return this.fetchRequests(params);
     }
 
-
-    getPrintersUser(): Observable<any> {
-        return this.api.getRequest('api/printer_user').pipe(
-            map((response: ApiResponseModel) => {
-                if (response.status === 200) {
-                    return response.data;
-                }
-                return false;
-            })
-        );
-    }
-
     getRequestById(id: number): Observable<RequestModel | ApiResponseModel> {
         console.log("fetching info for request ID: ", id);
         return this.api.getRequest(`api/request/${id}`).pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
-                    console.log("Request response: ", response.data);
+                    response.data.request.preset_requests.map((preset: RequestPresetApi) => {
+                        preset.color.name = this.translateColor(preset.color.id);
+                        preset.filament.name = this.translateFilament(preset.filament.id);
+                    });
+
                     return RequestModel.fromAPI(response.data.request);
                 } else {
                     return response;
@@ -93,8 +85,13 @@ export class RequestService {
         return this.api.getRequest('api/request', params).pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
-                    console.log("Requests response: ", response.data);
                     this.requests = (response.data.request as RequestApi[])?.map((requestData: RequestApi) => {
+
+                        requestData.preset_requests.map((preset) => {
+                            preset.color.name = this.translateColor(preset.color.id);
+                            preset.filament.name = this.translateFilament(preset.filament.id);
+                        });
+
                         return RequestModel.fromAPI(requestData);
                     });
                 }
@@ -163,7 +160,7 @@ export class RequestService {
     }
 
     private translateFilament(id: number): string {
-        const key = this.filamentMap[id];
+        const key = FilamentModel.filamentMap[id];
         return key ? this.translate.instant(`materials.${key}`) : `Unknown Filament (${id})`;
     }
 
