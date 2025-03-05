@@ -37,7 +37,7 @@ export class UserProfileComponent implements OnInit {
   readonly messageService = inject(MessageService);
   readonly printerUserService = inject(PrinterUserService);
   readonly fb = inject(FormBuilder);
-  route: ActivatedRoute = inject(ActivatedRoute);
+  readonly route = inject(ActivatedRoute);
 
   userContestSubmissions: UserContestSubmissionsModel[] = [];
   responsiveOptions: any[] | undefined;
@@ -84,6 +84,7 @@ export class UserProfileComponent implements OnInit {
         return;
       }
       this.userReviews = response;
+      console.log("reviews", this.userReviews)
       this.averageRating = this.userReviews.reduce((acc, review) => acc + review.rating, 0) / this.userReviews.length;
     });
   }
