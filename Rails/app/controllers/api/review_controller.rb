@@ -46,6 +46,14 @@ module Api
       end
     end
 
+    def user
+      user_reviews = Review.joins(order: { offer: :printer_user }).where('printer_users.user_id = ?', params[:id])
+      render json: {
+        reviews: review_as_json(user_reviews),
+        errors: {}
+      }, status: :ok
+    end
+
     private
 
     def review_as_json(review)

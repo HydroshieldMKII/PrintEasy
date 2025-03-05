@@ -18,8 +18,11 @@ Rails.application.routes.draw do
     end
     resources :order_status
     resources :order
-    resources :review
-    resources :user_review, only: [:index]
+    resources :review do
+      collection do
+        get 'user/:id', action: :user
+      end
+    end
     resources :status
     resources :contest, except: %i[new edit] do
       resources :user_submission, only: %i[index]

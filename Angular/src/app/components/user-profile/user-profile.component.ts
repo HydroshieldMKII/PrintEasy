@@ -15,6 +15,7 @@ import { SubmissionModel } from '../../models/submission.model';
 import { UserContestSubmissionsModel } from '../../models/user-contest-submissions.model';
 import { ApiResponseModel } from '../../models/api-response.model';
 import { Renderer2 } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 
 
@@ -33,6 +34,7 @@ export class UserProfileComponent implements OnInit {
   readonly messageService = inject(MessageService);
   readonly printerUserService = inject(PrinterUserService);
   readonly fb = inject(FormBuilder);
+  route: ActivatedRoute = inject(ActivatedRoute);
 
   userContestSubmissions: UserContestSubmissionsModel[] = [];
   responsiveOptions: any[] | undefined;
@@ -74,7 +76,7 @@ export class UserProfileComponent implements OnInit {
       }
     ];
 
-    this.reviewService.getUserReviews().subscribe((response: ApiResponseModel | ReviewModel[]) => {
+    this.reviewService.getUserReviews(this.route.snapshot.params['id']).subscribe((response: ApiResponseModel | ReviewModel[]) => {
       if (response instanceof ApiResponseModel) {
         return;
       }
