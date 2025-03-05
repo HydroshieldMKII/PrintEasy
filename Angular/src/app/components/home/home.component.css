@@ -1,0 +1,94 @@
+.page-header {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.header-item {
+    width: 100%;
+    text-align: center;
+}
+
+.page-header img {
+    object-fit: contain;
+    height: 300px;
+}
+
+h1 {
+    font-size: 3rem;
+    margin: 0;
+}
+
+h2 {
+    font-size: 2rem;
+    margin: 0;
+}
+
+h3 {
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+hr {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.h-row {
+    display: flex; 
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+.h-row p {
+    margin: 0;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.section {
+    margin-bottom: 50px;
+}
+
+.list {
+    display: flex;
+    flex-direction: row;
+    gap: 25px;
+    flex-wrap: wrap;
+    align-items: stretch;
+}
+
+:host ::ng-deep .p-card {
+    width: 22rem;
+    overflow: hidden;
+    height: 100%;
+    border: 1px solid #e2e8f0;
+    cursor: pointer; /* Change mouse to look like a link on hover */
+}
+
+stl-model-viewer {
+    cursor: default;
+    height: 300px;
+}
+
+.card-header {
+    padding: 20px;
+    padding-bottom: 5px;
+}
+
+.card-header-content {
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.card-header-content img {
+    object-fit: contain;
+    height: 300px;
+    max-width: 100%;
+}
+
+.card-content-label {
+    color: #003064;
+}

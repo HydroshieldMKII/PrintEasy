@@ -1,5 +1,5 @@
 module Api
-  class HomeController < ApplicationController
+  class HomeController < AuthenticatedController
     def index
       render json: { 
         requests: last_requests.as_json(
@@ -23,8 +23,13 @@ module Api
           methods: %i[stl_file_url has_offer_made? accepted_at]
         ),
         submissions: last_submissions.as_json(
-          include: :likes, 
-          methods: %i[stl_url image_url]
+          include: {
+            user: {
+              include: { country: {} }
+            },
+            likes: {}
+          }, 
+          methods: %i[stl_url image_url liked_by_current_user]
         ),
         contests: last_contests.as_json(
           include: :submissions, 

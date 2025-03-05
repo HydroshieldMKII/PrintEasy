@@ -1,4 +1,5 @@
 import { LikeModel, LikeAPI } from "./like.model";
+import { UserApi, UserModel } from "./user.model";
 
 export type SubmissionAPI = {
     id: number;
@@ -12,6 +13,7 @@ export type SubmissionAPI = {
     stl_url: string | null;
     likes: LikeAPI[];
     liked_by_current_user: boolean;
+    user: UserApi | null
 }
 
 export class SubmissionModel {
@@ -26,6 +28,7 @@ export class SubmissionModel {
     stlUrl: string | null;
     likes: LikeModel[];
     liked: boolean = false;
+    user: UserModel | null;
 
     constructor(
         id: number, 
@@ -38,6 +41,7 @@ export class SubmissionModel {
         imageUrl: string | null, 
         stlUrl: string | null, 
         likes: LikeModel[], 
+        user: UserModel | null,
         liked: boolean = false
     ) {
         this.id = id;
@@ -50,6 +54,7 @@ export class SubmissionModel {
         this.imageUrl = imageUrl;
         this.stlUrl = stlUrl;
         this.likes = likes;
+        this.user = user;
         this.liked = liked;
     }
 
@@ -65,6 +70,7 @@ export class SubmissionModel {
             data?.image_url,
             data?.stl_url,
             data?.likes?.map((like: LikeAPI) => new LikeModel(like?.id, like?.user_id, like?.submission_id)),
+            data?.user ? UserModel.fromAPI(data?.user) : null,
             data?.liked_by_current_user
         );
     }

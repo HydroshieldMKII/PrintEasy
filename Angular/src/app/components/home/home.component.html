@@ -1,1 +1,112 @@
-<p>home works!</p>
+<div style="padding: 10px;">
+    <div class="page-header">
+        <h1 class="header-item">Welcome to PrintEasy!</h1>
+        <img class="header-item" src="https://cdn.discordapp.com/attachments/1186372312900059179/1336734252863062128/DALLE_2025-02-05_11.20.16_-_A_professional_and_modern_transparent_logo_for_a_3D_printing_website_called_PrintEasy._The_design_should_feature_a_stylized_3D_printer_or_a_filament.png?ex=67c9cc49&is=67c87ac9&hm=7b455f4f8acb5d215583d3fe87f873b779e2e63f67f78b30053ed6f55cc6334a&">
+    </div>
+    <div class="section">
+        <h2>Latest Requests</h2>
+        <hr>
+        <div class="list">
+            <div *ngFor="let request of requests">
+                <p-card (click)="GoTo(request)">
+                    <ng-template #header>
+                        <div class="card-header">
+                            <div class="card-header-content" (click)="$event.stopPropagation()">
+                                <stl-model-viewer [stlModels]="[request?.stlFileUrl ?? '']"></stl-model-viewer>
+                            </div>
+                        </div>
+                    </ng-template>
+                    <ng-template #title>{{request.name}}</ng-template>
+                    <ng-template #subtitle>
+                        <div class="h-row">
+                            <p class="card-content-label">By :</p>
+                            <p>{{request.user?.username}}</p>
+                        </div>
+                    </ng-template>
+                    <ng-template #content>
+                        <div class="h-row">
+                            <p class="card-content-label">Budget :</p>
+                            <p>{{request.budget | currency}}</p>
+                        </div>
+                        <div class="h-row">
+                            <p class="card-content-label">Due for :</p>
+                            <p>{{request.targetDate | date}}</p>
+                        </div>
+                    </ng-template>
+                </p-card>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Latest Contests</h2>
+        <hr>
+        <div class="list">
+            <div *ngFor="let contest of contests">
+                <p-card (click)="GoTo(contest)">
+                    <ng-template #header>
+                        <div class="card-header">
+                            <div class="card-header-content">
+                                <img [src]="contest.image" lazy="loading">
+                            </div>
+                        </div>
+                    </ng-template>
+
+                    <ng-template #title>{{contest.theme}}</ng-template>
+                    <ng-template #subtitle>
+                        <div class="h-row">
+                            <p class="card-content-label" *ngIf="contest.endAt">Ends at :</p>
+                            <p *ngIf="contest.endAt">{{contest.endAt | date}}</p>
+                            <p class="card-content-label" *ngIf="!contest.endAt">Never ends</p>
+                        </div>
+                    </ng-template>
+                    <ng-template #content>
+                        <div class="h-row">
+                            <p class="card-content-label">Submissions per user :</p>
+                            <p>{{contest.submissionLimit}}</p>
+                        </div>
+                    </ng-template>
+                </p-card>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Latest Submissions</h2>
+        <hr>
+        <div class="list">
+            <div *ngFor="let submission of submissions">
+                <p-card (click)="GoTo(submission)">
+                    <ng-template #header>
+                        <div class="card-header">
+                            <div class="card-header-content">
+                                <img [src]="submission.imageUrl" lazy="loading">
+                            </div>
+                        </div>
+                    </ng-template>
+
+                    <ng-template #title>{{submission.name}}</ng-template>
+                    <ng-template #subtitle>
+                        <div class="h-row">
+                            <p class="card-content-label">By :</p>
+                            <p>{{submission.user?.username}}</p>
+                        </div>
+                    </ng-template>
+                    <ng-template #content>
+                        <div class="h-row">
+                            <p class="card-content-label">Created at :</p>
+                            <p>{{submission.created_at | date}}</p>
+                        </div>
+                    </ng-template>
+                    <ng-template #footer>
+                        <div class="h-row">
+                            <p-button [icon]="submission.liked ? 'pi pi-heart-fill' : 'pi pi-heart'"
+                                [severity]="submission.liked ? 'danger' : 'secondary'"
+                                [outlined]="!submission.liked" (click)="onLike(submission)" />
+                        </div>
+                    </ng-template>
+                </p-card>
+            </div>
+        </div>
+    </div>
+</div>
