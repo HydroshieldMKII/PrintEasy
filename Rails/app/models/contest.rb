@@ -99,6 +99,7 @@ class Contest < ApplicationRecord
                     .with_participants(params[:participants_min], params[:participants_max])
                     .sort_by_submissions(params[:sort_by_submissions])
                     .sort_by_date(params[:category], params[:sort])
+                    .where('start_at <= ?', Time.now)
                     .order(Arel.sql('
                       CASE 
                         WHEN contests.end_at IS NOT NULL AND contests.end_at < CURRENT_DATE THEN 1 

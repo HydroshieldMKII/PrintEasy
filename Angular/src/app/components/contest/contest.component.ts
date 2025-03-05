@@ -107,7 +107,7 @@ export class ContestComponent {
     if (this.currentValues[0] > 0 || this.currentValues[1] <= 30) {
       ssf_params = { ...ssf_params, participants_min: this.currentValues[0], participants_max: this.currentValues[1] };
     }
-    
+    console.log('ssf_params:', ssf_params);
     return ssf_params;
   }
 
