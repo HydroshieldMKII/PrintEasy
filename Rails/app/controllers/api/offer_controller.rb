@@ -41,8 +41,9 @@ module Api
     end
 
     def reject
-      offer = Offer.find(params[:id])
-      if offer.can_reject? && offer.reject!
+      offer = Offer.joins(:request).where(requests: { user: current_user }).find(params[:id])
+      
+      if offer.reject!
         render json: { offer: offer, errors: {} }, status: :ok
       else
         render json: { errors: offer.errors }, status: :unprocessable_entity

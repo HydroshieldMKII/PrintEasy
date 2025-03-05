@@ -27,7 +27,7 @@ class Offer < ApplicationRecord
     offer.validates :request, uniqueness: {
       scope: %i[printer_user_id color_id filament_id],
       message: 'This offer already exists'
-    }, unless: :cancelled_at?
+    }
   end
 
   with_options on: :create do |offer|
@@ -139,8 +139,21 @@ class Offer < ApplicationRecord
   end
 
   def reject!
-    return false if accepted? || rejected?
-
+    if accepted?
+      errors.add(:offer, 'Offer already accepted. Cannot reject')
+      return false
+    end
+  
+    if rejected?
+      errors.add(:offer, 'Offer already rejected')
+      return false
+    end
+  
+    if request.user != Current.user
+      errors.add(:offer, 'You are not allowed to reject this offer')
+      return false
+    end
+  
     update_column(:cancelled_at, Time.now)
   end
 

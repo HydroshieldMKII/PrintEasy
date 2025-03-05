@@ -101,6 +101,145 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
     assert_empty json_response['errors']
   end
 
+  test "should sort requests by name in ascending order" do
+    get api_request_index_url, params: { type: 'mine', sort: 'asc', sortCategory: 'name' }
+    assert_response :success
+    json_response = assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+    
+    assert_equal 2, json_response['request'].length
+    assert_equal "Test Request", json_response['request'][0]['name']
+    assert_equal "Test Request 3", json_response['request'][1]['name']
+  end
+  
+  test "should sort requests by name in descending order" do
+    get api_request_index_url, params: { type: 'mine', sort: 'desc', sortCategory: 'name' }
+    assert_response :success
+    json_response = assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+    
+    assert_equal 2, json_response['request'].length
+    assert_equal "Test Request 3", json_response['request'][0]['name']
+    assert_equal "Test Request", json_response['request'][1]['name']
+  end
+  
+  test "should sort requests by budget in ascending order" do
+    get api_request_index_url, params: { type: 'mine', sort: 'asc', sortCategory: 'budget' }
+    assert_response :success
+    json_response = assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+    
+    assert_equal 2, json_response['request'].length
+    assert_equal 100.0, json_response['request'][0]['budget']
+    assert_equal 150.0, json_response['request'][1]['budget']
+  end
+  
+  test "should sort requests by budget in descending order" do
+    get api_request_index_url, params: { type: 'mine', sort: 'desc', sortCategory: 'budget' }
+    assert_response :success
+    json_response = assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+    
+    assert_equal 2, json_response['request'].length
+    assert_equal 150.0, json_response['request'][0]['budget']
+    assert_equal 100.0, json_response['request'][1]['budget']
+  end
+  
+  test "should sort requests by date in ascending order" do
+    get api_request_index_url, params: { type: 'mine', sort: 'asc', sortCategory: 'date' }
+    assert_response :success
+    json_response = assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+    
+    assert_equal 2, json_response['request'].length
+    assert_equal "2021-10-31", json_response['request'][0]['target_date']
+    assert_equal "2021-12-31", json_response['request'][1]['target_date']
+  end
+  
+  test "should filter requests by in-progress status" do
+    get api_request_index_url, params: { type: 'mine', filter: 'in-progress' }
+    assert_response :success
+    json_response = assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+    
+    assert json_response['request'].all? { |r| r['accepted_at'].present? }
+    assert_equal 1, json_response['request'].length
+    assert_equal 1, json_response['request'][0]['id']
+  end
+  
+  test "should filter requests by country" do
+    get api_request_index_url, params: { type: 'mine', filter: 'country' }
+    assert_response :success
+    json_response = assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+    
+    assert_equal 2, json_response['request'].length
+    assert json_response['request'].all? { |r| r['user']['country']['name'] == 'Canada' }
+  end
+  
+  test "should filter requests by budget range" do
+    get api_request_index_url, params: { type: 'mine', minBudget: 120, maxBudget: 200 }
+    assert_response :success
+    json_response = assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+    
+    assert_equal 1, json_response['request'].length
+    assert json_response['request'].all? { |r| r['budget'] >= 120 && r['budget'] <= 200 }
+    assert_equal 150.0, json_response['request'][0]['budget']
+  end
+  
+  test "should filter requests by date range" do
+    get api_request_index_url, params: { 
+      type: 'mine', 
+      startDate: '2021-12-01', 
+      endDate: '2021-12-31'
+    }
+    assert_response :success
+    json_response = assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+
+    assert_equal 1, json_response['request'].length
+    assert json_response['request'][0]['target_date'] == '2021-12-31'
+  end
+  
+  test "should combine filtering and sorting" do
+    get api_request_index_url, params: { 
+      type: 'mine', 
+      sort: 'desc', 
+      sortCategory: 'budget',
+      minBudget: 50,
+      maxBudget: 200
+    }
+    assert_response :success
+    json_response = assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+    
+    assert_equal 2, json_response['request'].length
+    assert_equal 150.0, json_response['request'][0]['budget']
+    assert_equal 100.0, json_response['request'][1]['budget']
+  end
+  
+  test "should handle search parameter" do
+    get api_request_index_url, params: { type: 'mine', search: 'Test Request 3' }
+    assert_response :success
+    json_response = assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+    
+    assert_equal 1, json_response['request'].length
+    assert_equal "Test Request 3", json_response['request'][0]['name']
+  end
+
   ### SHOW ACTION ###
   test 'should show a specific request' do
     get api_request_url(@user_request.id), as: :json
@@ -182,6 +321,46 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 1, json_response['request']['preset_requests'][0]['filament']['id']
     assert_equal 1, json_response['request']['preset_requests'][0]['printer']['id']
     assert_equal 0.1, json_response['request']['preset_requests'][0]['print_quality']
+    assert_empty json_response['errors']
+  end
+
+  test "should create multiple preset_requests for a request" do
+    assert_difference('Request.count', 1) do
+      post api_request_index_url, params: {
+        request: {
+          name: 'Multiple Preset Requests',
+          comment: 'This request has multiple preset requests',
+          budget: 100,
+          target_date: 5.days.from_now.to_date,
+          stl_file: fixture_file_upload(Rails.root.join('test/fixtures/files/RUBY13.stl'), 'application/octet-stream'),
+          preset_requests_attributes: [
+            { color_id: 1, filament_id: 1, printer_id: 1, print_quality: 0.1 },
+            { color_id: 2, filament_id: 2, printer_id: 2, print_quality: 0.2 }
+          ]
+        }
+      }
+    end
+
+    assert_response :created
+
+    json_response = assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+
+    assert_equal 'Multiple Preset Requests', json_response['request']['name']
+    assert_equal 'This request has multiple preset requests', json_response['request']['comment']
+    assert_equal 100, json_response['request']['budget']
+    assert_equal 5.days.from_now.to_date.to_s, json_response['request']['target_date']
+    assert json_response ['request']['stl_file_url'].present?
+    assert_equal 2, json_response['request']['preset_requests'].length  # 2 preset_requests
+    assert_equal 1, json_response['request']['preset_requests'][0]['color']['id']
+    assert_equal 1, json_response['request']['preset_requests'][0]['filament']['id']
+    assert_equal 1, json_response['request']['preset_requests'][0]['printer']['id']
+    assert_equal 0.1, json_response['request']['preset_requests'][0]['print_quality']
+    assert_equal 2, json_response['request']['preset_requests'][1]['color']['id']
+    assert_equal 2, json_response['request']['preset_requests'][1]['filament']['id']
+    assert_equal 2, json_response['request']['preset_requests'][1]['printer']['id']
+    assert_equal 0.2, json_response['request']['preset_requests'][1]['print_quality']
     assert_empty json_response['errors']
   end
 
@@ -477,7 +656,7 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'Test Request', @user_request.reload.name
     assert_equal 100, @user_request.budget
     assert_equal 'Test Comments', @user_request.comment
-    assert_equal '2021-12-31', @user_request.target_date.to_s
+    assert_equal '2021-10-31', @user_request.target_date.to_s
     assert_equal 'RUBY13.stl', @user_request.stl_file.filename.to_s
     assert_equal 1, @user_request.preset_requests.count
 

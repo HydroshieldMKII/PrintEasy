@@ -635,7 +635,7 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     end
 
     # Http code
-    assert_response :unprocessable_entity
+    assert_response :not_found
 
     # Response format
     json_response = assert_nothing_raised { JSON.parse(response.body) }
@@ -643,7 +643,7 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     # response content
     assert_not_empty json_response['errors']
 
-    assert_equal ['You are not allowed to reject this offer'], json_response['errors']['offer']
+    assert_equal ["Couldn't find Offer with 'id'=9 [WHERE `requests`.`user_id` = ?]"], json_response['errors']['base']
   end
 
   test 'should not cancel offer if already accepted' do
@@ -683,6 +683,6 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     # response content
     assert_not_empty json_response['errors']
 
-    assert_equal ["Couldn't find Offer with 'id'=9999"], json_response['errors']['base']
+    assert_equal ["Couldn't find Offer with 'id'=9999 [WHERE `requests`.`user_id` = ?]"], json_response['errors']['base']
   end
 end

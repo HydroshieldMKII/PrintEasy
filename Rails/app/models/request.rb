@@ -66,7 +66,7 @@ class Request < ApplicationRecord
       'date' => 'target_date',
       'budget' => 'budget',
       'country' => 'users.country_id'
-    }.fetch(category, 'date')
+    }.fetch(category, 'target_date')
 
     direction = direction == 'asc' ? 'ASC' : 'DESC'
     order("#{column} #{direction}")
