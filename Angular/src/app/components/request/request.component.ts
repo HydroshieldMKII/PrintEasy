@@ -7,7 +7,9 @@ import { ImportsModule } from '../../../imports';
 import { MessageService } from 'primeng/api';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { TranslatePipe } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 import { ApiResponseModel } from '../../models/api-response.model';
+import { SliderChangeEvent, SliderSlideEndEvent } from 'primeng/slider';
 
 @Component({
   selector: 'app-request',
@@ -51,17 +53,50 @@ export class RequestsComponent implements OnInit {
     private requestService: RequestService,
     private router: Router,
     private messageService: MessageService,
-    private clipboard: Clipboard
+    private clipboard: Clipboard,
+    private translate: TranslateService
   ) {
     const queryParams = this.router.parseUrl(this.router.url).queryParams;
-    this.currentFilter = queryParams['filter'] || '';
-    this.currentSort = queryParams['sort'] || '';
-    this.currentSortCategory = queryParams['sortCategory'] || '';
-    this.searchQuery = queryParams['search'] || '';
+    this.currentFilter = queryParams['filter'] || null;
+    this.currentSort = queryParams['sort'] || null;
+    this.currentSortCategory = queryParams['sortCategory'] || null;
+    this.searchQuery = queryParams['search'] || null;
 
     // set tab
     this.activeTab = queryParams['tab'] || 'mine';
     this.router.navigate([], { queryParams: { tab: this.activeTab }, queryParamsHandling: 'merge' });
+
+    this.translate.onLangChange.subscribe(() => {
+      this.translateRefresh();
+    });
+    this.translateRefresh();
+  }
+
+  refreshData() {
+    this.filter('all');
+    this.filter('mine');
+  }
+
+  translateRefresh() {
+    this.filterOptions = [
+      { label: this.translate.instant('request.filter.owned-printer'), value: 'owned-printer' },
+      { label: this.translate.instant('request.filter.country'), value: 'country' },
+      { label: this.translate.instant('request.filter.in-progress'), value: 'in-progress' }
+    ];
+
+    this.sortOptions = [
+      { label: this.translate.instant('global.sort.name-asc'), value: 'name-asc' },
+      { label: this.translate.instant('global.sort.name-desc'), value: 'name-desc' },
+      { label: this.translate.instant('global.sort.date-asc'), value: 'date-asc' },
+      { label: this.translate.instant('global.sort.date-desc'), value: 'date-desc' },
+      { label: this.translate.instant('global.sort.budget-asc'), value: 'budget-asc' },
+      { label: this.translate.instant('global.sort.budget-desc'), value: 'budget-desc' },
+      { label: this.translate.instant('global.sort.country-asc'), value: 'country-asc' },
+      { label: this.translate.instant('global.sort.country-desc'), value: 'country-desc' }
+    ];
+
+    this.selectedFilterOption = this.filterOptions.find(option => option.value === this.currentFilter) || null;
+    this.selectedSortOption = this.sortOptions.find(option => option.value === `${this.currentSortCategory}-${this.currentSort}`) || null;
   }
 
   ngOnInit(): void {
@@ -70,11 +105,10 @@ export class RequestsComponent implements OnInit {
     this.initBudgetRange();
     this.initDateRange();
 
-    this.initializeSelectOptions();
     this.filter(this.activeTab);
 
-    this.selectedFilterOption = this.filterOptions.find(option => option.value === this.currentFilter) || this.filterOptions[0];
-    this.selectedSortOption = this.sortOptions.find(option => option.value === `${this.currentSortCategory}-${this.currentSort}`) || this.sortOptions[0];
+    this.selectedFilterOption = this.filterOptions.find(option => option.value === this.currentFilter) || null;
+    this.selectedSortOption = this.sortOptions.find(option => option.value === `${this.currentSortCategory}-${this.currentSort}`) || null;
   }
 
   initDateRange(): void {
@@ -102,48 +136,6 @@ export class RequestsComponent implements OnInit {
       this.budgetRange = [
         parseInt(queryParams['minBudget']),
         parseInt(queryParams['maxBudget'])
-      ];
-    }
-  }
-
-  initializeSelectOptions(): void {
-    if (this.currentLanguage === 'fr') {
-      this.filterOptions = [
-        { label: 'Aucun', value: '' },
-        { label: 'Mes imprimantes', value: 'owned-printer' },
-        { label: 'Mon pays', value: 'country' },
-        { label: 'Acceptées', value: 'in-progress' }
-      ];
-
-      this.sortOptions = [
-        { label: 'Aucun', value: '' },
-        { label: 'Nom (Asc)', value: 'name-asc' },
-        { label: 'Nom (Desc)', value: 'name-desc' },
-        { label: 'Date (Asc)', value: 'date-asc' },
-        { label: 'Date (Desc)', value: 'date-desc' },
-        { label: 'Budget (Asc)', value: 'budget-asc' },
-        { label: 'Budget (Desc)', value: 'budget-desc' },
-        { label: 'Pays (Asc)', value: 'country-asc' },
-        { label: 'Pays (Desc)', value: 'country-desc' }
-      ];
-    } else {
-      this.filterOptions = [
-        { label: 'None', value: '' },
-        { label: 'My printers', value: 'owned-printer' },
-        { label: 'My country', value: 'country' },
-        { label: 'Accepted', value: 'in-progress' }
-      ];
-
-      this.sortOptions = [
-        { label: 'None', value: '' },
-        { label: 'Name (Asc)', value: 'name-asc' },
-        { label: 'Name (Desc)', value: 'name-desc' },
-        { label: 'Date (Asc)', value: 'date-asc' },
-        { label: 'Date (Desc)', value: 'date-desc' },
-        { label: 'Budget (Asc)', value: 'budget-asc' },
-        { label: 'Budget (Desc)', value: 'budget-desc' },
-        { label: 'Country (Asc)', value: 'country-asc' },
-        { label: 'Country (Desc)', value: 'country-desc' }
       ];
     }
   }
@@ -237,19 +229,50 @@ export class RequestsComponent implements OnInit {
 
   onSearch(): void {
     this.router.navigate([], { queryParams: { search: this.searchQuery || null }, queryParamsHandling: 'merge' });
-
-    this.filter('all');
-    this.filter('mine');
+    this.refreshData();
   }
 
   onFilterChange(event: { value: SelectItem }): void {
-    this.currentFilter = event.value.value;
+    this.currentFilter = event?.value?.value || null;
+
+    this.router.navigate([], {
+      queryParams: { filter: this.currentFilter },
+      queryParamsHandling: 'merge'
+    });
+
+    this.refreshData();
   }
 
   onSortChange(event: { value: SelectItem }): void {
-    const [category, order] = event.value.value.split('-');
+    const [category, order] = event?.value?.value.split('-') || [];
     this.currentSort = order;
     this.currentSortCategory = category;
+
+    this.router.navigate([], {
+      queryParams: {
+        sort: this.currentSort || null,
+        sortCategory: this.currentSortCategory || null
+      },
+      queryParamsHandling: 'merge'
+    });
+
+    this.refreshData();
+  }
+
+  onBudgtChange(event: SliderSlideEndEvent): void {
+    if (event.values !== undefined) {
+      this.budgetRange = event.values;
+
+      this.router.navigate([], {
+        queryParams: {
+          minBudget: this.budgetRange[0],
+          maxBudget: this.budgetRange[1]
+        },
+        queryParamsHandling: 'merge'
+      });
+    }
+
+    this.refreshData();
   }
 
   copyToClipboard(pathUrl: string): void {
@@ -259,15 +282,6 @@ export class RequestsComponent implements OnInit {
       severity: 'success',
       summary: this.currentLanguage === 'fr' ? 'Demande copiée dans le presse-papiers' : 'Copied request to clipboard'
     });
-  }
-
-  updateLanguage(newLanguage: string): void {
-    this.currentLanguage = newLanguage;
-    localStorage.setItem('language', newLanguage);
-    this.initializeSelectOptions();
-
-    this.selectedFilterOption = this.filterOptions.find(option => option.value === this.currentFilter) || this.filterOptions[0];
-    this.selectedSortOption = this.sortOptions.find(option => option.value === `${this.currentSortCategory}-${this.currentSort}`) || this.sortOptions[0];
   }
 
   clearAdvancedFilters(): void {
@@ -296,8 +310,8 @@ export class RequestsComponent implements OnInit {
     this.currentSort = '';
     this.currentSortCategory = '';
 
-    this.selectedFilterOption = this.filterOptions[0];
-    this.selectedSortOption = this.sortOptions[0];
+    this.selectedFilterOption = null
+    this.selectedSortOption = null
 
     this.filter('all');
     this.filter('mine');

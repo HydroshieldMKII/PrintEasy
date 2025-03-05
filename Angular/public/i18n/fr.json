@@ -23,6 +23,17 @@
             "gets_error": "Échec de la récupération de tout",
             "summary_error": "Erreur",
             "summary_success": "Succès"
+        },
+        "sort": {
+            "none": "Aucun",
+            "name-asc": "Nom (croissant)",
+            "name-desc": "Nom (décroissant)",
+            "date-asc": "Date (croissant)",
+            "date-desc": "Date (décroissant)",
+            "budget-asc": "Budget (croissant)",
+            "budget-desc": "Budget (décroissant)",
+            "country-asc": "Pays (croissant)",
+            "country-desc": "Pays (décroissant)"
         }
     },
     "login": {
@@ -218,7 +229,12 @@
         "select_date_range": "Sélectionner une période",
         "clear_filters": "Effacer les Filtres",
         "apply_filters": "Appliquer les Filtres",
-        "download": "Télécharger"
+        "download": "Télécharger",
+        "filter": {
+            "owned-printer": "Imprimante possédée",
+            "country": "Pays",
+            "in-progress": "En cours"
+        }
     },
     "requestForm": {
         "edit_request": "Modifier la demande",

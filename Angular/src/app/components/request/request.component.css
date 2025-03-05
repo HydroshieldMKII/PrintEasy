@@ -394,6 +394,10 @@ h3 {
         margin-bottom: 0.5rem;
     }
 
+    #searchInput {
+        width: 100%;
+    }
+
     .filter-header .advanced-toggle {
         justify-content: space-between;
     }

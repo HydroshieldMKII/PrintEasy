@@ -23,13 +23,14 @@
   <div class="filter-header">
     <div class="search-container">
       <span class="p-input-icon-right">
-        <i class="pi pi-search"></i>
+        <i class="pi pi-search" (click)="onSearch()"></i>
         <input
           pInputText
           type="text"
           placeholder="{{ 'request.search_placeholder' | translate }}"
           [(ngModel)]="searchQuery"
           (keyup.enter)="onSearch()"
+          id="searchInput"
         />
       </span>
     </div>
@@ -45,7 +46,7 @@
       <div class="filter-item budget-range">
         <label>{{ 'request.budget_range' | translate }}</label>
         <div class="slider-wrapper">
-          <p-slider [(ngModel)]="budgetRange" [range]="true" [min]="0" [max]="10000"></p-slider>
+          <p-slider [(ngModel)]="budgetRange" [range]="true" [min]="0" [max]="10000" (onSlideEnd)="onBudgtChange($event)"></p-slider>
           <div class="range-values">
             <span>${{budgetRange[0]}}</span>
             <span>${{budgetRange[1]}}</span>
@@ -78,6 +79,8 @@
             <p-select
               [options]="filterOptions"
               [(ngModel)]="selectedFilterOption"
+              variant="filled"
+              [showClear]="true"
               optionLabel="label"
               appendTo="body"
               (onChange)="onFilterChange($event)"
@@ -92,6 +95,8 @@
           <p-select
             [options]="sortOptions"
             [(ngModel)]="selectedSortOption"
+            variant="filled"
+            [showClear]="true"
             optionLabel="label"
             appendTo="body"
             (onChange)="onSortChange($event)"
@@ -126,12 +131,12 @@
         title="{{ 'request.clear_filters' | translate }}"
       ></p-button>
       
-      <p-button 
+      <!-- <p-button 
         icon="pi pi-filter"
         styleClass="p-button-sm"
         (onClick)="applyAdvancedFilters()"
         title="{{ 'request.apply_filters' | translate }}"
-      ></p-button>
+      ></p-button> -->
     </div>
   </div>
 </div>

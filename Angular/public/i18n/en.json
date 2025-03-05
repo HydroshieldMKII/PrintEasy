@@ -23,6 +23,17 @@
             "gets_error": "Failed to get all",
             "summary_error": "Error",
             "summary_success": "Success"
+        },
+        "sort": {
+            "none": "None",
+            "name-asc": "Name (ascending)",
+            "name-desc": "Name (descending)",
+            "date-asc": "Date (ascending)",
+            "date-desc": "Date (descending)",
+            "budget-asc": "Budget (ascending)",
+            "budget-desc": "Budget (descending)",
+            "country-asc": "Country (ascending)",
+            "country-desc": "Country (descending)"
         }
     },
     "login": {
@@ -218,7 +229,12 @@
         "select_date_range": "Select date range",
         "clear_filters": "Clear Filters",
         "apply_filters": "Apply Filters",
-        "download": "Download"
+        "download": "Download",
+        "filter": {
+            "owned-printer": "Owned printer",
+            "country": "Country",
+            "in-progress": "In progress"
+        }
     },
     "requestForm": {
         "edit_request": "Edit Request",

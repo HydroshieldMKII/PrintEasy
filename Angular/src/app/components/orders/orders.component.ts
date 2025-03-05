@@ -16,7 +16,7 @@ import { SelectItemGroup } from 'primeng/api';
 })
 export class OrdersComponent {
   orderService: OrderService = inject(OrderService);
-  router : Router = inject(Router);
+  router: Router = inject(Router);
   translate: TranslateService = inject(TranslateService);
 
   myOrders: OrderModel[] = [];
@@ -29,15 +29,15 @@ export class OrdersComponent {
     'Arrived': '#8fff62',
     'Cancelled': '#ff6262'
   }
-  tab : string = 'commands';
+  tab: string = 'commands';
 
-  searchQuery : string | null = null;
-  selectedFilterOption : SelectItem | null = null;
-  selectedSortOption : SelectItem | null = null;
-  filterOptions : SelectItemGroup[] = []
-  sortOptions : SelectItem[] = []
+  searchQuery: string | null = null;
+  selectedFilterOption: SelectItem | null = null;
+  selectedSortOption: SelectItem | null = null;
+  filterOptions: SelectItemGroup[] = []
+  sortOptions: SelectItem[] = []
   showAdvancedFilters: boolean = false;
-  
+
   constructor() {
     this.translate.onLangChange.subscribe(() => {
       this.translateRefresh();
@@ -50,7 +50,7 @@ export class OrdersComponent {
       .find(item => item.value == this.router.routerState.snapshot.root.queryParams["filter"]) ?? null;
     this.selectedSortOption = this.sortOptions.find(item => item.value == this.router.routerState.snapshot.root.queryParams["sort"]) ?? null;
 
-    if (this.selectedFilterOption || this.selectedSortOption){
+    if (this.selectedFilterOption || this.selectedSortOption) {
       this.showAdvancedFilters = true;
     }
     this.updateUrl();
@@ -91,20 +91,20 @@ export class OrdersComponent {
     ]
   }
 
-  getMyOrders(params : { [key: string]: string } = {}) {
+  getMyOrders(params: { [key: string]: string } = {}) {
     params['type'] = 'my';
     this.orderService.getOrders(params).subscribe((response: ApiResponseModel | OrderModel[]) => {
-      if (Array.isArray(response)){
+      if (Array.isArray(response)) {
         this.myOrders = response;
         console.log(this.myOrders);
       }
     });
   }
 
-  getMakeOrders(params : { [key: string]: string } = {}) {
+  getMakeOrders(params: { [key: string]: string } = {}) {
     params['type'] = 'printer';
     this.orderService.getOrders(params).subscribe((response: ApiResponseModel | OrderModel[]) => {
-      if (Array.isArray(response)){
+      if (Array.isArray(response)) {
         this.makeOrders = response;
         console.log(this.makeOrders);
       }
@@ -115,34 +115,34 @@ export class OrdersComponent {
     this.updateUrl();
   }
 
-  onFilterChange(event : any) {
+  onFilterChange(event: any) {
     this.updateUrl();
   }
 
-  onSortChange(event : any) {
+  onSortChange(event: any) {
     this.updateUrl();
   }
 
-  updateUrl(){
-    let params : { [key: string]: string } = {};
+  updateUrl() {
+    let params: { [key: string]: string } = {};
     params['tab'] = this.tab;
-    if (this.selectedFilterOption){
+    if (this.selectedFilterOption) {
       params['filter'] = this.selectedFilterOption.value.toString();
     }
-    if (this.selectedSortOption){
+    if (this.selectedSortOption) {
       params['sort'] = this.selectedSortOption.value.toString();
     }
-    if (this.searchQuery){
+    if (this.searchQuery) {
       params['search'] = this.searchQuery;
     }
     this.router.navigate(['/orders'], { queryParams: params });
-    if (this.tab == 'contracts'){
+    if (this.tab == 'contracts') {
       this.getMakeOrders(params);
     }
     else {
       this.getMyOrders(params);
     }
-    
+
   }
 
   openContracts() {
