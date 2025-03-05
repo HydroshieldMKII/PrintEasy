@@ -32,6 +32,7 @@ module Api
       if @request.update(request_params)
         render Request.format_response(@request)
       else
+        # debugger
         render json: { request: {}, errors: @request.errors }, status: :unprocessable_entity
       end
     end

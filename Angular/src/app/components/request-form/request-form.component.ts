@@ -134,6 +134,7 @@ export class RequestFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.presetToDelete = [];
     const action = this.route.snapshot.url[0]?.path;
     this.id = this.route.snapshot.params['id'];
     this.isEditMode = action === 'edit';
@@ -238,13 +239,14 @@ export class RequestFormComponent implements OnInit {
 
   removePreset(index: number): void {
     const preset = this.request.presets[index];
+
     if (!preset.id) {
       this.request.presets.splice(index, 1);
       return;
     }
-    preset._destroy = true;
+
+    this.presetToDelete.push({ ...preset });
     this.request.presets.splice(index, 1);
-    this.presetToDelete.push(preset);
   }
 
   onFileUpload(event: FileSelectEvent): void {
@@ -288,11 +290,14 @@ export class RequestFormComponent implements OnInit {
 
     if (this.isEditMode) {
       this.requestService.updateRequest(this.request.id, formData).subscribe(response => {
-
+        if (response.status === 200) {
+          this.presetToDelete = [];
+        }
       });
     } else if (this.isNewMode) {
       this.requestService.createRequest(formData).subscribe(response => {
         if (response.status === 201) {
+          this.presetToDelete = [];
           this.router.navigate(['/requests/edit', response.data.request.id]);
         }
       });
@@ -305,10 +310,6 @@ export class RequestFormComponent implements OnInit {
 
     if (this.request.presets && this.request.presets.length > 0) {
       for (const preset of this.request.presets) {
-        // Now we're using the preset objects directly instead of finding them
-        // Since each preset.color, preset.filamentType, etc. is already 
-        // the complete object from the dropdown options
-
         if (preset.printerModel.id && preset.filamentType.id && preset.color.id && preset.printQuality && this.isPresetValid(preset)) {
           if (preset.id) {
             formData.append(`request[preset_requests_attributes][${presetIndex}][id]`, preset.id.toString());
@@ -317,7 +318,7 @@ export class RequestFormComponent implements OnInit {
           formData.append(`request[preset_requests_attributes][${presetIndex}][printer_id]`, preset.printerModel.id.toString());
           formData.append(`request[preset_requests_attributes][${presetIndex}][filament_id]`, preset.filamentType.id.toString());
           formData.append(`request[preset_requests_attributes][${presetIndex}][color_id]`, preset.color.id.toString());
-          formData.append(`request[preset_requests_attributes][${presetIndex}][print_quality]`, preset.printQuality);
+          formData.append(`request[preset_requests_attributes][${presetIndex}][print_quality]`, preset.printQuality.toString());
           presetIndex++;
         } else {
           hasError = true;
@@ -326,11 +327,15 @@ export class RequestFormComponent implements OnInit {
     }
 
     if (this.presetToDelete && this.presetToDelete.length > 0) {
+      const processedIds = new Set();
+
       for (const preset of this.presetToDelete) {
-        if (preset.id) {
+        if (preset.id && !processedIds.has(preset.id)) {
           formData.append(`request[preset_requests_attributes][${presetIndex}][id]`, preset.id.toString());
           formData.append(`request[preset_requests_attributes][${presetIndex}][_destroy]`, '1');
           presetIndex++;
+
+          processedIds.add(preset.id);
         }
       }
     }
