@@ -17,11 +17,12 @@ import { MessageService, SelectItem } from 'primeng/api';
 import { Select, SelectModule } from 'primeng/select';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { SliderModule } from 'primeng/slider';
+import { Slider } from 'primeng/slider';
 
 @Component({
   selector: 'app-contest',
   standalone: true,
-  imports: [CardModule, ButtonModule, InputTextModule, FormsModule, CommonModule, SpeedDialModule, DialogModule, RouterLink, TranslatePipe, SelectModule, FloatLabelModule, SliderModule],
+  imports: [CardModule, ButtonModule, InputTextModule, FormsModule, CommonModule, SpeedDialModule, DialogModule, RouterLink, TranslatePipe, SelectModule, FloatLabelModule, SliderModule, Slider],
   templateUrl: './contest.component.html',
   styleUrls: ['./contest.component.css']
 })
@@ -39,7 +40,7 @@ export class ContestComponent {
   currentSort: string = '';
   currentSortCategory: string = '';
   currentQuery: string = '';
-  currentValue: number = 1;
+  currentValues: number[] = [0, 30];
   sliderClass: string = 'none';
   showAdvancedFilters: boolean = false;
 
@@ -65,7 +66,15 @@ export class ContestComponent {
       this.currentSort = params['sort'] || '';
       this.currentSortCategory = params['sortCategory'] || '';
       this.currentQuery = params['search'] || '';
-      this.currentValue = params['participants'] || 1;
+      if (params['participants'] && Array.isArray(params['participants'])) {
+        this.currentValues = params['participants'];
+      } else {
+        this.currentValues = [0, 30];
+        this.route.navigate([], {
+          queryParams: { participants: null },
+          queryParamsHandling: 'merge'
+        });
+      }
 
       this.selectedFilterOption = this.filterOptions.find(option => option.value === this.currentFilter) || this.filterOptions[0];
       this.selectedSortOption = this.sortOptions.find(option => option.value === `${this.currentSortCategory}-${this.currentSort}`) || this.sortOptions[0];
@@ -95,15 +104,14 @@ export class ContestComponent {
       ssf_params = { ...ssf_params, search: this.currentQuery };
     }
 
-    if (this.currentValue >= 0) {
-      ssf_params = { ...ssf_params, participants: this.currentValue };
+    if (this.currentValues[0] > 0 || this.currentValues[1] <= 30) {
+      ssf_params = { ...ssf_params, participants_min: this.currentValues[0], participants_max: this.currentValues[1] };
     }
     
     return ssf_params;
   }
 
   newContest() {
-    console.log('New contest');
     this.route.navigate(['/contest/new']);
   }
 
@@ -166,12 +174,11 @@ export class ContestComponent {
   }
 
   onSlideEnd(event: any) {
-    this.currentValue = event.value;
-
-    console.log('Slide end:', this.currentValue);
+    console.log('Slide end:', event.values);
+    this.currentValues = event.values;
 
     this.route.navigate([], {
-      queryParams: { participants: this.currentValue || 0 },
+      queryParams: { participants: this.currentValues || null },
       queryParamsHandling: 'merge'
     });
 
@@ -184,7 +191,6 @@ export class ContestComponent {
 
   fetchContests() {
     this.contestService.getContests(this.ssf()).subscribe((response) => {
-      console.log('Contests:', response);
       this.contests = response;
     }
     );

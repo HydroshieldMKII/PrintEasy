@@ -25,13 +25,13 @@ class Contest < ApplicationRecord
     where('end_at < ?', Time.now)
   }
 
-  scope :with_participants, ->(participants) {
-    return if participants.blank?
+  scope :with_participants, ->(participants_min, participants_max) {
+    return if participants_min.blank? && participants_max.blank?
 
     left_joins(:submissions)
     .joins("LEFT JOIN users ON users.id = submissions.user_id")
     .group("contests.id")
-    .having("COUNT(DISTINCT users.id) <= ?", participants)
+    .having("COUNT(DISTINCT users.id) >= ? AND COUNT(DISTINCT users.id) <= ?", participants_min, participants_max)
   }
   
   scope :sort_by_submissions, -> (direction_params) {
@@ -96,7 +96,7 @@ class Contest < ApplicationRecord
                     .search(params[:search])
                     .active(params)
                     .finished(params)
-                    .with_participants(params[:participants])
+                    .with_participants(params[:participants_min], params[:participants_max])
                     .sort_by_submissions(params[:sort_by_submissions])
                     .sort_by_date(params[:category], params[:sort])
                     .order(Arel.sql('

@@ -33,10 +33,10 @@
         <div class="filter-item participants-range">
           <label>{{ 'contest.participants_range' | translate }}</label>
           <div class="slider-wrapper">
-            <p-slider [(ngModel)]="currentValue" (onSlideEnd)="onSlideEnd($event)" min="0" max="30" />
+            <p-slider [range]="true" [(ngModel)]="currentValues" (onSlideEnd)="onSlideEnd($event)" [min]="0" [max]="30" />
             <div class="range-values">
-              <span>0</span>
-              <span>{{ currentValue }}</span>
+              <span>{{ currentValues[0] }}</span>
+              <span>{{ currentValues[1] }}</span>
             </div>
           </div>
         </div>

@@ -141,7 +141,8 @@
             "edit_printer": "Edit Printer",
             "add_printer": "Add Printer",
             "printer_model_required": "Printer Model is required",
-            "acquisition_date_required": "Acquisition Date is required"
+            "acquisition_date_required": "Acquisition Date is required",
+            "no_print_review": "No print review"
         }
     },
     "orders": {

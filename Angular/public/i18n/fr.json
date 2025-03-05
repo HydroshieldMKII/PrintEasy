@@ -142,7 +142,8 @@
             "edit_printer": "Modifier l'imprimante",
             "add_printer": "Ajouter une imprimante",
             "printer_model_required": "Le modèle d'imprimante est requis",
-            "acquisition_date_required": "La date d'acquisition est requise"
+            "acquisition_date_required": "La date d'acquisition est requise",
+            "no_print_review": "Pas d'avis sur l'imprimante"
         }
     },
     "orders": {
