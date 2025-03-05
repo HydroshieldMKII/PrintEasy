@@ -231,36 +231,36 @@
       <tr [ngClass]="{ 'invalid': !isPresetValid(preset) }">
         <td>
           <p-select
-            [(ngModel)]="preset.printerModel.model"
-            [options]="printers"
-            optionLabel="label"
-            optionValue="value"
-            placeholder="{{ 'requestForm.select_printer' | translate }}"
-            [disabled]="isViewMode || request.hasOffers"
-            appendTo="body"
-          ></p-select>
+          [(ngModel)]="preset.printerModel"
+          [options]="printers"
+          optionLabel="label"
+          dataKey="id"
+          placeholder="{{ 'requestForm.select_printer' | translate }}"
+          [disabled]="isViewMode || request.hasOffers"
+          appendTo="body"
+        ></p-select>
         </td>
         <td>
           <p-select
-            [(ngModel)]="preset.filamentType.name"
-            [options]="filamentTypes"
-            optionLabel="label"
-            optionValue="value"
-            placeholder="{{ 'requestForm.select_filament' | translate }}"
-            [disabled]="isViewMode || request.hasOffers"
-            appendTo="body"
-          ></p-select>
+          [(ngModel)]="preset.filamentType"
+          [options]="filamentTypes" 
+          optionLabel="label"
+          dataKey="id"
+          placeholder="{{ 'requestForm.select_filament' | translate }}"
+          [disabled]="isViewMode || request.hasOffers"
+          appendTo="body"
+        ></p-select>
         </td>
         <td>
           <p-select
-            [(ngModel)]="preset.color.name"
-            [options]="colors"
-            optionLabel="label"
-            optionValue="value"
-            placeholder="{{ 'requestForm.select_color' | translate }}"
-            [disabled]="isViewMode || request.hasOffers"
-            appendTo="body"
-          ></p-select>
+          [(ngModel)]="preset.color"
+          [options]="colors"
+          optionLabel="label"
+          dataKey="id"
+          placeholder="{{ 'requestForm.select_color' | translate }}"
+          [disabled]="isViewMode || request.hasOffers"
+          appendTo="body"
+        ></p-select>
         </td>
         <td>
           <p-inputnumber 

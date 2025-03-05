@@ -73,7 +73,47 @@ export class RequestFormComponent implements OnInit {
     private translate: TranslateService
   ) {
     this.dateValidator = this.dateValidator.bind(this);
+
+    this.translate.onLangChange.subscribe(() => {
+      this.translateRefresh();
+    });
+    this.translateRefresh();
   }
+
+  translateRefresh(): void {
+    this.colors = this.colors.map((color: any) => {
+      color.label = this.translateColor(color.id);
+      color.value = color.label;
+      return color;
+    });
+
+    this.filamentTypes = this.filamentTypes.map((filament: any) => {
+      filament.label = this.translateFilament(filament.id);
+      filament.value = filament.label;
+      return filament;
+    });
+
+    this.request.presets = this.request.presets.map((preset: any) => {
+      const matchingColor = this.colors.find((c: any) => c.id === preset.color.id);
+      const matchingFilament = this.filamentTypes.find((f: any) => f.id === preset.filamentType.id);
+      const matchingPrinter = this.printers.find((p: any) => p.id === preset.printerModel.id);
+
+      if (matchingColor) {
+        preset.color = { ...matchingColor };
+      }
+
+      if (matchingFilament) {
+        preset.filamentType = { ...matchingFilament };
+      }
+
+      if (matchingPrinter) {
+        preset.printerModel = { ...matchingPrinter };
+      }
+
+      return preset;
+    });
+  }
+
 
   dateValidator(control: AbstractControl) {
     const selectedDate = new Date(control.value);
@@ -265,17 +305,18 @@ export class RequestFormComponent implements OnInit {
 
     if (this.request.presets && this.request.presets.length > 0) {
       for (const preset of this.request.presets) {
-        const printer = this.printers.find((p: any) => p.label === preset.printerModel.model);
-        const filament = this.filamentTypes.find((f: any) => f.label === preset.filamentType.name);
-        const color = this.colors.find((c: any) => c.label === preset.color.name);
+        // Now we're using the preset objects directly instead of finding them
+        // Since each preset.color, preset.filamentType, etc. is already 
+        // the complete object from the dropdown options
 
-        if (printer && filament && color && preset.printQuality && this.isPresetValid(preset)) {
+        if (preset.printerModel.id && preset.filamentType.id && preset.color.id && preset.printQuality && this.isPresetValid(preset)) {
           if (preset.id) {
             formData.append(`request[preset_requests_attributes][${presetIndex}][id]`, preset.id.toString());
           }
-          formData.append(`request[preset_requests_attributes][${presetIndex}][printer_id]`, printer.id.toString());
-          formData.append(`request[preset_requests_attributes][${presetIndex}][filament_id]`, filament.id.toString());
-          formData.append(`request[preset_requests_attributes][${presetIndex}][color_id]`, color.id.toString());
+
+          formData.append(`request[preset_requests_attributes][${presetIndex}][printer_id]`, preset.printerModel.id.toString());
+          formData.append(`request[preset_requests_attributes][${presetIndex}][filament_id]`, preset.filamentType.id.toString());
+          formData.append(`request[preset_requests_attributes][${presetIndex}][color_id]`, preset.color.id.toString());
           formData.append(`request[preset_requests_attributes][${presetIndex}][print_quality]`, preset.printQuality);
           presetIndex++;
         } else {
@@ -315,9 +356,9 @@ export class RequestFormComponent implements OnInit {
 
   addPreset(): void {
     this.request.presets.push({
-      printerModel: { model: '' },
-      filamentType: { name: '' },
-      color: { name: '' },
+      printerModel: { id: null, model: '', label: '', value: '' },
+      filamentType: { id: null, name: '', label: '', value: '' },
+      color: { id: null, name: '', label: '', value: '' },
       printQuality: 0.16
     });
   }
@@ -345,14 +386,14 @@ export class RequestFormComponent implements OnInit {
   }
 
   isPresetValid(preset: any): boolean {
-    const printerValid = !!this.printers.find((p: any) => p.label === preset.printerModel.model);
-    const filamentValid = !!this.filamentTypes.find((f: any) => f.label === preset.filamentType.name);
-    const colorValid = !!this.colors.find((c: any) => c.label === preset.color.name);
+    const printerValid = preset.printerModel && preset.printerModel.id !== null;
+    const filamentValid = preset.filamentType && preset.filamentType.id !== null;
+    const colorValid = preset.color && preset.color.id !== null;
 
     const isDuplicate = this.request.presets.filter((p: any) =>
-      p.printerModel.model === preset.printerModel.model &&
-      p.filamentType.name === preset.filamentType.name &&
-      p.color.name === preset.color.name &&
+      p.printerModel.id === preset.printerModel.id &&
+      p.filamentType.id === preset.filamentType.id &&
+      p.color.id === preset.color.id &&
       p.printQuality === preset.printQuality
     ).length > 1;
 
@@ -402,5 +443,15 @@ export class RequestFormComponent implements OnInit {
         reader.readAsArrayBuffer(file);
       }
     }
+  }
+
+  private translateFilament(id: number): string {
+    const key = FilamentModel.filamentMap[id];
+    return key ? this.translate.instant(`materials.${key}`) : `Unknown Filament (${id})`;
+  }
+
+  private translateColor(id: number): string {
+    const key = ColorModel.colorMap[id];
+    return key ? this.translate.instant(`colors.${key}`) : `Unknown Color (${id})`;
   }
 }
