@@ -34,64 +34,64 @@ module Api
       end
     end
 
-    def order_as_json(order) 
-    order.as_json(
-      except: %i[offer_id],
-      include: {
-        offer: {
-          except: %i[created_at updated_at printer_user_id request_id color_id filament_id],
-          include: {
-            printer_user: {
-              except: %i[printer_id user_id],
-              include: {
-                user: {
-                  except: %i[country_id],
-                  include: {country: {}},
-                  methods: %i[profile_picture_url]
-                },
-                printer: { only: %i[id model]}
-              }
-            },
-            request: {
-              except: %i[created_at updated_at user_id],
-              methods: %i[stl_file_url],
-              include: {
-                user: {
-                  except: %i[country_id],
-                  include: {country: {}},
-                  methods: %i[profile_picture_url]
-                },
-                preset_requests: {
-                  except: %i[request_id, color_id, filament_id, printer_id],
-                  include: {
-                    color: {},
-                    filament: {},
-                    printer: {}
+    def order_as_json(order)
+      order.as_json(
+        except: %i[offer_id],
+        include: {
+          offer: {
+            except: %i[created_at updated_at printer_user_id request_id color_id filament_id],
+            include: {
+              printer_user: {
+                except: %i[printer_id user_id],
+                include: {
+                  user: {
+                    except: %i[country_id],
+                    include: { country: {} },
+                    methods: %i[profile_picture_url]
+                  },
+                  printer: { only: %i[id model] }
+                }
+              },
+              request: {
+                except: %i[created_at updated_at user_id],
+                methods: %i[stl_file_url],
+                include: {
+                  user: {
+                    except: %i[country_id],
+                    include: { country: {} },
+                    methods: %i[profile_picture_url]
+                  },
+                  preset_requests: {
+                    except: %i[request_id color_id filament_id printer_id],
+                    include: {
+                      color: {},
+                      filament: {},
+                      printer: {}
+                    }
                   }
                 }
-              }
-            },
-            color: {},
-            filament: {}
-          }
-        },
-        review: {
-          include: {
-            user: {
-              except: %i[crountry_id],
-              include: {country: {}},
-              methods: %i[profile_picture_url]
+              },
+              color: {},
+              filament: {}
             }
           },
-          methods: %i[image_urls]
+          review: {
+            include: {
+              user: {
+                except: %i[crountry_id],
+                include: { country: {} },
+                methods: %i[profile_picture_url]
+              }
+            },
+            methods: %i[image_urls]
+          },
+          order_status: {
+            except: %i[order_id],
+            methods: %i[image_url]
+          }
         },
-        order_status: {
-          except: %i[order_id],
-          methods: %i[image_url]
-        }
-      },
-      methods: %i[available_status]
-    )
+        methods: %i[available_status]
+      )
     end
-  end  
+  end
 end

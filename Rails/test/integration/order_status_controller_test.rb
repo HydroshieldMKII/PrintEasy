@@ -85,7 +85,7 @@ class OrderStatusControllerTest < ActionDispatch::IntegrationTest
       @parsed_response = JSON.parse(response.body)
     end
     assert_equal ['must exist'], @parsed_response['errors']['order']
-    assert_equal ["You are not authorized to create a new status for this order"], @parsed_response['errors']['order_status']
+    assert_equal ['You are not authorized to create a new status for this order'], @parsed_response['errors']['order_status']
   end
 
   # test "should not create -> invalid status_name" do

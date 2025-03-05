@@ -145,7 +145,8 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
       JSON.parse(response.body)
     end
 
-    assert_equal ["Couldn't find Request with 'id'=9999 [WHERE (`requests`.`user_id` = ? OR `requests`.`id` IS NOT NULL)]"], json_response['errors']['base']
+    assert_equal ["Couldn't find Request with 'id'=9999 [WHERE (`requests`.`user_id` = ? OR `requests`.`id` IS NOT NULL)]"],
+                 json_response['errors']['base']
   end
 
   ### CREATE ACTION ###
@@ -605,7 +606,7 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
       JSON.parse(response.body)
     end
 
-    assert_equal ["Cannot delete request with accepted offers"], json_response['errors']['base']
+    assert_equal ['Cannot delete request with accepted offers'], json_response['errors']['base']
   end
 
   test "should not allow user to delete another user's request" do

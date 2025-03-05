@@ -14,41 +14,43 @@ class Order < ApplicationRecord
   validate :user_owns_request
 
   scope :search_by_name, ->(query) { joins(offer: :request).where('requests.name LIKE ?', "%#{query}%") if query.present? }
-  scope :status_filter, ->(status) { joins(:order_status).where(order_status: { id: OrderStatus.select('MAX(id)').group(:order_id) }).where(order_status: { status_name: status }) }
-  scope :review_filter, -> {joins(:review)}
-  scope :not_review_filter, -> {where.not(id: joins(:review).select(:id))}
-  scope :apply_sort, ->(sort) {
+  scope :status_filter, lambda { |status|
+    joins(:order_status).where(order_status: { id: OrderStatus.select('MAX(id)').group(:order_id) }).where(order_status: { status_name: status })
+  }
+  scope :review_filter, -> { joins(:review) }
+  scope :not_review_filter, -> { where.not(id: joins(:review).select(:id)) }
+  scope :apply_sort, lambda { |sort|
     return order('offers.target_date DESC') unless sort.present?
+
     field, direction = sort.split('-')
     column = {
       'name' => 'requests.name',
       'date' => 'offers.target_date',
-      'price' => 'offers.price',
+      'price' => 'offers.price'
     }.fetch(field, 'offers.target_date')
     direction = direction == 'asc' ? 'ASC' : 'DESC'
     joins(offer: :request).order("#{column} #{direction}")
   }
-    
 
   def self.fetch_for_user(params)
     case params[:type]
     when 'printer'
       joins(offer: { printer_user: :user })
-      .where(users: { id: Current.user.id })
-      .search_by_name(params[:search])
-      .apply_filters(params[:filter])
-      .apply_sort(params[:sort])
+        .where(users: { id: Current.user.id })
+        .search_by_name(params[:search])
+        .apply_filters(params[:filter])
+        .apply_sort(params[:sort])
     else
       joins(offer: { request: :user })
-      .where(users: { id: Current.user.id })
-      .search_by_name(params[:search])
-      .apply_filters(params[:filter])
-      .apply_sort(params[:sort])
+        .where(users: { id: Current.user.id })
+        .search_by_name(params[:search])
+        .apply_filters(params[:filter])
+        .apply_sort(params[:sort])
     end
   end
 
   def self.apply_filters(filter)
-    if ['Accepted', 'Printing', 'Printed', 'Shipped', 'Arrived', 'Cancelled'].include?(filter)
+    if %w[Accepted Printing Printed Shipped Arrived Cancelled].include?(filter)
       status_filter(filter)
     elsif filter == 'reviewed'
       review_filter
@@ -90,9 +92,7 @@ class Order < ApplicationRecord
   end
 
   def not_two_order_with_the_same_request
-    if request.nil?
-      return false
-    end
+    return false if request.nil?
     return true unless request.offers.joins(:order).count.positive?
 
     errors.add(:offer_id, 'Request already has an order')
