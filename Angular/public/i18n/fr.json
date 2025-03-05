@@ -143,7 +143,10 @@
             "add_printer": "Ajouter une imprimante",
             "printer_model_required": "Le modèle d'imprimante est requis",
             "acquisition_date_required": "La date d'acquisition est requise",
-            "no_print_review": "Pas d'avis sur l'imprimante"
+            "no_print_review": "Pas d'avis sur l'imprimante",
+            "acquired_on": "Acquis le",
+            "last_used_on": "Dernière utilisation le",
+            "never_used": "Jamais utilisé"
         }
     },
     "orders": {

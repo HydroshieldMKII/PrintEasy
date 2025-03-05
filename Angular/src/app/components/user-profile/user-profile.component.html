@@ -104,16 +104,16 @@
                         <div class="card-body">
                             <p class="acquisition-date">
                                 <i class="pi pi-calendar"></i>
-                                Acquired on {{ printerUser.aquiredDate | date:'MMM d, y' }}
+                                {{ 'user_profile.printer.acquired_on' | translate }} {{ printerUser.aquiredDate | date:'MMM d, y' }}
                             </p>
 
                             <p class="last-used" *ngIf="printerUser.lastUsed">
                                 <i class="pi pi-clock"></i>
-                                Last used on {{ printerUser.lastUsed | date:'MMM d, y' }}
+                                {{ 'user_profile.printer.last_used_on' | translate }} {{ printerUser.lastUsed | date:'MMM d, y' }}
                             </p>
                             <p class="last-used not-used" *ngIf="!printerUser.lastUsed">
                                 <i class="pi pi-clock"></i>
-                                Never used
+                                {{ 'user_profile.printer.never_used' | translate }}
                             </p>
                         </div>
 

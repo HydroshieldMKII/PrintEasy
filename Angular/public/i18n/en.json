@@ -142,7 +142,10 @@
             "add_printer": "Add Printer",
             "printer_model_required": "Printer Model is required",
             "acquisition_date_required": "Acquisition Date is required",
-            "no_print_review": "No print review"
+            "no_print_review": "No print review",
+            "acquired_on": "Acquired on",
+            "last_used_on": "Last used on",
+            "never_used": "Never used"
         }
     },
     "orders": {
