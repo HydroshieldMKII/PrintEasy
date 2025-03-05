@@ -15,6 +15,7 @@
         "advanced": "Advanced",
         "sort": "Sort",
         "filter": "Filter",
+        "confirm_delete": "Confirm Delete",
         "errors": {
             "created_success": "Created successfully",
             "updated_success": "Updated successfully",
@@ -145,7 +146,11 @@
             "no_print_review": "No print review",
             "acquired_on": "Acquired on",
             "last_used_on": "Last used on",
-            "never_used": "Never used"
+            "never_used": "Never used",
+            "edit_active_offers": "Cannot edit printer with active offers",
+            "delete_active_offers": "Cannot delete printer with active offers",
+            "delete_printer": "Delete Printer",
+            "confirm_delete_message": "Are you sure you want to delete this printer? This action cannot be undone."
         }
     },
     "orders": {

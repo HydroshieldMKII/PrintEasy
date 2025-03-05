@@ -15,6 +15,7 @@
         "advanced": "Personnaliser",
         "sort": "Trier par",
         "filter": "Filtrer par",
+        "confirm_delete": "Confirmer la suppression",
         "errors": {
             "created_success": "Créé avec succès",
             "updated_success": "Mis à jour avec succès",
@@ -146,7 +147,11 @@
             "no_print_review": "Pas d'avis sur l'imprimante",
             "acquired_on": "Acquis le",
             "last_used_on": "Dernière utilisation le",
-            "never_used": "Jamais utilisé"
+            "never_used": "Jamais utilisé",
+            "edit_active_offers": "Vous ne pouvez pas modifier l'imprimante car vous avez des offres actives",
+            "delete_active_offers": "Impossible de supprimer l'imprimante avec des offres actives",
+            "delete_printer": "Supprimer l'imprimante",
+            "confirm_delete_message": "Êtes-vous sûr de vouloir supprimer l'imprimante ? Cette action ne peut pas être annulée."
         }
     },
     "orders": {
