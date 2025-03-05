@@ -25,8 +25,8 @@ module Api
     end
 
     def create
-      newParams = { order: { offer_id: params[:id], order_status_attributes: [{ status_name: 'Accepted' }] } }
-      @order = Order.new(newParams[:order])
+      new_params = { order: { offer_id: params[:id], order_status_attributes: [{ status_name: 'Accepted' }] } }
+      @order = Order.new(new_params[:order])
       if @order.save
         render json: { order: order_as_json(@order), errors: {} }, status: :created
       else

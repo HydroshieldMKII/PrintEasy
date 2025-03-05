@@ -184,8 +184,12 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
       @parsed_response = JSON.parse(response.body)
     end
     assert_equal ['must exist'], @parsed_response['errors']['offer']
-    assert_equal ["can't be blank", 'Offer must exist', 'Consumer and printer cannot be the same user', 'User is not owner of request'],
-                 @parsed_response['errors']['offer_id']
+    assert_equal [
+      "can't be blank",
+      'Offer must exist',
+      'Consumer and printer cannot be the same user',
+      'User is not owner of request'
+    ], @parsed_response['errors']['offer_id']
   end
 
   test "should not get create -> offer_id doesn't exist" do

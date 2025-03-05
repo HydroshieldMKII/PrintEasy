@@ -15,7 +15,9 @@ class Order < ApplicationRecord
 
   scope :search_by_name, ->(query) { joins(offer: :request).where('requests.name LIKE ?', "%#{query}%") if query.present? }
   scope :status_filter, lambda { |status|
-    joins(:order_status).where(order_status: { id: OrderStatus.select('MAX(id)').group(:order_id) }).where(order_status: { status_name: status })
+    joins(:order_status)
+      .where(order_status: { id: OrderStatus.select('MAX(id)').group(:order_id) })
+      .where(order_status: { status_name: status })
   }
   scope :review_filter, -> { joins(:review) }
   scope :not_review_filter, -> { where.not(id: joins(:review).select(:id)) }
