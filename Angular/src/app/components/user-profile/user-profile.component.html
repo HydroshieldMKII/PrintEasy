@@ -83,14 +83,14 @@
                     </div>
                 </div>
             </p-tabpanel>
-            
+
             <p-tabpanel [value]="'printers'">
                 <div class="printers-container">
                     <div *ngFor="let printerUser of printerUsers" class="printer-card">
                         <div class="card-header">
                             <h3>{{ printerUser.printer.model }}</h3>
                         </div>
-                        
+
                         <div class="printer-preview">
                             <div *ngIf="printerUser.lastReviewedImage" class="preview-image">
                                 <img [src]="printerUser.lastReviewedImage" alt="Last print preview">
@@ -100,13 +100,13 @@
                                 <span>No print preview</span>
                             </div>
                         </div>
-                        
+
                         <div class="card-body">
                             <p class="acquisition-date">
                                 <i class="pi pi-calendar"></i>
                                 Acquired on {{ printerUser.aquiredDate | date:'MMM d, y' }}
                             </p>
-                            
+
                             <p class="last-used" *ngIf="printerUser.lastUsed">
                                 <i class="pi pi-clock"></i>
                                 Last used on {{ printerUser.lastUsed | date:'MMM d, y' }}
@@ -116,25 +116,19 @@
                                 Never used
                             </p>
                         </div>
-                        
+
                         <div class="card-actions">
                             <div class="button-group">
-                                <p-button
-                                    type="button"
-                                    icon="pi pi-pencil"
-                                    severity="primary"
+                                <p-button type="button" icon="pi pi-pencil" severity="primary"
                                     (click)="editPrinter(printerUser)">
                                 </p-button>
-                                <p-button
-                                    type="button"
-                                    icon="pi pi-trash"
-                                    severity="danger"
+                                <p-button type="button" icon="pi pi-trash" severity="danger"
                                     (click)="showDeleteDialog(printerUser)">
                                 </p-button>
                             </div>
                         </div>
                     </div>
-                   
+
                     <div class="add-printer-card" (click)="showAddPrinterDialog()">
                         <div class="add-printer-content">
                             <i class="pi pi-plus-circle"></i>
@@ -143,59 +137,44 @@
                     </div>
                 </div>
             </p-tabpanel>
-            
+
             <!-- Add/Edit Printer Dialog -->
-            <p-dialog 
-                header="{{isEditMode ? 'Edit Printer' : 'Add Printer'}}" 
-                [(visible)]="printerDialogVisible" 
-                [modal]="true" 
-                [style]="{width: '30rem'}" 
-                [draggable]="false" 
-                [resizable]="false">
+            <p-dialog header="{{isEditMode ? 'Edit Printer' : 'Add Printer'}}" [(visible)]="printerDialogVisible"
+                [modal]="true" [style]="{'width': '30rem'}" [draggable]="false" class="printer-dialog" [resizable]="false">
                 <form [formGroup]="printerForm" (ngSubmit)="onPrinterSubmit()">
                     <div class="field">
-                        <label for="model">Printer Model</label>
-                        <p-select 
-                            formControlName="printer" 
-                            [options]="availablePrinters" 
-                            optionLabel="model" 
-                            placeholder="Select a printer model" 
-                            [style]="{width: '100%'}"
-                            appendTo="body">
-                        </p-select>
-                        <small *ngIf="printerForm.get('printer')?.hasError('required') && printerForm.get('printer')?.touched" class="p-error">Printer model is required</small>
+                        <p-floatlabel variant="in">
+                            <p-select formControlName="printer" [options]="availablePrinters" optionLabel="model"
+                                 [style]="{width: '100%'}" appendTo="body">
+                            </p-select>
+                            <label for="model">Printer Model</label>
+                        </p-floatlabel>
+                        <p-message severity="error" variant="simple" size="small">Printer model is required</p-message>
                     </div>
-                    
+
                     <div class="field">
-                        <label for="aquiredDate">Acquisition Date</label>
-                        <p-calendar 
-                            appendTo="body"
-                            formControlName="aquiredDate" 
-                            [showIcon]="true" 
-                            dateFormat="yy-mm-dd"
-                            [style]="{width: '100%'}"
-                            [maxDate]="today">
-                        </p-calendar>
-                        <small *ngIf="printerForm.get('aquiredDate')?.hasError('required') && printerForm.get('aquiredDate')?.touched" class="p-error">Acquisition date is required</small>
+                        <p-floatlabel variant="in">
+                            <p-datepicker appendTo="body" formControlName="aquiredDate" [showIcon]="true"
+                                dateFormat="yy-mm-dd" [style]="{width: '100%'}" [maxDate]="today">
+                            </p-datepicker>
+                            <label for="aquiredDate">Acquisition Date</label>
+                        </p-floatlabel>
+                        <p-message severity="error" variant="simple" size="small">Acquisition date is
+                            required</p-message>
                     </div>
-                    
+
                     <div class="dialog-footer">
-                        <p-button type="button" label="Cancel" icon="pi pi-times" (click)="printerDialogVisible = false" styleClass="p-button-text"></p-button>
-                        <p-button type="submit" label="Save" icon="pi pi-check" [disabled]="printerForm.invalid"></p-button>
+                        <p-button type="button" label="Cancel" icon="pi pi-times" (click)="printerDialogVisible = false"
+                            severity="secondary"></p-button>
+                        <p-button type="submit" label="Save" icon="pi pi-check"
+                            severity="success" [disabled]="printerForm.invalid"></p-button>
                     </div>
                 </form>
             </p-dialog>
-            
+
             <!-- Delete Confirmation Dialog -->
-            <p-dialog 
-                [(visible)]="deleteDialogVisible" 
-                [modal]="true" 
-                [style]="{ width: '25rem' }" 
-                dismissableMask="true"
-                closable="false"
-                blockScroll="true"
-                resizable="false"
-                draggable="false">
+            <p-dialog [(visible)]="deleteDialogVisible" [modal]="true" [style]="{ width: '25rem' }"
+                dismissableMask="true" closable="false" blockScroll="true" resizable="false" draggable="false">
                 <ng-template #header>
                     <div class="inline-flex items-center justify-center gap-2">
                         <i class="pi pi-exclamation-triangle text-red-500 text-2xl"></i>
@@ -210,17 +189,10 @@
                     <p-button label="Delete" severity="danger" (click)="confirmDelete()" />
                 </ng-template>
             </p-dialog>
-            
+
             <!-- Delete Confirmation Dialog -->
-            <p-dialog 
-                [(visible)]="deleteDialogVisible" 
-                [modal]="true" 
-                [style]="{ width: '25rem' }" 
-                dismissableMask="true"
-                closable="false"
-                blockScroll="true"
-                resizable="false"
-                draggable="false">
+            <p-dialog [(visible)]="deleteDialogVisible" [modal]="true" [style]="{ width: '25rem' }"
+                dismissableMask="true" closable="false" blockScroll="true" resizable="false" draggable="false">
                 <ng-template #header>
                     <div class="inline-flex items-center justify-center gap-2">
                         <i class="pi pi-exclamation-triangle text-red-500 text-2xl"></i>
@@ -286,8 +258,7 @@
                                 <!-- Bouton Like -->
                                 <p-button [icon]="submission.liked ? 'pi pi-heart-fill' : 'pi pi-heart'"
                                     [severity]="submission.liked ? 'danger' : 'secondary'"
-                                    [outlined]="!submission.liked"
-                                    (click)="onLike(submission)" />
+                                    [outlined]="!submission.liked" (click)="onLike(submission)" />
                             </div>
 
                             <!-- (click)="toggleLike(product)" -->

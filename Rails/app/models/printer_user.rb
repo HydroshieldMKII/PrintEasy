@@ -5,6 +5,9 @@ class PrinterUser < ApplicationRecord
   belongs_to :user
   has_many :offers, dependent: :destroy
   
+  validates :acquired_date, presence: true
+  validates :acquired_date, comparison: { less_than_or_equal_to: -> { Date.current }, message: 'cannot be in the future' }, if: -> { acquired_date.present? }
+
   def last_review_image
     completed_offer = offers
       .joins(order: [:review, :order_status, { review: :images_attachments }])

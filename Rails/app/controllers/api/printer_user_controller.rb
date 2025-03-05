@@ -7,7 +7,7 @@ module Api
     def index
       @printer_users = current_user.printer_users
       
-      render json: @printer_users.as_json({
+      render json: { printer_users: @printer_users.as_json({
         except: %i[user_id printer_id],
         include: {
           printer: {
@@ -18,7 +18,7 @@ module Api
           }
         },
         methods: [:last_review_image, :last_used]
-      })
+      }) }, status: :ok
     end
     
     def show
@@ -37,14 +37,14 @@ module Api
       @printer_user = current_user.printer_users.new(printer_user_params)
       
       if @printer_user.save
-        render json: @printer_user.as_json({
+        render json: { printer_user: @printer_user.as_json({
           except: %i[user_id printer_id],
           include: {
             printer: {
               only: %i[id model]
             }
           }
-        })
+        }) }, status: :created
       else
         render json: { errors: @printer_user.errors.as_json }, status: :unprocessable_entity
       end

@@ -6,6 +6,7 @@ import { AuthService } from '../../services/authentication.service';
 import { PresetService } from '../../services/preset.service';
 import { PrinterUserModel } from '../../models/printer-user.model';
 import { PrinterModel } from '../../models/printer.model';
+import { PrinterUserService } from '../../services/printer-user.service';
 import { SubmissionService } from '../../services/submission.service';
 import { ReviewService } from '../../services/review.service';
 import { LikeService } from '../../services/like.service';
@@ -14,6 +15,7 @@ import { SubmissionModel } from '../../models/submission.model';
 import { UserContestSubmissionsModel } from '../../models/user-contest-submissions.model';
 import { ApiResponseModel } from '../../models/api-response.model';
 import { Renderer2 } from '@angular/core';
+
 
 
 @Component({
@@ -29,6 +31,7 @@ export class UserProfileComponent implements OnInit {
   readonly likeService = inject(LikeService);
   readonly presetService = inject(PresetService);
   readonly messageService = inject(MessageService);
+  readonly printerUserService = inject(PrinterUserService);
   readonly fb = inject(FormBuilder);
 
   userContestSubmissions: UserContestSubmissionsModel[] = [];
@@ -45,6 +48,7 @@ export class UserProfileComponent implements OnInit {
   deleteDialogVisible: boolean = false;
   printerToDelete: PrinterUserModel | null = null;
   isEditMode: boolean = false;
+  printerUserEdit: PrinterUserModel | null = null;
   printerForm: FormGroup;
   today = new Date();
 
@@ -86,15 +90,13 @@ export class UserProfileComponent implements OnInit {
   }
 
   loadPrinterUsers() {
-    this.presetService.getPrinterUsers().subscribe(printerUsers => {
-      console.log("Printer user loaded", printerUsers);
+    this.printerUserService.getPrinterUsers().subscribe(printerUsers => {
       this.printerUsers = printerUsers;
     });
   }
 
   loadPrinterList() {
     this.presetService.getAllPrinters().subscribe(printers => {
-      console.log("Printers loaded", printers);
       this.availablePrinters = printers;
     });
   }
@@ -107,6 +109,8 @@ export class UserProfileComponent implements OnInit {
 
   editPrinter(printerUser: PrinterUserModel) {
     this.isEditMode = true;
+    this.printerUserEdit = printerUser
+
     this.printerForm.patchValue({
       printer: printerUser.printer,
       aquiredDate: new Date(printerUser.aquiredDate)
@@ -133,34 +137,47 @@ export class UserProfileComponent implements OnInit {
   }
 
   onPrinterSubmit() {
-    if (this.printerForm.valid) {
-      const formValues = this.printerForm.value;
-
-      if (this.isEditMode) {
+    if (!this.printerForm.valid) return;
+  
+    const submitAction$ = this.isEditMode && this.printerUserEdit 
+      ? this.printerUserService.updatePrinterUser(this.printerForm, this.printerUserEdit.id)
+      : this.printerUserService.createPrinterUser(this.printerForm);
+  
+    submitAction$.subscribe({
+      next: (response) => {
+        const isSuccessful = this.isEditMode 
+          ? response.status === 200 
+          : response.status === 201;
+  
+        if (isSuccessful) {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: `Printer ${this.isEditMode ? 'updated' : 'added'} successfully`
+          });
+          this.loadPrinterUsers();
+        } else {
+          console.error('Error:', response.errors);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: `Printer not ${this.isEditMode ? 'updated' : 'added'}`
+          });
+        }
+      },
+      error: (error) => {
+        console.error('Submission error:', error);
         this.messageService.add({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Printer updated successfully'
+          severity: 'error',
+          summary: 'Error',
+          detail: `An error occurred while ${this.isEditMode ? 'updating' : 'adding'} the printer`
         });
-      } else {
-
-        // const newPrinterUser: PrinterUserModel = {
-        //   user: this.authService.currentUser!,
-        //   printer: formValues.printer,
-        //   aquiredDate: formValues.aquiredDate
-        // };
-
-        // this.printerUsers.push(newPrinterUser);
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Printer added successfully'
-        });
+      },
+      complete: () => {
+        this.printerDialogVisible = false;
+        this.printerForm.reset();
       }
-
-      this.printerDialogVisible = false;
-      this.printerForm.reset();
-    }
+    });
   }
 
   onLike(submission: SubmissionModel) {

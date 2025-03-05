@@ -1,6 +1,7 @@
 import { UserModel, UserApi } from "./user.model";
 import { PrinterApi } from "./printer.model";
 import { PrinterModel } from "./printer.model";
+import { FormGroup } from "@angular/forms";
 
 export type PrinterUserApi = {
     id: number;
@@ -40,9 +41,18 @@ export class PrinterUserModel {
             data.id,
             UserModel.fromAPI(data.user),
             PrinterModel.fromAPI(data.printer),
-            new Date(data.acquired_date),
+            new Date(data.acquired_date + 'T00:00:00'),
             data.last_review_image ?? null,
             data.last_used ? new Date(data.last_used) : null
         );
+    }
+
+    static toAPI(printerUserForm: FormGroup): FormData {
+        const printerUserFormData = new FormData();
+
+        printerUserFormData.append('printer_user[printer_id]', printerUserForm.value.printer.id);
+        printerUserFormData.append('printer_user[acquired_date]', printerUserForm.value.aquiredDate);
+        console.log("PrinterUserFormDate:", printerUserFormData);
+        return printerUserFormData;
     }
 }
