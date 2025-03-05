@@ -57,8 +57,8 @@ export class ReviewService {
         );
     }
 
-    getUserReviews(): Observable<ReviewModel[] | ApiResponseModel> {
-        return this.api.getRequest("/api/user_review").pipe(
+    getUserReviews(id : number): Observable<ReviewModel[] | ApiResponseModel> {
+        return this.api.getRequest(`/api/review/user/${id}`).pipe(
             map((response: ApiResponseModel) => {
                 if (response.status === 200) {
                     return response.data.reviews.map((review: ReviewApi) => ReviewModel.fromAPI(review));

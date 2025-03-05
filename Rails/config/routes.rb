@@ -18,8 +18,11 @@ Rails.application.routes.draw do
     end
     resources :order_status
     resources :order
-    resources :review
-    resources :user_review, only: [:index]
+    resources :review do
+      collection do
+        get 'user/:id', action: :user
+      end
+    end
     resources :status
     resources :contest, except: %i[new edit] do
       resources :user_submission, only: %i[index]
@@ -28,6 +31,7 @@ Rails.application.routes.draw do
     resources :filament
     resources :submission
     resources :preset
+    resources :home
     resources :user_contest_submissions, only: [:index]
     resources :like, only: %i[index create destroy]
   end
