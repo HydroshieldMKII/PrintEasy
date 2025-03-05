@@ -310,6 +310,7 @@
         "select_filament": "Select Filament",
         "select_color": "Select Color",
         "offer_preset": "Offer this preset",
+        "offer_preset_alt": "Suggeste an alternative preset",
         "make_offer": "Make an offer",
         "cancel": "Cancel",
         "delete": "Delete",

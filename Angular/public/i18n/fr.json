@@ -311,6 +311,7 @@
         "select_filament": "Sélectionner un filament",
         "select_color": "Sélectionner une couleur",
         "offer_preset": "Proposer ce préréglage",
+        "offer_preset_alt": "Proposer un préréglage alternatif",
         "make_offer": "Faire une offre",
         "cancel": "Annuler",
         "delete": "Supprimer",

@@ -8,6 +8,7 @@ export type RequestPresetApi = {
     color: ColorApi;
     filament: FilamentApi;
     printer: PrinterApi;
+    has_offer_made: boolean;
 }
 
 export class RequestPresetModel {
@@ -16,19 +17,22 @@ export class RequestPresetModel {
     color: ColorModel;
     filamentType: FilamentModel;
     printerModel: PrinterModel;
+    hasOfferMade: boolean;
 
     constructor(
         id: number,
         printQuality: number,
         color: ColorModel,
         filamentType: FilamentModel,
-        printerModel: PrinterModel
+        printerModel: PrinterModel,
+        hasOfferMade: boolean
     ) {
         this.id = id;
         this.printQuality = printQuality;
         this.color = color;
         this.filamentType = filamentType;
         this.printerModel = printerModel;
+        this.hasOfferMade = hasOfferMade;
     }
 
     static fromAPI(data: RequestPresetApi): RequestPresetModel {
@@ -37,7 +41,8 @@ export class RequestPresetModel {
             data.print_quality,
             new ColorModel(data.color.id, data.color.name),
             new FilamentModel(data.filament.id, data.filament.name),
-            new PrinterModel(data.printer.id, data.printer.model)
+            new PrinterModel(data.printer.id, data.printer.model),
+            data.has_offer_made
         );
     }
 }
