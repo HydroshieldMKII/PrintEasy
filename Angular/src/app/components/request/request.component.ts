@@ -9,7 +9,7 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { TranslatePipe } from '@ngx-translate/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ApiResponseModel } from '../../models/api-response.model';
-import { SliderChangeEvent, SliderSlideEndEvent } from 'primeng/slider';
+import { SliderSlideEndEvent } from 'primeng/slider';
 import { FilamentModel } from '../../models/filament.model';
 import { ColorModel } from '../../models/color.model';
 
@@ -300,7 +300,7 @@ export class RequestsComponent implements OnInit {
     this.clipboard.copy(fullUrl);
     this.messageService.add({
       severity: 'success',
-      summary: this.currentLanguage === 'fr' ? 'Demande copiée dans le presse-papiers' : 'Copied request to clipboard'
+      summary: this.translate.instant('request.copied')
     });
   }
 

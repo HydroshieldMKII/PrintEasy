@@ -123,6 +123,10 @@ textarea {
     .stl-actions {
         flex-direction: column;
     }
+
+    .stl-placeholder {
+        max-width: 20rem;
+    }
 }
 
 #comment {

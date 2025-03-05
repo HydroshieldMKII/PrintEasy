@@ -209,6 +209,7 @@
         "delete": "Delete",
         "delete_disabled": "Delete disabled (request accepted)",
         "share": "Share",
+        "copied": "Request copied to clipboard",
         "preset_details": "Preset Details",
         "printer_model": "Printer Model",
         "filament_type": "Filament Type",

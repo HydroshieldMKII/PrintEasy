@@ -247,7 +247,9 @@ export class RequestFormComponent implements OnInit {
     }
 
     if (this.isEditMode) {
-      this.requestService.updateRequest(this.request.id, formData).subscribe(response => { });
+      this.requestService.updateRequest(this.request.id, formData).subscribe(response => {
+
+      });
     } else if (this.isNewMode) {
       this.requestService.createRequest(formData).subscribe(response => {
         if (response.status === 201) {

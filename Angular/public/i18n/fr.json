@@ -209,6 +209,7 @@
         "delete": "Supprimer",
         "delete_disabled": "Suppression désactivée (requête acceptée)",
         "share": "Partager",
+        "copied": "Requete copiée dans le presse-papiers",
         "preset_details": "Détails des préréglages",
         "printer_model": "Modèle d'imprimante",
         "filament_type": "Type de filament",

@@ -143,6 +143,12 @@ export class RequestService {
                         summary: this.translate.instant('global.success'),
                         detail: this.translate.instant('requestForm.update_success')
                     });
+                } else if (response.status === 422 && response.errors['stl_file'] === 'must have .stl extension') {
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: this.translate.instant('requestForm.upload_file'),
+                        detail: this.translate.instant('requestForm.file_type_error')
+                    });
                 } else {
                     this.messageService.add({
                         severity: 'error',
