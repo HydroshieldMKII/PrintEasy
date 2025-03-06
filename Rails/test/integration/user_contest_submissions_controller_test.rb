@@ -14,7 +14,7 @@ class UserContestSubmissionsControllerTest < ActionDispatch::IntegrationTest
 
   test 'should get index' do
     assert_difference('Contest.count', 0) do
-      get api_user_contest_submissions_url
+      get api_user_user_contest_submissions_url(@user.id)
     end
 
     assert_response :success
