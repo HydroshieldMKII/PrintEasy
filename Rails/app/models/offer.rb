@@ -25,7 +25,7 @@ class Offer < ApplicationRecord
   with_options on: %i[create update] do |offer|
     offer.validate :target_date_greater_than_today
     offer.validates :request, uniqueness: {
-      scope: %i[printer_user_id color_id filament_id],
+      scope: %i[printer_user_id color_id filament_id print_quality],
       message: 'This offer already exists'
     }
   end

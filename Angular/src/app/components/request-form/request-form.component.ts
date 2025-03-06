@@ -414,9 +414,6 @@ export class RequestFormComponent implements OnInit {
     this.offerModalVisible = false;
   }
 
-
-
-
   // Drag and drop
   onDragOver(event: DragEvent): void {
     event.preventDefault();
@@ -448,6 +445,17 @@ export class RequestFormComponent implements OnInit {
         reader.readAsArrayBuffer(file);
       }
     }
+  }
+
+  refreshRequestDetails(): void {
+    if (!this.id) {
+      return;
+    }
+    this.requestService.getRequestById(this.id).subscribe((response) => {
+      if (response instanceof RequestModel) {
+        this.request = response;
+      }
+    });
   }
 
   private translateFilament(id: number): string {

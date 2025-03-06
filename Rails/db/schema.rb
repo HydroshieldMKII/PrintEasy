@@ -12,7 +12,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 20_250_305_232_833) do
+ActiveRecord::Schema[8.0].define(version: 20_250_306_021_659) do
   create_table 'active_storage_attachments', charset: 'utf8mb4', collation: 'utf8mb4_general_ci', force: :cascade do |t|
     t.string 'name', null: false
     t.string 'record_type', null: false
@@ -79,7 +79,7 @@ ActiveRecord::Schema[8.0].define(version: 20_250_305_232_833) do
     t.date 'target_date', null: false
     t.datetime 'created_at', null: false
     t.datetime 'updated_at', null: false
-    t.float 'print_quality', null: false
+    t.decimal 'print_quality', precision: 4, scale: 2, null: false
     t.datetime 'cancelled_at'
     t.index ['color_id'], name: 'index_offers_on_color_id'
     t.index ['filament_id'], name: 'index_offers_on_filament_id'
@@ -109,7 +109,7 @@ ActiveRecord::Schema[8.0].define(version: 20_250_305_232_833) do
     t.bigint 'color_id', null: false
     t.bigint 'filament_id', null: false
     t.bigint 'printer_id', null: false
-    t.float 'print_quality', null: false
+    t.decimal 'print_quality', precision: 4, scale: 2, null: false
     t.index ['color_id'], name: 'index_preset_requests_on_color_id'
     t.index ['filament_id'], name: 'index_preset_requests_on_filament_id'
     t.index ['printer_id'], name: 'index_preset_requests_on_printer_id'
@@ -122,7 +122,7 @@ ActiveRecord::Schema[8.0].define(version: 20_250_305_232_833) do
     t.bigint 'color_id', null: false
     t.bigint 'filament_id', null: false
     t.bigint 'user_id', null: false
-    t.float 'print_quality', null: false
+    t.decimal 'print_quality', precision: 4, scale: 2, null: false
     t.index ['color_id'], name: 'index_presets_on_color_id'
     t.index ['filament_id'], name: 'index_presets_on_filament_id'
     t.index %w[user_id filament_id color_id print_quality],

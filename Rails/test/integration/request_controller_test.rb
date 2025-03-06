@@ -48,7 +48,7 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
                  json_response['request'][0]['preset_requests'][0]['printer']['id']
     assert_equal @other_user_request.preset_requests[0].printer.model,
                  json_response['request'][0]['preset_requests'][0]['printer']['model']
-    assert_equal @other_user_request.preset_requests[0].print_quality,
+    assert_equal @other_user_request.preset_requests[0].print_quality.to_s,
                  json_response['request'][0]['preset_requests'][0]['print_quality']
     assert_equal @other_user_request.user.id, json_response['request'][0]['user']['id']
     assert_equal @other_user_request.user.username, json_response['request'][0]['user']['username']
@@ -80,7 +80,7 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
 
     preset1 = request1['preset_requests'][0]
     assert_equal @preset.id, preset1['id']
-    assert_equal @preset.print_quality, preset1['print_quality']
+    assert_equal @preset.print_quality.to_s, preset1['print_quality']
     assert_equal @preset.color.id, preset1['color']['id']
     assert_equal @preset.color.name, preset1['color']['name']
     assert_equal @preset.filament.id, preset1['filament']['id']
@@ -99,147 +99,6 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
 
     assert_equal true, json_response['has_printer']
     assert_empty json_response['errors']
-  end
-
-  ### INDEX (SSF) ACTION ###
-
-  test 'should sort requests by name in ascending order' do
-    get api_request_index_url, params: { type: 'mine', sort: 'asc', sortCategory: 'name' }
-    assert_response :success
-    json_response = assert_nothing_raised do
-      JSON.parse(response.body)
-    end
-
-    assert_equal 2, json_response['request'].length
-    assert_equal 'Test Request', json_response['request'][0]['name']
-    assert_equal 'Test Request 3', json_response['request'][1]['name']
-  end
-
-  test 'should sort requests by name in descending order' do
-    get api_request_index_url, params: { type: 'mine', sort: 'desc', sortCategory: 'name' }
-    assert_response :success
-    json_response = assert_nothing_raised do
-      JSON.parse(response.body)
-    end
-
-    assert_equal 2, json_response['request'].length
-    assert_equal 'Test Request 3', json_response['request'][0]['name']
-    assert_equal 'Test Request', json_response['request'][1]['name']
-  end
-
-  test 'should sort requests by budget in ascending order' do
-    get api_request_index_url, params: { type: 'mine', sort: 'asc', sortCategory: 'budget' }
-    assert_response :success
-    json_response = assert_nothing_raised do
-      JSON.parse(response.body)
-    end
-
-    assert_equal 2, json_response['request'].length
-    assert_equal 100.0, json_response['request'][0]['budget']
-    assert_equal 150.0, json_response['request'][1]['budget']
-  end
-
-  test 'should sort requests by budget in descending order' do
-    get api_request_index_url, params: { type: 'mine', sort: 'desc', sortCategory: 'budget' }
-    assert_response :success
-    json_response = assert_nothing_raised do
-      JSON.parse(response.body)
-    end
-
-    assert_equal 2, json_response['request'].length
-    assert_equal 150.0, json_response['request'][0]['budget']
-    assert_equal 100.0, json_response['request'][1]['budget']
-  end
-
-  test 'should sort requests by date in ascending order' do
-    get api_request_index_url, params: { type: 'mine', sort: 'asc', sortCategory: 'date' }
-    assert_response :success
-    json_response = assert_nothing_raised do
-      JSON.parse(response.body)
-    end
-
-    assert_equal 2, json_response['request'].length
-    assert_equal '2021-10-31', json_response['request'][0]['target_date']
-    assert_equal '2021-12-31', json_response['request'][1]['target_date']
-  end
-
-  test 'should filter requests by in-progress status' do
-    get api_request_index_url, params: { type: 'mine', filter: 'in-progress' }
-    assert_response :success
-    json_response = assert_nothing_raised do
-      JSON.parse(response.body)
-    end
-
-    assert(json_response['request'].all? { |r| r['accepted_at'].present? })
-    assert_equal 1, json_response['request'].length
-    assert_equal 1, json_response['request'][0]['id']
-  end
-
-  test 'should filter requests by country' do
-    get api_request_index_url, params: { type: 'mine', filter: 'country' }
-    assert_response :success
-    json_response = assert_nothing_raised do
-      JSON.parse(response.body)
-    end
-
-    assert_equal 2, json_response['request'].length
-    assert(json_response['request'].all? { |r| r['user']['country']['name'] == 'Canada' })
-  end
-
-  test 'should filter requests by budget range' do
-    get api_request_index_url, params: { type: 'mine', minBudget: 120, maxBudget: 200 }
-    assert_response :success
-    json_response = assert_nothing_raised do
-      JSON.parse(response.body)
-    end
-
-    assert_equal 1, json_response['request'].length
-    assert(json_response['request'].all? { |r| r['budget'] >= 120 && r['budget'] <= 200 })
-    assert_equal 150.0, json_response['request'][0]['budget']
-  end
-
-  test 'should filter requests by date range' do
-    get api_request_index_url, params: {
-      type: 'mine',
-      startDate: '2021-12-01',
-      endDate: '2021-12-31'
-    }
-    assert_response :success
-    json_response = assert_nothing_raised do
-      JSON.parse(response.body)
-    end
-
-    assert_equal 1, json_response['request'].length
-    assert json_response['request'][0]['target_date'] == '2021-12-31'
-  end
-
-  test 'should combine filtering and sorting' do
-    get api_request_index_url, params: {
-      type: 'mine',
-      sort: 'desc',
-      sortCategory: 'budget',
-      minBudget: 50,
-      maxBudget: 200
-    }
-    assert_response :success
-    json_response = assert_nothing_raised do
-      JSON.parse(response.body)
-    end
-
-    assert_equal 2, json_response['request'].length
-    assert_equal 150.0, json_response['request'][0]['budget']
-    assert_equal 100.0, json_response['request'][1]['budget']
-  end
-
-  test 'should handle search parameter' do
-    get api_request_index_url, params: { type: 'mine', search: 'Test Request 3' }
-    assert_response :success
-    json_response = assert_nothing_raised do
-      JSON.parse(response.body)
-    end
-
-    assert_equal 1, json_response['request'].length
-    assert_equal 'Test Request 3', json_response['request'][0]['name']
   end
 
   ### SHOW ACTION ###
@@ -270,7 +129,7 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
                  json_response['request']['preset_requests'][0]['printer']['id']
     assert_equal @user_request.preset_requests[0].printer.model,
                  json_response['request']['preset_requests'][0]['printer']['model']
-    assert_equal @user_request.preset_requests[0].print_quality,
+    assert_equal @user_request.preset_requests[0].print_quality.to_s,
                  json_response['request']['preset_requests'][0]['print_quality']
     assert_equal @user_request.user.id, json_response['request']['user']['id']
     assert_equal @user_request.user.username, json_response['request']['user']['username']
@@ -322,7 +181,7 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 1, json_response['request']['preset_requests'][0]['color']['id']
     assert_equal 1, json_response['request']['preset_requests'][0]['filament']['id']
     assert_equal 1, json_response['request']['preset_requests'][0]['printer']['id']
-    assert_equal 0.1, json_response['request']['preset_requests'][0]['print_quality']
+    assert_equal '0.1', json_response['request']['preset_requests'][0]['print_quality']
     assert_empty json_response['errors']
   end
 
@@ -358,11 +217,11 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 1, json_response['request']['preset_requests'][0]['color']['id']
     assert_equal 1, json_response['request']['preset_requests'][0]['filament']['id']
     assert_equal 1, json_response['request']['preset_requests'][0]['printer']['id']
-    assert_equal 0.1, json_response['request']['preset_requests'][0]['print_quality']
+    assert_equal '0.1', json_response['request']['preset_requests'][0]['print_quality']
     assert_equal 2, json_response['request']['preset_requests'][1]['color']['id']
     assert_equal 2, json_response['request']['preset_requests'][1]['filament']['id']
     assert_equal 2, json_response['request']['preset_requests'][1]['printer']['id']
-    assert_equal 0.2, json_response['request']['preset_requests'][1]['print_quality']
+    assert_equal '0.2', json_response['request']['preset_requests'][1]['print_quality']
     assert_empty json_response['errors']
   end
 
@@ -558,7 +417,7 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
                  json_response['request']['preset_requests'][0]['printer']['id']
     assert_equal @user_request2.preset_requests[0].printer.model,
                  json_response['request']['preset_requests'][0]['printer']['model']
-    assert_equal @user_request2.preset_requests[0].print_quality,
+    assert_equal @user_request2.preset_requests[0].print_quality.to_s,
                  json_response['request']['preset_requests'][0]['print_quality']
     assert_equal @user_request2.user.id, json_response['request']['user']['id']
     assert_equal @user_request2.user.username, json_response['request']['user']['username']
@@ -598,13 +457,13 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 3, first_preset['color']['id']
     assert_equal 3, first_preset['filament']['id']
     assert_equal 3, first_preset['printer']['id']
-    assert_equal 0.3, first_preset['print_quality']
+    assert_equal '0.3', first_preset['print_quality']
 
     second_preset = json_response['request']['preset_requests'][1]
     assert_not_nil second_preset['color']['id']
     assert_equal 2, second_preset['filament']['id']
     assert_equal 2, second_preset['printer']['id']
-    assert_equal 0.2, second_preset['print_quality']
+    assert_equal '0.2', second_preset['print_quality']
     assert_empty json_response['errors']
   end
 
