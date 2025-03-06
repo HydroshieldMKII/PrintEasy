@@ -49,6 +49,7 @@ export class OrdersComponent {
       .flatMap(group => group.items)
       .find(item => item.value == this.router.routerState.snapshot.root.queryParams["filter"]) ?? null;
     this.selectedSortOption = this.sortOptions.find(item => item.value == this.router.routerState.snapshot.root.queryParams["sort"]) ?? null;
+    this.tab = this.router.routerState.snapshot.root.queryParams["tab"] ?? 'commands';
 
     if (this.selectedFilterOption || this.selectedSortOption) {
       this.showAdvancedFilters = true;
