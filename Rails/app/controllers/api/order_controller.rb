@@ -12,16 +12,14 @@ module Api
     end
 
     def show
-      @order = Order.find(params[:id])
+      @order = Order.joins(offer: [:request, { printer_user: :user }])
+                    .where('requests.user_id = ? OR printer_users.user_id = ?', current_user.id, current_user.id)
+                    .find(params[:id])
 
-      if current_user == @order.consumer || current_user == @order.printer
-        render json: {
-          order: order_as_json(@order),
-          errors: {}
-        }, status: :ok
-      else
-        render json: { errors: { order: ['You are not authorized to view this order'] } }, status: :forbidden
-      end
+      render json: {
+        order: order_as_json(@order),
+        errors: {}
+      }, status: :ok
     end
 
     def create

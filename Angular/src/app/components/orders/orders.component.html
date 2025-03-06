@@ -120,7 +120,7 @@
                             <td>
                                 <div class="h-td-table">
                                     <p-avatar label="" size="large" shape="circle" *ngIf="order.offer.printerUser.user.profilePictureUrl" image="{{order.offer.printerUser.user.profilePictureUrl}}"></p-avatar>
-                                    <p>{{order.offer.printerUser.user.username}}</p>
+                                    <p-button [label]="order.offer.printerUser.user.username" [link]="true" routerLink="/profile/{{ order.offer.printerUser.user.id }}"/>
                                 </div>
                                 
                             </td>
@@ -267,7 +267,7 @@
                             <td>
                                 <div class="h-td-table">
                                     <p-avatar label="" size="large" shape="circle" *ngIf="order.offer.request.user.profilePictureUrl" image="{{order.offer.request.user.profilePictureUrl}}"></p-avatar>
-                                    <p>{{order.offer.request.user.username}}</p>
+                                    <p-button [label]="order.offer.request.user.username" [link]="true" routerLink="/profile/{{ order.offer.request.user.id }}"/>
                                 </div>
                                 
                             </td>

@@ -12,7 +12,7 @@ class UserProfileControllerTest < ActionDispatch::IntegrationTest
     sign_in @user
   end
 
-  test "should get show" do
+  test 'should get show' do
     assert_difference 'User.count', 0 do
       get api_user_profile_path(@user)
     end
@@ -39,7 +39,7 @@ class UserProfileControllerTest < ActionDispatch::IntegrationTest
     assert_equal 1, printer_user['user']['id']
   end
 
-  test "should not get show if not signed in" do
+  test 'should not get show if not signed in' do
     sign_out @user
 
     assert_difference 'User.count', 0 do
@@ -52,6 +52,6 @@ class UserProfileControllerTest < ActionDispatch::IntegrationTest
       JSON.parse(response.body)
     end
 
-    assert_equal ["Invalid login credentials"], json_response['errors']["connection"]
+    assert_equal ['Invalid login credentials'], json_response['errors']['connection']
   end
 end
