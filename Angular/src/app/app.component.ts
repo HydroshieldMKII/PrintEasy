@@ -40,6 +40,7 @@ export class AppComponent implements OnInit {
   auth: AuthService = inject(AuthService);
   items: MenuItem[] | undefined;
   language: string = 'fr';
+  userMenuItems: MenuItem[] = [];
 
   constructor(
     private primeng: PrimeNG,
@@ -55,40 +56,47 @@ export class AppComponent implements OnInit {
     this.translate.use(savedLanguage);
     localStorage.setItem('language', savedLanguage);
     this.language = savedLanguage;
+
+    this.translate.onLangChange.subscribe(() => {
+      this.onLanguageChange();
+    });
   }
 
-  ngOnInit() {
-    this.primeng.ripple.set(true);
-
-    // Set the items for the menubar
+  onLanguageChange() {
     this.items = [
       {
-        label: 'Requests',
+        label: this.translate.instant('global.menu.requests'),
         icon: 'pi pi-inbox',
         command: () => this.router.navigate(['/requests'])
       },
       {
-        label: 'Offer',
+        label: this.translate.instant('global.menu.offers'),
         icon: 'pi pi-tag',
         command: () => this.router.navigate(['/offers'])
       },
       {
-        label: 'Orders',
+        label: this.translate.instant('global.menu.orders'),
         icon: 'pi pi-shopping-cart',
         command: () => this.router.navigate(['/orders'])
       },
       {
-        label: 'Contests',
+        label: this.translate.instant('global.menu.contest'),
         icon: 'pi pi-trophy',
         command: () => this.router.navigate(['/contest'])
       },
     ]
+
+    this.userMenuItems = [
+      { label: this.translate.instant('global.menu.profile'), icon: 'pi pi-user', command: () => this.viewProfile() },
+      { label: this.translate.instant('global.menu.logout'), icon: 'pi pi-sign-out', command: () => this.logout() }
+    ];
   }
 
-  userMenuItems = [
-    { label: 'My Profile', icon: 'pi pi-user', command: () => this.viewProfile() },
-    { label: 'Logout', icon: 'pi pi-sign-out', command: () => this.logout() }
-  ];
+  ngOnInit() {
+    this.primeng.ripple.set(true);
+    this.onLanguageChange();
+  }
+
 
   navigateToHome() {
     this.router.navigate(['/']);

@@ -38,6 +38,17 @@
       "budget-desc": "Budget (décroissant)",
       "country-asc": "Pays (croissant)",
       "country-desc": "Pays (décroissant)"
+    },
+    "menu": {
+      "home": "Accueil",
+      "requests": "Demandes",
+      "contests": "Concours",
+      "submissions": "Soumissions",
+      "contest": "Concours",
+      "offers": "Offres",
+      "orders": "Commandes",
+      "profile": "Profil",
+      "logout": "Déconnexion"
     }
   },
   "home": {

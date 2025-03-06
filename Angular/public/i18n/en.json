@@ -38,6 +38,17 @@
       "budget-desc": "Budget (descending)",
       "country-asc": "Country (ascending)",
       "country-desc": "Country (descending)"
+    },
+    "menu": {
+      "home": "Home",
+      "requests": "Requests",
+      "contests": "Contests",
+      "submissions": "Submissions",
+      "contest": "Contest",
+      "offers": "Offers",
+      "orders": "Orders",
+      "profile": "Profile",
+      "logout": "Logout"
     }
   },
   "home": {
@@ -280,7 +291,7 @@
     "accepted": "Accepted",
     "pending": "Pending",
     "advanced_filters": "Advanced",
-    "budget_range": "Budget Range",
+    "budget_range": "Budget range",
     "date_range": "Target date range",
     "date_from": "From",
     "select_date_range": "Select date range",
