@@ -12,11 +12,11 @@ class PresetRequest < ApplicationRecord
             uniqueness: { scope: %i[color_id filament_id printer_id print_quality] }
 
   def matching_offer_by_current_user?
-    printer_user_ids = Current.user.printer_users.pluck(:id)
-    return false if printer_user_ids.empty?
+    printer_user = Current.user.printer_users
+    return false if printer_user.empty?
 
     request.offers.where(
-      printer_user_id: printer_user_ids,
+      printer_user_id: printer_user,
       color_id: color_id,
       filament_id: filament_id,
       print_quality: print_quality

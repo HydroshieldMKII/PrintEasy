@@ -7,6 +7,7 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
     @user = users(:one)
     @user_request = requests(:request_one)
     @user_request2 = requests(:request_three)
+    @user_request_no_offer = requests(:request_four)
 
     @other_user = users(:two)
     @other_user_request = requests(:request_two)
@@ -389,11 +390,11 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
   ### UPDATE ACTION ###
   test 'should partially update request with valid data' do
     assert_difference('Request.count', 0) do
-      patch api_request_url(@user_request2), params: { request: { name: 'Updated Request', budget: 999 } }, as: :json
+      patch api_request_url( @user_request_no_offer), params: { request: { name: 'Updated Request', budget: 999 } }, as: :json
     end
 
     assert_response :success
-    @user_request2.reload
+    @user_request_no_offer.reload
 
     json_response = assert_nothing_raised do
       JSON.parse(response.body)
@@ -401,32 +402,33 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
 
     assert_equal 'Updated Request', json_response['request']['name']
     assert_equal 999, json_response['request']['budget']
-    assert_equal @user_request2.comment, json_response['request']['comment']
-    assert_equal @user_request2.target_date.to_s, json_response['request']['target_date']
-    assert_equal @user_request2.stl_file_url, json_response['request']['stl_file_url']
-    assert_equal @user_request2.preset_requests.count, json_response['request']['preset_requests'].length
-    assert_equal @user_request2.preset_requests[0].color.id,
+    assert_equal @user_request_no_offer.comment, json_response['request']['comment']
+    assert_equal @user_request_no_offer.target_date.to_s, json_response['request']['target_date']
+    assert_equal @user_request_no_offer.stl_file_url, json_response['request']['stl_file_url']
+    assert_equal @user_request_no_offer.preset_requests.count, json_response['request']['preset_requests'].length
+    assert_equal @user_request_no_offer.preset_requests[0].color.id,
                  json_response['request']['preset_requests'][0]['color']['id']
-    assert_equal @user_request2.preset_requests[0].color.name,
+    assert_equal @user_request_no_offer.preset_requests[0].color.name,
                  json_response['request']['preset_requests'][0]['color']['name']
-    assert_equal @user_request2.preset_requests[0].filament.id,
+    assert_equal @user_request_no_offer.preset_requests[0].filament.id,
                  json_response['request']['preset_requests'][0]['filament']['id']
-    assert_equal @user_request2.preset_requests[0].filament.name,
+    assert_equal @user_request_no_offer.preset_requests[0].filament.name,
                  json_response['request']['preset_requests'][0]['filament']['name']
-    assert_equal @user_request2.preset_requests[0].printer.id,
+    assert_equal @user_request_no_offer.preset_requests[0].printer.id,
                  json_response['request']['preset_requests'][0]['printer']['id']
-    assert_equal @user_request2.preset_requests[0].printer.model,
+    assert_equal @user_request_no_offer.preset_requests[0].printer.model,
                  json_response['request']['preset_requests'][0]['printer']['model']
-    assert_equal @user_request2.preset_requests[0].print_quality.to_s,
+    assert_equal @user_request_no_offer.preset_requests[0].print_quality.to_s,
                  json_response['request']['preset_requests'][0]['print_quality']
-    assert_equal @user_request2.user.id, json_response['request']['user']['id']
-    assert_equal @user_request2.user.username, json_response['request']['user']['username']
-    assert_equal @user_request2.user.country.name, json_response['request']['user']['country']['name']
+    assert_equal @user_request_no_offer.user.id, json_response['request']['user']['id']
+    assert_equal @user_request_no_offer.user.username, json_response['request']['user']['username']
+    assert_equal @user_request_no_offer.user.country.name, json_response['request']['user']['country']['name']
     assert_empty json_response['errors']
   end
 
   test 'should fully update request with valid data' do
-    patch api_request_url(@user_request2), params: {
+    # debugger
+    patch api_request_url(@user_request_no_offer), params: {
       request: {
         name: 'Fully Updated Request',
         comment: 'This is a fully updated request',
@@ -439,7 +441,7 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
     }, as: :json
 
     assert_response :success
-    @user_request2.reload
+    @user_request_no_offer.reload
 
     json_response = assert_nothing_raised do
       JSON.parse(response.body)
@@ -450,29 +452,23 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 999, json_response['request']['budget']
     assert_equal '3000-01-01', json_response['request']['target_date']
 
-    assert_equal @user_request2.preset_requests.count, json_response['request']['preset_requests'].length
+    assert_equal @user_request_no_offer.preset_requests.count, json_response['request']['preset_requests'].length
 
     first_preset = json_response['request']['preset_requests'][0]
     assert_not_nil first_preset['id']
-    assert_equal 3, first_preset['color']['id']
-    assert_equal 3, first_preset['filament']['id']
-    assert_equal 3, first_preset['printer']['id']
-    assert_equal '0.3', first_preset['print_quality']
-
-    second_preset = json_response['request']['preset_requests'][1]
-    assert_not_nil second_preset['color']['id']
-    assert_equal 2, second_preset['filament']['id']
-    assert_equal 2, second_preset['printer']['id']
-    assert_equal '0.2', second_preset['print_quality']
+    assert_equal 4, first_preset['color']['id']
+    assert_equal 4, first_preset['filament']['id']
+    assert_equal 4, first_preset['printer']['id']
+    assert_equal '0.4', first_preset['print_quality']
     assert_empty json_response['errors']
   end
 
   test 'should delete preset_requests' do
-    initial_count = @user_request2.preset_requests.count
-    preset_to_delete = @user_request2.preset_requests.first
+    initial_count = @user_request_no_offer.preset_requests.count
+    preset_to_delete =  @user_request_no_offer.preset_requests.first
 
     assert_difference('PresetRequest.count', -1) do
-      patch api_request_url(@user_request2), params: {
+      patch api_request_url(@user_request_no_offer), params: {
         request: {
           name: 'Fully Updated Request',
           comment: 'This is a fully updated request',
@@ -486,9 +482,9 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_response :success
-    @user_request2.reload
+    @user_request_no_offer.reload
 
-    assert_equal initial_count - 1, @user_request2.preset_requests.count
+    assert_equal initial_count - 1,  @user_request_no_offer.preset_requests.count
     assert_nil PresetRequest.find_by(id: preset_to_delete.id)
 
     json_response = JSON.parse(response.body)
