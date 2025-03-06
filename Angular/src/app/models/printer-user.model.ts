@@ -41,6 +41,7 @@ export class PrinterUserModel {
     }
 
     static fromAPI(data: PrinterUserApi): PrinterUserModel {
+        debugger;
         return new PrinterUserModel(
             data.id,
             UserModel.fromAPI(data.user),

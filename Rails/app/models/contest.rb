@@ -2,7 +2,6 @@
 
 class Contest < ApplicationRecord
   # before_validation :set_start_at, on: [:create, :update]
-
   default_scope { where(deleted_at: nil) }
 
   scope :active_for_user, lambda { |_user|
@@ -69,15 +68,23 @@ class Contest < ApplicationRecord
   }, message: 'must be in the future' }, on: :create
   validates :start_at, comparison: { greater_than: lambda {
     Time.now
-  }, message: 'must be in the future' }, on: :update, if: lambda {
-                                                        will_save_change_to_attribute?(:start_at)
-                                                      }
+  }, message: 'must be in the future' }, on: :update, if: -> { will_save_change_to_attribute?(:start_at) }
+
   validates :start_at, comparison: { less_than: :end_at, message: 'must be before end_at' }, if: lambda {
     end_at.present?
   }
   validates :image, presence: true
 
   validate :contest_finished?, on: :update
+
+  def destroy
+    if started?
+      soft_delete
+      false
+    else
+      super
+    end
+  end
 
   def winner_user
     return nil unless finished?
