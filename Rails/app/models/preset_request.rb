@@ -10,11 +10,11 @@ class PresetRequest < ApplicationRecord
   validates :color_id, :filament_id, :printer_id, presence: true
 
   def matching_offer_by_current_user?
-    printer_user = Current.user.printer_users
-    return false if printer_user.empty?
-
+    matching_printer_users = Current.user.printer_users.where(printer: printer_id)
+    return false if matching_printer_users.empty?
+    
     request.offers.where(
-      printer_user_id: printer_user,
+      printer_user_id: matching_printer_users,
       color_id: color_id,
       filament_id: filament_id,
       print_quality: print_quality
