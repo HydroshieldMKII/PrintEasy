@@ -221,6 +221,17 @@
                     </div>
                 </div>
 
+                <div
+                    *ngIf="userProfile?.selfReviews?.length == 0"
+                    class="empty-message"
+                    style="width: 100%; height: 100%;"
+                    >
+                    <i class="pi pi-inbox text-6xl text-gray-400"></i>
+                    <p class="text-xl font-semibold text-gray-500 mt-2">
+                        {{'user_profile.no_reviews' | translate}}
+                    </p>
+                </div>
+
             </p-tabpanel>
 
             <p-tabpanel *ngIf="authService.currentUser?.id === userProfile?.id" [value]="'likes'">

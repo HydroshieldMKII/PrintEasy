@@ -172,6 +172,7 @@
     "printers_tab": "Imprimantes",
     "submissions_tab": "Soumissions",
     "likes_tab": "J'aime",
+    "no_reviews": "Cet utilisateur n'a pas encore eu d'avis",
     "printer": {
       "printer_model": "Modèle d'imprimante",
       "acquisition_date": "Date d'acquisition",

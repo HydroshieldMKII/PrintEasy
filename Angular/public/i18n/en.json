@@ -171,6 +171,7 @@
     "reviews_tab": "Reviews",
     "printers_tab": "Printers",
     "likes_tab": "Likes",
+    "no_reviews": "This user has no reviews yet",
     "printer": {
       "printer_model": "Printer Model",
       "acquisition_date": "Acquisition Date",
