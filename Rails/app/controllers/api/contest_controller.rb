@@ -2,7 +2,7 @@
 
 module Api
   class ContestController < AuthenticatedController
-    before_action :is_admin?, only: %i[create update destroy]
+    before_action :admin?, only: %i[create update destroy]
 
     def index
       @contests = Contest.contests_order(current_user, params)
@@ -72,7 +72,7 @@ module Api
 
     private
 
-    def is_admin?
+    def admin?
       return if current_user.is_admin
 
       render json: { errors: { contest: ['You must be an admin to perform this action'] } }, status: :unauthorized
