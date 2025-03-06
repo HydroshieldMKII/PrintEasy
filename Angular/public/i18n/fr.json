@@ -196,12 +196,12 @@
         "ssf": {
             "reviewed": "Avisé",
             "not_reviewed": "Non avisé",
-            "name_asc": "Nom (ASC)",
-            "name_desc": "Nom (DESC)",
-            "price_asc": "Prix (ASC)",
-            "price_desc": "Prix (DESC)",
-            "date_asc": "Date (ASC)",
-            "date_desc": "Date (DESC)"
+            "name_asc": "Nom (croissant)",
+            "name_desc": "Nom (décroissant)",
+            "price_asc": "Prix (croissant)",
+            "price_desc": "Prix (décroissant)",
+            "date_asc": "Date (croissant)",
+            "date_desc": "Date (décroissant)"
         }
     },
     "order": {

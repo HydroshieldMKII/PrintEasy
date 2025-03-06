@@ -195,12 +195,12 @@
         "ssf": {
             "reviewed": "Reviewed",
             "not_reviewed": "Not Reviewed",
-            "name_asc": "Name (ASC)",
-            "name_desc": "Name (DESC)",
-            "price_asc": "Price (ASC)",
-            "price_desc": "Price (DESC)",
-            "date_asc": "Date (ASC)",
-            "date_desc": "Date (DESC)"
+            "name_asc": "Name (ascending)",
+            "name_desc": "Name (descending)",
+            "price_asc": "Price (ascending)",
+            "price_desc": "Price (descending)",
+            "date_asc": "Date (ascending)",
+            "date_desc": "Date (descending)"
         }
     },
     "order": {
