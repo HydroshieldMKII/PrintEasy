@@ -86,7 +86,16 @@
                       yearRange="2000:2060"
                       (onSelect)="onDateChange($event)"
                     ></p-datepicker>
-                    <label>{{ "request.date_range" | translate }}</label>
+                    <label
+                      *ngIf="
+                        !dateRange ||
+                        (dateRange && dateRange[0] && dateRange[1])
+                      "
+                      >{{ "request.date_range" | translate }}</label
+                    >
+                    <label *ngIf="dateRange && dateRange[0] && !dateRange[1]">{{
+                      "request.date_from" | translate
+                    }}</label>
                   </p-floatlabel>
                 </div>
               </div>
@@ -147,6 +156,8 @@
                 styleClass="p-button-sm p-button-outlined"
                 (onClick)="clearAdvancedFilters()"
                 title="{{ 'request.clear_filters' | translate }}"
+                pTooltip="{{ 'request.clear_filters' | translate }}"
+                tooltipPosition="left"
               ></p-button>
 
               <!-- <p-button 
