@@ -324,6 +324,9 @@ export class OrderComponent {
           });
           console.log('Available statuses:', this.availableStatuses);
         }
+      } else {
+        console.log('Error:', response);
+        this.router.navigate(['/orders']);
       }
 
     });
