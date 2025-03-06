@@ -156,6 +156,24 @@ end
   req.save
 end
 
+5.times do |i|
+  req = Request.create(
+    user: user2,
+    name: "User 2 Request #{i + 1}",
+    budget: (i + 1) * 25.00,
+    comment: "This is request number #{i + 1} from user 2.",
+    target_date: Time.now + (i + 15).days
+  )
+
+  # Attach STL file to request
+  req.stl_file.attach(
+    io: File.open(stl_file_path1),
+    filename: 'RUBY13.stl',
+    content_type: 'application/sla'
+  )
+  req.save
+end
+
 # Create Preset Requests for each Request
 Request.all.each do |request|
   colors = Color.all
