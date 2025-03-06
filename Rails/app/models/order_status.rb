@@ -17,8 +17,8 @@ class OrderStatus < ApplicationRecord
   validate :can_transition, on: :create
   validate :state_valid?
   before_destroy :can_destroy?, prepend: true
-  before_destroy :frozen?, prepend: true
-  before_update :frozen?, prepend: true
+  before_destroy :can_change?, prepend: true
+  before_update :can_change?, prepend: true
 
   StateMachines::Machine.ignore_method_conflicts = true
 
@@ -166,7 +166,7 @@ class OrderStatus < ApplicationRecord
     true
   end
 
-  def frozen?
+  def can_change?
     last_state = order&.order_status&.order(created_at: :desc)&.first
     if %w[Cancelled Arrived Shipped].include?(last_state.status_name)
       errors.add(:order_status, 'Cannot change status of a frozen order')

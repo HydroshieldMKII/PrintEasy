@@ -26,10 +26,10 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     assert_nil @first_request['user_id']
     assert_nil @first_request['created_at']
     assert_nil @first_request['updated_at']
-    assert_equal requests(:request_three).name, @first_request['name']
-    assert_equal requests(:request_three).budget, @first_request['budget']
-    assert_equal requests(:request_three).comment, @first_request['comment']
-    assert_equal requests(:request_three).target_date.to_s, @first_request['target_date']
+    assert_equal requests(:request_four).name, @first_request['name']
+    assert_equal requests(:request_four).budget, @first_request['budget']
+    assert_equal requests(:request_four).comment, @first_request['comment']
+    assert_equal requests(:request_four).target_date.to_s, @first_request['target_date']
     assert_equal 1, @first_request['preset_requests'].count
 
     @preset_request = @first_request['preset_requests'].first
@@ -39,16 +39,16 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     assert_nil @preset_request['printer_id']
 
     @color = @preset_request['color']
-    assert_equal colors(:color_three).id, @color['id']
-    assert_equal colors(:color_three).name, @color['name']
+    assert_equal colors(:color_four).id, @color['id']
+    assert_equal colors(:color_four).name, @color['name']
 
     @filament = @preset_request['filament']
-    assert_equal filaments(:three).id, @filament['id']
-    assert_equal filaments(:three).name, @filament['name']
+    assert_equal filaments(:four).id, @filament['id']
+    assert_equal filaments(:four).name, @filament['name']
 
     @printer = @preset_request['printer']
-    assert_equal printers(:three).id, @printer['id']
-    assert_equal printers(:three).model, @printer['model']
+    assert_equal printers(:four).id, @printer['id']
+    assert_equal printers(:four).model, @printer['model']
 
     @request_user = @first_request['user']
     assert_equal users(:one).id, @request_user['id']
