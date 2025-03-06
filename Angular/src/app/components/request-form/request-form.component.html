@@ -7,7 +7,6 @@
     }}
   </h1>
 
-  <!-- Use *ngIf to avoid rendering before form is defined -->
   <form *ngIf="form" [formGroup]="form" (ngSubmit)="submitRequest()">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <!-- Left Section: Request Details -->
@@ -227,7 +226,6 @@
     <button type="submit" style="display: none"></button>
   </form>
 
-  <!-- Presets Table (outside the form) -->
   <p-table
     [value]="request.presets"
     dataKey="id"

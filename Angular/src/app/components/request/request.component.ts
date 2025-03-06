@@ -295,6 +295,22 @@ export class RequestsComponent implements OnInit {
     this.refreshData();
   }
 
+  onDateChange(date: Date): void {
+    console.log(date);
+
+    if (date && this.dateRange) {
+      this.router.navigate([], {
+        queryParams: {
+          startDate: this.dateRange[0]?.toISOString().split('T')[0],
+          endDate: this.dateRange[1] ? this.dateRange[1].toISOString().split('T')[0] : null
+        },
+        queryParamsHandling: 'merge'
+      });
+      
+      this.refreshData();
+    }
+  }
+
   copyToClipboard(pathUrl: string): void {
     const fullUrl = new URL(pathUrl, window.location.origin).href;
     this.clipboard.copy(fullUrl);
