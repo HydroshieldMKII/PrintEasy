@@ -205,9 +205,7 @@ export class OfferModalComponent implements OnChanges {
       submitObs.subscribe(
         response => {
           if (response.status === 200 || response.status === 201) {
-            if (this.offerIdToEdit) {
-              this.offerUpdated.emit(true);
-            }
+            this.offerUpdated.emit(true);
 
             this.offerModalVisible = false;
             this.offerModalVisibleChange.emit(false);
@@ -218,8 +216,6 @@ export class OfferModalComponent implements OnChanges {
       );
     }
   }
-
-
 
   deleteOffer() {
     console.log('Offer Deleted');

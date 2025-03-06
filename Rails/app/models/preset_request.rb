@@ -11,7 +11,7 @@ class PresetRequest < ApplicationRecord
   validates :request_id,
             uniqueness: { scope: %i[color_id filament_id printer_id print_quality] }
 
-  def has_matching_offer_by_current_user?
+  def has_matching_offer_by_current_user
     printer_user_ids = Current.user.printer_users.pluck(:id)
     return false if printer_user_ids.empty?
 

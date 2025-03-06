@@ -13,7 +13,7 @@
         "info": "Information",
         "confirm": "Confirmer",
         "advanced": "Personnaliser",
-        "sort": "Trier par",
+        "sort_by": "Trier par",
         "filter": "Filtrer par",
         "confirm_delete": "Confirmer la suppression",
         "errors": {

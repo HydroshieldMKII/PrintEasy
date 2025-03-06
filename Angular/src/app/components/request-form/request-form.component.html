@@ -263,7 +263,7 @@
         ></p-select>
         </td>
         <td>
-          <p-inputnumber 
+            <p-inputnumber 
             [showButtons]="(isEditMode && !request.hasOffers && !request.hasOfferAccepted) || isNewMode" 
             buttonLayout="horizontal" 
             spinnerMode="vertical" 
@@ -274,7 +274,9 @@
             [min]="0.01" 
             [max]="2"
             [disabled]="isViewMode || request.hasOffers"
-          ></p-inputnumber>
+            [minFractionDigits]="2"
+            [maxFractionDigits]="2"
+            ></p-inputnumber>
         </td>
         <td *ngIf="isEditMode || isNewMode">
           <button
@@ -295,7 +297,7 @@
             icon="pi pi-arrow-right"
             variant="outlined"
             severity="info"
-            label="{{ 'requestForm.offer_preset' | translate }}"
+            [label]="preset.hasOfferMade ? ('requestForm.offer_preset_alt' | translate) : ('requestForm.offer_preset' | translate)"
             (click)="showOfferModal(preset)"
           ></p-button>
         </td>
@@ -377,4 +379,10 @@
   </p-dialog>
 </div>
 
-<app-offer-modal *ngIf="offerModalVisible" [(offerModalVisible)]="offerModalVisible" [requestIdToEdit]="id" [presetToEdit]="presetModalToEdit"></app-offer-modal>
+<app-offer-modal 
+  *ngIf="offerModalVisible" 
+  [(offerModalVisible)]="offerModalVisible" 
+  [requestIdToEdit]="id" 
+  [presetToEdit]="presetModalToEdit"
+  (offerUpdated)="refreshRequestDetails()"
+></app-offer-modal>
