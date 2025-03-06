@@ -410,13 +410,13 @@ export class RequestFormComponent implements OnInit {
     const printerValid = preset.printerModel && preset.printerModel.id !== null;
     const filamentValid = preset.filamentType && preset.filamentType.id !== null;
     const colorValid = preset.color && preset.color.id !== null;
-    
+
     preset.printQuality = parseFloat(preset.printQuality);
 
-    const isMarkedForDeletion = this.presetToDelete.some((p: any) => 
+    const isMarkedForDeletion = this.presetToDelete.some((p: any) =>
       preset.id && p.id === preset.id
     );
-    
+
     if (isMarkedForDeletion) {
       return true; //
     }
@@ -424,7 +424,7 @@ export class RequestFormComponent implements OnInit {
     const duplicateCount = this.request.presets.filter((p: any) => {
       const pQuality = parseFloat(p.printQuality);
       const currentQuality = preset.printQuality;
-      
+
       return p.printerModel.id === preset.printerModel.id &&
         p.filamentType.id === preset.filamentType.id &&
         p.color.id === preset.color.id &&
