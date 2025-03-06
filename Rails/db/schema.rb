@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_06_005916) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_06_021659) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -118,7 +118,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_06_005916) do
     t.bigint "color_id", null: false
     t.bigint "filament_id", null: false
     t.bigint "user_id", null: false
-    t.float "print_quality", null: false
+    t.decimal "print_quality", precision: 4, scale: 2, null: false
     t.index ["color_id"], name: "index_presets_on_color_id"
     t.index ["filament_id"], name: "index_presets_on_filament_id"
     t.index ["user_id", "filament_id", "color_id", "print_quality"], name: "idx_on_user_id_filament_id_color_id_print_quality_c373c36abc", unique: true

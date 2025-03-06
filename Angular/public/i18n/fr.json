@@ -356,6 +356,7 @@
         "confirm_accept_message": "Êtes-vous sûr de vouloir accepter cette offre ? Vous ne pouvez accepter qu'une seule offre par demande.",
         "yes": "Oui",
         "no": "Non",
+        "yes_see": "Oui, voir les détails",
         "created": "Offre créée avec succès!",
         "updated": "Offre mise à jour avec succès!",
         "deleted": "Offre supprimée avec succès!",
