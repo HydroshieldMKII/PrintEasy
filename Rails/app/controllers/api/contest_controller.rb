@@ -56,9 +56,9 @@ module Api
 
     def destroy
       @contest = Contest.find(params[:id])
-      deleted = @contest.started? ? @contest.soft_delete : @contest.destroy
+      # deleted = @contest.started? ? @contest.soft_delete : @contest.destroy
 
-      if deleted
+      if @contest.destroy
         render json: {
                  contest: @contest.as_json(include: :submissions,
                                            methods: %i[image_url finished? started?

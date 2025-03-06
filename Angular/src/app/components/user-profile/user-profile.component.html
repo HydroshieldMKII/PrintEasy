@@ -164,9 +164,9 @@
                     </div>
 
                     <div class="dialog-footer">
-                        <p-button type="button" label="Cancel" icon="pi pi-times" (click)="printerDialogVisible = false"
+                        <p-button type="button" label="{{ 'global.cancel_button' | translate }}" icon="pi pi-times" (click)="printerDialogVisible = false"
                             severity="secondary"></p-button>
-                        <p-button type="submit" label="Save" icon="pi pi-check"
+                        <p-button type="submit" label="{{ 'global.save_button' | translate }}" icon="pi pi-check"
                             severity="success" [disabled]="printerForm.invalid"></p-button>
                     </div>
                 </form>

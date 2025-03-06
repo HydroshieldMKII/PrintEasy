@@ -88,10 +88,25 @@ export class UserProfileComponent implements OnInit {
 
     this.responsiveOptions = [
       {
+        breakpoint: '1400px',
+        numVisible: 2,
+        numScroll: 1,
+      },
+      {
+        breakpoint: '1199px',
+        numVisible: 3,
+        numScroll: 1,
+      },
+      {
+        breakpoint: '767px',
+        numVisible: 2,
+        numScroll: 1,
+      },
+      {
         breakpoint: '575px',
         numVisible: 1,
-        numScroll: 1
-      }
+        numScroll: 1,
+      },
     ];
 
     this.reviewService.getUserReviews(this.router.snapshot.params['id']).subscribe((response: ApiResponseModel | ReviewModel[]) => {
@@ -152,7 +167,7 @@ export class UserProfileComponent implements OnInit {
     if (this.printerToDelete) {
       this.printerUserService.deletePrinterUser(this.printerToDelete.id).subscribe(response => {
         if (response.status === 200) {
-          this.printerUsers = this.printerUsers.filter(p => p.id !== this.printerToDelete?.id);
+          this.userProfile!.printerUsers = this.userProfile!.printerUsers.filter(pu => pu.id !== this.printerToDelete?.id);
           this.messageService.add({
             severity: 'success',
             summary: 'Success',
@@ -192,7 +207,14 @@ export class UserProfileComponent implements OnInit {
             summary: 'Success',
             detail: `Printer ${this.isEditMode ? 'updated' : 'added'} successfully`
           });
-          this.loadPrinterUsers();
+            if (this.isEditMode && this.printerUserEdit) {
+            const index = this.userProfile?.printerUsers.findIndex(pu => pu.id === this.printerUserEdit?.id);
+            if (index !== undefined && index !== -1) {
+              this.userProfile!.printerUsers[index] = PrinterUserModel.fromAPI(response.data.printer_user);
+            }
+            } else {
+              this.userProfile?.printerUsers.push(PrinterUserModel.fromAPI(response.data.printer_user));
+            }
         } else {
           this.messageService.add({
             severity: 'error',
@@ -201,7 +223,7 @@ export class UserProfileComponent implements OnInit {
           });
         }
       },
-      error: (error) => {
+      error: () => {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',

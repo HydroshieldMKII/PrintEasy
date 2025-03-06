@@ -78,10 +78,25 @@ export class SubmissionsComponent {
 
     this.responsiveOptions = [
       {
+        breakpoint: '1400px',
+        numVisible: 2,
+        numScroll: 1,
+      },
+      {
+        breakpoint: '1199px',
+        numVisible: 3,
+        numScroll: 1,
+      },
+      {
+        breakpoint: '767px',
+        numVisible: 2,
+        numScroll: 1,
+      },
+      {
         breakpoint: '575px',
         numVisible: 1,
-        numScroll: 1
-      }
+        numScroll: 1,
+      },
     ];
   }
 
@@ -96,7 +111,6 @@ export class SubmissionsComponent {
     if (this.submissionForm.invalid) {
       return;
     }
-    console.log('Form:', this.submissionForm.value);
 
     const submissionForm = new FormData();
     submissionForm.append('submission[name]', this.submissionForm.value.name);
