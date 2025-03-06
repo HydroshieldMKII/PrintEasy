@@ -4,7 +4,9 @@ class PrinterUser < ApplicationRecord
   belongs_to :printer
   belongs_to :user
   has_many :offers, dependent: :destroy
-  before_destroy :can_destroy?, prepend: true
+  before_destroy :can_update?, prepend: true
+
+  validate :can_update?, on: :update
 
   validates :acquired_date, presence: true
   validates :acquired_date, comparison: { less_than_or_equal_to: lambda {
@@ -45,18 +47,18 @@ class PrinterUser < ApplicationRecord
     printed_status.created_at
   end
 
-  def can_delete
+  def can_update
     offers.empty? && offers.joins(:order).empty?
   end
 
   private
 
-  def can_destroy?
+  def can_update?
     return if offers.empty?
 
     return unless offers.joins(:order).exists?
 
-    errors.add(:base, 'Cannot delete printer user with orders')
+    errors.add(:base, 'Cannot update printer user with orders')
     throw(:abort)
   end
 end

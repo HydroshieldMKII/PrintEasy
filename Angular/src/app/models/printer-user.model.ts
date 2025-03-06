@@ -10,7 +10,7 @@ export type PrinterUserApi = {
     acquired_date: Date;
     last_review_image: string | null;
     last_used: Date | null;
-    can_delete: boolean | null;
+    can_update: boolean | null;
 }
 
 export class PrinterUserModel {
@@ -48,7 +48,7 @@ export class PrinterUserModel {
             new Date(data.acquired_date + 'T00:00:00'),
             data.last_review_image ?? null,
             data.last_used ? new Date(data.last_used) : null,
-            data.can_delete ?? null
+            data.can_update ?? null
         );
     }
 

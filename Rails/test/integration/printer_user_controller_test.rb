@@ -26,7 +26,7 @@ class PrinterUserControllerTest < ActionDispatch::IntegrationTest
     assert_equal '2025-02-14', printer_user['acquired_date']
     assert_nil printer_user['last_review_image']
     assert_nil printer_user['last_used']
-    assert_equal false, printer_user['can_delete']
+    assert_equal false, printer_user['can_update']
     assert_equal 1, printer_user['printer']['id']
     assert_equal 'Bambulab', printer_user['printer']['model']
     assert_equal 1, printer_user['user']['id']
@@ -266,5 +266,39 @@ class PrinterUserControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_equal ['Invalid login credentials'], json_response['errors']['connection']
+  end
+
+  test "should not destroy printer_user if it has offers" do
+    sign_out @user
+    sign_in users(:two)
+
+    assert_difference 'PrinterUser.count', 0 do
+      delete api_printer_user_path(@printer_user_two)
+    end
+
+    assert_response :unprocessable_entity
+
+    json_response = assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+
+    assert_equal ['Cannot update printer user with orders'], json_response['errors']['base']
+  end
+
+  test 'should not update printer_user if it has offers' do
+    sign_out @user
+    sign_in users(:two)
+
+    assert_difference 'PrinterUser.count', 0 do
+      patch api_printer_user_path(@printer_user_two), params: { printer_user: { acquired_date: 5.days.ago } }
+    end
+
+    assert_response :unprocessable_entity
+
+    json_response = assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+
+    assert_equal ['Cannot update printer user with orders'], json_response['errors']['base']
   end
 end

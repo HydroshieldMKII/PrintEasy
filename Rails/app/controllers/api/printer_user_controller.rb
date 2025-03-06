@@ -17,7 +17,7 @@ module Api
                                                                  include: { country: {} }
                                                                }
                                                              },
-                                                             methods: %i[last_review_image last_used can_delete]
+                                                             methods: %i[last_review_image last_used can_update]
                                                            }) }, status: :ok
     end
 

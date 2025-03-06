@@ -16,7 +16,7 @@ module Api
                   include: { country: { only: %i[id name] } }
                 }
               },
-              methods: %i[last_review_image last_used can_delete]
+              methods: %i[last_review_image last_used can_update]
             }
           },
           methods: %i[profile_picture_url user_contests_submissions]
