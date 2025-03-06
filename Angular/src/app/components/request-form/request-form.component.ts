@@ -19,6 +19,7 @@ import { OfferModalComponent } from '../offer-modal/offer-modal.component';
 import { TranslatePipe } from '@ngx-translate/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ApiResponseModel } from '../../models/api-response.model';
+import { PresetModel } from '../../models/preset.model';
 
 @Component({
   selector: 'app-request-form',
@@ -246,7 +247,14 @@ export class RequestFormComponent implements OnInit {
     }
 
     this.presetToDelete.push({ ...preset });
-    this.request.presets.splice(index, 1);
+  }
+
+  isAboutToBeDeleted(preset: PresetModel): boolean {
+    return this.presetToDelete.some((p: PresetModel) => p.id === preset.id);
+  }
+
+  undoDeletePreset(preset: PresetModel): void {
+    this.presetToDelete = this.presetToDelete.filter((p: PresetModel) => p.id !== preset.id);
   }
 
   onFileUpload(event: FileSelectEvent): void {
@@ -291,12 +299,18 @@ export class RequestFormComponent implements OnInit {
     if (this.isEditMode) {
       this.requestService.updateRequest(this.request.id, formData).subscribe(response => {
         if (response.status === 200) {
+          this.request.presets = this.request.presets.filter((preset: any) => {
+            return !this.presetToDelete.some((p: any) => p.id === preset.id);
+          });
           this.presetToDelete = [];
         }
       });
     } else if (this.isNewMode) {
       this.requestService.createRequest(formData).subscribe(response => {
         if (response.status === 201) {
+          this.request.presets = this.request.presets.filter((preset: any) => {
+            return !this.presetToDelete.some((p: any) => p.id === preset.id);
+          });
           this.presetToDelete = [];
           this.router.navigate(['/requests/edit', response.data.request.id]);
         }
@@ -391,18 +405,34 @@ export class RequestFormComponent implements OnInit {
   }
 
   isPresetValid(preset: any): boolean {
+    console.log(preset);
+    console.log(this.request.presets);
     const printerValid = preset.printerModel && preset.printerModel.id !== null;
     const filamentValid = preset.filamentType && preset.filamentType.id !== null;
     const colorValid = preset.color && preset.color.id !== null;
+    
+    preset.printQuality = parseFloat(preset.printQuality);
 
-    const isDuplicate = this.request.presets.filter((p: any) =>
-      p.printerModel.id === preset.printerModel.id &&
-      p.filamentType.id === preset.filamentType.id &&
-      p.color.id === preset.color.id &&
-      p.printQuality === preset.printQuality
-    ).length > 1;
+    const isMarkedForDeletion = this.presetToDelete.some((p: any) => 
+      preset.id && p.id === preset.id
+    );
+    
+    if (isMarkedForDeletion) {
+      return true; //
+    }
 
-    return printerValid && filamentValid && colorValid && preset.printQuality && !isDuplicate;
+    const duplicateCount = this.request.presets.filter((p: any) => {
+      const pQuality = parseFloat(p.printQuality);
+      const currentQuality = preset.printQuality;
+      
+      return p.printerModel.id === preset.printerModel.id &&
+        p.filamentType.id === preset.filamentType.id &&
+        p.color.id === preset.color.id &&
+        pQuality === currentQuality;
+    }).length;
+
+    console.log(printerValid && filamentValid && colorValid && !isNaN(preset.printQuality) && duplicateCount <= 1);
+    return printerValid && filamentValid && colorValid && !isNaN(preset.printQuality) && duplicateCount <= 1;
   }
 
   showOfferModal(preset?: any): void {

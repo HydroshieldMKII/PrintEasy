@@ -149,7 +149,13 @@ export class RequestService {
                         summary: this.translate.instant('requestForm.upload_file'),
                         detail: this.translate.instant('requestForm.file_type_error')
                     });
-                } else {
+                } else if(response.status === 422 && response.errors['preset_requests.request_id'] === 'has already been taken') {
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: this.translate.instant('requestForm.invalid_preset'),
+                        detail: this.translate.instant('requestForm.invalid_preset_message')
+                    });
+                }else {
                     this.messageService.add({
                         severity: 'error',
                         summary: this.translate.instant('global.error'),
