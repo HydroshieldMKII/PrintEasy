@@ -15,14 +15,11 @@ class PresetRequest < ApplicationRecord
     printer_user_ids = Current.user.printer_users.pluck(:id)
     return false if printer_user_ids.empty?
 
-    epsilon = 0.0001
-    min_quality = print_quality - epsilon
-    max_quality = print_quality + epsilon
-
     request.offers.where(
       printer_user_id: printer_user_ids,
       color_id: color_id,
-      filament_id: filament_id
-    ).where('print_quality BETWEEN ? AND ?', min_quality, max_quality).exists?
+      filament_id: filament_id,
+      print_quality: print_quality
+    ).exists?
   end
 end
