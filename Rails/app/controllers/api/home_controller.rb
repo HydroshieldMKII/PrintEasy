@@ -43,15 +43,15 @@ module Api
     private
 
     def last_requests
-      Request.order('created_at DESC').limit(6)
+      Request.order('created_at DESC').limit(5)
     end
 
     def last_submissions
-      Submission.order('created_at DESC').limit(6)
+      Submission.order('created_at DESC').limit(5)
     end
 
     def last_contests
-      Contest.order('start_at DESC').where('start_at < ?', Date.today).limit(6)
+      Contest.order('start_at DESC').where('start_at < ?', Date.today).limit(5)
     end
   end
 end

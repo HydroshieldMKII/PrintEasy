@@ -44,7 +44,11 @@ export class HomeComponent {
     if (object instanceof ContestModel) {
       this.router.navigate(['/contest/', object.id, "submissions"]);
     } else if (object instanceof RequestModel) {
-      this.router.navigate(['/requests/view/', object.id]);
+      if (object.user?.id === this.authService.currentUser?.id) {
+        this.router.navigate(['/requests/edit/', object.id]);
+      }else {
+        this.router.navigate(['/requests/view/', object.id]);
+      }
     } else if (object instanceof SubmissionModel) {
       this.router.navigate(['/contest/', object.contest_id, "submissions"]);
     }
