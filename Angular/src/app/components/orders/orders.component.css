@@ -5,6 +5,10 @@
     align-items: center;
 }
 
+:host ::ng-deep .p-button-link {
+    padding: 0rem !important;
+}
+
 .status-tag {
     color: rgb(34, 34, 34);
     border-radius: 10px;

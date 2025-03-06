@@ -7,9 +7,11 @@
             
             <div class="h-row">
                 <p class="info-label h3c">{{'order.printer_owner' | translate}}</p>
-                <div style="display: flex; flex-direction: row; gap: 10px;">
+                <div style="display: flex; flex-direction: row; gap: 10px; align-items: center;">
                     <p-avatar label="" size="large" shape="circle" *ngIf="order?.offer?.printerUser?.user?.profilePictureUrl" image="{{order?.offer?.printerUser?.user?.profilePictureUrl}}"></p-avatar>
-                    <p class="h3c">{{order?.offer?.printerUser?.user?.username}}</p>
+                    <!-- <p class="h3c">{{order?.offer?.printerUser?.user?.username}}</p> -->
+                    <p-button [style]="{height: '100%', 'font-size': '1.25rem'}" [label]="order?.offer?.printerUser?.user?.username" [link]="true" routerLink="/profile/{{ order?.offer?.printerUser?.user?.id }}"/>
+
                 </div>
             </div>
 

@@ -26,7 +26,7 @@ interface StatusChoice {
 
 @Component({
   selector: 'app-orders',
-  imports: [ImportsModule, DropdownModule, ReactiveFormsModule, StlModelViewerModule, TranslatePipe],
+  imports: [ImportsModule, DropdownModule, ReactiveFormsModule, StlModelViewerModule, TranslatePipe, RouterLink],
   templateUrl: './order.component.html',
   styleUrl: './order.component.css'
 })
