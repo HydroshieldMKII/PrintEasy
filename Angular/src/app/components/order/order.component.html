@@ -6,7 +6,7 @@
             <p class="h1c">{{order?.offer?.request?.name}}</p>
             
             <div class="h-row">
-                <p class="info-label">{{'order.printer_owner' | translate}}</p>
+                <p class="info-label h3c">{{'order.printer_owner' | translate}}</p>
                 <div style="display: flex; flex-direction: row; gap: 10px;">
                     <p-avatar label="" size="large" shape="circle" *ngIf="order?.offer?.printerUser?.user?.profilePictureUrl" image="{{order?.offer?.printerUser?.user?.profilePictureUrl}}"></p-avatar>
                     <p class="h3c">{{order?.offer?.printerUser?.user?.username}}</p>
@@ -14,19 +14,19 @@
             </div>
 
             <div class="h-row">
-                <p class="info-label">{{'order.price' | translate}}</p>
+                <p class="info-label h3c">{{'order.price' | translate}}</p>
                 <p class="h3c">{{order?.offer?.price | currency}}</p>
             </div>
 
             <div class="h-row">
-                <p class="info-label">{{'order.current_status' | translate}}</p>
+                <p class="info-label h3c">{{'order.current_status' | translate}}</p>
                 <span [ngStyle]="{'color': 'rgb(34, 34, 34)', 'background-color': statusColorRef[currentStatus?.statusName || 0], 'border-radius': '10px', 'height': '30px', 'padding': '7px', 'display': 'flex', 'flex-direction': 'row', 'align-items': 'center'}">
                     <p>{{"status." + currentStatus?.statusName | translate}}</p>
                 </span>
             </div>
 
             <div class="h-row">
-                <p class="info-label">{{'order.target_date' | translate}}</p>
+                <p class="info-label h3c">{{'order.target_date' | translate}}</p>
                 <p class="h3c">{{order?.offer?.targetDate | date:'fullDate'}}</p>
             </div>
 
