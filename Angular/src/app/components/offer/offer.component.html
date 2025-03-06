@@ -13,7 +13,6 @@
 
     <p-tabpanels>
       <p-tabpanel *ngFor="let tab of ['all', 'mine']" [value]="tab">
-        <!-- Directly iterate through the native API structure -->
         <div *ngFor="let request of currentRequests" class="mb-6">
           <div class="request-header p-2 bg-gray-100 rounded">
             <a style="color: black;">
@@ -26,85 +25,82 @@
             </a>
           </div>
 
-          <p-table [value]="request.offers" dataKey="id" styleClass="fixed-table">
-            <ng-container *ngIf="activeTab === 'all'; else mineColGroup">
-              <ng-template pTemplate="colgroup">
-                <col style="width: 16.66%;" />
-                <col style="width: 16.66%;" />
-                <col style="width: 16.66%;" />
-                <col style="width: 16.66%;" />
-                <col style="width: 16.66%;" />
-                <col style="width: 16.66%;" />
-              </ng-template>
+          <p-table 
+  [value]="request.offers" 
+  dataKey="id" 
+  [tableStyle]="{ 'min-width': '60rem' }"
+  [responsive]="true">
+  
+  <ng-template pTemplate="header">
+    <tr>
+      <th *ngIf="activeTab === 'all'" class="font-bold text-lg">{{ 'offer.username' | translate }}</th>
+      <th class="font-bold text-lg">{{ 'offer.printer' | translate }}</th>
+      <th class="font-bold text-lg">{{ 'offer.preset' | translate }}</th>
+      <th class="font-bold text-lg">{{ 'offer.price_offered' | translate }}</th>
+      <th class="font-bold text-lg">{{ 'offer.offer_date' | translate }}</th>
+      <th class="font-bold text-lg" style="width: 4rem">{{ 'offer.actions' | translate }}</th>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-offer>
+    <tr [ngClass]="{'disabled-row': offer.cancelledAt || offer.acceptedAt}">
+      <td *ngIf="activeTab === 'all'">{{ offer.printerUser.user.username }}</td>
+      <td>{{ offer.printerUser.printer.model }}</td>
+      <td>{{ offer.color.name }} / {{ offer.filament.name }} / {{ offer.printQuality }}mm</td>
+      <td>{{ offer.price === 0 ? ('offer.free' | translate) : (offer.price | currency) }}</td>
+      <td>{{ offer.targetDate | date:'mediumDate' }}</td>
+      <td>
+        <ng-container *ngIf="offer.cancelledAt || offer.acceptedAt; else actionButtons">
+          <span *ngIf="offer.cancelledAt">
+            {{ 'offer.rejected' | translate }} ({{ offer.cancelledAt | date:'mediumDate' }})
+          </span>
+          <span *ngIf="offer.acceptedAt">
+            {{ 'offer.accepted' | translate }} ({{ offer.acceptedAt | date:'mediumDate' }})
+          </span>
+        </ng-container>
+        
+        <ng-template #actionButtons>
+          <div class="flex gap-2">
+            <!-- Mine tab buttons -->
+            <ng-container *ngIf="activeTab === 'mine'">
+              <p-button
+                icon="pi pi-pencil"
+                pTooltip="{{ 'offer.edit_offer' | translate }}" 
+                tooltipPosition="top"
+                (onClick)="editOffer(offer)">
+              </p-button>
+              <p-button
+                icon="pi pi-trash"
+                pTooltip="{{ 'offer.cancel_offer' | translate }}" 
+                tooltipPosition="top"
+                severity="danger"
+                (onClick)="cancelOffer(offer, request)">
+              </p-button>
             </ng-container>
-            <ng-template #mineColGroup>
-              <ng-template pTemplate="colgroup">
-                <col style="width: 20%;" />
-                <col style="width: 20%;" />
-                <col style="width: 20%;" />
-                <col style="width: 20%;" />
-                <col style="width: 20%;" />
-              </ng-template>
-            </ng-template>
-          
-            <ng-template pTemplate="header">
-              <tr>
-                <th *ngIf="activeTab === 'all'">{{ 'offer.username' | translate }}</th>
-                <th>{{ 'offer.printer' | translate }}</th>
-                <th>{{ 'offer.preset' | translate }}</th>
-                <th>{{ 'offer.price_offered' | translate }}</th>
-                <th>{{ 'offer.offer_date' | translate }}</th>
-                <th>{{ 'offer.actions' | translate }}</th>
-              </tr>
-            </ng-template>
-          
-            <ng-template pTemplate="body" let-offer>
-              <tr [ngClass]="{'disabled-row': offer.cancelledAt || offer.acceptedAt}">
-                <td *ngIf="activeTab === 'all'">{{ offer.printerUser.user.username }}</td>
-                <td>{{ offer.printerUser.printer.model }}</td>
-                <td>{{ offer.color.name }} / {{ offer.filament.name }} / {{ offer.printQuality }}mm</td>
-                <td>{{ offer.price === 0 ? ('offer.free' | translate) : (offer.price | currency) }}</td>
-                <td>{{ offer.targetDate | date:'mediumDate' }}</td>
-                <td>
-                  <ng-container *ngIf="offer.cancelledAt || offer.acceptedAt; else actionButtons">
-                    <span *ngIf="offer.cancelledAt">
-                      {{ 'offer.rejected' | translate }} ({{ offer.cancelledAt | date:'mediumDate' }})
-                    </span>
-                    <span *ngIf="offer.acceptedAt">
-                      {{ 'offer.accepted' | translate }} ({{ offer.acceptedAt | date:'mediumDate' }})
-                    </span>
-                  </ng-container>
-                  
-                  <ng-template #actionButtons>
-                    <div class="flex gap-2">
-                      <!-- Mine tab buttons -->
-                        <ng-container *ngIf="activeTab === 'mine'">
-                        <button pButton type="button" icon="pi pi-pencil" 
-                            pTooltip="{{ 'offer.edit_offer' | translate }}" tooltipPosition="top"
-                            (click)="editOffer(offer)"></button>
-                        <button pButton type="button" icon="pi pi-trash" 
-                            pTooltip="{{ 'offer.cancel_offer' | translate }}" tooltipPosition="top"
-                            severity="danger"
-                            (click)="cancelOffer(offer, request)"></button>
-                        </ng-container>
-                        
-                        <!-- All tab buttons -->
-                        <ng-container *ngIf="activeTab === 'all'">
-                        <button pButton type="button" icon="pi pi-check" 
-                            pTooltip="{{ 'offer.accept_offer' | translate }}" tooltipPosition="top"
-                            severity="success"
-                            (click)="showAcceptOffer(offer)"></button>
-                        <button pButton type="button" icon="pi pi-times" 
-                            pTooltip="{{ 'offer.refuse_offer' | translate }}" tooltipPosition="top"
-                            severity="danger"
-                            (click)="showRefuseOffer(offer)"></button>
-                        </ng-container>
-                    </div>
-                  </ng-template>
-                </td>
-              </tr>
-            </ng-template>
-          </p-table>
+            
+            <!-- All tab buttons -->
+            <ng-container *ngIf="activeTab === 'all'">
+              <p-button
+                icon="pi pi-check"
+                pTooltip="{{ 'offer.accept_offer' | translate }}" 
+                tooltipPosition="top"
+                severity="success"
+                (onClick)="showAcceptOffer(offer)">
+              </p-button>
+              <p-button
+                icon="pi pi-times"
+                pTooltip="{{ 'offer.refuse_offer' | translate }}" 
+                tooltipPosition="top"
+                severity="danger"
+                (onClick)="showRefuseOffer(offer)">
+              </p-button>
+            </ng-container>
+          </div>
+        </ng-template>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
           
         </div>
 

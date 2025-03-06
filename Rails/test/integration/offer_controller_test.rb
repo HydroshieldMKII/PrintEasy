@@ -32,7 +32,7 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     assert_equal 2, json_response['requests'][0]['offers'][0]['id']
     assert_equal 2.5, json_response['requests'][0]['offers'][0]['price']
     assert_equal '2021-01-02', json_response['requests'][0]['offers'][0]['target_date']
-    assert_equal "0.22", json_response['requests'][0]['offers'][0]['print_quality']
+    assert_equal '0.22', json_response['requests'][0]['offers'][0]['print_quality']
     assert_nil json_response['requests'][0]['offers'][0]['cancelled_at']
     assert_equal 1, json_response['requests'][0]['offers'][0]['printer_user']['id']
     assert_equal 1, json_response['requests'][0]['offers'][0]['printer_user']['user']['id']
@@ -46,7 +46,7 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     assert_equal 9, json_response['requests'][0]['offers'][1]['id']
     assert_equal 1.5, json_response['requests'][0]['offers'][1]['price']
     assert_equal '2021-01-01', json_response['requests'][0]['offers'][1]['target_date']
-    assert_equal "0.22", json_response['requests'][0]['offers'][1]['print_quality']
+    assert_equal '0.22', json_response['requests'][0]['offers'][1]['print_quality']
     assert_nil json_response['requests'][0]['offers'][1]['cancelled_at']
     assert_equal 1, json_response['requests'][0]['offers'][1]['printer_user']['id']
     assert_equal 1, json_response['requests'][0]['offers'][1]['printer_user']['user']['id']
@@ -89,7 +89,7 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     assert_equal 2, json_response['requests'][0]['offers'][0]['id']
     assert_equal 2.5, json_response['requests'][0]['offers'][0]['price']
     assert_equal '2021-01-02', json_response['requests'][0]['offers'][0]['target_date']
-    assert_equal "0.22", json_response['requests'][0]['offers'][0]['print_quality']
+    assert_equal '0.22', json_response['requests'][0]['offers'][0]['print_quality']
     assert_nil json_response['requests'][0]['offers'][0]['cancelled_at']
 
     assert_empty json_response['errors']
@@ -120,7 +120,7 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
       post api_offer_index_url,
            params: { offer: { name: 'Test Offer', price: 1.5, target_date: '2026-01-01', comment: 'test comment',
                               request_id: offers(:nine).request_id, printer_user_id: @user.printer_users.first.id,
-                              color_id: @offer2.color_id, filament_id: @offer.filament_id, print_quality: "0.22" } }
+                              color_id: @offer2.color_id, filament_id: @offer.filament_id, print_quality: '0.22' } }
     end
 
     # Http code
@@ -137,7 +137,7 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     assert_equal 1, json_response['offer']['filament_id']
     assert_equal 1.5, json_response['offer']['price']
     assert_equal '2026-01-01', json_response['offer']['target_date']
-    assert_equal "0.22", json_response['offer']['print_quality']
+    assert_equal '0.22', json_response['offer']['print_quality']
     assert_nil json_response['offer']['cancelled_at']
     assert_empty json_response['errors']
   end
@@ -191,7 +191,7 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
       post api_offer_index_url,
            params: { offer: { name: 'Test Offer', price: 1.5, target_date: '2026-01-01', comment: 'test comment',
                               request_id: @offer2.request_id, printer_user_id: @offer2.printer_user_id,
-                              color_id: @offer2.color_id, filament_id: @offer2.filament_id, print_quality: "0.22" } }
+                              color_id: @offer2.color_id, filament_id: @offer2.filament_id, print_quality: '0.22' } }
     end
 
     # Http code
@@ -213,7 +213,7 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
            params: { offer: { name: 'Test Offer', price: 1.5, target_date: '2026-01-01', comment: 'test comment',
                               request_id: offers(:ten).request_id,
                               printer_user_id: printer_users(:one).id,
-                              color_id: @offer.color_id, filament_id: @offer.filament_id, print_quality: "0.22" } }
+                              color_id: @offer.color_id, filament_id: @offer.filament_id, print_quality: '0.22' } }
     end
 
     # Http code
@@ -237,7 +237,7 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
       post api_offer_index_url,
            params: { offer: { name: 'Test Offer', price: 1.5, target_date: '2026-01-01', comment: 'test comment',
                               request_id: @offer.request_id, printer_user_id: @offer.printer_user_id,
-                              color_id: @offer2.color_id, filament_id: @offer2.filament_id, print_quality: "0.22" } }
+                              color_id: @offer2.color_id, filament_id: @offer2.filament_id, print_quality: '0.22' } }
     end
 
     # Http code
@@ -260,7 +260,7 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
       post api_offer_index_url,
            params: { offer: { name: 'Test Offer', price: 1.5, target_date: '2026-01-01', comment: 'test comment',
                               request_id: @offer.request_id, printer_user_id: @offer.printer_user_id,
-                              color_id: @offer.color_id, filament_id: @offer.filament_id, print_quality: "0.22" } }
+                              color_id: @offer.color_id, filament_id: @offer.filament_id, print_quality: '0.22' } }
     end
 
     # Http code
@@ -281,7 +281,7 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
       post api_offer_index_url,
            params: { offer: { name: 'Test Offer', price: 1.5, target_date: '2026-01-01', comment: 'test comment',
                               request_id: @offer2.request_id, printer_user_id: @offer.printer_user_id,
-                              color_id: @offer.color_id, filament_id: @offer.filament_id, print_quality: "0.22" } }
+                              color_id: @offer.color_id, filament_id: @offer.filament_id, print_quality: '0.22' } }
     end
 
     # Http code
@@ -306,7 +306,7 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
       post api_offer_index_url,
            params: { offer: { name: 'Test Offer', price: 1.5, target_date: '2026-01-01', comment: 'test comment',
                               request_id: @offer2.request_id,
-                              color_id: @offer.color_id, filament_id: @offer.filament_id, print_quality: "0.22" } }
+                              color_id: @offer.color_id, filament_id: @offer.filament_id, print_quality: '0.22' } }
     end
 
     # Http code
@@ -341,7 +341,7 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     assert_equal 2, json_response['offer']['id']
     assert_equal 2.5, json_response['offer']['price']
     assert_equal '2021-01-02', json_response['offer']['target_date']
-    assert_equal "0.22", json_response['offer']['print_quality']
+    assert_equal '0.22', json_response['offer']['print_quality']
     assert_nil json_response['offer']['cancelled_at']
     assert_equal 1, json_response['offer']['printer_user']['id']
     assert_equal 1, json_response['offer']['printer_user']['user']['id']
@@ -381,7 +381,7 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     # Database changes
     assert_no_difference 'Offer.count' do
       patch api_offer_url(@offer2),
-            params: { offer: { price: 1.5, target_date: '2026-01-01', print_quality: "0.22",
+            params: { offer: { price: 1.5, target_date: '2026-01-01', print_quality: '0.22',
                                printer_user_id: @offer2.printer_user_id, color_id: @offer2.color_id,
                                filament_id: @offer2.filament_id } }
     end
@@ -396,7 +396,7 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     assert_equal 2, json_response['offer']['id']
     assert_equal 1.5, json_response['offer']['price']
     assert_equal '2026-01-01', json_response['offer']['target_date']
-    assert_equal "0.22", json_response['offer']['print_quality']
+    assert_equal '0.22', json_response['offer']['print_quality']
     assert_nil json_response['offer']['cancelled_at']
     assert_equal 1, json_response['offer']['printer_user_id']
     assert_equal 2, json_response['offer']['color_id']
@@ -436,7 +436,7 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     # Database changes
     assert_no_difference 'Offer.count' do
       patch api_offer_url(@offer2),
-            params: { offer: { price: 1.5, target_date: '2026-01-01', print_quality: "0.22",
+            params: { offer: { price: 1.5, target_date: '2026-01-01', print_quality: '0.22',
                                printer_user_id: @offer2.printer_user_id, color_id: @offer2.color_id,
                                filament_id: @offer2.filament_id } }
     end
@@ -479,7 +479,7 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     assert_equal '2021-01-02', json_response['offer']['target_date']
     assert_equal '2021-01-02T00:00:00.000Z', json_response['offer']['created_at']
     assert_equal '2021-01-02T00:00:00.000Z', json_response['offer']['updated_at']
-    assert_equal "0.22", json_response['offer']['print_quality']
+    assert_equal '0.22', json_response['offer']['print_quality']
     assert_nil json_response['offer']['cancelled_at']
     assert_empty json_response['errors']
 

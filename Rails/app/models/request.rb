@@ -130,7 +130,7 @@ class Request < ApplicationRecord
             filament: { only: %i[id name] },
             printer: { only: %i[id model] }
           },
-          methods: [:has_matching_offer_by_current_user]
+          methods: [:matching_offer_by_current_user?]
         },
         user: {
           only: %i[id username],
@@ -155,7 +155,7 @@ class Request < ApplicationRecord
             filament: { only: %i[id name] },
             printer: { only: %i[id model] }
           },
-          methods: [:has_matching_offer_by_current_user]
+          methods: [:matching_offer_by_current_user?]
         },
         user: {
           only: %i[id username],

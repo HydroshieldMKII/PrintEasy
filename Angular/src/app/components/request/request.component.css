@@ -248,7 +248,6 @@ h3 {
     width: 100%;
 }
 
-/* Filter header styles (merged and deduplicated) */
 .filter-header {
     display: flex;
     flex-wrap: wrap;
@@ -283,7 +282,6 @@ h3 {
     white-space: nowrap;
 }
 
-/* Slider styles (merged and deduplicated) */
 .slider-wrapper {
     padding-top: 5px;
     padding-bottom: 30px;
@@ -309,7 +307,6 @@ h3 {
     margin-left: -0.6rem;
 }
 
-/* Filter actions bar (new component) */
 .filter-actions-bar {
     display: flex;
     justify-content: space-between;
@@ -323,12 +320,10 @@ h3 {
     gap: 0.5rem;
 }
 
-/* Hide old filter actions */
 .filter-item .filter-actions {
     display: none;
 }
 
-/* Mobile optimizations (merged and deduplicated) */
 @media (max-width: 768px) {
     .ssf {
         display: block;
