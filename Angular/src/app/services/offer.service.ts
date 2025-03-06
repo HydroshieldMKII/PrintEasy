@@ -22,30 +22,6 @@ export class OfferService {
     messageService: MessageService = inject(MessageService);
     offers: OfferModel[] = [];
 
-    // Mapping IDs to translation keys
-    private filamentMap: Record<number, string> = {
-        1: 'petg',
-        2: 'tpu',
-        3: 'nylon',
-        4: 'wood',
-        5: 'metal',
-        6: 'carbon_fiber'
-    };
-
-    private colorMap: Record<number, string> = {
-        1: 'red',
-        2: 'blue',
-        3: 'green',
-        4: 'yellow',
-        5: 'black',
-        6: 'white',
-        7: 'orange',
-        8: 'purple',
-        9: 'pink',
-        10: 'brown',
-        11: 'gray'
-    };
-
     constructor(
         private api: ApiRequestService,
         private translate: TranslateService
@@ -199,12 +175,12 @@ export class OfferService {
     }
 
     private translateFilament(id: number): string {
-        const key = this.filamentMap[id];
+        const key = FilamentModel.filamentMap[id];
         return key ? this.translate.instant(`materials.${key}`) : `Unknown Filament (${id})`;
     }
 
     private translateColor(id: number): string {
-        const key = this.colorMap[id];
+        const key = ColorModel.colorMap[id];
         return key ? this.translate.instant(`colors.${key}`) : `Unknown Color (${id})`;
     }
 }

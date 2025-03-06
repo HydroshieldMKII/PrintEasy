@@ -296,8 +296,6 @@ export class RequestsComponent implements OnInit {
   }
 
   onDateChange(date: Date): void {
-    console.log(date);
-
     if (date && this.dateRange) {
       this.router.navigate([], {
         queryParams: {
@@ -306,7 +304,7 @@ export class RequestsComponent implements OnInit {
         },
         queryParamsHandling: 'merge'
       });
-      
+
       this.refreshData();
     }
   }

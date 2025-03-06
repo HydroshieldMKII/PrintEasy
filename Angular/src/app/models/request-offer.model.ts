@@ -34,7 +34,6 @@ export class RequestOfferModel {
     }
 
     static fromAPI(data: RequestOfferApi): RequestOfferModel {
-        console.log(data);
         return new RequestOfferModel(
             data.id,
             data.name,
