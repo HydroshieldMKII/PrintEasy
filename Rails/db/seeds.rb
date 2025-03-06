@@ -62,7 +62,7 @@ user2 = User.create!(
   username: 'bbb',
   password: 'bbbbbb',
   password_confirmation: 'bbbbbb',
-  country_id: 3,
+  country_id: 2,
   is_admin: false
 )
 
