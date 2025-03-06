@@ -2,7 +2,7 @@
 
 module Api
   class OrderStatusController < AuthenticatedController
-    before_action :get_order_status, only: %i[show update destroy]
+    before_action :find_order_status, only: %i[show update destroy]
 
     def show
       if current_user == @order_status.consumer || current_user == @order_status.printer
@@ -55,7 +55,7 @@ module Api
       params.require(:order_status).permit(:status_name, :comment, :image, :order_id)
     end
 
-    def get_order_status
+    def find_order_status
       @order_status = OrderStatus.find(params[:id])
     end
   end

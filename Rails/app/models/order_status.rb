@@ -17,8 +17,8 @@ class OrderStatus < ApplicationRecord
   validate :can_transition, on: :create
   validate :state_valid?
   before_destroy :can_destroy?, prepend: true
-  before_destroy :is_frozen?, prepend: true
-  before_update :is_frozen?, prepend: true
+  before_destroy :can_change?, prepend: true
+  before_update :can_change?, prepend: true
 
   StateMachines::Machine.ignore_method_conflicts = true
 
@@ -95,11 +95,13 @@ class OrderStatus < ApplicationRecord
     events = self.class.state_machine.events
     last_state = order&.order_status&.order(created_at: :desc)&.first
     unless last_state.nil?
-      events.each do |event|
+      valid_transition = events.any? do |event|
         from = event.branches[0].state_requirements[0][:from].values
         to = event.branches[0].state_requirements[0][:to].values
-        return true if from.include?(last_state.status_name) && to.include?(status_name)
+        from.include?(last_state.status_name) && to.include?(status_name)
       end
+
+      return true if valid_transition
 
       errors.add(:status_name, "Invalid transition from #{last_state.status_name} to #{status_name}")
       return false
@@ -164,7 +166,7 @@ class OrderStatus < ApplicationRecord
     true
   end
 
-  def is_frozen?
+  def can_change?
     last_state = order&.order_status&.order(created_at: :desc)&.first
     if %w[Cancelled Arrived Shipped].include?(last_state.status_name)
       errors.add(:order_status, 'Cannot change status of a frozen order')

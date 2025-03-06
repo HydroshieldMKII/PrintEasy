@@ -2,7 +2,7 @@
 
 module Api
   class ReviewController < AuthenticatedController
-    before_action :get_review, only: %i[update destroy]
+    before_action :find_review, only: %i[update destroy]
 
     def show
       @review = Review.find(params[:id])
@@ -69,7 +69,7 @@ module Api
       )
     end
 
-    def get_review
+    def find_review
       user_reviews = Review.where(user_id: current_user.id)
       @review = user_reviews.find(params[:id])
     end

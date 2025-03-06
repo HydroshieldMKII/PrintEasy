@@ -17,7 +17,6 @@
 
     <p-tabpanels>
       <p-tabpanel *ngFor="let tab of ['all', 'mine']" [value]="tab">
-        <!-- Directly iterate through the native API structure -->
         <div *ngFor="let request of currentRequests" class="mb-6">
           <div class="request-header p-2 bg-gray-100 rounded">
             <a style="color: black">
@@ -193,7 +192,9 @@
   <ng-template #header>
     <div class="inline-flex items-center justify-center gap-2">
       <i class="pi pi-exclamation-triangle text-red-500 text-2xl"></i>
-      <span class="font-bold">{{ "offer.confirm_cancel" | translate }}</span>
+      <span class="font-bold" style="margin-left: 10px">{{
+        "offer.confirm_cancel" | translate
+      }}</span>
     </div>
   </ng-template>
   <span class="text-surface-500 dark:text-surface-400 block mb-4">

@@ -81,7 +81,6 @@ export class OfferModalComponent implements OnChanges {
           id: preset.id
         };
       });
-      console.log('Presets:', this.presets);
     });
 
     this.printerUserService.getPrinterUsers().subscribe((printerUsers: PrinterUserModel[]) => {
@@ -133,8 +132,6 @@ export class OfferModalComponent implements OnChanges {
   }
 
   onPresetSelected(selectedPreset: any): void {
-    console.log('Selected Preset:', selectedPreset);
-
     const preset = this.presets.find(p => p.value === selectedPreset.value);
 
     if (preset) {
@@ -177,16 +174,12 @@ export class OfferModalComponent implements OnChanges {
       const formData = new FormData();
 
       if (!this.requestIdToEdit && !this.offerIdToEdit) {
-        console.error('Error: requestIdToEdit or offerIdToEdit is not set.');
         return;
-      } else {
-        console.log('requestIdToEdit:', this.requestIdToEdit);
       }
 
       if (this.requestIdToEdit) {
         formData.append('offer[request_id]', this.requestIdToEdit.toString());
       }
-      console.log('Form values:', formValues);
       formData.append('offer[printer_user_id]', formValues.printer.idPrinterUser.toString());
       formData.append('offer[color_id]', formValues.color.id.toString());
       formData.append('offer[filament_id]', formValues.filament.id.toString());
@@ -209,16 +202,13 @@ export class OfferModalComponent implements OnChanges {
 
             this.offerModalVisible = false;
             this.offerModalVisibleChange.emit(false);
-          } else {
-            console.log('Error:', response);
-          }
+          } 
         }
       );
     }
   }
 
   deleteOffer() {
-    console.log('Offer Deleted');
     this.offerModalVisible = false;
   }
 
@@ -249,9 +239,6 @@ export class OfferModalComponent implements OnChanges {
 
       if (this.offerIdToEdit) {
         this.offerService.getOfferById(this.offerIdToEdit).subscribe((offer: any) => {
-          console.log('Offer to edit:', offer);
-          console.log('Printers:', this.printers);
-
           let matchingPrinter = this.printers.find(p => p.idPrinterUser === offer.printerUser.id);
           const matchingColor = this.colors.find(c => c.id === offer.color.id);
           const matchingFilament = this.filaments.find(f => f.id === offer.filament.id);
@@ -271,8 +258,6 @@ export class OfferModalComponent implements OnChanges {
       }
 
       if (this.presetToEdit) {
-        console.log('Preset to edit in modal:', this.presetToEdit);
-        console.log('Printers:', this.printers);
         const matchingColor = this.colors.find(c => c.id === this.presetToEdit?.color.id);
         const matchingFilament = this.filaments.find(f => f.id === this.presetToEdit?.filamentType.id);
         const matchingPrinter = this.printers.find(p => p.id === this.presetToEdit?.printerModel.id);

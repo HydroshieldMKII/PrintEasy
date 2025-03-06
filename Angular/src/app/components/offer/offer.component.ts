@@ -58,22 +58,17 @@ export class OffersComponent {
     if (this.activeTab === 'all') {
       this.offerService.getOffers().subscribe((requests: RequestOfferModel[] | ApiResponseModel) => {
         if (requests instanceof ApiResponseModel) {
-          console.log("Error getting my offers:", requests);
           return;
         }
 
-        console.log("all offers:", requests);
         this.offers = requests;
       });
     } else if (this.activeTab === 'mine') {
       this.offerService.getMyOffers().subscribe((response) => {
-        console.log("my offers loaded:", response);
         if (response instanceof ApiResponseModel) {
-          console.log("Error getting my offers:", response);
           return;
         }
 
-        console.log("my offers:", response);
         this.myOffers = response as RequestOfferModel[];
       });
     }
@@ -110,7 +105,6 @@ export class OffersComponent {
     if (this.activeTab === 'all' && !this.offers) {
       this.offerService.getOffers().subscribe((requests: RequestOfferModel[] | ApiResponseModel) => {
         if (requests instanceof ApiResponseModel) {
-          console.log("Error getting my offers:", requests);
           return;
         }
         this.offers = requests;
@@ -119,7 +113,6 @@ export class OffersComponent {
     if (this.activeTab === 'mine' && !this.myOffers) {
       this.offerService.getMyOffers().subscribe((response) => {
         if (response instanceof ApiResponseModel) {
-          console.log("Error getting my offers:", response);
           return;
         }
         this.myOffers = response as RequestOfferModel[];
@@ -142,14 +135,9 @@ export class OffersComponent {
         if (response.status === 200 && this.requestToDelete !== null) {
           this.requestToDelete.offers = this.requestToDelete.offers.filter((offer: OfferModel) => offer !== this.offerToDelete);
 
-          console.log("Offer deleted:", response);
-          console.log("Request:", this.requestToDelete);
-
           if (this.requestToDelete && this.requestToDelete.offers.length === 0) {
             this.myOffers = this.myOffers?.filter(request => request !== this.requestToDelete) || null;
           }
-        } else {
-          console.log("Error deleting offer:", response);
         }
 
         this.offerToDelete = null;
@@ -166,13 +154,11 @@ export class OffersComponent {
   }
 
   editOffer(offer: any): void {
-    console.log("editing id:", offer.id);
     this.offerIdToEdit = offer.id;
     this.offerModalVisible = true;
   }
 
   cancelOffer(offer: OfferModel, request: any): void {
-    console.log("Canceling:", offer);
     this.offerToDelete = offer;
     this.requestToDelete = request;
     this.deleteDialogVisible = true;
@@ -184,7 +170,6 @@ export class OffersComponent {
   }
 
   confirmAccept(redirectToOrder: boolean): void {
-    console.log("Accepting id:", this.offerToAccept?.id);
     if (!this.offerToAccept?.id) return;
 
     this.orderService.createOrder(this.offerToAccept.id).subscribe((response: ApiResponseModel | OrderModel) => {
@@ -195,7 +180,6 @@ export class OffersComponent {
 
         this.offerService.getMyOffers().subscribe((offers: RequestOfferModel[] | ApiResponseModel) => {
           if (offers instanceof ApiResponseModel) {
-            console.log("Error getting my offers:", offers);
             return;
           }
           this.myOffers = offers;
@@ -203,7 +187,6 @@ export class OffersComponent {
 
         this.offerService.getOffers().subscribe((offers: RequestOfferModel[] | ApiResponseModel) => {
           if (offers instanceof ApiResponseModel) {
-            console.log("Error getting my offers:", offers);
             return;
           }
           this.offers = offers as RequestOfferModel[];
@@ -219,18 +202,14 @@ export class OffersComponent {
   }
 
   showRefuseOffer(offer: OfferModel): void {
-    console.log("Rejecting id:", offer.id);
-
     this.offerToRefuse = offer;
     this.refuseDialogVisible = true;
   }
 
   onOfferUpdated(updated: boolean): void {
-    console.log("Offer updated from offer list:", updated);
     this.offerIdToEdit = null;
     this.offerService.getMyOffers().subscribe((offers) => {
       if (offers instanceof ApiResponseModel) {
-        console.log("Error getting my offers:", offers);
         return;
       }
       this.myOffers = offers as RequestOfferModel[];
@@ -247,7 +226,6 @@ export class OffersComponent {
 
         this.offerService.getMyOffers().subscribe((response) => {
           if (response instanceof ApiResponseModel) {
-            console.log("Error getting my offers:", response);
             return;
           }
           this.myOffers = response as RequestOfferModel[];
@@ -255,7 +233,6 @@ export class OffersComponent {
 
         this.offerService.getOffers().subscribe((offers: RequestOfferModel[] | ApiResponseModel) => {
           if (offers instanceof ApiResponseModel) {
-            console.log("Error getting my offers:", offers);
             return;
           }
           this.offers = offers;

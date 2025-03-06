@@ -21,7 +21,7 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
     end
     assert_equal 7, @parsed_response['orders'].length
     tested_order = @parsed_response['orders'][0]
-    testOrder(tested_order)
+    test_order(tested_order)
     assert_empty @parsed_response['errors']
   end
 
@@ -39,7 +39,7 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
     assert_equal 1, @parsed_response['orders'].length
     tested_order = @parsed_response['orders'][0]
     assert_empty @parsed_response['errors']
-    testOrder(tested_order)
+    test_order(tested_order)
   end
 
   test 'should get index -> review filter' do
@@ -56,7 +56,7 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
     assert_equal 6, @parsed_response['orders'].length
     tested_order = @parsed_response['orders'][0]
     assert_empty @parsed_response['errors']
-    testOrder(tested_order)
+    test_order(tested_order)
   end
 
   test 'should get index -> search filter' do
@@ -73,7 +73,7 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
     assert_equal 7, @parsed_response['orders'].length
     tested_order = @parsed_response['orders'][0]
     assert_empty @parsed_response['errors']
-    testOrder(tested_order)
+    test_order(tested_order)
   end
 
   test 'should get index -> sort filter' do
@@ -90,7 +90,7 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
     assert_equal 7, @parsed_response['orders'].length
     tested_order = @parsed_response['orders'][0]
     assert_empty @parsed_response['errors']
-    testOrder(tested_order)
+    test_order(tested_order)
   end
 
   test 'should get show' do
@@ -104,7 +104,7 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
-    testOrder(@parsed_response['order'])
+    test_order(@parsed_response['order'])
     assert_empty @parsed_response['errors']
   end
 
@@ -265,9 +265,8 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
 
   private
 
-  def testOrder(tested_order)
+  def test_order(tested_order)
     assert_nil tested_order['offer_id']
-
     assert_equal offers(:one).id, tested_order['offer']['id']
     assert_equal offers(:one).print_quality, tested_order['offer']['print_quality'].to_f
     assert_equal offers(:one).price, tested_order['offer']['price']

@@ -149,94 +149,94 @@ class OrderStatusControllerTest < ActionDispatch::IntegrationTest
 
   test 'creation after Cancelled (printer)' do
     %w[Accepted Printing Printed Shipped Cancelled Arrived].each do |status|
-      shouldNotCreateOrderStatus('Cancelled', status, users(:two), 6)
+      should_not_create_order_status('Cancelled', status, users(:two), 6)
     end
   end
 
   test 'creation after Cancelled (consumer)' do
     %w[Accepted Printing Printed Shipped Cancelled Arrived].each do |status|
-      shouldNotCreateOrderStatus('Cancelled', status, users(:one), 6)
+      should_not_create_order_status('Cancelled', status, users(:one), 6)
     end
   end
 
   test 'creation after Arrived (printer)' do
     %w[Accepted Printing Printed Shipped Cancelled Arrived].each do |status|
-      shouldNotCreateOrderStatus('Arrived', status, users(:two), 5)
+      should_not_create_order_status('Arrived', status, users(:two), 5)
     end
   end
 
   test 'creation after Arrived (consumer)' do
     %w[Accepted Printing Printed Shipped Cancelled Arrived].each do |status|
-      shouldNotCreateOrderStatus('Arrived', status, users(:one), 5)
+      should_not_create_order_status('Arrived', status, users(:one), 5)
     end
   end
 
   test 'creation after Shipped (printer)' do
     %w[Accepted Printing Printed Shipped Cancelled Arrived].each do |status|
-      shouldNotCreateOrderStatus('Shipped', status, users(:two), 4)
+      should_not_create_order_status('Shipped', status, users(:two), 4)
     end
   end
 
   test 'creation after Shipped (consumer)' do
     %w[Accepted Printing Printed Shipped Cancelled].each do |status|
-      shouldNotCreateOrderStatus('Shipped', status, users(:one), 4)
+      should_not_create_order_status('Shipped', status, users(:one), 4)
     end
-    shouldCreateOrderStatus('Arrived', users(:one), 4)
+    should_create_order_status('Arrived', users(:one), 4)
   end
 
   test 'creation after Printed (printer)' do
     %w[Accepted Printing Arrived].each do |status|
-      shouldNotCreateOrderStatus('Printed', status, users(:two), 3)
+      should_not_create_order_status('Printed', status, users(:two), 3)
     end
     %w[Printed Shipped].each do |status|
-      shouldCreateOrderStatus(status, users(:two), 3)
+      should_create_order_status(status, users(:two), 3)
     end
   end
 
   test 'creation after Printed (consumer)' do
     %w[Accepted Printing Printed Shipped Cancelled Arrived].each do |status|
-      shouldNotCreateOrderStatus('Printed', status, users(:one), 3)
+      should_not_create_order_status('Printed', status, users(:one), 3)
     end
   end
 
   test 'creation after Printing (printer)' do
     %w[Accepted Shipped Arrived].each do |status|
-      shouldNotCreateOrderStatus('Printing', status, users(:two), 2)
+      should_not_create_order_status('Printing', status, users(:two), 2)
     end
     %w[Printing Printed].each do |status|
-      shouldCreateOrderStatus(status, users(:two), 2)
+      should_create_order_status(status, users(:two), 2)
     end
   end
 
   test 'creation after Printing (consumer)' do
     %w[Accepted Printing Printed Shipped Cancelled Arrived].each do |status|
-      shouldNotCreateOrderStatus('Printing', status, users(:one), 2)
+      should_not_create_order_status('Printing', status, users(:one), 2)
     end
   end
 
   test 'creation after Accepted (printer)' do
     %w[Printed Shipped Arrived].each do |status|
-      shouldNotCreateOrderStatus('Accepted', status, users(:two), 1)
+      should_not_create_order_status('Accepted', status, users(:two), 1)
     end
     %w[Accepted Printing].each do |status|
-      shouldCreateOrderStatus(status, users(:two), 1)
+      should_create_order_status(status, users(:two), 1)
     end
   end
 
   test 'creation after Accepted (consumer)' do
     %w[Accepted Printing Printed Shipped Arrived].each do |status|
-      shouldNotCreateOrderStatus('Accepted', status, users(:one), 1)
+      should_not_create_order_status('Accepted', status, users(:one), 1)
     end
   end
 
   test 'should create Cancelled(printer)' do
-    shouldCreateOrderStatus('Cancelled', users(:two), 1)
-    shouldCreateOrderStatus('Cancelled', users(:two), 2)
-    shouldCreateOrderStatus('Cancelled', users(:two), 3)
+    should_create_order_status('Cancelled', users(:two), 1)
+    should_create_order_status('Cancelled', users(:two), 2)
+    should_create_order_status('Cancelled', users(:two), 3)
   end
 
   test 'should create Cancelled(consumer)' do
-    shouldCreateOrderStatus('Cancelled', users(:one), 1)
+    should_create_order_status('Cancelled', users(:one), 1)
   end
 
   # UPDATE
@@ -303,10 +303,10 @@ class OrderStatusControllerTest < ActionDispatch::IntegrationTest
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
-    createdOS =  @parsed_response['order_status']
-    assert_equal 1, createdOS['order_id']
-    assert_equal 'this is changed', createdOS['comment']
-    assert_equal 'Accepted', createdOS['status_name']
+    created_order_status = @parsed_response['order_status']
+    assert_equal 1, created_order_status['order_id']
+    assert_equal 'this is changed', created_order_status['comment']
+    assert_equal 'Accepted', created_order_status['status_name']
     assert_empty @parsed_response['errors']
   end
 
@@ -320,10 +320,10 @@ class OrderStatusControllerTest < ActionDispatch::IntegrationTest
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
-    createdOS =  @parsed_response['order_status']
-    assert_equal 2, createdOS['order_id']
-    assert_equal 'this is changed', createdOS['comment']
-    assert_equal 'Printing', createdOS['status_name']
+    created_order_status = @parsed_response['order_status']
+    assert_equal 2, created_order_status['order_id']
+    assert_equal 'this is changed', created_order_status['comment']
+    assert_equal 'Printing', created_order_status['status_name']
     assert_empty @parsed_response['errors']
   end
 
@@ -337,10 +337,10 @@ class OrderStatusControllerTest < ActionDispatch::IntegrationTest
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
-    createdOS =  @parsed_response['order_status']
-    assert_equal 3, createdOS['order_id']
-    assert_equal 'this is changed', createdOS['comment']
-    assert_equal 'Printed', createdOS['status_name']
+    created_order_status = @parsed_response['order_status']
+    assert_equal 3, created_order_status['order_id']
+    assert_equal 'this is changed', created_order_status['comment']
+    assert_equal 'Printed', created_order_status['status_name']
     assert_empty @parsed_response['errors']
   end
 
@@ -425,43 +425,43 @@ class OrderStatusControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'destroy while Accepted' do
-    shouldNotDestroyOrderStatus(users(:two), 1)
+    should_not_destroy_order_status(users(:two), 1)
   end
 
   test 'destroy while Printing' do
-    shouldNotDestroyOrderStatus(users(:two), 2)
-    shouldDestroyOrderStatus(users(:two), order_status(:three))
+    should_not_destroy_order_status(users(:two), 2)
+    should_destroy_order_status(users(:two), order_status(:three))
   end
 
   test 'destroy while Printed' do
-    shouldNotDestroyOrderStatus(users(:two), 4)
-    shouldDestroyOrderStatus(users(:two), order_status(:five))
-    shouldDestroyOrderStatus(users(:two), order_status(:six))
+    should_not_destroy_order_status(users(:two), 4)
+    should_destroy_order_status(users(:two), order_status(:five))
+    should_destroy_order_status(users(:two), order_status(:six))
   end
 
   test 'destroy while Shipped' do
-    shouldNotDestroyOrderStatus(users(:two), 7)
-    shouldNotDestroyOrderStatus(users(:two), 8)
-    shouldNotDestroyOrderStatus(users(:two), 9)
-    shouldNotDestroyOrderStatus(users(:two), 10)
+    should_not_destroy_order_status(users(:two), 7)
+    should_not_destroy_order_status(users(:two), 8)
+    should_not_destroy_order_status(users(:two), 9)
+    should_not_destroy_order_status(users(:two), 10)
   end
 
   test 'destroy while Arrived' do
-    shouldNotDestroyOrderStatus(users(:two), 11)
-    shouldNotDestroyOrderStatus(users(:two), 12)
-    shouldNotDestroyOrderStatus(users(:two), 13)
-    shouldNotDestroyOrderStatus(users(:two), 14)
-    shouldNotDestroyOrderStatus(users(:two), 15)
+    should_not_destroy_order_status(users(:two), 11)
+    should_not_destroy_order_status(users(:two), 12)
+    should_not_destroy_order_status(users(:two), 13)
+    should_not_destroy_order_status(users(:two), 14)
+    should_not_destroy_order_status(users(:two), 15)
   end
 
   test 'destroy while Cancelled' do
-    shouldNotDestroyOrderStatus(users(:two), 16)
-    shouldNotDestroyOrderStatus(users(:two), 17)
+    should_not_destroy_order_status(users(:two), 16)
+    should_not_destroy_order_status(users(:two), 17)
   end
 
   private
 
-  def shouldCreateOrderStatus(to, as, order_id)
+  def should_create_order_status(to, as, order_id)
     sign_in as
 
     assert_difference('OrderStatus.count', 1) do
@@ -480,7 +480,7 @@ class OrderStatusControllerTest < ActionDispatch::IntegrationTest
     assert_empty @parsed_response['errors']
   end
 
-  def shouldNotCreateOrderStatus(from, to, as, order_id)
+  def should_not_create_order_status(from, to, as, order_id)
     sign_in as
 
     assert_difference('OrderStatus.count', 0) do
@@ -500,7 +500,7 @@ class OrderStatusControllerTest < ActionDispatch::IntegrationTest
     assert_equal ["Invalid transition from #{from} to #{to}"], @parsed_response['errors']['status_name']
   end
 
-  def shouldDestroyOrderStatus(as, order_status)
+  def should_destroy_order_status(as, order_status)
     sign_in as
 
     assert_difference('OrderStatus.count', -1) do
@@ -518,7 +518,7 @@ class OrderStatusControllerTest < ActionDispatch::IntegrationTest
     assert_empty @parsed_response['errors']
   end
 
-  def shouldNotDestroyOrderStatus(as, order_status_id)
+  def should_not_destroy_order_status(as, order_status_id)
     sign_in as
 
     assert_difference('OrderStatus.count', 0) do
