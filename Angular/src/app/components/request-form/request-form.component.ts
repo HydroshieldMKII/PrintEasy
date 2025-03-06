@@ -405,8 +405,6 @@ export class RequestFormComponent implements OnInit {
   }
 
   isPresetValid(preset: any): boolean {
-    console.log(preset);
-    console.log(this.request.presets);
     const printerValid = preset.printerModel && preset.printerModel.id !== null;
     const filamentValid = preset.filamentType && preset.filamentType.id !== null;
     const colorValid = preset.color && preset.color.id !== null;
@@ -431,7 +429,7 @@ export class RequestFormComponent implements OnInit {
         pQuality === currentQuality;
     }).length;
 
-    console.log(printerValid && filamentValid && colorValid && !isNaN(preset.printQuality) && duplicateCount <= 1);
+    // console.log(printerValid && filamentValid && colorValid && !isNaN(preset.printQuality) && duplicateCount <= 1);
     return printerValid && filamentValid && colorValid && !isNaN(preset.printQuality) && duplicateCount <= 1;
   }
 

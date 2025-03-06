@@ -4,37 +4,52 @@
 # model remove the "{}" from the fixture names and add the columns immediately
 # below each fixture, per the syntax in the comments below
 #
-request_one: {
-  id: 1,
-  user_id: 1,
-  name: "Test Request",
-  budget: 100,
-  comment: "Test Comments",
-  target_date: "2021-10-31",
-  created_at: "2021-01-01",
-  updated_at: "2021-01-01"
-}
+request_one:
+  {
+    id: 1,
+    user_id: 1,
+    name: "Test Request",
+    budget: 100,
+    comment: "Test Comments",
+    target_date: "2021-10-31",
+    created_at: "2021-01-01",
+    updated_at: "2021-01-01",
+  }
 
 # column: value
 #
-request_two: {
-  id: 2,
-  user_id: 2,
-  name: "Test Request 2",
-  budget: 200,
-  comment: "Test Comments 2",
-  target_date: "2021-12-31",
-  created_at: "2021-01-02",
-  updated_at: "2021-01-02"
-}
+request_two:
+  {
+    id: 2,
+    user_id: 2,
+    name: "Test Request 2",
+    budget: 200,
+    comment: "Test Comments 2",
+    target_date: "2021-12-31",
+    created_at: "2021-01-02",
+    updated_at: "2021-01-02",
+  }
 # column: value
-request_three: {
-  id: 3,
-  user_id: 1,
-  name: "Test Request 3",
-  budget: 150,
-  comment: "Test Comments 3",
-  target_date: "2021-12-31",
-  created_at: "2021-01-03",
-  updated_at: "2021-01-03"
-}
+request_three:
+  {
+    id: 3,
+    user_id: 1,
+    name: "Test Request 3",
+    budget: 150,
+    comment: "Test Comments 3",
+    target_date: "2021-12-31",
+    created_at: "2021-01-03",
+    updated_at: "2021-01-03",
+  }
+
+request_four:
+  {
+    id: 4,
+    user_id: 1,
+    name: "Test Request 4",
+    budget: 250,
+    comment: "Test Comments 4",
+    target_date: "2021-12-31",
+    created_at: "2021-01-04",
+    updated_at: "2021-01-04",
+  }

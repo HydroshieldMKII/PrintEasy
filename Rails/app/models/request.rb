@@ -4,6 +4,8 @@ class Request < ApplicationRecord
   belongs_to :user
   has_many :offers, dependent: :destroy
   has_many :preset_requests, dependent: :destroy
+
+  # after_update :after_update
   validate :unique_preset_requests
 
   accepts_nested_attributes_for :preset_requests, allow_destroy: true
