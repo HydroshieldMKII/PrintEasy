@@ -352,7 +352,9 @@
     "invalid_preset_message": "Veuillez sélectionner toutes les options pour le préréglage et s'assurer qu'ils sont uniques",
     "update_success": "Demande mise à jour avec succès",
     "update_error": "Échec de la mise à jour de la demande",
-    "drop_stl_file": "Déposez votre fichier ici"
+    "drop_stl_file": "Déposez votre fichier ici",
+    "undo_delete": "Annuler la suppression",
+    "delete_preset": "Supprimer le préréglage"
   },
   "offer": {
     "title": "Offres",
