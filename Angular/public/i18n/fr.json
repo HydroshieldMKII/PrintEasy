@@ -301,8 +301,8 @@
     "download": "Télécharger",
     "filter": {
       "owned-printer": "Imprimante possédée",
-      "country": "Pays",
-      "in-progress": "En cours"
+      "country": "Même pays",
+      "in-progress": "Acceptées"
     }
   },
   "requestForm": {

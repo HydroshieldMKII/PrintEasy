@@ -51,6 +51,7 @@ class Request < ApplicationRecord
   scope :by_budget_range, lambda { |min_budget, max_budget|
     where('requests.budget >= ? AND requests.budget <= ?', min_budget, max_budget) if min_budget.present? && max_budget.present?
   }
+
   scope :by_date_range, lambda { |start_date, end_date|
     if start_date.present? && end_date.present?
       where('requests.target_date > ? AND requests.target_date <= ?',
@@ -60,6 +61,7 @@ class Request < ApplicationRecord
       where('requests.target_date >= ?', start_date.to_date.end_of_day)
     end
   }
+
   scope :sorted, lambda { |category, direction|
     return order('target_date ASC') unless category.present? && direction.present?
 
@@ -204,16 +206,6 @@ class Request < ApplicationRecord
   def accepted_at
     offers.joins(:order).first&.created_at
   end
-
-  # def update(_p)
-  #   pr_params = _p[:preset_requests_attributes].to_h.values.map { |pr| pr['request_id'] = id; pr }
-  #   preset_requests.destroy_all
-
-  #   debugger
-  #   PresetRequest.insert_all(pr_params)
-
-  #   super
-  # end
 
   private
 

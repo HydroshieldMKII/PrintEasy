@@ -94,7 +94,7 @@ class Offer < ApplicationRecord
     )
   end
 
-  # Grouping and serializing offers by request
+  # Group of offers
   def self.group_by_request(offers)
     return [] if offers.empty?
 
