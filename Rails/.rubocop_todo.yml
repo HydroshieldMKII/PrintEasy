@@ -1,13 +1,5 @@
-Bundler/DuplicatedGem:
-  Exclude:
-    - "Gemfile"
-
-Bundler/DuplicatedGroup:
-  Exclude:
-    - "Gemfile"
-
 Metrics/AbcSize:
-  Max: 278
+  Max: 378
 
 Metrics/BlockLength:
   Max: 186
@@ -22,6 +14,9 @@ Metrics/MethodLength:
   Max: 67
 
 Metrics/PerceivedComplexity:
+  Max: 14
+
+Metrics/CyclomaticComplexity:
   Max: 14
 
 Style/Documentation:

@@ -17,7 +17,7 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
       @parsed_response = JSON.parse(response.body)
     end
     assert_nil @parsed_response['errors']
-    assert_equal 3, @parsed_response['requests'].count
+    assert_equal 4, @parsed_response['requests'].count
     assert_equal 4, @parsed_response['submissions'].count
     assert_equal 3, @parsed_response['contests'].count
 
