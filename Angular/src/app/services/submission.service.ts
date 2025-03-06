@@ -37,11 +37,10 @@ export class SubmissionService {
     );
   }
 
-  getUserContestSubmissions(): Observable<UserContestSubmissionsModel[]> {
-    return this.api.getRequest('api/user_contest_submissions').pipe(
+  getUserContestSubmissions(user_id: number): Observable<UserContestSubmissionsModel[]> {
+    return this.api.getRequest(`api/users/${user_id}/user_contest_submissions`).pipe(
       map(response => {
         if (response.status === 200) {
-          console.log('User contest submissions', response);
           return response.data.contests.map((data: any) => UserContestSubmissionsModel.fromApi(data));
         } else {
           console.log('error:', response.errors);

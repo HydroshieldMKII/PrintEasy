@@ -15,16 +15,17 @@ import { SubmissionModel } from '../../models/submission.model';
 import { LikeModel } from '../../models/like.model';
 import { UserContestSubmissionsModel } from '../../models/user-contest-submissions.model';
 import { ApiResponseModel } from '../../models/api-response.model';
+import { UserProfileService } from '../../services/user-profile.service';
+import { UserModel } from '../../models/user.model';
 import { Renderer2 } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
-import { ResolveEnd } from '@angular/router';
-import { ActivatedRoute } from '@angular/router';
-
-
+import { Router, ActivatedRoute } from '@angular/router';
+import { NotfoundComponent } from '../notfound/notfound.component';
+import { UserProfileModel } from '../../models/user-profile.model';
 
 @Component({
   selector: 'app-user-profile',
-  imports: [ImportsModule, TranslatePipe],
+  imports: [ImportsModule, TranslatePipe, NotfoundComponent],
   templateUrl: './user-profile.component.html',
   styleUrl: './user-profile.component.css'
 })
@@ -36,8 +37,10 @@ export class UserProfileComponent implements OnInit {
   readonly presetService = inject(PresetService);
   readonly messageService = inject(MessageService);
   readonly printerUserService = inject(PrinterUserService);
+  readonly userProfileService = inject(UserProfileService);
   readonly fb = inject(FormBuilder);
-  readonly route = inject(ActivatedRoute);
+  readonly router = inject(ActivatedRoute);
+  readonly route = inject(Router);
 
   userContestSubmissions: UserContestSubmissionsModel[] = [];
   responsiveOptions: any[] | undefined;
@@ -56,6 +59,7 @@ export class UserProfileComponent implements OnInit {
   printerUserEdit: PrinterUserModel | null = null;
   printerForm: FormGroup;
   today = new Date();
+  userProfile: UserProfileModel | null | undefined = undefined;
 
   constructor(private renderer: Renderer2) {
     this.printerForm = this.fb.group({
@@ -63,8 +67,19 @@ export class UserProfileComponent implements OnInit {
       aquiredDate: [null, Validators.required]
     });
 
-    this.submissionService.getUserContestSubmissions().subscribe(submissions => {
-      this.userContestSubmissions = submissions;
+    this.router.params.subscribe(params => {
+      if (params["id"]) {
+        this.userProfileService.getUserProfile(params["id"]).subscribe((response: UserProfileModel | ApiResponseModel) => {
+          if (response instanceof UserProfileModel) {
+            this.userProfile = response;
+            console.log('user profile:', this.userProfile);
+          } else {
+            if (response.status === 404) {
+              this.userProfile = null;
+            }
+          }
+        });
+      }
     });
 
     this.likeService.getLikes().subscribe(response => {
@@ -90,8 +105,13 @@ export class UserProfileComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.loadPrinterUsers();
     this.loadPrinterList();
+  }
+
+  loadContestSubmissions() {
+    this.submissionService.getUserContestSubmissions(this.router.snapshot.params["id"]).subscribe(submissions => {
+      this.userContestSubmissions = submissions;
+    });
   }
 
   loadPrinterUsers() {

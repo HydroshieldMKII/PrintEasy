@@ -1,10 +1,10 @@
-<div class="profile-container">
+<div *ngIf="userProfile !== null" class="profile-container">
     <div class="profile-header">
         <div class="profile-avatar">
-            <p-avatar shape="circle" size="xlarge" image="{{authService.currentUser?.profilePictureUrl}}"></p-avatar>
+            <p-avatar shape="circle" size="xlarge" image="{{userProfile?.user?.profilePictureUrl}}"></p-avatar>
             <div class="profile-info">
-                <h2>{{ authService.currentUser?.username }}</h2>
-                <p>{{ authService.currentUser?.country }}</p>
+                <h2>{{ userProfile?.user?.username }}</h2>
+                <p>{{ userProfile?.user?.country?.name }}</p>
             </div>
         </div>
         <div class="profile-rating">
@@ -14,7 +14,7 @@
     </div>
 
     <div class="profile-details">
-        <p>{{ prints }} {{ 'user_profile.print_since' | translate }} {{ authService.currentUser?.createdAt | date:'MMM d, y' }}</p>
+        <p>{{ prints }} {{ 'user_profile.print_since' | translate }} {{ userProfile?.user?.createdAt | date:'MMM d, y' }}</p>
     </div>
 
 
@@ -23,11 +23,11 @@
             <p-tab [value]="'contest-submissions'">{{ 'user_profile.submissions_tab' | translate }}</p-tab>
             <p-tab [value]="'printers'">{{ 'user_profile.printers_tab' | translate }}</p-tab>
             <p-tab [value]="'reviews'">{{ 'user_profile.reviews_tab' | translate }}</p-tab>
-            <p-tab [value]="'likes'">{{ 'user_profile.likes_tab' | translate }}</p-tab>
+            <p-tab *ngIf="authService.currentUser?.id === userProfile?.user?.id" [value]="'likes'">{{ 'user_profile.likes_tab' | translate }}</p-tab>
         </p-tablist>
         <p-tabpanels>
             <p-tabpanel [value]="'contest-submissions'">
-                <div *ngFor="let contest of userContestSubmissions">
+                <div *ngFor="let contest of userProfile?.userContestSubmissions">
                     <div class="mt-4">
                         <h2>
                             {{ contest.contest.theme}}
@@ -84,14 +84,14 @@
 
             <p-tabpanel [value]="'printers'">
                 <div class="printers-container">
-                    <div class="add-printer-card" (click)="showAddPrinterDialog()">
+                    <div *ngIf="authService?.currentUser?.id === userProfile?.user?.id" class="add-printer-card" (click)="showAddPrinterDialog()">
                         <div class="add-printer-content">
                             <i class="pi pi-plus-circle"></i>
                             <p>{{ 'user_profile.printer.add_printer' | translate }}</p>
                         </div>
                     </div>
 
-                    <div *ngFor="let printerUser of printerUsers" class="printer-card">
+                    <div *ngFor="let printerUser of userProfile?.printerUsers" class="printer-card">
                         
                         <div class="card-header">
                             <h3>{{ printerUser.printer.model }}</h3>
@@ -123,7 +123,7 @@
                             </p>
                         </div>
 
-                        <div class="card-actions">
+                        <div *ngIf="authService?.currentUser?.id === userProfile?.user?.id" class="card-actions">
                             <div class="button-group">
                                 <p-button type="button" icon="pi pi-pencil" severity="primary"
                                     (click)="editPrinter(printerUser)" [disabled]="!printerUser.canDelete"
@@ -223,7 +223,7 @@
 
             </p-tabpanel>
 
-            <p-tabpanel [value]="'likes'">
+            <p-tabpanel *ngIf="authService.currentUser?.id === userProfile?.user?.id" [value]="'likes'">
                 <div class="likes-container">
                     <div *ngFor="let submission of userLikes" class="card">
                         <div class="card-content">
@@ -258,5 +258,6 @@
             </p-tabpanel>
         </p-tabpanels>
     </p-tabs>
-
 </div>
+
+<app-notfound *ngIf="userProfile === null" ></app-notfound>

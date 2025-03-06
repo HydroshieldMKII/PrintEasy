@@ -33,7 +33,11 @@ Rails.application.routes.draw do
     resources :preset
     resources :home
     resources :user_contest_submissions, only: [:index]
+    resources :users do
+      resources :user_contest_submissions, only: [:index]
+    end
     resources :like, only: %i[index create destroy]
+    resources :user_profile, only: [:show]
   end
 
   match '*url', to: 'angular#index', via: :get

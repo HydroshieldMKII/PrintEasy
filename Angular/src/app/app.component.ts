@@ -110,7 +110,10 @@ export class AppComponent implements OnInit {
 
   viewProfile() {
     // Navigate to the profile page
-    this.router.navigate(['/profile']);
+    const userId = this.auth.currentUser?.id;
+    if (userId !== undefined) {
+      this.router.navigate(['/profile', userId.toString()]);
+    }
   }
 
   logout() {
