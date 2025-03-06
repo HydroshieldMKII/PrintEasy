@@ -94,7 +94,7 @@ export class UserProfileComponent implements OnInit {
       }
     ];
 
-    this.reviewService.getUserReviews(this.route.snapshot.params['id']).subscribe((response: ApiResponseModel | ReviewModel[]) => {
+    this.reviewService.getUserReviews(this.router.snapshot.params['id']).subscribe((response: ApiResponseModel | ReviewModel[]) => {
       if (response instanceof ApiResponseModel) {
         return;
       }
