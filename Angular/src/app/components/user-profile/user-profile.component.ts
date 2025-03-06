@@ -67,18 +67,20 @@ export class UserProfileComponent implements OnInit {
       aquiredDate: [null, Validators.required]
     });
 
-    if (this.router.snapshot.params["id"]) {
-      this.userProfileService.getUserProfile(this.router.snapshot.params["id"]).subscribe((response: UserProfileModel | ApiResponseModel) => {
-        if (response instanceof UserProfileModel) {
-          this.userProfile = response;
-          console.log('user profile:', this.userProfile);
-        } else {
-          if (response.status === 404) {
-            this.userProfile = null;
+    this.router.params.subscribe(params => {
+      if (params["id"]) {
+        this.userProfileService.getUserProfile(params["id"]).subscribe((response: UserProfileModel | ApiResponseModel) => {
+          if (response instanceof UserProfileModel) {
+            this.userProfile = response;
+            console.log('user profile:', this.userProfile);
+          } else {
+            if (response.status === 404) {
+              this.userProfile = null;
+            }
           }
-        }
-      });
-    }
+        });
+      }
+    });
 
     this.likeService.getLikes().subscribe(response => {
       this.userLikes = response;
@@ -102,7 +104,6 @@ export class UserProfileComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.loadPrinterUsers();
     this.loadPrinterList();
   }
 

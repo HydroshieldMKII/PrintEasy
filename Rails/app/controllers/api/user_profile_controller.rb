@@ -13,7 +13,8 @@ module Api
                                 user: {
                                     include: {country: {only: %i[id name]}}
                                 }
-                            }
+                            },
+                            methods: [:last_review_image, :last_used, :can_delete]
                         }
                     },
                     methods: %i[profile_picture_url user_contests_submissions]

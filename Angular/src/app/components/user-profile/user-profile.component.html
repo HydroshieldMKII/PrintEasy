@@ -23,7 +23,7 @@
             <p-tab [value]="'contest-submissions'">{{ 'user_profile.submissions_tab' | translate }}</p-tab>
             <p-tab [value]="'printers'">{{ 'user_profile.printers_tab' | translate }}</p-tab>
             <p-tab [value]="'reviews'">{{ 'user_profile.reviews_tab' | translate }}</p-tab>
-            <p-tab [value]="'likes'">{{ 'user_profile.likes_tab' | translate }}</p-tab>
+            <p-tab *ngIf="authService.currentUser?.id === userProfile?.user?.id" [value]="'likes'">{{ 'user_profile.likes_tab' | translate }}</p-tab>
         </p-tablist>
         <p-tabpanels>
             <p-tabpanel [value]="'contest-submissions'">
@@ -84,14 +84,14 @@
 
             <p-tabpanel [value]="'printers'">
                 <div class="printers-container">
-                    <div class="add-printer-card" (click)="showAddPrinterDialog()">
+                    <div *ngIf="authService?.currentUser?.id === userProfile?.user?.id" class="add-printer-card" (click)="showAddPrinterDialog()">
                         <div class="add-printer-content">
                             <i class="pi pi-plus-circle"></i>
                             <p>{{ 'user_profile.printer.add_printer' | translate }}</p>
                         </div>
                     </div>
 
-                    <div *ngFor="let printerUser of printerUsers" class="printer-card">
+                    <div *ngFor="let printerUser of userProfile?.printerUsers" class="printer-card">
                         
                         <div class="card-header">
                             <h3>{{ printerUser.printer.model }}</h3>
@@ -123,7 +123,7 @@
                             </p>
                         </div>
 
-                        <div class="card-actions">
+                        <div *ngIf="authService?.currentUser?.id === userProfile?.user?.id" class="card-actions">
                             <div class="button-group">
                                 <p-button type="button" icon="pi pi-pencil" severity="primary"
                                     (click)="editPrinter(printerUser)" [disabled]="!printerUser.canDelete"
@@ -223,7 +223,7 @@
 
             </p-tabpanel>
 
-            <p-tabpanel [value]="'likes'">
+            <p-tabpanel *ngIf="authService.currentUser?.id === userProfile?.user?.id" [value]="'likes'">
                 <div class="likes-container">
                     <div *ngFor="let submission of userLikes" class="card">
                         <div class="card-content">

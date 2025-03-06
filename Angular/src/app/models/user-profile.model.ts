@@ -8,16 +8,16 @@ export type UserProfileApi = {
 
 export class UserProfileModel {
     user: UserModel;
-    printerUser: PrinterUserModel[];
+    printerUsers: PrinterUserModel[];
     userContestSubmissions: UserContestSubmissionsModel[];
     
     constructor(
         user: UserModel,
-        printerUser: PrinterUserModel[],
+        printerUsers: PrinterUserModel[],
         userContestSubmissions: UserContestSubmissionsModel[])
     {
         this.user = user;
-        this.printerUser = printerUser;
+        this.printerUsers = printerUsers;
         this.userContestSubmissions = userContestSubmissions;
     }
 
