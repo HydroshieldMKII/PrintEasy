@@ -44,7 +44,6 @@ export class UserProfileComponent implements OnInit {
 
   userContestSubmissions: UserContestSubmissionsModel[] = [];
   responsiveOptions: any[] | undefined;
-  userReviews: ReviewModel[] = [];
   userLikes: SubmissionModel[] = [];
   averageRating: number = 0;
   tab: string = 'contest-submissions';
@@ -93,15 +92,6 @@ export class UserProfileComponent implements OnInit {
         numScroll: 1
       }
     ];
-
-    this.reviewService.getUserReviews(this.router.snapshot.params['id']).subscribe((response: ApiResponseModel | ReviewModel[]) => {
-      if (response instanceof ApiResponseModel) {
-        return;
-      }
-      this.userReviews = response;
-      console.log("reviews", this.userReviews)
-      this.averageRating = this.userReviews.reduce((acc, review) => acc + review.rating, 0) / this.userReviews.length;
-    });
   }
 
   ngOnInit() {

@@ -20,7 +20,7 @@ export class UserProfileService {
     return this.api.getRequest(`/api/user_profile/${id}`).pipe(
       map((response: ApiResponseModel) => {
         if (response.status === 200) {
-          return UserProfileModel.fromApi(response.data);
+          return UserProfileModel.fromApi(response.data.user);
         } else {
           return response;
         }

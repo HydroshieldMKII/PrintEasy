@@ -19,7 +19,7 @@ module Api
               methods: %i[last_review_image last_used can_update]
             }
           },
-          methods: %i[profile_picture_url user_contests_submissions]
+          methods: %i[profile_picture_url user_contests_submissions self_reviews]
         ),
         errors: {}
       }, status: :ok

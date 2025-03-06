@@ -1,5 +1,6 @@
 import { CountryApi, CountryModel } from './country.model';
 import { PrinterUserApi, PrinterUserModel } from './printer-user.model';
+import { ReviewApi } from './review.model';
 import { UserContestSubmissionsAPI, UserContestSubmissionsModel } from './user-contest-submissions.model';
 
 export type UserApi = {
@@ -9,8 +10,6 @@ export type UserApi = {
     profile_picture_url: string | undefined;
     created_at: string;
     is_admin: boolean;
-    printer_users: PrinterUserApi[] | null;
-    user_contests_submissions: UserContestSubmissionsAPI[] | null;
 }
 
 export class UserModel {
@@ -20,8 +19,6 @@ export class UserModel {
     createdAt?: Date;
     profilePictureUrl?: string;
     isAdmin?: boolean;
-    printerUsers?: PrinterUserModel[];
-    userContestSubmissions?: UserContestSubmissionsModel[];
 
 
     constructor(
@@ -30,9 +27,7 @@ export class UserModel {
         country: CountryModel, 
         profilePictureUrl?: string, 
         createdAt?: Date, 
-        isAdmin?: boolean,
-        printerUsers?: PrinterUserModel[],
-        userContestSubmissions?: UserContestSubmissionsModel[]
+        isAdmin?: boolean
     ) {
         this.id = id;
         this.username = username;
@@ -40,8 +35,6 @@ export class UserModel {
         this.createdAt = createdAt;
         this.profilePictureUrl = profilePictureUrl;
         this.isAdmin = isAdmin;
-        this.printerUsers = printerUsers;
-        this.userContestSubmissions = userContestSubmissions;
     }
 
     static fromAPI(data: UserApi): UserModel {

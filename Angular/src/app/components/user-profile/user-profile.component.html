@@ -1,20 +1,20 @@
 <div *ngIf="userProfile !== null" class="profile-container">
     <div class="profile-header">
         <div class="profile-avatar">
-            <p-avatar shape="circle" size="xlarge" image="{{userProfile?.user?.profilePictureUrl}}"></p-avatar>
+            <p-avatar shape="circle" size="xlarge" image="{{userProfile?.profilePictureUrl}}"></p-avatar>
             <div class="profile-info">
-                <h2>{{ userProfile?.user?.username }}</h2>
-                <p>{{ userProfile?.user?.country?.name }}</p>
+                <h2>{{ userProfile?.username }}</h2>
+                <p>{{ userProfile?.country?.name }}</p>
             </div>
         </div>
         <div class="profile-rating">
             <p-rating [readonly]="true" [stars]="5" [(ngModel)]="averageRating" class="big-stars"></p-rating>
-            <a href="#" class="reviews">{{ userReviews.length }} {{ 'user_profile.reviews' | translate }}</a>
+            <a href="#" class="reviews">{{ userProfile?.selfReviews?.length }} {{ 'user_profile.reviews' | translate }}</a>
         </div>
     </div>
 
     <div class="profile-details">
-        <p>{{ prints }} {{ 'user_profile.print_since' | translate }} {{ userProfile?.user?.createdAt | date:'MMM d, y' }}</p>
+        <p>{{ prints }} {{ 'user_profile.print_since' | translate }} {{ userProfile?.createdAt | date:'MMM d, y' }}</p>
     </div>
 
 
@@ -23,7 +23,7 @@
             <p-tab [value]="'contest-submissions'">{{ 'user_profile.submissions_tab' | translate }}</p-tab>
             <p-tab [value]="'printers'">{{ 'user_profile.printers_tab' | translate }}</p-tab>
             <p-tab [value]="'reviews'">{{ 'user_profile.reviews_tab' | translate }}</p-tab>
-            <p-tab *ngIf="authService.currentUser?.id === userProfile?.user?.id" [value]="'likes'">{{ 'user_profile.likes_tab' | translate }}</p-tab>
+            <p-tab *ngIf="authService.currentUser?.id === userProfile?.id" [value]="'likes'">{{ 'user_profile.likes_tab' | translate }}</p-tab>
         </p-tablist>
         <p-tabpanels>
             <p-tabpanel [value]="'contest-submissions'">
@@ -84,7 +84,7 @@
 
             <p-tabpanel [value]="'printers'">
                 <div class="printers-container">
-                    <div *ngIf="authService?.currentUser?.id === userProfile?.user?.id" class="add-printer-card" (click)="showAddPrinterDialog()">
+                    <div *ngIf="authService?.currentUser?.id === userProfile?.id" class="add-printer-card" (click)="showAddPrinterDialog()">
                         <div class="add-printer-content">
                             <i class="pi pi-plus-circle"></i>
                             <p>{{ 'user_profile.printer.add_printer' | translate }}</p>
@@ -123,7 +123,7 @@
                             </p>
                         </div>
 
-                        <div *ngIf="authService?.currentUser?.id === userProfile?.user?.id" class="card-actions">
+                        <div *ngIf="authService?.currentUser?.id === userProfile?.id" class="card-actions">
                             <div class="button-group">
                                 <p-button type="button" icon="pi pi-pencil" severity="primary"
                                     (click)="editPrinter(printerUser)" [disabled]="!printerUser.canDelete"
@@ -192,7 +192,7 @@
 
             <p-tabpanel [value]="'reviews'">
                 <div class="review-list">
-                    <div *ngFor="let review of userReviews">
+                    <div *ngFor="let review of userProfile?.selfReviews">
                         <p-card [style]="{ width: '22rem', overflow: 'hidden', height: '100%' }">
                             <ng-template #header>
                                 <div style="padding: 20px;">
@@ -223,7 +223,7 @@
 
             </p-tabpanel>
 
-            <p-tabpanel *ngIf="authService.currentUser?.id === userProfile?.user?.id" [value]="'likes'">
+            <p-tabpanel *ngIf="authService.currentUser?.id === userProfile?.id" [value]="'likes'">
                 <div class="likes-container">
                     <div *ngFor="let submission of userLikes" class="card">
                         <div class="card-content">
