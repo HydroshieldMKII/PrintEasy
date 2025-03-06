@@ -8,7 +8,7 @@ export type RequestPresetApi = {
     color: ColorApi;
     filament: FilamentApi;
     printer: PrinterApi;
-    has_offer_made: boolean;
+    has_matching_offer_by_current_user: boolean;
 }
 
 export class RequestPresetModel {
@@ -42,7 +42,7 @@ export class RequestPresetModel {
             new ColorModel(data.color.id, data.color.name),
             new FilamentModel(data.filament.id, data.filament.name),
             new PrinterModel(data.printer.id, data.printer.model),
-            data.has_offer_made
+            data.has_matching_offer_by_current_user
         );
     }
 }

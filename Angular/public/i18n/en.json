@@ -13,7 +13,7 @@
         "info": "Information",
         "confirm": "Confirm",
         "advanced": "Advanced",
-        "sort": "Sort",
+        "sort_by": "Sort",
         "filter": "Filter",
         "confirm_delete": "Confirm Delete",
         "errors": {
@@ -368,6 +368,7 @@
         "confirm_accept_message": "Are you sure you want to accept the offer? You can only accept one offer per request.",
         "yes": "Yes",
         "no": "No",
+        "yes_see": "Yes, see details",
         "error_already_exists": "You already submitted an offer with the same preset",
         "created": "Offer created successfully",
         "deleted": "Offer deleted successfully",

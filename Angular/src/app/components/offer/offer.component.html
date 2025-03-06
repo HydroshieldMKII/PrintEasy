@@ -159,7 +159,7 @@
   <ng-template #header>
     <div class="inline-flex items-center justify-center gap-2">
       <i class="pi pi-exclamation-triangle text-red-500 text-2xl"></i>
-      <span class="font-bold">{{ 'offer.confirm_refuse' | translate }}</span>
+      <span class="font-bold" style="margin-left: 10px;">{{ 'offer.confirm_refuse' | translate }}</span>
     </div>
   </ng-template>
   <span class="text-surface-500 dark:text-surface-400 block mb-4">
@@ -185,7 +185,7 @@
   <ng-template #header>
     <div class="inline-flex items-center justify-center gap-2">
       <i class="pi pi-check-circle text-green-500 text-2xl"></i>
-      <span class="font-bold">{{ 'offer.confirm_accept' | translate }}</span>
+      <span class="font-bold" style="margin-left: 10px;">{{ 'offer.confirm_accept' | translate }}</span>
     </div>
   </ng-template>
   <span class="text-surface-500 dark:text-surface-400 block mb-4">
@@ -193,7 +193,8 @@
   </span>
   <ng-template #footer>
     <p-button [label]="'offer.no' | translate" severity="secondary" (click)="acceptDialogVisible = false" />
-    <p-button [label]="'offer.yes' | translate" severity="success" (click)="confirmAccept()" />
+    <p-button [label]="'offer.yes' | translate" severity="success" (click)="confirmAccept(false)" />
+    <p-button [label]="'offer.yes_see' | translate" severity="info" (click)="confirmAccept(true)" />
   </ng-template>
 </p-dialog>
 

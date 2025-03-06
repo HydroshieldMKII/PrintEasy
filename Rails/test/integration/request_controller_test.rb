@@ -48,7 +48,7 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
                  json_response['request'][0]['preset_requests'][0]['printer']['id']
     assert_equal @other_user_request.preset_requests[0].printer.model,
                  json_response['request'][0]['preset_requests'][0]['printer']['model']
-    assert_equal @other_user_request.preset_requests[0].print_quality,
+    assert_equal @other_user_request.preset_requests[0].print_quality.to_s,
                  json_response['request'][0]['preset_requests'][0]['print_quality']
     assert_equal @other_user_request.user.id, json_response['request'][0]['user']['id']
     assert_equal @other_user_request.user.username, json_response['request'][0]['user']['username']
@@ -80,7 +80,7 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
 
     preset1 = request1['preset_requests'][0]
     assert_equal @preset.id, preset1['id']
-    assert_equal @preset.print_quality, preset1['print_quality']
+    assert_equal @preset.print_quality.to_s, preset1['print_quality']
     assert_equal @preset.color.id, preset1['color']['id']
     assert_equal @preset.color.name, preset1['color']['name']
     assert_equal @preset.filament.id, preset1['filament']['id']
@@ -270,7 +270,7 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
                  json_response['request']['preset_requests'][0]['printer']['id']
     assert_equal @user_request.preset_requests[0].printer.model,
                  json_response['request']['preset_requests'][0]['printer']['model']
-    assert_equal @user_request.preset_requests[0].print_quality,
+    assert_equal @user_request.preset_requests[0].print_quality.to_s,
                  json_response['request']['preset_requests'][0]['print_quality']
     assert_equal @user_request.user.id, json_response['request']['user']['id']
     assert_equal @user_request.user.username, json_response['request']['user']['username']
@@ -322,7 +322,7 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 1, json_response['request']['preset_requests'][0]['color']['id']
     assert_equal 1, json_response['request']['preset_requests'][0]['filament']['id']
     assert_equal 1, json_response['request']['preset_requests'][0]['printer']['id']
-    assert_equal 0.1, json_response['request']['preset_requests'][0]['print_quality']
+    assert_equal "0.1", json_response['request']['preset_requests'][0]['print_quality']
     assert_empty json_response['errors']
   end
 
@@ -358,11 +358,11 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 1, json_response['request']['preset_requests'][0]['color']['id']
     assert_equal 1, json_response['request']['preset_requests'][0]['filament']['id']
     assert_equal 1, json_response['request']['preset_requests'][0]['printer']['id']
-    assert_equal 0.1, json_response['request']['preset_requests'][0]['print_quality']
+    assert_equal "0.1", json_response['request']['preset_requests'][0]['print_quality']
     assert_equal 2, json_response['request']['preset_requests'][1]['color']['id']
     assert_equal 2, json_response['request']['preset_requests'][1]['filament']['id']
     assert_equal 2, json_response['request']['preset_requests'][1]['printer']['id']
-    assert_equal 0.2, json_response['request']['preset_requests'][1]['print_quality']
+    assert_equal "0.2", json_response['request']['preset_requests'][1]['print_quality']
     assert_empty json_response['errors']
   end
 
@@ -558,7 +558,7 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
                  json_response['request']['preset_requests'][0]['printer']['id']
     assert_equal @user_request2.preset_requests[0].printer.model,
                  json_response['request']['preset_requests'][0]['printer']['model']
-    assert_equal @user_request2.preset_requests[0].print_quality,
+    assert_equal @user_request2.preset_requests[0].print_quality.to_s,
                  json_response['request']['preset_requests'][0]['print_quality']
     assert_equal @user_request2.user.id, json_response['request']['user']['id']
     assert_equal @user_request2.user.username, json_response['request']['user']['username']
@@ -598,13 +598,13 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 3, first_preset['color']['id']
     assert_equal 3, first_preset['filament']['id']
     assert_equal 3, first_preset['printer']['id']
-    assert_equal 0.3, first_preset['print_quality']
+    assert_equal "0.3", first_preset['print_quality']
 
     second_preset = json_response['request']['preset_requests'][1]
     assert_not_nil second_preset['color']['id']
     assert_equal 2, second_preset['filament']['id']
     assert_equal 2, second_preset['printer']['id']
-    assert_equal 0.2, second_preset['print_quality']
+    assert_equal "0.2", second_preset['print_quality']
     assert_empty json_response['errors']
   end
 

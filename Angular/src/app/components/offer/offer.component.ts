@@ -183,7 +183,7 @@ export class OffersComponent {
     this.acceptDialogVisible = true;
   }
 
-  confirmAccept(): void {
+  confirmAccept(redirectToOrder: boolean): void {
     console.log("Accepting id:", this.offerToAccept?.id);
     if (!this.offerToAccept?.id) return;
 
@@ -206,8 +206,12 @@ export class OffersComponent {
             console.log("Error getting my offers:", offers);
             return;
           }
-          this.offers = offers as unknown as RequestOfferModel[];
+          this.offers = offers as RequestOfferModel[];
         });
+
+        if (redirectToOrder) {
+          this.router.navigate(['/orders/view/', response.id]);
+        }
       } else {
         this.messageService.add({ severity: 'error', summary: this.translate.instant('global.error'), detail: this.translate.instant('offer.accept_error') });
       }
