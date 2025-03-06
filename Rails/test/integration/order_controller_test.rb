@@ -269,7 +269,7 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
     assert_nil tested_order['offer_id']
 
     assert_equal offers(:one).id, tested_order['offer']['id']
-    assert_equal offers(:one).print_quality, tested_order['offer']['print_quality']
+    assert_equal offers(:one).print_quality, tested_order['offer']['print_quality'].to_f
     assert_equal offers(:one).price, tested_order['offer']['price']
     assert_nil tested_order['offer']['created_at']
     assert_nil tested_order['offer']['updated_at']
@@ -314,7 +314,7 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
 
     assert_equal offers(:one).request.preset_requests[0].id, tested_order['offer']['request']['preset_requests'][0]['id']
     assert_equal offers(:one).request.preset_requests[0].print_quality,
-                 tested_order['offer']['request']['preset_requests'][0]['print_quality']
+                 tested_order['offer']['request']['preset_requests'][0]['print_quality'].to_f
 
     assert_equal offers(:one).request.preset_requests[0].color.id,
                  tested_order['offer']['request']['preset_requests'][0]['color']['id']
