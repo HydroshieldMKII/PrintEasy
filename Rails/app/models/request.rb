@@ -205,6 +205,16 @@ class Request < ApplicationRecord
     offers.joins(:order).first&.created_at
   end
 
+  # def update(_p)
+  #   pr_params = _p[:preset_requests_attributes].to_h.values.map { |pr| pr['request_id'] = id; pr }
+  #   preset_requests.destroy_all
+    
+  #   debugger
+  #   PresetRequest.insert_all(pr_params)
+
+  #   super
+  # end
+
   private
 
   def can_destroy?
