@@ -25,8 +25,10 @@ module Api
           methods: %i[stl_file_url has_offer_made? accepted_at]
         ),
         submissions: last_submissions.as_json(
+          except: %i[user_id],
           include: {
             user: {
+              only: %i[id username],
               include: { country: {} }
             },
             likes: {}

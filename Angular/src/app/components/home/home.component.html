@@ -103,7 +103,7 @@
                         <div class="h-row">
                             <p-button [icon]="submission.liked ? 'pi pi-heart-fill' : 'pi pi-heart'"
                                 [severity]="submission.liked ? 'danger' : 'secondary'"
-                                [outlined]="!submission.liked" (click)="onLike(submission)" />
+                                [outlined]="!submission.liked" (click)="$event.stopPropagation(); onLike(submission)" />
                         </div>
                     </ng-template>
                 </p-card>
