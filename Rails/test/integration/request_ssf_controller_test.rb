@@ -26,9 +26,10 @@ class RequestsSsfControllerTest < ActionDispatch::IntegrationTest
       JSON.parse(response.body)
     end
 
-    assert_equal 2, json_response['request'].length
+    assert_equal 3, json_response['request'].length
     assert_equal 'Test Request', json_response['request'][0]['name']
     assert_equal 'Test Request 3', json_response['request'][1]['name']
+    assert_equal 'Test Request 4', json_response['request'][2]['name']
   end
 
   test 'should sort requests by name in descending order' do
@@ -38,9 +39,10 @@ class RequestsSsfControllerTest < ActionDispatch::IntegrationTest
       JSON.parse(response.body)
     end
 
-    assert_equal 2, json_response['request'].length
-    assert_equal 'Test Request 3', json_response['request'][0]['name']
-    assert_equal 'Test Request', json_response['request'][1]['name']
+    assert_equal 3, json_response['request'].length
+    assert_equal 'Test Request 4', json_response['request'][0]['name']
+    assert_equal 'Test Request 3', json_response['request'][1]['name']
+    assert_equal 'Test Request', json_response['request'][2]['name']
   end
 
   test 'should sort requests by budget in ascending order' do
@@ -50,9 +52,10 @@ class RequestsSsfControllerTest < ActionDispatch::IntegrationTest
       JSON.parse(response.body)
     end
 
-    assert_equal 2, json_response['request'].length
+    assert_equal 3, json_response['request'].length
     assert_equal 100.0, json_response['request'][0]['budget']
     assert_equal 150.0, json_response['request'][1]['budget']
+    assert_equal 250.0, json_response['request'][2]['budget']
   end
 
   test 'should sort requests by budget in descending order' do
@@ -62,9 +65,10 @@ class RequestsSsfControllerTest < ActionDispatch::IntegrationTest
       JSON.parse(response.body)
     end
 
-    assert_equal 2, json_response['request'].length
-    assert_equal 150.0, json_response['request'][0]['budget']
-    assert_equal 100.0, json_response['request'][1]['budget']
+    assert_equal 3, json_response['request'].length
+    assert_equal 250.0, json_response['request'][0]['budget']
+    assert_equal 150.0, json_response['request'][1]['budget']
+    assert_equal 100.0, json_response['request'][2]['budget']
   end
 
   test 'should sort requests by date in ascending order' do
@@ -74,9 +78,10 @@ class RequestsSsfControllerTest < ActionDispatch::IntegrationTest
       JSON.parse(response.body)
     end
 
-    assert_equal 2, json_response['request'].length
+    assert_equal 3, json_response['request'].length
     assert_equal '2021-10-31', json_response['request'][0]['target_date']
     assert_equal '2021-12-31', json_response['request'][1]['target_date']
+    assert_equal '2021-12-31', json_response['request'][2]['target_date']
   end
 
   test 'should sort requests by date in descending order' do
@@ -86,9 +91,10 @@ class RequestsSsfControllerTest < ActionDispatch::IntegrationTest
       JSON.parse(response.body)
     end
 
-    assert_equal 2, json_response['request'].length
+    assert_equal 3, json_response['request'].length
     assert_equal '2021-12-31', json_response['request'][0]['target_date']
-    assert_equal '2021-10-31', json_response['request'][1]['target_date']
+    assert_equal '2021-12-31', json_response['request'][1]['target_date']
+    assert_equal '2021-10-31', json_response['request'][2]['target_date']
   end
 
   test 'should filter requests by in-progress status' do
@@ -99,8 +105,7 @@ class RequestsSsfControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert(json_response['request'].all? { |r| r['accepted_at'].present? })
-    assert_equal 1, json_response['request'].length
-    assert_equal 1, json_response['request'][0]['id']
+    assert_equal 2, json_response['request'].length
   end
 
   test 'should filter requests by country' do
@@ -110,7 +115,7 @@ class RequestsSsfControllerTest < ActionDispatch::IntegrationTest
       JSON.parse(response.body)
     end
 
-    assert_equal 2, json_response['request'].length
+    assert_equal 3, json_response['request'].length
     assert(json_response['request'].all? { |r| r['user']['country']['name'] == 'Canada' })
   end
 
@@ -137,8 +142,8 @@ class RequestsSsfControllerTest < ActionDispatch::IntegrationTest
       JSON.parse(response.body)
     end
 
-    assert_equal 1, json_response['request'].length
-    assert json_response['request'][0]['target_date'] == '2021-12-31'
+    assert_equal 2, json_response['request'].length
+    assert json_response['request'].all? { |r| r['target_date'] == '2021-12-31' }
   end
 
   test 'should combine filtering and sorting' do

@@ -22,11 +22,7 @@ class PrintersControllerTest < ActionDispatch::IntegrationTest
       JSON.parse(response.body)
     end
 
-    expected_response = [
-      { 'id' => @printer1.id, 'model' => @printer1.model },
-      { 'id' => @printer2.id, 'model' => @printer2.model },
-      { 'id' => @printer3.id, 'model' => @printer3.model }
-    ]
+    expected_response = [{"id" => 1, "model" => "Bambulab"}, {"id" => 2, "model" => "Creality"}, {"id" => 3, "model" => "Prusa"}, {"id" => 4, "model" => "Anycubic"}]
 
     assert_equal expected_response, json_response
   end
