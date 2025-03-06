@@ -56,18 +56,18 @@ class User < ApplicationRecord
 
   def self_reviews
     Review.joins(order: { offer: :printer_user })
-        .where('printer_users.user_id = ?', id)
-        .map do |review|
-          review.as_json(
-            methods: %i[image_urls],
-            include: {
-              user: {
-                except: %i[country_id],
-                include: { country: {} },
-                methods: %i[profile_picture_url]
-              }
-            }
-          )
-        end
+          .where('printer_users.user_id = ?', id)
+          .map do |review|
+      review.as_json(
+        methods: %i[image_urls],
+        include: {
+          user: {
+            except: %i[country_id],
+            include: { country: {} },
+            methods: %i[profile_picture_url]
+          }
+        }
+      )
+    end
   end
 end

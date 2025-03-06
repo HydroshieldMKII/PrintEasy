@@ -119,7 +119,8 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
-    assert_equal ["Couldn't find Order with 'id'=999"], @parsed_response['errors']['base']
+    assert_equal ["Couldn't find Order with 'id'=999 [WHERE (requests.user_id = ? OR printer_users.user_id = ?)]"],
+                 @parsed_response['errors']['base']
   end
 
   test 'should not get show -> not owner' do
@@ -129,11 +130,12 @@ class OrderControllerTest < ActionDispatch::IntegrationTest
       get api_order_path(1), as: :json
     end
 
-    assert_response :forbidden
+    assert_response :not_found
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
-    assert_equal ['You are not authorized to view this order'], @parsed_response['errors']['order']
+    assert_equal ["Couldn't find Order with 'id'=1 [WHERE (requests.user_id = ? OR printer_users.user_id = ?)]"],
+                 @parsed_response['errors']['base']
   end
 
   test 'should not get index -> not signed in' do

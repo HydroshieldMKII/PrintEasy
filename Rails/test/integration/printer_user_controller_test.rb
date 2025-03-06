@@ -268,7 +268,7 @@ class PrinterUserControllerTest < ActionDispatch::IntegrationTest
     assert_equal ['Invalid login credentials'], json_response['errors']['connection']
   end
 
-  test "should not destroy printer_user if it has offers" do
+  test 'should not destroy printer_user if it has offers' do
     sign_out @user
     sign_in users(:two)
 

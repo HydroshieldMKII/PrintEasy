@@ -53,7 +53,8 @@ class OrderStatusControllerTest < ActionDispatch::IntegrationTest
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
-    assert_equal ["Couldn't find OrderStatus with 'id'=999"], @parsed_response['errors']['base']
+    assert_equal ["Couldn't find OrderStatus with 'id'=999 [WHERE (requests.user_id = ? OR printer_users.user_id = ?)]"],
+                 @parsed_response['errors']['base']
   end
 
   test 'should not return the order status of an order that the user does not possess' do
@@ -63,11 +64,12 @@ class OrderStatusControllerTest < ActionDispatch::IntegrationTest
       get api_order_status_path(1), as: :json
     end
 
-    assert_response :forbidden
+    assert_response :not_found
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
-    assert_equal ['You are not authorized to view this order status'], @parsed_response['errors']['order_status']
+    assert_equal ["Couldn't find OrderStatus with 'id'=1 [WHERE (requests.user_id = ? OR printer_users.user_id = ?)]"],
+                 @parsed_response['errors']['base']
   end
 
   # CREATE
@@ -264,7 +266,8 @@ class OrderStatusControllerTest < ActionDispatch::IntegrationTest
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
-    assert_equal ["Couldn't find OrderStatus with 'id'=999"], @parsed_response['errors']['base']
+    assert_equal ["Couldn't find OrderStatus with 'id'=999 [WHERE (requests.user_id = ? OR printer_users.user_id = ?)]"],
+                 @parsed_response['errors']['base']
   end
 
   test 'should not update -> not owner' do
@@ -408,7 +411,8 @@ class OrderStatusControllerTest < ActionDispatch::IntegrationTest
     assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
-    assert_equal ["Couldn't find OrderStatus with 'id'=999"], @parsed_response['errors']['base']
+    assert_equal ["Couldn't find OrderStatus with 'id'=999 [WHERE (requests.user_id = ? OR printer_users.user_id = ?)]"],
+                 @parsed_response['errors']['base']
   end
 
   test 'should not destroy -> not owner' do
