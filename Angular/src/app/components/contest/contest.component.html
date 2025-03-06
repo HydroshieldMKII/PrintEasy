@@ -48,7 +48,7 @@
             <p-floatlabel variant="in">
               <p-select inputId="in_label" [options]="filterOptions" [(ngModel)]="selectedFilterOption"
                 name="selectedFilterOption" optionLabel="label" styleClass="w-full" variant="filled"
-                (onChange)="onFilterChange($event)" appendTo="body" />
+                (onChange)="onFilterChange($event)" appendTo="body" (onClear)="onClearFilter" [showClear]="true" />
               <label for="in_label">{{ 'global.filter' | translate }}</label>
             </p-floatlabel>
           </div>
@@ -59,7 +59,7 @@
             <p-floatlabel variant="in">
               <p-select inputId="in_label" [options]="sortOptions" [(ngModel)]="selectedSortOption"
                 name="selectedSortOption" optionLabel="label" styleClass="w-full" variant="filled"
-                (onChange)="onSortChange($event)" appendTo="body" />
+                (onChange)="onSortChange($event)" appendTo="body" (onClear)="onClearSort" [showClear]="true" />
               <label for="in_label">{{ 'global.sort_by' | translate }}</label>
             </p-floatlabel>
           </div>

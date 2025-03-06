@@ -99,6 +99,7 @@ export class ContestFormComponent {
     }
 
     if (startDateTime < new Date().getTime()) {
+      debugger;
       this.startDatePicker = "ng-invalid ng-dirty";
       return { dateError: this.translate.instant('contest_form.error_date_after_today') };
     }
@@ -116,8 +117,6 @@ export class ContestFormComponent {
 
   onSubmit() {
     if (this.contestForm.valid) {
-      console.log('Données du concours:', this.contestForm.value);
-
       const contestFormData = new FormData();
 
       contestFormData.append('contest[theme]', this.contestForm.value.theme);
@@ -125,7 +124,7 @@ export class ContestFormComponent {
       contestFormData.append('contest[submission_limit]', this.contestForm.value.limit);
       contestFormData.append('contest[start_at]', this.contestForm.value.startDate);
       contestFormData.append('contest[end_at]', this.contestForm.value.endDate);
-      console.log('ContestFormData:', contestFormData);
+      
       if (this.contestForm.value.image) {
         contestFormData.append('contest[image]', this.contestForm.value.image);
       }

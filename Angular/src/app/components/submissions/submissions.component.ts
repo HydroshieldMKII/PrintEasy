@@ -185,20 +185,16 @@ export class SubmissionsComponent {
   }
 
   onSelectImage(event: any) {
-    console.log('Image:', event.files[0]);
     const file = event.files[0];
     const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
     if (allowedTypes.includes(file.type)) {
       this.imageUrl = URL.createObjectURL(file);
       this.noImagePreview = '';
       this.submissionForm.patchValue({ image: file });
-    } else {
-      console.log('Invalid image type');
     }
   }
 
   onUploadStl(event: any) {
-    console.log('File uploaded:', event);
     const file = event.files[0];
     this.uploadedFile = file;
 
@@ -210,13 +206,10 @@ export class SubmissionsComponent {
       reader.readAsArrayBuffer(file);
       this.noStlPreview = '';
       this.submissionForm.patchValue({ stl: file });
-    } else {
-      console.log('Invalid STL file');
     }
   }
 
   onFileUploadError(event: any) {
-    console.log('Error:', event);
   }
 
   imageValidator(control: AbstractControl): ValidationErrors | null {

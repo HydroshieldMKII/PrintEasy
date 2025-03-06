@@ -26,7 +26,7 @@ export class AuthService {
 
     constructor(private api: ApiRequestService) {
         const storedCurrentUser = JSON.parse(localStorage.getItem(this.CURRENT_USER_KEY) ?? 'null');
-        console.log('Stored current user:', storedCurrentUser);
+
         if (storedCurrentUser) {
             this._currentUser = new UserModel(storedCurrentUser.id, storedCurrentUser.username, storedCurrentUser.country, storedCurrentUser.profilePictureUrl, storedCurrentUser.createdAt, storedCurrentUser.isAdmin);
         }
@@ -35,7 +35,7 @@ export class AuthService {
 
     private setCurrentUser(user: UserModel | null) {
         this._currentUser = user;
-        console.log('Current user:', user);
+
         if (user === null) {
             localStorage.removeItem(this.CURRENT_USER_KEY);
             return;
@@ -55,11 +55,11 @@ export class AuthService {
         return this.api.postRequest('users/sign_in', {}, credentials).pipe(
             map(response => {
                 if (response.status === 200) {
-                    console.log('Login response:', response);
+
                     if (!this.isLoggedIn) {
                         this.messageService.add({ severity: 'success', summary: 'Welcome', detail: 'You are now logged in!' });
                         const userData = (response.data as any)?.['user'];
-                        console.log('User data:', userData);
+
                         this.setCurrentUser(new UserModel(userData?.['id'], userData?.['username'], userData?.['country_name'], userData?.['profile_picture_url'], userData?.['created_at'], userData?.['is_admin']));
                     }
                 }
@@ -78,7 +78,7 @@ export class AuthService {
                 country_id: providedCredentials.countryId
             }
         };
-        console.log('Credentials:', credentials);
+        
         return this.api.postRequest('users', {}, credentials).pipe(
             map(response => {
                 // console.log('Sign up response:', response);

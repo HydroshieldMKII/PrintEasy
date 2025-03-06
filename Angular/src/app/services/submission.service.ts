@@ -26,10 +26,8 @@ export class SubmissionService {
     return this.api.getRequest(`api/contest/${contest_id}/user_submission`).pipe(
       map(response => {
         if (response.status === 200) {
-          console.log('submissions:', response.data.submissions);
           return response.data.submissions.map((submission: any) => UserSubmission.fromApi(submission));
         } else {
-          console.log('error:', response.errors);
           this.messageService.add({ severity: 'error', summary: this.translateService.instant('global.errors.summary_error'), detail: this.translateService.instant('global.errors.gets_error') });
           return [];
         }
@@ -43,7 +41,6 @@ export class SubmissionService {
         if (response.status === 200) {
           return response.data.contests.map((data: any) => UserContestSubmissionsModel.fromApi(data));
         } else {
-          console.log('error:', response.errors);
           this.messageService.add({ severity: 'error', summary: this.translateService.instant('global.errors.summary_error'), detail: this.translateService.instant('global.errors.gets_error') });
           return [];
         }
@@ -61,7 +58,6 @@ export class SubmissionService {
           });
         }
         else {
-          console.log('error:', response.errors);
           this.messageService.add({
             severity: 'error', summary: this.translateService.instant('global.errors.summary_error'),
             detail: this.translateService.instant('global.errors.created_error')
@@ -83,7 +79,6 @@ export class SubmissionService {
           });
         }
         else {
-          console.log('error:', response.errors);
           this.messageService.add({
             severity: 'error', summary: this.translateService.instant('global.errors.summary_error'),
             detail: this.translateService.instant('global.errors.updated_error')
@@ -105,7 +100,6 @@ export class SubmissionService {
           });
         }
         else {
-          console.log('error:', response.errors);
           this.messageService.add({
             severity: 'error', summary: this.translateService.instant('global.errors.summary_error'),
             detail: this.translateService.instant('global.errors.deleted_error')

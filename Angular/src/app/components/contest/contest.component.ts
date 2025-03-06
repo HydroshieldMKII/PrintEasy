@@ -107,8 +107,30 @@ export class ContestComponent {
     if (this.currentValues[0] > 0 || this.currentValues[1] <= 30) {
       ssf_params = { ...ssf_params, participants_min: this.currentValues[0], participants_max: this.currentValues[1] };
     }
-    console.log('ssf_params:', ssf_params);
+
     return ssf_params;
+  }
+
+  onClearFilter() {
+    debugger;
+    this.currentFilter = '';
+    this.selectedFilterOption = this.filterOptions[0];
+
+    this.route.navigate([], {
+      queryParams: { filter: null },
+      queryParamsHandling: 'merge'
+    });
+  }
+
+  onClearSort() {
+    this.currentSort = '';
+    this.currentSortCategory = '';
+    this.selectedSortOption = this.sortOptions[0];
+
+    this.route.navigate([], {
+      queryParams: { sortCategory: null, sort: null },
+      queryParamsHandling: 'merge'
+    });
   }
 
   newContest() {
@@ -137,7 +159,7 @@ export class ContestComponent {
   }
 
   onFilterChange(event: { value: SelectItem }) {
-    this.currentFilter = event.value.value || '';
+    this.currentFilter = event?.value?.value || '';
 
     this.route.navigate([], {
       queryParams: { filter: this.currentFilter || null },
@@ -148,7 +170,7 @@ export class ContestComponent {
   }
 
   onSortChange(event: any) {
-    if (event.value.value) {
+    if (event?.value?.value) {
       this.currentSortCategory = event.value.value.split('-')[0];
       this.currentSort = event.value.value.split('-')[1];
     } else {
@@ -174,7 +196,6 @@ export class ContestComponent {
   }
 
   onSlideEnd(event: any) {
-    console.log('Slide end:', event.values);
     this.currentValues = event.values;
 
     this.route.navigate([], {

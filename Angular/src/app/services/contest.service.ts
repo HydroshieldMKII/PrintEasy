@@ -23,7 +23,6 @@ export class ContestService {
         if (response.status === 200) {
           return response.data.contests.map((contest: any) => ContestModel.fromApi(contest));
         } else {
-          console.log('error:', response.errors);
           this.messageService.add({ severity: 'error', summary: this.translateService.instant('global.errors.summary_error'), detail: this.translateService.instant('global.errors.gets_error') });
           return [];
         }
@@ -37,7 +36,6 @@ export class ContestService {
         if (response.status === 200) {
           return ContestModel.fromApi(response.data.contest);
         } else {
-          console.log('error:', response.errors);
           this.messageService.add({ severity: 'error', summary: this.translateService.instant('global.errors.summary_error'), detail: this.translateService.instant('global.errors.get_error') });
           return response;
         }
@@ -52,7 +50,6 @@ export class ContestService {
           this.messageService.add({ severity: 'success', summary: this.translateService.instant('global.errors.summary_success'), detail: this.translateService.instant('global.errors.created_success') });
         }
         else {
-          console.log('error:', response.errors);
           this.messageService.add({ severity: 'error', summary: this.translateService.instant('global.errors.summary_error'), detail: this.translateService.instant('global.errors.created_error') });
         }
         return response;
@@ -67,7 +64,6 @@ export class ContestService {
           this.messageService.add({ severity: 'success', summary: this.translateService.instant('global.errors.summary_success'), detail: this.translateService.instant('global.errors.updated_success') });
         }
         else {
-          console.log('error:', response.errors);
           this.messageService.add({ severity: 'error', summary: this.translateService.instant('global.errors.summary_error'), detail: this.translateService.instant('global.errors.updated_error') });
         }
         return response;
@@ -82,7 +78,6 @@ export class ContestService {
           this.messageService.add({ severity: 'success', summary: this.translateService.instant('global.errors.summary_success'), detail: this.translateService.instant('global.errors.deleted_success') });
           }
           else {
-            console.log('error:', response.errors);
             this.messageService.add({ severity: 'error', summary: this.translateService.instant('global.errors.summary_error'), detail: this.translateService.instant('global.errors.deleted_error') });
           }
         return response;

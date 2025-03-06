@@ -41,7 +41,6 @@ export class PrinterUserModel {
     }
 
     static fromAPI(data: PrinterUserApi): PrinterUserModel {
-        debugger;
         return new PrinterUserModel(
             data.id,
             UserModel.fromAPI(data.user),
@@ -58,7 +57,7 @@ export class PrinterUserModel {
 
         printerUserFormData.append('printer_user[printer_id]', printerUserForm.value.printer.id);
         printerUserFormData.append('printer_user[acquired_date]', printerUserForm.value.aquiredDate);
-        console.log("PrinterUserFormDate:", printerUserFormData);
+        
         return printerUserFormData;
     }
 }

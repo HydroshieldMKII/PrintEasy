@@ -23,7 +23,6 @@ export class UserSubmission {
     }
 
     static fromApi(data: UserSubmissionAPI): UserSubmission {
-        console.log('UserSubmission:', data);
         return new UserSubmission(
             UserModel.fromAPI(data?.user),
             data?.submissions?.map((submission: SubmissionAPI) => SubmissionModel.fromApi(submission)),

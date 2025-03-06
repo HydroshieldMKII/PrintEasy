@@ -100,7 +100,6 @@ export class ApiRequestService {
         }
 
         if (error.status === 401) {
-            console.error('Unauthorized request:', error);
             // const authService = this.injector.get(AuthService);
             // authService.logOut();
             this.router.navigate(['/login']);

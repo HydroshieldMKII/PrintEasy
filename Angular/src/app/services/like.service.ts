@@ -21,7 +21,6 @@ export class LikeService {
           return response.data.likes.map((submission: SubmissionAPI) => SubmissionModel.fromApi(submission));
         }
         else {
-          console.log('error:', response.errors);
           return [];
         }
 
@@ -32,13 +31,6 @@ export class LikeService {
   createLike(submissionId: number): Observable<ApiResponseModel> {
     return this.api.postRequest('api/like', {}, { submission_id: submissionId }).pipe(
       map(response => {
-        if (response.status === 201) {
-          console.log('response:', response);
-        }
-        else {
-          console.log('error:', response.errors);
-        }
-
         return response;
       })
     );
@@ -47,13 +39,6 @@ export class LikeService {
   deleteLike(id: number = 0): Observable<ApiResponseModel> {
     return this.api.deleteRequest(`api/like/${id}`).pipe(
       map(response => {
-        if (response.status === 200) {
-          console.log('response:', response);
-        }
-        else {
-          console.log('error:', response.errors);
-        }
-
         return response;
       })
     );
