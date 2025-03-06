@@ -211,7 +211,7 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     assert_no_difference 'Offer.count' do
       post api_offer_index_url,
            params: { offer: { name: 'Test Offer', price: 1.5, target_date: '2026-01-01', comment: 'test comment',
-                              request_id: offers(:ten).request_id,
+                              request_id:requests(:request_three).id,
                               printer_user_id: printer_users(:one).id,
                               color_id: @offer.color_id, filament_id: @offer.filament_id, print_quality: '0.22' } }
     end
@@ -225,7 +225,7 @@ class OfferControllerTest < ActionDispatch::IntegrationTest
     # response content
     assert_not_empty json_response['errors']
 
-    assert_equal ['You cannot create an offer on your own request'], json_response['errors']['offer']
+    assert_equal ["You cannot create an offer on your own request", "Request already accepted an offer. Cannot create"], json_response['errors']['offer']
   end
 
   test 'should not create an offer if request is already accepted' do

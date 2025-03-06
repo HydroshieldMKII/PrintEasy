@@ -1,16 +1,9 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one: {
-  id: 1,
-  model: "Bambulab",
-}
+one: { id: 1, model: "Bambulab" }
 
-two: {
-  id: 2,
-  model: "Creality",
-}
+two: { id: 2, model: "Creality" }
 
-three: {
-  id: 3,
-  model: "Prusa",
-}
+three: { id: 3, model: "Prusa" }
+
+four: { id: 4, model: "Anycubic" }

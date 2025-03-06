@@ -4,18 +4,11 @@
 # model remove the "{}" from the fixture names and add the columns immediately
 # below each fixture, per the syntax in the comments below
 #
-one: {
-  id: 1,
-  name: "PLA"
-}
+one: { id: 1, name: "PLA" }
 # column: value
 #
-two: {
-  id: 2,
-  name: "ABS"
-}
+two: { id: 2, name: "ABS" }
 # column: value
-three: {
-  id: 3,
-  name: "PETG"
-}
+three: { id: 3, name: "PETG" }
+
+four: { id: 4, name: "TPU" }
