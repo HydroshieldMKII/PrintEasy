@@ -1,10 +1,10 @@
-<div class="profile-container">
+<div *ngIf="userProfile !== null" class="profile-container">
     <div class="profile-header">
         <div class="profile-avatar">
-            <p-avatar shape="circle" size="xlarge" image="{{authService.currentUser?.profilePictureUrl}}"></p-avatar>
+            <p-avatar shape="circle" size="xlarge" image="{{userProfile?.user?.profilePictureUrl}}"></p-avatar>
             <div class="profile-info">
-                <h2>{{ user?.username }}</h2>
-                <p>{{ user?.country?.name }}</p>
+                <h2>{{ userProfile?.user?.username }}</h2>
+                <p>{{ userProfile?.user?.country?.name }}</p>
             </div>
         </div>
         <div class="profile-rating">
@@ -14,7 +14,7 @@
     </div>
 
     <div class="profile-details">
-        <p>{{ prints }} {{ 'user_profile.print_since' | translate }} {{ user?.createdAt | date:'MMM d, y' }}</p>
+        <p>{{ prints }} {{ 'user_profile.print_since' | translate }} {{ userProfile?.user?.createdAt | date:'MMM d, y' }}</p>
     </div>
 
 
@@ -27,7 +27,7 @@
         </p-tablist>
         <p-tabpanels>
             <p-tabpanel [value]="'contest-submissions'">
-                <div *ngFor="let contest of userContestSubmissions">
+                <div *ngFor="let contest of userProfile?.userContestSubmissions">
                     <div class="mt-4">
                         <h2>
                             {{ contest.contest.theme}}
@@ -258,5 +258,6 @@
             </p-tabpanel>
         </p-tabpanels>
     </p-tabs>
-
 </div>
+
+<app-notfound *ngIf="userProfile === null" ></app-notfound>

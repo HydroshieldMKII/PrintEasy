@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 import { UserModel } from '../models/user.model';
 import { ApiResponseModel } from '../models/api-response.model';
 import { ApiRequestService } from './api.service';
+import { UserProfileModel } from '../models/user-profile.model';
 
 
 @Injectable({
@@ -15,11 +16,11 @@ export class UserProfileService {
 
   constructor(private api: ApiRequestService) { }
 
-  getUserProfile(id: number): Observable<UserModel | ApiResponseModel> {
+  getUserProfile(id: number): Observable<UserProfileModel | ApiResponseModel> {
     return this.api.getRequest(`/api/user_profile/${id}`).pipe(
       map((response: ApiResponseModel) => {
         if (response.status === 200) {
-          return UserModel.fromAPI(response.data.user);
+          return UserProfileModel.fromApi(response.data);
         } else {
           return response;
         }

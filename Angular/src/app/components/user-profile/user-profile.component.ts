@@ -19,12 +19,13 @@ import { UserProfileService } from '../../services/user-profile.service';
 import { UserModel } from '../../models/user.model';
 import { Renderer2 } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
-import { ResolveEnd } from '@angular/router';
 import { Router, ActivatedRoute } from '@angular/router';
+import { NotfoundComponent } from '../notfound/notfound.component';
+import { UserProfileModel } from '../../models/user-profile.model';
 
 @Component({
   selector: 'app-user-profile',
-  imports: [ImportsModule, TranslatePipe],
+  imports: [ImportsModule, TranslatePipe, NotfoundComponent],
   templateUrl: './user-profile.component.html',
   styleUrl: './user-profile.component.css'
 })
@@ -58,29 +59,26 @@ export class UserProfileComponent implements OnInit {
   printerUserEdit: PrinterUserModel | null = null;
   printerForm: FormGroup;
   today = new Date();
-  user: UserModel | null = null;
+  userProfile: UserProfileModel | null | undefined = undefined;
 
   constructor(private renderer: Renderer2) {
-    if (this.router.snapshot.params["id"]) {
-      this.userProfileService.getUserProfile(this.router.snapshot.params["id"]).subscribe((response: UserModel | ApiResponseModel) => {
-        if (response instanceof ApiResponseModel) {
-          console.log('User not found');
-          this.route.navigate([`/profile/${this.router.snapshot.params["id"]}`]);
-          return;
-        }
-        // this.userProfile = response
-        this.user = response;
-      });
-    }
-
     this.printerForm = this.fb.group({
       printer: [null, Validators.required],
       aquiredDate: [null, Validators.required]
     });
 
-    this.submissionService.getUserContestSubmissions(this.router.snapshot.params["id"]).subscribe(submissions => {
-      this.userContestSubmissions = submissions;
-    });
+    if (this.router.snapshot.params["id"]) {
+      this.userProfileService.getUserProfile(this.router.snapshot.params["id"]).subscribe((response: UserProfileModel | ApiResponseModel) => {
+        if (response instanceof UserProfileModel) {
+          this.userProfile = response;
+          console.log('user profile:', this.userProfile);
+        } else {
+          if (response.status === 404) {
+            this.userProfile = null;
+          }
+        }
+      });
+    }
 
     this.likeService.getLikes().subscribe(response => {
       this.userLikes = response;
@@ -106,6 +104,12 @@ export class UserProfileComponent implements OnInit {
   ngOnInit() {
     this.loadPrinterUsers();
     this.loadPrinterList();
+  }
+
+  loadContestSubmissions() {
+    this.submissionService.getUserContestSubmissions(this.router.snapshot.params["id"]).subscribe(submissions => {
+      this.userContestSubmissions = submissions;
+    });
   }
 
   loadPrinterUsers() {
