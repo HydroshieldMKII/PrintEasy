@@ -3,8 +3,8 @@
         <div class="profile-avatar">
             <p-avatar shape="circle" size="xlarge" image="{{authService.currentUser?.profilePictureUrl}}"></p-avatar>
             <div class="profile-info">
-                <h2>{{ authService.currentUser?.username }}</h2>
-                <p>{{ authService.currentUser?.country }}</p>
+                <h2>{{ user?.username }}</h2>
+                <p>{{ user?.country?.name }}</p>
             </div>
         </div>
         <div class="profile-rating">
@@ -14,7 +14,7 @@
     </div>
 
     <div class="profile-details">
-        <p>{{ prints }} {{ 'user_profile.print_since' | translate }} {{ authService.currentUser?.createdAt | date:'MMM d, y' }}</p>
+        <p>{{ prints }} {{ 'user_profile.print_since' | translate }} {{ user?.createdAt | date:'MMM d, y' }}</p>
     </div>
 
 

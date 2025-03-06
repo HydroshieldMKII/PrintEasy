@@ -39,6 +39,7 @@ export class UserProfileComponent implements OnInit {
   readonly userProfileService = inject(UserProfileService);
   readonly fb = inject(FormBuilder);
   readonly router = inject(ActivatedRoute);
+  readonly route = inject(Router);
 
   userContestSubmissions: UserContestSubmissionsModel[] = [];
   responsiveOptions: any[] | undefined;
@@ -57,16 +58,18 @@ export class UserProfileComponent implements OnInit {
   printerUserEdit: PrinterUserModel | null = null;
   printerForm: FormGroup;
   today = new Date();
+  user: UserModel | null = null;
 
   constructor(private renderer: Renderer2) {
     if (this.router.snapshot.params["id"]) {
       this.userProfileService.getUserProfile(this.router.snapshot.params["id"]).subscribe((response: UserModel | ApiResponseModel) => {
         if (response instanceof ApiResponseModel) {
-          // this.router.navigate(['/404']);
+          console.log('User not found');
+          this.route.navigate([`/profile/${this.router.snapshot.params["id"]}`]);
           return;
         }
         // this.userProfile = response
-        console.log(response);
+        this.user = response;
       });
     }
 
@@ -75,7 +78,7 @@ export class UserProfileComponent implements OnInit {
       aquiredDate: [null, Validators.required]
     });
 
-    this.submissionService.getUserContestSubmissions().subscribe(submissions => {
+    this.submissionService.getUserContestSubmissions(this.router.snapshot.params["id"]).subscribe(submissions => {
       this.userContestSubmissions = submissions;
     });
 

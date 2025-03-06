@@ -19,7 +19,6 @@ export class UserProfileService {
     return this.api.getRequest(`/api/user_profile/${id}`).pipe(
       map((response: ApiResponseModel) => {
         if (response.status === 200) {
-          console.log(response);
           return UserModel.fromAPI(response.data.user);
         } else {
           return response;

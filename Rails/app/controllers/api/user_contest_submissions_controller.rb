@@ -3,7 +3,8 @@
 module Api
   class UserContestSubmissionsController < AuthenticatedController
     def index
-      contests_with_submissions = current_user.user_contests_submissions
+      @user = User.find(params[:user_id])
+      contests_with_submissions = @user.user_contests_submissions
 
       render json: { contests: contests_with_submissions }, status: :ok
     end
