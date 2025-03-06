@@ -72,10 +72,9 @@ export class UserProfileComponent implements OnInit {
         this.userProfileService.getUserProfile(params["id"]).subscribe((response: UserProfileModel | ApiResponseModel) => {
           if (response instanceof UserProfileModel) {
             this.userProfile = response;
-            console.log('user profile:', this.userProfile);
           } else {
             if (response.status === 404) {
-              this.userProfile = null;
+              this.route.navigate(['/']);
             }
           }
         });

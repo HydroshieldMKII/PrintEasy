@@ -58,8 +58,8 @@ class PrinterUserControllerTest < ActionDispatch::IntegrationTest
     json_response = assert_nothing_raised do
       JSON.parse(response.body)
     end
-
-    assert_equal 5.days.ago.to_date, json_response['acquired_date'].to_date
+    
+    assert_equal 5.days.ago.to_date, json_response["printer_user"]['acquired_date'].to_date
   end
 
   test 'should destroy printer_user' do

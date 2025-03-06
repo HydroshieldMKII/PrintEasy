@@ -2,8 +2,6 @@
 
 class Contest < ApplicationRecord
   # before_validation :set_start_at, on: [:create, :update]
-  before_destroy :contest_started?, prepend: true
-
   default_scope { where(deleted_at: nil) }
 
   scope :active_for_user, lambda { |_user|
@@ -79,10 +77,12 @@ class Contest < ApplicationRecord
 
   validate :contest_finished?, on: :update
 
-  def contest_started?
+  def destroy
     if started?
       soft_delete
-      throw(:abort)
+      false
+    else
+      super
     end
   end
 
