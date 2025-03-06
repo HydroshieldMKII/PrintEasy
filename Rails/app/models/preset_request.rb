@@ -17,7 +17,6 @@ class PresetRequest < ApplicationRecord
       printer_user_id: printer_user,
       color_id: color_id,
       filament_id: filament_id,
-      printer_id: printer_id,
       print_quality: print_quality
     ).exists?
   end
