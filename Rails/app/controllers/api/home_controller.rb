@@ -22,7 +22,7 @@ module Api
               }
             }
           },
-          methods: %i[stl_file_url has_offer_made? accepted_at]
+          methods: %i[stl_file_url offer_made? accepted_at]
         ),
         submissions: last_submissions.as_json(
           except: %i[user_id],

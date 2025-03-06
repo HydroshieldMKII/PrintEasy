@@ -143,7 +143,7 @@ class RequestsSsfControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_equal 2, json_response['request'].length
-    assert json_response['request'].all? { |r| r['target_date'] == '2021-12-31' }
+    assert(json_response['request'].all? { |r| r['target_date'] == '2021-12-31' })
   end
 
   test 'should combine filtering and sorting' do

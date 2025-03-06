@@ -141,7 +141,7 @@ class Request < ApplicationRecord
           }
         }
       },
-      methods: %i[stl_file_url has_offer_made? accepted_at]
+      methods: %i[stl_file_url offer_made? accepted_at]
     )
   end
 
@@ -166,7 +166,7 @@ class Request < ApplicationRecord
           }
         }
       },
-      methods: %i[stl_file_url has_offer_made? accepted_at]
+      methods: %i[stl_file_url offer_made? accepted_at]
     )
   end
 
@@ -193,11 +193,11 @@ class Request < ApplicationRecord
     Rails.application.routes.url_helpers.rails_blob_url(stl_file, only_path: true)
   end
 
-  def has_offer_made?
+  def offer_made?
     offers.exists?
   end
 
-  def has_offer_accepted?
+  def offer_accepted?
     offers.joins(:order).exists?
   end
 
@@ -208,7 +208,7 @@ class Request < ApplicationRecord
   # def update(_p)
   #   pr_params = _p[:preset_requests_attributes].to_h.values.map { |pr| pr['request_id'] = id; pr }
   #   preset_requests.destroy_all
-    
+
   #   debugger
   #   PresetRequest.insert_all(pr_params)
 
@@ -223,7 +223,7 @@ class Request < ApplicationRecord
       throw(:abort)
     end
 
-    return unless has_offer_accepted?
+    return unless offer_accepted?
 
     errors.add(:base, 'Cannot delete request with accepted offers')
     throw(:abort)
@@ -234,7 +234,7 @@ class Request < ApplicationRecord
       errors.add(:request, 'You are not allowed to update this request')
       return false
     end
-    return unless has_offer_accepted?
+    return unless offer_accepted?
 
     errors.add(:base, 'Cannot update request with accepted offers')
     false

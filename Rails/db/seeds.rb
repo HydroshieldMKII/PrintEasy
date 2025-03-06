@@ -734,8 +734,8 @@ order3 = Order.create!(offer: Offer.third)
 Current.user = admin
 order4 = Order.create!(offer: Offer.last)
 
-rubyImage = File.open(Rails.root.join('db/seeds/files/ruby.jpg'))
-dariusImage = File.open(Rails.root.join('db/seeds/files/DariusSlayJunior.jpg'))
+ruby_image = File.open(Rails.root.join('db/seeds/files/ruby.jpg'))
+darius_image = File.open(Rails.root.join('db/seeds/files/DariusSlayJunior.jpg'))
 
 # Create Order Statuses
 status_accepted = Status.create!(name: 'Accepted')
@@ -757,7 +757,7 @@ orderstatus1 = OrderStatus.create!(order: order1, status: status_accepted, comme
 OrderStatus.create!(order: order1, status: status_printing, comment: 'Order started printing.')
 
 orderstatus1.image.attach(
-  io: rubyImage,
+  io: ruby_image,
   filename: 'ruby.jpg',
   content_type: 'image/jpg'
 )
@@ -765,8 +765,8 @@ orderstatus1.save
 
 Current.user = user1
 OrderStatus.create!(order: order2, status: status_arrived, comment: 'Order arrived.')
-rubyImage.rewind
-dariusImage.rewind
+ruby_image.rewind
+darius_image.rewind
 
 r1 = Review.create!(
   order: order2,
@@ -776,8 +776,8 @@ r1 = Review.create!(
   rating: 4
 )
 r1.images.attach([
-                   { io: rubyImage, filename: 'ruby.jpg', content_type: 'image/jpg' },
-                   { io: dariusImage, filename: 'DariusSlayJunior.jpg', content_type: 'image/jpg' }
+                   { io: ruby_image, filename: 'ruby.jpg', content_type: 'image/jpg' },
+                   { io: darius_image, filename: 'DariusSlayJunior.jpg', content_type: 'image/jpg' }
                  ])
 r1.save
 

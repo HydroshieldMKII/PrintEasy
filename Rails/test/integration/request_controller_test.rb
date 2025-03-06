@@ -77,7 +77,7 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
     assert_equal @user_request.comment, request1['comment']
     assert_equal @user_request.target_date.to_s, request1['target_date']
     assert_equal @user_request.stl_file_url, request1['stl_file_url']
-    assert_equal true, request1['has_offer_made?']
+    assert_equal true, request1['offer_made?']
 
     preset1 = request1['preset_requests'][0]
     assert_equal @preset.id, preset1['id']
@@ -96,7 +96,7 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
     assert_equal @user_request2.comment, request2['comment']
     assert_equal @user_request2.target_date.to_s, request2['target_date']
     assert_equal @user_request2.stl_file_url, request2['stl_file_url']
-    assert_equal true, request2['has_offer_made?']
+    assert_equal true, request2['offer_made?']
 
     assert_equal true, json_response['has_printer']
     assert_empty json_response['errors']
@@ -390,7 +390,7 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
   ### UPDATE ACTION ###
   test 'should partially update request with valid data' do
     assert_difference('Request.count', 0) do
-      patch api_request_url( @user_request_no_offer), params: { request: { name: 'Updated Request', budget: 999 } }, as: :json
+      patch api_request_url(@user_request_no_offer), params: { request: { name: 'Updated Request', budget: 999 } }, as: :json
     end
 
     assert_response :success
@@ -465,7 +465,7 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
 
   test 'should delete preset_requests' do
     initial_count = @user_request_no_offer.preset_requests.count
-    preset_to_delete =  @user_request_no_offer.preset_requests.first
+    preset_to_delete = @user_request_no_offer.preset_requests.first
 
     assert_difference('PresetRequest.count', -1) do
       patch api_request_url(@user_request_no_offer), params: {
@@ -484,7 +484,7 @@ class RequestsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     @user_request_no_offer.reload
 
-    assert_equal initial_count - 1,  @user_request_no_offer.preset_requests.count
+    assert_equal initial_count - 1, @user_request_no_offer.preset_requests.count
     assert_nil PresetRequest.find_by(id: preset_to_delete.id)
 
     json_response = JSON.parse(response.body)
