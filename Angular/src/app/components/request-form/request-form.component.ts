@@ -231,7 +231,7 @@ export class RequestFormComponent implements OnInit {
 
       this.form = this.fb.group({
         name: ['', [Validators.required, Validators.minLength(3)]],
-        budget: ['', [Validators.required, Validators.min(0), Validators.max(10000)]],
+        budget: [0.00, [Validators.required, Validators.min(0), Validators.max(10000)]],
         targetDate: ['', [Validators.required, this.dateValidator]],
         comment: ['', Validators.maxLength(200)]
       });
@@ -303,6 +303,8 @@ export class RequestFormComponent implements OnInit {
             return !this.presetToDelete.some((p: any) => p.id === preset.id);
           });
           this.presetToDelete = [];
+
+          this.refreshRequestDetails();
         }
       });
     } else if (this.isNewMode) {
