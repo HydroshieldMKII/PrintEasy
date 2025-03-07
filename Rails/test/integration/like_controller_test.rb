@@ -156,4 +156,51 @@ class LikeControllerTest < ActionDispatch::IntegrationTest
 
     assert_equal ['Invalid login credentials'], @parsed_response['errors']['connection']
   end
+
+  test "should not create like if submission doesn't exist" do
+    assert_no_difference('Like.count') do
+      post api_like_index_url, params: { like: { user_id: @user.id, submission_id: 999 } }
+    end
+
+    assert_response :unprocessable_entity
+
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+
+    assert_equal ['must exist'], @parsed_response['errors']['submission']
+  end
+
+  test "should get index" do
+    assert_no_difference('Like.count') do
+      get api_like_index_url
+    end
+
+    assert_response :ok
+
+    assert_nothing_raised do
+      @parsed_response = JSON.parse(response.body)
+    end
+
+    assert_equal 1, @parsed_response['likes'][0]['likes'].count
+    assert_equal 1, @parsed_response['likes'][0]['likes'][0]["id"]
+    assert_equal 1, @parsed_response['likes'][0]['likes'][0]["user_id"]
+    assert_equal 1, @parsed_response['likes'][0]['likes'][0]["submission_id"]
+  end
+
+  test "should not get index if not authenticated" do
+    sign_out @user
+
+    assert_no_difference('Like.count') do
+      get api_like_index_url
+    end
+
+    assert_response :unauthorized
+
+    assert_nothing_raised do 
+      @parsed_response = JSON.parse(response.body)
+    end
+
+    assert_equal ['Invalid login credentials'], @parsed_response['errors']['connection']
+  end
 end
