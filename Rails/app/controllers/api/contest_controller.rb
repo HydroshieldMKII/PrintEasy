@@ -57,7 +57,7 @@ module Api
     def destroy
       @contest = Contest.find(params[:id])
       @contest.destroy
-      
+
       render json: {
                contest: @contest.as_json(include: :submissions,
                                          methods: %i[image_url finished? started?

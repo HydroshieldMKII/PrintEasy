@@ -12,7 +12,7 @@ class PresetRequest < ApplicationRecord
   def matching_offer_by_current_user?
     matching_printer_users = Current.user.printer_users.where(printer: printer_id)
     return false if matching_printer_users.empty?
-    
+
     request.offers.where(
       printer_user_id: matching_printer_users,
       color_id: color_id,

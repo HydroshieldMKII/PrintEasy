@@ -38,17 +38,17 @@ module Api
 
       if @printer_user.save
         render json: { printer_user: @printer_user.as_json({
-          except: %i[user_id printer_id],
-          include: {
-            printer: {
-              only: %i[id model]
-            },
-            user: {
-              include: { country: {} }
-            }
-          },
-          methods: %i[last_review_image last_used can_update]
-        }) }, status: :created
+                                                             except: %i[user_id printer_id],
+                                                             include: {
+                                                               printer: {
+                                                                 only: %i[id model]
+                                                               },
+                                                               user: {
+                                                                 include: { country: {} }
+                                                               }
+                                                             },
+                                                             methods: %i[last_review_image last_used can_update]
+                                                           }) }, status: :created
       else
         render json: { errors: @printer_user.errors.as_json }, status: :unprocessable_entity
       end
@@ -57,17 +57,17 @@ module Api
     def update
       if @printer_user.update(printer_user_params)
         render json: { printer_user: @printer_user.as_json({
-          except: %i[user_id printer_id],
-          include: {
-            printer: {
-              only: %i[id model]
-            },
-            user: {
-              include: { country: {} }
-            }
-          },
-          methods: %i[last_review_image last_used can_update]
-        }) }, status: :ok
+                                                             except: %i[user_id printer_id],
+                                                             include: {
+                                                               printer: {
+                                                                 only: %i[id model]
+                                                               },
+                                                               user: {
+                                                                 include: { country: {} }
+                                                               }
+                                                             },
+                                                             methods: %i[last_review_image last_used can_update]
+                                                           }) }, status: :ok
       else
         render json: { errors: @printer_user.errors.as_json }, status: :unprocessable_entity
       end
