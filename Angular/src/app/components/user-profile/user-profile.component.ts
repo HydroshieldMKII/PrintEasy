@@ -22,6 +22,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NotfoundComponent } from '../notfound/notfound.component';
 import { UserProfileModel } from '../../models/user-profile.model';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-user-profile',
@@ -38,6 +39,7 @@ export class UserProfileComponent implements OnInit {
   readonly messageService = inject(MessageService);
   readonly printerUserService = inject(PrinterUserService);
   readonly userProfileService = inject(UserProfileService);
+  readonly translate = inject(TranslateService);
   readonly fb = inject(FormBuilder);
   readonly router = inject(ActivatedRoute);
   readonly route = inject(Router);
@@ -159,8 +161,8 @@ export class UserProfileComponent implements OnInit {
           this.userProfile!.printerUsers = this.userProfile!.printerUsers.filter(pu => pu.id !== this.printerToDelete?.id);
           this.messageService.add({
             severity: 'success',
-            summary: 'Success',
-            detail: 'Printer deleted successfully'
+            summary: this.translate.instant('global.success'),
+            detail: this.translate.instant('profile.printer_deleted')
           });
           this.deleteDialogVisible = false;
           this.printerToDelete = null;
@@ -196,14 +198,14 @@ export class UserProfileComponent implements OnInit {
             summary: 'Success',
             detail: `Printer ${this.isEditMode ? 'updated' : 'added'} successfully`
           });
-            if (this.isEditMode && this.printerUserEdit) {
+          if (this.isEditMode && this.printerUserEdit) {
             const index = this.userProfile?.printerUsers.findIndex(pu => pu.id === this.printerUserEdit?.id);
             if (index !== undefined && index !== -1) {
               this.userProfile!.printerUsers[index] = PrinterUserModel.fromAPI(response.data.printer_user);
             }
-            } else {
-              this.userProfile?.printerUsers.push(PrinterUserModel.fromAPI(response.data.printer_user));
-            }
+          } else {
+            this.userProfile?.printerUsers.push(PrinterUserModel.fromAPI(response.data.printer_user));
+          }
         } else {
           this.messageService.add({
             severity: 'error',

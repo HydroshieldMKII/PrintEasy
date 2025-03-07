@@ -51,6 +51,9 @@
       "logout": "Déconnexion"
     }
   },
+  "profile":{
+    "printer_deleted": "Imprimante supprimée avec succès"
+  },
   "home": {
     "title": "Bienvenue chez PrintEasy!",
     "request_header": "Dernières demandes",

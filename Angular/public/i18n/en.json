@@ -51,6 +51,9 @@
       "logout": "Logout"
     }
   },
+  "profile":{
+    "printer_deleted": "Printer deleted successfully"
+  },
   "home": {
     "title": "Welcome to PrintEasy!",
     "request_header": "Latest Requests",
