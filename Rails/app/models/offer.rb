@@ -101,7 +101,7 @@ class Offer < ApplicationRecord
     request_ids = offers.pluck(:request_id).uniq
     requests = Request.where(id: request_ids)
                       .includes(:user, offers: [
-                                  { printer_user: %i[user printer] },
+                                  { printer_user: [] },
                                   :color,
                                   :filament
                                 ])
@@ -112,7 +112,6 @@ class Offer < ApplicationRecord
           except: %i[request_id printer_user_id created_at updated_at color_id filament_id],
           include: {
             printer_user: {
-              only: [:id],
               include: {
                 user: {
                   only: %i[id username],

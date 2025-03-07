@@ -53,7 +53,7 @@
             </ng-container>
             <ng-template #mineColGroup>
               <ng-template pTemplate="colgroup">
-                <col style="width: 20%" />
+                <col style="width: 25%" />
                 <col style="width: 20%" />
                 <col style="width: 20%" />
                 <col style="width: 20%" />
@@ -81,9 +81,26 @@
                 }"
               >
                 <td *ngIf="activeTab === 'all'">
-                  {{ offer.printerUser.user.username }}
+                  <div>
+                    <a
+                      [routerLink]="['/profile', offer.printerUser.user.id]"
+                      class="cursor-pointer"
+                      [style.color]="'#0080FF'"
+                      [style]="{ textDecoration: 'none' }"
+                    >
+                      {{ offer.printerUser.user.username }}
+                    </a>
+                    <div class="text-sm" [style.color]="'#6B7280'">
+                      {{ offer.printerUser.user.country.name }}
+                    </div>
+                  </div>
                 </td>
-                <td>{{ offer.printerUser.printer.model }}</td>
+                <td>
+                  <div>{{ offer.printerUser.printer.model }}</div>
+                  <div class="text-sm" [style.color]="'#6B7280'">
+                    {{ offer.printerUser.aquiredDate | date : "mediumDate" }}
+                  </div>
+                </td>
                 <td>
                   {{ offer.color.name }} / {{ offer.filament.name }} /
                   {{ offer.printQuality }}mm

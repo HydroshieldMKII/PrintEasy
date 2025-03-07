@@ -6,7 +6,7 @@ module Api
 
     def index
       @offers = Offer.filter_by_type(params[:type])
-                     .includes(:request, printer_user: %i[user printer], color: [], filament: [])
+                     .includes(:request, printer_user: [], color: [], filament: [])
                      .order(:target_date)
       render_offers(@offers)
     end
