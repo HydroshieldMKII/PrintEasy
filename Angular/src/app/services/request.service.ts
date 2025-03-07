@@ -149,13 +149,13 @@ export class RequestService {
                         summary: this.translate.instant('requestForm.upload_file'),
                         detail: this.translate.instant('requestForm.file_type_error')
                     });
-                } else if(response.status === 422 && response.errors['preset_requests.request_id'] === 'has already been taken') {
+                } else if (response.status === 422 && (response.errors['preset_requests.request_id'] === 'has already been taken' || response.errors['base'] === 'Duplicate preset exists in the request')) {
                     this.messageService.add({
                         severity: 'error',
                         summary: this.translate.instant('requestForm.invalid_preset'),
                         detail: this.translate.instant('requestForm.invalid_preset_message')
                     });
-                }else {
+                } else {
                     this.messageService.add({
                         severity: 'error',
                         summary: this.translate.instant('global.error'),
