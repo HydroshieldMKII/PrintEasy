@@ -24,6 +24,7 @@
     "@primeuix/styled": "^0.4.1",
     "@tailwindcss/postcss": "^4.0.8",
     "angular-stl-model-viewer": "^13.0.0",
+    "flickity": "^3.0.0",
     "primeflex": "^3.3.1",
     "primeicons": "^7.0.0",
     "primeng": "^19.0.7",
