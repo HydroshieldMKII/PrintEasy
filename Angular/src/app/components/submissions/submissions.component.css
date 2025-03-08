@@ -44,6 +44,10 @@
 
 .contest-description {
     font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
 }
 
 .card-footer {
@@ -275,10 +279,6 @@ h2 {
     justify-content: space-between;
 }
 
-.items-center {
-    align-items: center;
-}
-
 .relative {
     position: relative;
 }
@@ -355,6 +355,18 @@ h2 {
 .participate-message {
     margin: 0;
     line-height: 1.6;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.gap-5 {
+    gap: 5px;
+}
+
+.flex-end {
+    justify-content: flex-end;
 }
 
 @keyframes fadeIn {

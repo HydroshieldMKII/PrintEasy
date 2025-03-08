@@ -18,12 +18,12 @@ import { Select, SelectModule } from 'primeng/select';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { SliderModule } from 'primeng/slider';
 import { Slider } from 'primeng/slider';
-import { min } from 'rxjs';
+import { ContestCardComponent } from '../contest-card/contest-card.component';
 
 @Component({
   selector: 'app-contest',
   standalone: true,
-  imports: [CardModule, ButtonModule, InputTextModule, FormsModule, CommonModule, SpeedDialModule, DialogModule, RouterLink, TranslatePipe, SelectModule, FloatLabelModule, SliderModule, Slider],
+  imports: [CardModule, ButtonModule, InputTextModule, FormsModule, CommonModule, SpeedDialModule, DialogModule, RouterLink, TranslatePipe, SelectModule, FloatLabelModule, SliderModule, Slider, ContestCardComponent],
   templateUrl: './contest.component.html',
   styleUrls: ['./contest.component.css']
 })
@@ -157,6 +157,10 @@ export class ContestComponent {
       this.contests = this.contests.filter(contest => contest.id !== this.id);
     }
     );
+  }
+
+  onContestDeleted(contestId: number) {
+    this.contests = this.contests.filter(contest => contest.id !== contestId);
   }
 
   deleteContest(id: number) {
