@@ -111,14 +111,14 @@
             contest.winnerUser.username
             }}
           </p>
-          <p *ngIf="!contest.finished || !contest.winnerUser">
+          <p *ngIf="!contest.finished || !contest.winnerUser" class="date-font">
             <i class="pi pi-users"></i><span> {{ 'contest.submission_limit' | translate }}:</span> {{
             contest.submissionLimit }}
           </p>
 
-          <p><i class="pi pi-calendar"></i><span> {{ 'contest.starts' | translate }}:</span> {{ contest.startAt |
+          <p class="date-font"><i class="pi pi-calendar"></i><span> {{ 'contest.starts' | translate }}:</span> {{ contest.startAt |
             date:'MMM d, y h:mm a' }}</p>
-          <p><i class="pi pi-calendar-times"></i><span> {{ 'contest.ends' | translate }}:</span> {{ contest.endAt ?
+          <p class="date-font"><i class="pi pi-calendar-times"></i><span> {{ 'contest.ends' | translate }}:</span> {{ contest.endAt ?
             (contest.endAt | date:'MMM d, y h:mm a') : 'N/A' }}</p>
         </div>
       </div>

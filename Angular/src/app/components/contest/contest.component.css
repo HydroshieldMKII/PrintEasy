@@ -315,7 +315,31 @@ h2 {
 .participants-range {
 }
 
+.date-font {
+    font-size: auto;
+}
+
 @media (max-width: 768px) {
+    :host ::ng-deep .advanced-toggle {
+        width: 100%;
+    }
+
+    :host ::ng-deep .filter-title {
+        width: 100%;
+    }
+
+    .date-font {
+        font-size: 14px;
+    }
+
+    .date-font i {
+        font-size: 14px;
+    }
+
+    .date-font span {
+        font-size: 14px;
+    }
+
     :host ::ng-deep .p-select {
         width: 100%;
     }
