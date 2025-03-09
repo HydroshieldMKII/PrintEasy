@@ -10,6 +10,7 @@ class User < ApplicationRecord
   has_many :offers, through: :printer_users
   has_many :likes
   has_many :liked_submissions, through: :likes, source: :submission
+  has_many :contests, through: :submissions
 
   has_one_attached :profile_picture
 
@@ -21,6 +22,43 @@ class User < ApplicationRecord
   validates :username, presence: true, uniqueness: true
   validates :password_confirmation, presence: true
   validates :country_id, presence: true
+
+ 
+  # def won_contests
+  #   contests.where("contests.end_at <= ?", Time.now) 
+  #          .select { |contest| contest.winner_user&.dig("id") == id }
+  # end
+
+
+  # find how many contests the user has won
+  # the not exists subquery is to find submissions who have the same amount of likes but were created before the current submission or more likes than the current
+  # not exists if true means that there is no other submissions that have the same amount or like or more
+  # not exists if false means that there is another submission that has the same amount of likes or more
+  def won_contests
+    contests
+      .joins(:submissions)
+      .joins("LEFT JOIN likes ON likes.submission_id = submissions.id")
+      .where("contests.end_at <= ?", Time.now)
+      .where("submissions.user_id = ?", id)
+      .where(
+        "NOT EXISTS (
+          SELECT 1
+          FROM submissions s2
+          LEFT JOIN likes l2 ON l2.submission_id = s2.id
+          WHERE s2.contest_id = contests.id
+          GROUP BY s2.id, s2.created_at
+          HAVING COUNT(l2.id) > COUNT(likes.id)
+             OR (COUNT(l2.id) = COUNT(likes.id) AND s2.created_at < submissions.created_at)
+        )"
+      )
+      .group("contests.id, submissions.id, submissions.user_id, submissions.created_at")
+      .having("COUNT(likes.id) > 0")
+      .distinct
+  end
+
+  def wins_count
+    won_contests.length
+  end
 
   def accessible_contests
     is_admin? ? Contest.all : Contest.active_for_user(self)

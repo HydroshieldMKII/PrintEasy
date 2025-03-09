@@ -229,7 +229,8 @@ contest3 = Contest.create(
   theme: 'Best 3D Printed Jewelry',
   description: 'Create and submit your best 3D printed jewelry.',
   submission_limit: 5,
-  start_at: Time.now - 2.days
+  start_at: Time.now - 20.days,
+  end_at: Time.now - 10.days
 )
 
 ruby_image.rewind
@@ -465,7 +466,7 @@ end
   submission = Submission.new(
     name: "Submission #{i + 1}",
     description: "Description for submission #{i + 1}.",
-    user: user1,
+    user: admin,
     contest: contest3
   )
 
