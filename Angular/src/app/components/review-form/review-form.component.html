@@ -1,0 +1,109 @@
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6" style="margin-bottom: 5px;">
+    <form class="" [formGroup]="reviewForm">
+        <div style="margin-bottom: 2rem;">
+            <p-floatlabel variant="in" floatLabel="always">
+                <input
+                type="text"
+                formControlName="title"
+                pInputText
+                id="title"
+                maxlength="30"
+                />
+                <label for="title">{{'order.review.title' | translate}}</label>
+            </p-floatlabel>
+            <p-message severity="error" variant="simple" size="small">{{'order.title_error' | translate}}</p-message>
+        </div>
+
+        <div style="margin-bottom: 2rem;">
+            <p-floatlabel variant="in" floatLabel="always">
+                <textarea
+                pTextarea
+                id="description"
+                formControlName="description"
+                rows="5"
+                cols="30"
+                style="resize: none"
+                maxlength="200"
+                ></textarea>
+                <label for="description">{{'order.review.description' | translate}}</label>
+            </p-floatlabel>
+            <p-message severity="error" variant="simple" size="small">{{'order.comment_error' | translate}}</p-message>
+        </div>
+
+        <p-rating 
+            formControlName="rating"
+            [readonly]="false"
+            [stars]="5"
+            class="big-stars"
+        ></p-rating>
+
+        <div *ngIf="consumer" style="display: flex; justify-content: flex-start; gap: 1rem; margin-top: 1rem;">
+            <p-button label="{{'global.save_button' | translate}}" icon="pi pi-save" [disabled]="reviewForm.invalid" (click)="onReviewSubmit()" severity="success"></p-button>
+            <p-button *ngIf="isEditReview" label="{{'global.delete_button' | translate}}" icon="pi pi-trash" (click)="deleteReviewDialogVisible = true" severity="danger"></p-button>
+        </div>
+    </form>
+    <div class="flex-col gap-6">
+        <div *ngIf="reviewImageUrls.length == 0" class="empty-carousel">
+            <p-fileUpload
+                *ngIf="consumer"
+                mode="basic"
+                multiple="true"
+                name="images"
+                accept="image/*"
+                [auto]="true"
+                chooseLabel="{{'order.order_status.upload_button' | translate}}"
+                (onSelect)="onReviewFileSelect($event)"
+                [style]="{'position': 'absolute', 'top': '0.5rem', 'left': '0.5rem'}">
+            </p-fileUpload>
+            <i class="pi pi-images" style="font-size: 2.5rem;"></i>
+        </div>
+        <p-galleria [value]="reviewImageUrls" [numVisible]="5" [showItemNavigators]="true" [showThumbnails]="false" [showIndicatorsOnItem]="true" [indicatorsPosition]="'bottom'" [showIndicators]="true" [containerStyle]="{'max-width': '100%', 'height': '400px'}">
+            <ng-template #item let-image>
+                <div *ngIf="consumer">
+                    <p-fileUpload
+                        mode="basic"
+                        multiple="true"
+                        name="images"
+                        accept="image/*"
+                        [auto]="true"
+                        (onSelect)="onReviewFileSelect($event)"
+                        class="no-label-upload"
+                        [style]="{'position': 'absolute', 'top': '0.5rem', 'left': '0.5rem'}">
+                    </p-fileUpload>
+                </div>
+                <p-button *ngIf="consumer" icon="pi pi-trash" severity="danger" [style]="{'position': 'absolute', 'top': '0.5rem', 'right': '0.5rem'}" (onClick)="deleteImage(image.url)"></p-button>
+                <img [src]="image.url" alt="" style="display:block;width:100%;object-fit:contain;height: 400px;">
+            </ng-template>
+        </p-galleria>
+    </div>
+
+    <p-dialog
+    [(visible)]="deleteReviewDialogVisible"
+    [modal]="true"
+    [style]="{ width: '25rem' }"
+    dismissableMask="true"
+    closable="false"
+    blockScroll="true"
+    resizable="false"
+    draggable="false"
+    >
+        <ng-template #header>
+            <div class="inline-flex items-center justify-center gap-2">
+            <i class="pi pi-exclamation-triangle text-red-500 text-2xl"></i>
+            <span style="margin-left: 5px;" class="font-bold">Confirm Delete</span>
+            </div>
+        </ng-template>
+        <span class="text-surface-500 dark:text-surface-400 block mb-4">
+            {{'order.verif_delete_review' | translate}}
+        </span>
+        <ng-template #footer>
+            <p-button
+            label="{{'global.cancel_button' | translate}}"
+            [text]="true"
+            severity="secondary"
+            (click)="deleteReviewDialogVisible = false"
+            />
+            <p-button label="{{'global.delete_button' | translate}}" severity="danger" (click)="DeleteReview()" />
+        </ng-template>
+    </p-dialog>
+</div>

@@ -1,0 +1,68 @@
+input,
+textarea {
+    width: 100%;
+}
+
+:host ::ng-deep .p-button-link .p-button-label {
+    font-size: 1.25rem !important;
+}
+
+.gap-6 {
+    gap: 1.5rem;
+}
+
+.grid-cols-1 {
+    grid-template-columns: 1fr;
+}
+
+.md\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.grid {
+    display: grid;
+}
+
+:host ::ng-deep .big-stars svg {
+    font-size: 10rem;
+    width: 30px;
+    height: 30px;
+}
+
+:host ::ng-deep .big-stars {
+    margin-bottom: 2rem;
+}
+
+.empty-carousel {
+    width: 100%; 
+    height: 400px; 
+    background-color: rgb(211, 210, 210); 
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    position: relative;
+}
+
+::ng-deep .no-label-upload .p-fileupload-choose-button span {
+    display: none;
+}
+
+::ng-deep .p-message {
+    position: absolute !important;
+}
+
+::ng-deep .p-fileupload-basic {
+    justify-content: flex-start !important;
+}
+
+@media (max-width: 768px) {
+    .flex-col {
+        flex-direction: column;
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}
