@@ -112,20 +112,12 @@ export class OrderComponent {
       this.tab = 'status';
     }
 
-
-    this.getStatusTranslations();
-    this.getStatusDefaultMessages();
-    this.getEditMenuWithTranslations();
-    this.getTranslatedErrors();
+    this.translate.onLangChange.subscribe(() => {
+      this.translateRefresh();
+    });
+    this.translateRefresh();
 
     this.refreshOrder();
-
-    this.translate.onLangChange.subscribe(() => {
-      this.getStatusTranslations();
-      this.getStatusDefaultMessages();
-      this.getEditMenuWithTranslations();
-      this.getTranslatedErrors();
-    });
 
     this.orderStatusForm = this.fb.group({
       statusName: ['', [Validators.required, this.statusNameValidator.bind(this)]],
@@ -165,36 +157,30 @@ export class OrderComponent {
     this.router.navigate([`/orders/view/${Number(this.route.snapshot.params['id'])}`], { queryParams: { tab: 'review' } });
   }
 
-  // TODO: redo translations like orders
-  getStatusTranslations(): void {
-    const results = this.translate.instant(['status.Accepted', 'status.Printing', 'status.Printed', 'status.Shipped', 'status.Arrived', 'status.Cancelled']);
-    this.statusTranslations['Accepted'] = results['status.Accepted'];
-    this.statusTranslations['Printing'] = results['status.Printing'];
-    this.statusTranslations['Printed'] = results['status.Printed'];
-    this.statusTranslations['Shipped'] = results['status.Shipped'];
-    this.statusTranslations['Arrived'] = results['status.Arrived'];
-    this.statusTranslations['Cancelled'] = results['status.Cancelled'];
-  }
+  translateRefresh() {
+    this.errors_type = this.translate.instant(['global.errors'])['global.errors'];
 
-  getTranslatedErrors(): void {
-    const results = this.translate.instant(['global.errors']);
-    this.errors_type = results['global.errors'];
-  }
+    this.editMenuItems[0].label = this.translate.instant('global.edit_button')['global.edit_button'];
+    this.editMenuItems[1].label = this.translate.instant('global.delete_button')['global.delete_button'];
 
-  getStatusDefaultMessages(): void {
-    const results = this.translate.instant(['order.order_status.empty_comments.Accepted', 'order.order_status.empty_comments.Printing', 'order.order_status.empty_comments.Printed', 'order.order_status.empty_comments.Shipped', 'order.order_status.empty_comments.Arrived', 'order.order_status.empty_comments.Cancelled'])
-    this.statusDefaultCommentRef['Accepted'] = results['order.order_status.empty_comments.Accepted'];
-    this.statusDefaultCommentRef['Printing'] = results['order.order_status.empty_comments.Printing'];
-    this.statusDefaultCommentRef['Printed'] = results['order.order_status.empty_comments.Printed'];
-    this.statusDefaultCommentRef['Shipped'] = results['order.order_status.empty_comments.Shipped'];
-    this.statusDefaultCommentRef['Arrived'] = results['order.order_status.empty_comments.Arrived'];
-    this.statusDefaultCommentRef['Cancelled'] = results['order.order_status.empty_comments.Cancelled'];
-  }
+    const message = this.translate.instant(['order.order_status.empty_comments.Accepted', 'order.order_status.empty_comments.Printing', 'order.order_status.empty_comments.Printed', 'order.order_status.empty_comments.Shipped', 'order.order_status.empty_comments.Arrived', 'order.order_status.empty_comments.Cancelled'])
+    this.statusDefaultCommentRef['Accepted'] = message['order.order_status.empty_comments.Accepted'];
+    this.statusDefaultCommentRef['Printing'] = message['order.order_status.empty_comments.Printing'];
+    this.statusDefaultCommentRef['Printed'] = message['order.order_status.empty_comments.Printed'];
+    this.statusDefaultCommentRef['Shipped'] = message['order.order_status.empty_comments.Shipped'];
+    this.statusDefaultCommentRef['Arrived'] = message['order.order_status.empty_comments.Arrived'];
+    this.statusDefaultCommentRef['Cancelled'] = message['order.order_status.empty_comments.Cancelled'];
 
-  getEditMenuWithTranslations(): void {
-    const results = this.translate.instant(['global.edit_button', 'global.delete_button'])
-    this.editMenuItems[0].label = results['global.edit_button'];
-    this.editMenuItems[1].label = results['global.delete_button'];
+    const statuses = this.translate.instant(['status.Accepted', 'status.Printing', 'status.Printed', 'status.Shipped', 'status.Arrived', 'status.Cancelled']);
+    this.statusTranslations['Accepted'] = statuses['status.Accepted'];
+    this.statusTranslations['Printing'] = statuses['status.Printing'];
+    this.statusTranslations['Printed'] = statuses['status.Printed'];
+    this.statusTranslations['Shipped'] = statuses['status.Shipped'];
+    this.statusTranslations['Arrived'] = statuses['status.Arrived'];
+    this.statusTranslations['Cancelled'] = statuses['status.Cancelled'];
+
+    this.refreshStatusActions();
+    this.refreshAvailableStatuses();
   }
 
   refreshOrder(): void {
@@ -204,8 +190,6 @@ export class OrderComponent {
     this.ShippedStatus = [];
     this.ArrivedStatus = [];
     this.CancelledStatus = [];
-    this.statusActions = [];
-    this.availableStatuses = [];
     this.canCancel = false;
     this.canArrive = false;
     this.consumer = false;
@@ -231,80 +215,91 @@ export class OrderComponent {
           for (let status of this.order.orderStatus) {
             this.sortStatus(status);
           }
-          for (let status of this.order.availableStatus) {
-            switch (status) {
-              case 'Accepted':
-                this.statusActions.push({
-                  label: this.statusTranslations['Accepted'],
-                  icon: 'pi pi-play',
-                  command: () => {
-                    this.ShowOrderStatusForm();
-                    this.orderStatusForm.patchValue({ statusName: 'Accepted' });
-                  }
-                });
-                break;
-              case 'Printing':
-                this.statusActions.push({
-                  label: this.statusTranslations['Printing'],
-                  icon: 'pi pi-print',
-                  command: () => {
-                    this.ShowOrderStatusForm();
-                    this.orderStatusForm.patchValue({ statusName: 'Printing' });
-                  }
-                });
-                break;
-              case 'Printed':
-                this.statusActions.push({
-                  label: this.statusTranslations['Printed'],
-                  icon: 'pi pi-check-circle',
-                  command: () => {
-                    this.ShowOrderStatusForm();
-                    this.orderStatusForm.patchValue({ statusName: 'Printed' });
-                  }
-                });
-                break;
-              case 'Shipped':
-                this.statusActions.push({
-                  label: this.statusTranslations['Shipped'],
-                  icon: 'pi pi-send',
-                  command: () => {
-                    this.ShowOrderStatusForm();
-                    this.orderStatusForm.patchValue({ statusName: 'Shipped' });
-                  }
-                });
-                break;
-              case 'Arrived':
-                this.statusActions.push({
-                  label: this.statusTranslations['Arrived'],
-                  icon: 'pi pi-home',
-                  command: () => {
-                    this.ShowOrderStatusForm();
-                    this.orderStatusForm.patchValue({ statusName: 'Arrived' });
-                  }
-                });
-                break;
-              case 'Cancelled':
-                this.statusActions.push({
-                  label: this.statusTranslations['Cancelled'],
-                  icon: 'pi pi-ban',
-                  command: () => {
-                    this.ShowOrderStatusForm();
-                    this.orderStatusForm.patchValue({ statusName: 'Cancelled' });
-                  }
-                });
-                break;
-            }
-          }
-          this.order.availableStatus.forEach((status: string) => {
-            this.availableStatuses.push({ name: this.statusTranslations[status], value: status });
-          });
-          console.log('Available statuses:', this.availableStatuses);
+          this.refreshStatusActions();
+          this.refreshAvailableStatuses();
         }
       } else {
         console.log('Error:', response);
         this.router.navigate(['/orders']);
       }
 
+    });
+  }
+
+  refreshStatusActions(): void {
+    this.statusActions = [];
+    if (this.order?.availableStatus) {
+      for (let status of this.order.availableStatus) {
+        switch (status) {
+          case 'Accepted':
+            this.statusActions.push({
+              label: this.statusTranslations['Accepted'],
+              icon: 'pi pi-play',
+              command: () => {
+                this.ShowOrderStatusForm();
+                this.orderStatusForm.patchValue({ statusName: 'Accepted' });
+              }
+            });
+            break;
+          case 'Printing':
+            this.statusActions.push({
+              label: this.statusTranslations['Printing'],
+              icon: 'pi pi-print',
+              command: () => {
+                this.ShowOrderStatusForm();
+                this.orderStatusForm.patchValue({ statusName: 'Printing' });
+              }
+            });
+            break;
+          case 'Printed':
+            this.statusActions.push({
+              label: this.statusTranslations['Printed'],
+              icon: 'pi pi-check-circle',
+              command: () => {
+                this.ShowOrderStatusForm();
+                this.orderStatusForm.patchValue({ statusName: 'Printed' });
+              }
+            });
+            break;
+          case 'Shipped':
+            this.statusActions.push({
+              label: this.statusTranslations['Shipped'],
+              icon: 'pi pi-send',
+              command: () => {
+                this.ShowOrderStatusForm();
+                this.orderStatusForm.patchValue({ statusName: 'Shipped' });
+              }
+            });
+            break;
+          case 'Arrived':
+            this.statusActions.push({
+              label: this.statusTranslations['Arrived'],
+              icon: 'pi pi-home',
+              command: () => {
+                this.ShowOrderStatusForm();
+                this.orderStatusForm.patchValue({ statusName: 'Arrived' });
+              }
+            });
+            break;
+          case 'Cancelled':
+            this.statusActions.push({
+              label: this.statusTranslations['Cancelled'],
+              icon: 'pi pi-ban',
+              command: () => {
+                this.ShowOrderStatusForm();
+                this.orderStatusForm.patchValue({ statusName: 'Cancelled' });
+              }
+            });
+            break;
+        }
+      }
+    }
+  }
+
+  refreshAvailableStatuses(): void {
+    this.availableStatuses = [];
+    this.order?.availableStatus.forEach((status: string) => {
+      this.availableStatuses.push({ name: this.statusTranslations[status], value: status });
     });
   }
 
