@@ -90,36 +90,31 @@ class Request < ApplicationRecord
                      .where.not(user: Current.user)
                      .not_accepted
                      .search_by_name(params[:search])
-                     .apply_filter(params[:filter])
-                     .sorted(params[:sortCategory], params[:sort])
                  else
-                   none
+                   [] #user no printers
                  end
                when 'mine'
                  Current.user.requests
                         .with_associations
                         .search_by_name(params[:search])
-                        .apply_filter(params[:filter])
-                        .sorted(params[:sortCategory], params[:sort])
                else
-                 none
+                  []
                end
-
-    requests = requests.by_budget_range(params[:minBudget], params[:maxBudget])
-    requests.by_date_range(params[:startDate], params[:endDate])
-  end
-
-  def self.apply_filter(filter)
-    case filter
-    when 'owned-printer'
-      by_printer_owner
-    when 'country'
-      by_country
-    when 'in-progress'
-      in_progress
-    else
-      all
-    end
+    
+    requests = case params[:filter]
+               when 'owned-printer'
+                 requests.by_printer_owner
+               when 'country'
+                 requests.by_country
+               when 'in-progress'
+                 requests.in_progress
+               else
+                 requests
+               end
+    
+    requests = requests.sorted(params[:sortCategory], params[:sort])
+               .by_budget_range(params[:minBudget], params[:maxBudget])
+               .by_date_range(params[:startDate], params[:endDate])
   end
 
   # Serialize a single request
