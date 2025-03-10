@@ -1,5 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ImportsModule } from '../../../imports';
+
+import { UserLeaderboardService } from '../../services/user-leaderboard.service';
+import { UserLeaderboardModel } from '../../models/user-leaderboard.model';
 
 @Component({
   selector: 'app-leaderboard',
@@ -9,6 +12,9 @@ import { ImportsModule } from '../../../imports';
 })
 export class LeaderboardComponent {
   leaderboard!: any[];
+  userLeaderboardService: UserLeaderboardService = inject(UserLeaderboardService);
+
+  usersLeaderboard: UserLeaderboardModel[] = [];
 
   constructor() {
     this.leaderboard = [
@@ -20,5 +26,10 @@ export class LeaderboardComponent {
         totalLikes: 10
       }
     ];
+
+    this.userLeaderboardService.getUserLeaderboard().subscribe((leaderboard: UserLeaderboardModel[]) => {
+      this.usersLeaderboard = leaderboard;
+      console.log(this.usersLeaderboard)
+    });
   }
 }

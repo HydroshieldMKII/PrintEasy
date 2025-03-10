@@ -30,6 +30,14 @@ class User < ApplicationRecord
   #          .select { |contest| contest.winner_user&.dig("id") == id }
   # end
 
+  scope :contests_count, -> { 
+    Contest.joins(
+      "LEFT JOIN submissions ON contests.id = submissions.contest_id"
+      )
+      .where("submissions.user_id = ?", 1)
+      .distinct
+      .count(:id)
+    }
 
   # find how many contests the user has won
   # the not exists subquery is to find submissions who have the same amount of likes but were created before the current submission or more likes than the current

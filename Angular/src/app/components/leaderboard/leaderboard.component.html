@@ -33,7 +33,7 @@
     </p-table>
 
 
-    <p-table [value]="leaderboard" [tableStyle]="{ 'min-width': '50rem' }">
+    <p-table [value]="usersLeaderboard" [tableStyle]="{ 'min-width': '50rem' }">
         <ng-template #header>
             <tr>
                 <th>Username</th>
@@ -41,6 +41,7 @@
                 <th>Participations</th>
                 <th>Win rate</th>
                 <th>Total likes</th>
+                <th>Submission ratio</th>
             </tr>
         </ng-template>
         <ng-template #body let-rowData>
@@ -50,6 +51,7 @@
                 <td>{{ rowData.participations }}</td>
                 <td>{{ rowData.winRate }}</td>
                 <td>{{ rowData.totalLikes }}</td>
+                <td>{{ rowData.submissionsParticipationRate }}</td>
             </tr>
         </ng-template>
     </p-table>
