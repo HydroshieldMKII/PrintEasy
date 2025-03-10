@@ -3,7 +3,7 @@
 module Api
   class OrderController < AuthenticatedController
     def index
-      @orders = Order.fetch_for_user(params)
+      @orders = Order.fetch_for_user(ssf_params)
 
       render json: {
         orders: order_as_json(@orders),
@@ -31,6 +31,8 @@ module Api
         render json: { errors: @order.errors.as_json }, status: :unprocessable_entity
       end
     end
+
+    private
 
     def order_as_json(order)
       order.as_json(
@@ -90,6 +92,10 @@ module Api
         },
         methods: %i[available_status]
       )
+    end
+
+    def ssf_params
+      params.permit(:sort, :search, :filter, :type)
     end
   end
 end

@@ -13,11 +13,13 @@ class Order < ApplicationRecord
   validate :not_two_order_with_the_same_request
   validate :user_owns_request
 
-  scope :search_by_name, ->(query) { joins(offer: :request).where('requests.name LIKE ?', "%#{query}%") if query.present? }
+  scope :search_by_name, ->(query) { joins(offer: :request).where('requests.name LIKE ? OR requests.comment LIKE ?', "%#{query}%", "%#{query}%") if query.present? }
   scope :status_filter, lambda { |status|
     joins(:order_status)
       .where(order_status: { id: OrderStatus.select('MAX(id)').group(:order_id) })
-      .where(order_status: { status_name: status })
+      # .where(order_status: { status_name: status })
+      .where('order_status.status_name IN (?)', status)
+
   }
   scope :review_filter, -> { joins(:review) }
   scope :not_review_filter, -> { where.not(id: joins(:review).select(:id)) }
@@ -52,15 +54,21 @@ class Order < ApplicationRecord
   end
 
   def self.apply_filters(filter)
-    if %w[Accepted Printing Printed Shipped Arrived Cancelled].include?(filter)
-      status_filter(filter)
-    elsif filter == 'reviewed'
-      review_filter
-    elsif filter == 'notReviewed'
-      not_review_filter
-    else
-      all
+    filter = "" if filter.nil?
+    filters = filter.split(';')
+    result = all
+    filters.each do |fil|
+      if fil == 'reviewed'
+        result = result.review_filter
+      elsif fil == 'notReviewed'
+        result = result.not_review_filter
+      end
     end
+    similarStatus = %w[Accepted Printing Printed Shipped Arrived Cancelled].intersection(filters)
+    if similarStatus.length > 0
+      result = result.status_filter(similarStatus)
+    end
+    result
   end
 
   def printer

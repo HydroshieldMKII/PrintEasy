@@ -32,7 +32,7 @@ export class OrdersComponent {
   tab: string = 'commands';
 
   searchQuery: string | null = null;
-  selectedFilterOption: SelectItem | null = null;
+  selectedFilterOption: SelectItem[] | null = null;
   selectedSortOption: SelectItem | null = null;
   filterOptions: SelectItemGroup[] = []
   sortOptions: SelectItem[] = []
@@ -45,9 +45,12 @@ export class OrdersComponent {
     this.translateRefresh();
 
     this.searchQuery = this.router.routerState.snapshot.root.queryParams["search"];
-    this.selectedFilterOption = this.filterOptions
-      .flatMap(group => group.items)
-      .find(item => item.value == this.router.routerState.snapshot.root.queryParams["filter"]) ?? null;
+    const filters = this.router.routerState.snapshot.root.queryParams["filter"]?.split(';') ?? null;
+    if (filters) {
+      this.selectedFilterOption = this.filterOptions
+        .flatMap(group => group.items)
+        .filter(item => filters.includes(item.value));
+    }
     this.selectedSortOption = this.sortOptions.find(item => item.value == this.router.routerState.snapshot.root.queryParams["sort"]) ?? null;
     this.tab = this.router.routerState.snapshot.root.queryParams["tab"] ?? 'commands';
 
@@ -128,7 +131,14 @@ export class OrdersComponent {
     let params: { [key: string]: string } = {};
     params['tab'] = this.tab;
     if (this.selectedFilterOption) {
-      params['filter'] = this.selectedFilterOption.value.toString();
+      console.log(this.selectedFilterOption);
+      let filter = "";
+      for (let fil of this.selectedFilterOption) {
+        filter += fil.value + ";";
+      }
+      if (filter){
+        params['filter'] = filter;
+      }
     }
     if (this.selectedSortOption) {
       params['sort'] = this.selectedSortOption.value.toString();
@@ -143,7 +153,13 @@ export class OrdersComponent {
     else {
       this.getMyOrders(params);
     }
+  }
 
+  clearAdvancedFilters() {
+    this.selectedFilterOption = null;
+    this.selectedSortOption = null;
+    this.searchQuery = null;
+    this.updateUrl();
   }
 
   openContracts() {
