@@ -10,7 +10,8 @@ class User < ApplicationRecord
   has_many :offers, through: :printer_users
   has_many :likes
   has_many :liked_submissions, through: :likes, source: :submission
-  has_many :contests, through: :submissions
+  has_many :contests, -> { distinct }, through: :submissions
+  has_many :likes_received, through: :submissions, source: :likes
 
   has_one_attached :profile_picture
 
