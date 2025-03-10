@@ -177,6 +177,7 @@ export class OrderComponent {
     this.router.navigate([`/orders/view/${Number(this.route.snapshot.params['id'])}`], { queryParams: { tab: 'review' } });
   }
 
+  // TODO: redo translations like orders
   getStatusTranslations(): void {
     const results = this.translate.instant(['status.Accepted', 'status.Printing', 'status.Printed', 'status.Shipped', 'status.Arrived', 'status.Cancelled']);
     this.statusTranslations['Accepted'] = results['status.Accepted'];
