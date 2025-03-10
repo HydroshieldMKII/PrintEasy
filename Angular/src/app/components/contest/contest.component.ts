@@ -18,11 +18,12 @@ import { Select, SelectModule } from 'primeng/select';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { SliderModule } from 'primeng/slider';
 import { Slider } from 'primeng/slider';
+import { ContestCardComponent } from '../contest-card/contest-card.component';
 
 @Component({
   selector: 'app-contest',
   standalone: true,
-  imports: [CardModule, ButtonModule, InputTextModule, FormsModule, CommonModule, SpeedDialModule, DialogModule, RouterLink, TranslatePipe, SelectModule, FloatLabelModule, SliderModule, Slider],
+  imports: [CardModule, ButtonModule, InputTextModule, FormsModule, CommonModule, SpeedDialModule, DialogModule, RouterLink, TranslatePipe, SelectModule, FloatLabelModule, SliderModule, Slider, ContestCardComponent],
   templateUrl: './contest.component.html',
   styleUrls: ['./contest.component.css']
 })
@@ -41,16 +42,15 @@ export class ContestComponent {
   currentSortCategory: string = '';
   currentQuery: string = '';
   currentValues: number[] = [0, 30];
+  oldCurrentValues: number[] = [0, 30];
   sliderClass: string = 'none';
   showAdvancedFilters: boolean = false;
 
   filterOptions: SelectItem[] = [
-    { label: this.translateService.instant('contest.ssf.filter.all'), value: '' },
     { label: this.translateService.instant('contest.ssf.filter.active'), value: 'active' },
     { label: this.translateService.instant('contest.ssf.filter.inactive'), value: 'finished' }
   ];
   sortOptions: SelectItem[] = [
-    { label: this.translateService.instant('contest.ssf.sort.none'), value: '' },
     { label: this.translateService.instant('contest.ssf.sort.participants_asc'), value: 'submissions-asc' },
     { label: this.translateService.instant('contest.ssf.sort.participants_desc'), value: 'submissions-desc' },
     { label: this.translateService.instant('contest.ssf.sort.start_asc'), value: 'start_at-asc' },
@@ -68,6 +68,12 @@ export class ContestComponent {
       this.currentQuery = params['search'] || '';
       if (params['participants'] && Array.isArray(params['participants'])) {
         this.currentValues = params['participants'];
+
+        if (this.currentValues[0] > this.currentValues[1]) {
+          const [minValue, maxValue] = [Math.min(this.currentValues[0], this.currentValues[1]), Math.max(this.currentValues[0], this.currentValues[1])];
+          this.currentValues[0] = minValue;
+          this.currentValues[1] = maxValue;
+        }
       } else {
         this.currentValues = [0, 30];
         this.route.navigate([], {
@@ -76,8 +82,8 @@ export class ContestComponent {
         });
       }
 
-      this.selectedFilterOption = this.filterOptions.find(option => option.value === this.currentFilter) || this.filterOptions[0];
-      this.selectedSortOption = this.sortOptions.find(option => option.value === `${this.currentSortCategory}-${this.currentSort}`) || this.sortOptions[0];
+      this.selectedFilterOption = this.filterOptions.find(option => option.value === this.currentFilter) || null;
+      this.selectedSortOption = this.sortOptions.find(option => option.value === `${this.currentSortCategory}-${this.currentSort}`) || null;
     });
 
     this.fetchContests();
@@ -99,7 +105,7 @@ export class ContestComponent {
         ssf_params = { ...ssf_params, sort: this.currentSort, category: this.currentSortCategory };
       }
     }
-    
+
     if (this.currentQuery) {
       ssf_params = { ...ssf_params, search: this.currentQuery };
     }
@@ -153,6 +159,10 @@ export class ContestComponent {
     );
   }
 
+  onContestDeleted(contestId: number) {
+    this.contests = this.contests.filter(contest => contest.id !== contestId);
+  }
+
   deleteContest(id: number) {
     this.id = id;
     this.deleteDialogVisible = true;
@@ -196,14 +206,23 @@ export class ContestComponent {
   }
 
   onSlideEnd(event: any) {
-    this.currentValues = event.values;
+    if (this.oldCurrentValues[0] != this.currentValues[0] || this.oldCurrentValues[1] != this.currentValues[1]) {
+      this.currentValues = event.values;
 
-    this.route.navigate([], {
-      queryParams: { participants: this.currentValues || null },
-      queryParamsHandling: 'merge'
-    });
+      if (this.currentValues[0] > this.currentValues[1]) {
+        const [minValue, maxValue] = [Math.min(this.currentValues[0], this.currentValues[1]), Math.max(this.currentValues[0], this.currentValues[1])];
+        this.currentValues[0] = minValue;
+        this.currentValues[1] = maxValue;
+      }
 
-    this.fetchContests();
+      this.route.navigate([], {
+        queryParams: { participants: this.currentValues || null },
+        queryParamsHandling: 'merge'
+      });
+
+      this.oldCurrentValues = this.currentValues;
+      this.fetchContests();
+    }
   }
 
   toggleAdvancedFilters() {

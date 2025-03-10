@@ -195,8 +195,8 @@ export class UserProfileComponent implements OnInit {
         if (isSuccessful) {
           this.messageService.add({
             severity: 'success',
-            summary: 'Success',
-            detail: `Printer ${this.isEditMode ? 'updated' : 'added'} successfully`
+            summary: this.translate.instant('global.success'),
+            detail: this.isEditMode ? this.translate.instant('user_profile.printer.printer_updated') : this.translate.instant('user_profile.printer.printer_added')
           });
           if (this.isEditMode && this.printerUserEdit) {
             const index = this.userProfile?.printerUsers.findIndex(pu => pu.id === this.printerUserEdit?.id);
@@ -209,16 +209,16 @@ export class UserProfileComponent implements OnInit {
         } else {
           this.messageService.add({
             severity: 'error',
-            summary: 'Error',
-            detail: `Printer not ${this.isEditMode ? 'updated' : 'added'}`
+            summary: this.translate.instant('global.error'),
+            detail: this.isEditMode ? this.translate.instant('user_profile.printer.printer_not_updated') : this.translate.instant('user_profile.printer.printer_not_added')
           });
         }
       },
       error: () => {
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
-          detail: `An error occurred while ${this.isEditMode ? 'updating' : 'adding'} the printer`
+          summary: this.translate.instant('global.error'),
+          detail: this.isEditMode ? this.translate.instant('user_profile.printer.printer_not_updated') : this.translate.instant('user_profile.printer.printer_not_added')
         });
       },
       complete: () => {

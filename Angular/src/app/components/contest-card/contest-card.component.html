@@ -1,0 +1,57 @@
+<div class="card" [ngStyle]="{ opacity: contest.finished ? '0.5' : '1' }">
+    <div class="contest-content">
+        <img [src]="contest.image" alt="Contest image" class="contest-image" loading="lazy" />
+        <div class="contest-details">
+            <h3 class="contest-theme">{{ contest.theme }} {{ contest.finished ? '(Ended)' : '' }}</h3>
+            <p class="contest-description">{{ contest.description ? (contest.description.length > 30 ?
+                (contest.description | slice:0:30) + '...' : contest.description) : '' }}</p>
+            <p *ngIf="contest.finished && contest.winnerUser">
+                <i class="pi pi-trophy"></i><span> {{ 'contest.winner' | translate }}:</span> {{
+                contest.winnerUser.username
+                }}
+            </p>
+            <p *ngIf="!contest.finished || !contest.winnerUser" class="date-font">
+                <i class="pi pi-users"></i><span> {{ 'contest.submission_limit' | translate }}:</span> {{
+                contest.submissionLimit }}
+            </p>
+
+            <p class="date-font"><i class="pi pi-calendar"></i><span> {{ 'contest.starts' | translate }}:</span> {{
+                contest.startAt |
+                date:'MMM d, y h:mm a' }}</p>
+            <p class="date-font"><i class="pi pi-calendar-times"></i><span> {{ 'contest.ends' | translate }}:</span> {{
+                contest.endAt ?
+                (contest.endAt | date:'MMM d, y h:mm a') : 'N/A' }}</p>
+        </div>
+    </div>
+
+
+    <button [routerLink]="['/contest', contest.id, 'submissions']" pButton
+        label="{{ 'contest.button_contest_detail' | translate }}"
+        class="p-button-outlined contest-detail-button"></button>
+
+    @if (authService.currentUser?.isAdmin) {
+    <div class="admin-buttons">
+        <button pButton icon="pi pi-pencil" class="p-button-text" (click)="editContest(contest)"></button>
+        <button pButton icon="pi pi-trash" class="p-button-text p-button-danger"
+            (click)="deleteContest(contest.id)"></button>
+    </div>
+    }
+</div>
+
+<p-dialog [(visible)]="deleteDialogVisible" [modal]="true" [style]="{ width: '25rem' }" dismissableMask="true"
+  closable="false" blockScroll="true" resizable="false" draggable="false">
+  <ng-template #header>
+    <div class="inline-flex items-center justify-center gap-2">
+      <i class="pi pi-exclamation-triangle text-red-500 text-2xl"></i>
+      <span class="font-bold">{{ 'contest.confirm_delete' | translate }}</span>
+    </div>
+  </ng-template>
+  <span class="text-surface-500 dark:text-surface-400 block mb-4">
+    {{ 'contest.confirm_delete_message' | translate }}
+  </span>
+  <ng-template #footer>
+    <p-button label="{{ 'global.cancel_button' | translate }}" [text]="true" severity="secondary"
+      (click)="deleteDialogVisible = false" />
+    <p-button label="{{ 'global.delete_button' | translate }}" severity="danger" (click)="confirmDelete()" />
+  </ng-template>
+</p-dialog>

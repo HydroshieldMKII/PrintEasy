@@ -190,7 +190,11 @@
       "edit_active_offers": "Vous ne pouvez pas modifier l'imprimante car vous avez des offres actives",
       "delete_active_offers": "Impossible de supprimer l'imprimante avec des offres actives",
       "delete_printer": "Supprimer l'imprimante",
-      "confirm_delete_message": "Êtes-vous sûr de vouloir supprimer l'imprimante ? Cette action ne peut pas être annulée."
+      "confirm_delete_message": "Êtes-vous sûr de vouloir supprimer l'imprimante ? Cette action ne peut pas être annulée.",
+      "printer_added": "Imprimante ajoutée avec succès",
+      "printer_updated": "Imprimante mise à jour avec succès",
+      "printer_not_added": "Échec de l'ajout de l'imprimante",
+      "printer_not_updated": "Échec de la mise à jour de l'imprimante"
     }
   },
   "orders": {

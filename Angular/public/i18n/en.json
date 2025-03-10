@@ -189,7 +189,11 @@
       "edit_active_offers": "Cannot edit printer with active offers",
       "delete_active_offers": "Cannot delete printer with active offers",
       "delete_printer": "Delete Printer",
-      "confirm_delete_message": "Are you sure you want to delete this printer? This action cannot be undone."
+      "confirm_delete_message": "Are you sure you want to delete this printer? This action cannot be undone.",
+      "printer_added": "Printer added successfully",
+      "printer_updated": "Printer updated successfully",
+      "printer_not_added": "Printer addition failed",
+      "printer_not_updated": "Printer update failed"
     }
   },
   "orders": {

@@ -30,6 +30,7 @@ Rails.application.routes.draw do
     resources :home
     resources :like, only: %i[index create destroy]
     resources :user_profile, only: [:show]
+    resources :leaderboard, only: [:index]
   end
 
   match '*url', to: 'angular#index', via: :get

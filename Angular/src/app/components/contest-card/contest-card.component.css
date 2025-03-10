@@ -9,21 +9,6 @@
     text-align: center;
 }
 
-.slider-wrapper {
-    padding-top: 5px;
-    padding-bottom: 30px;
-    position: relative;
-}
-
-.range-values {
-    position: absolute;
-    bottom: 5px;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.75rem;
-}
-
 .contest-list {
     display: flex;
     gap: 20px;
@@ -89,13 +74,6 @@ h2 {
     margin-bottom: 20px;
 }
 
-.search-container {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 20px;
-}
-
 /* .contest-list {
     display: flex;
     flex-direction: row;
@@ -104,14 +82,6 @@ h2 {
     width: 100%;
     margin-top: 30px;
 } */
-
-.search-bar {
-    height: 100%;
-}
-
-:host ::ng-deep .p-slider {
-    width: 100px;
-}
 
 .flex {
     display: flex;
@@ -198,137 +168,17 @@ h2 {
     width: 100%;
 }
 
-:host ::ng-deep .p-select {
-    width: 200px;
-}
-
-:host ::ng-deep .p-select-label {
-    display: flex;
-}
-
-.advanced-filters {
-    border: none;
-    border-radius: 0.75rem;
-    background-color: #ffffff;
-    margin-bottom: 1rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 
-                0 1px 3px rgba(0, 0, 0, 0.08);
-    overflow: hidden;
-    transition: box-shadow 0.3s ease;
-}
-
-.filter-header {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.75rem 1rem;
-    cursor: pointer;
-    user-select: none;
-    border-bottom: 1px solid #e0e0e0;
-    transition: background-color 0.2s ease;
-    gap: 1rem;
-    background-color: #ffffff;
-}
-
-.filter-header:hover {
-    background-color: #f8f9fa;
-    transition: background-color 0.2s ease;
-}
-
-.filter-header.active {
-    background-color: #f0f8ff;
-    border-left: 3px solid #007bff;
-}
-
-.filter-header .search-container {
-    flex: 1;
-    min-width: 200px;
-}
-
-.filter-header .advanced-toggle {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    white-space: nowrap;
-}
-
-.p-input-icon-right {
-    position: relative;
-    width: 100%;
-}
-
-.p-input-icon-right input {
-    width: 100%;
-    padding-right: 2.5rem;
-}
-
-.p-input-icon-right .pi-search {
-    position: absolute;
-    right: 0.75rem;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 10;
-    pointer-events: none;
-}
-
-.date-filter {
-    flex: 1.5;
-    min-width: 180px;
-}
-
 .mb-4 {
     margin-bottom: 1rem;
-}
-
-.filter-title {
-    font-weight: 600;
-    font-size: 0.95rem;
-}
-
-.filter-content {
-    padding: 1rem;
-    transition: max-height 0.3s ease;
-}
-
-.filter-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    align-items: flex-end;
-    justify-content: flex-end;
-}
-
-.filter-item {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-}
-
-.filter-item label {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: #555;
-}
-
-.participants-range {
 }
 
 .date-font {
     font-size: auto;
 }
 
-:host ::ng-deep .advanced-toggle {
-    flex-grow: 1;
-    justify-content: flex-end;
-}
+@media (max-width: 768px) {
 
-@media (max-width: 768px) { 
-    :host ::ng-deep .card {
-        width: 334px !important;
-    }
-
-   .date-font {
+    .date-font {
         font-size: 14px;
     }
 
@@ -338,24 +188,6 @@ h2 {
 
     .date-font span {
         font-size: 14px;
-    }
-
-    :host ::ng-deep .p-select {
-        width: 100%;
-    }
-
-    :host ::ng-deep .p-slider {
-        width: 100%;
-    }
-
-    .filter-item {
-        width: 100%;
-    }
-
-    .filter-row {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1rem;
     }
 
     p-speeddial {
@@ -371,10 +203,6 @@ h2 {
         flex-direction: column;
         align-items: center;
         text-align: center;
-    }
-
-    .search-mobile {
-        width: 100%;
     }
 
     .contest-image {
