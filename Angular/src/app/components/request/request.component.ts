@@ -36,7 +36,6 @@ export class RequestsComponent implements OnInit {
   currentSortCategory: string = '';
 
   selectedSortOption: SelectItem | null = null;
-  selectedFilterOption: SelectItem | null = null;
 
   filterOptions: SelectItem[] = [];
   sortOptions: SelectItem[] = [];
@@ -46,6 +45,10 @@ export class RequestsComponent implements OnInit {
 
   currentLanguage: string = 'en';
   showAdvancedFilters: boolean = false;
+
+  multiFilterOptions: SelectItem[] = [];
+  currentMultiFilterOptions: SelectItem[] = [];
+  selectedOptions: string[] = [];
 
   toggleAdvancedFilters(): void {
     this.showAdvancedFilters = !this.showAdvancedFilters;
@@ -58,23 +61,53 @@ export class RequestsComponent implements OnInit {
     private clipboard: Clipboard,
     private translate: TranslateService
   ) {
-    const queryParams = this.router.parseUrl(this.router.url).queryParams;
-    this.currentFilter = queryParams['filter'] || null;
-    this.currentSort = queryParams['sort'] || null;
-    this.currentSortCategory = queryParams['sortCategory'] || null;
-    this.searchQuery = queryParams['search'] || null;
-
-    // set tab
-    this.activeTab = queryParams['tab'] === 'all' ? 'all' : 'mine';
-    this.router.navigate([], {
-      queryParams: { tab: this.activeTab },
-      queryParamsHandling: 'merge',
-    });
+    this.initFromQueryParams();
 
     this.translate.onLangChange.subscribe(() => {
       this.translateRefresh();
     });
     this.translateRefresh();
+  }
+
+  initFromQueryParams(): void {
+    const queryParams = this.router.parseUrl(this.router.url).queryParams;
+
+    this.currentFilter = queryParams['filter'] || null;
+    this.currentSort = queryParams['sort'] || null;
+    this.currentSortCategory = queryParams['sortCategory'] || null;
+    this.searchQuery = queryParams['search'] || null;
+
+    if (queryParams['selectedOptions']) {
+      this.selectedOptions = queryParams['selectedOptions'].split(',');
+
+      //check the selected options in multiFilterOptions
+      this.selectedOptions.forEach((option) => {
+        const selectedOption = this.multiFilterOptions.find(
+          (item) => item.value === option
+        );
+        if (selectedOption) {
+          this.currentMultiFilterOptions.push(selectedOption);
+        }
+      });
+    } else {
+      this.selectedOptions = [];
+    }
+
+    if (queryParams['minBudget'] && queryParams['maxBudget']) {
+      this.budgetRange = [
+        parseInt(queryParams['minBudget']),
+        parseInt(queryParams['maxBudget']),
+      ];
+    } else {
+      this.budgetRange = [0, 10000];
+    }
+
+    this.activeTab = queryParams['tab'] === 'all' ? 'all' : 'mine';
+
+    this.router.navigate([], {
+      queryParams: { tab: this.activeTab },
+      queryParamsHandling: 'merge',
+    });
   }
 
   refreshData() {
@@ -83,7 +116,7 @@ export class RequestsComponent implements OnInit {
   }
 
   translateRefresh() {
-    this.filterOptions = [
+    this.multiFilterOptions = [
       {
         label: this.translate.instant('request.filter.owned-printer'),
         value: 'owned-printer',
@@ -133,10 +166,12 @@ export class RequestsComponent implements OnInit {
       },
     ];
 
-    this.selectedFilterOption =
-      this.filterOptions.find(
-        (option) => option.value === this.currentFilter
-      ) || null;
+    if (this.selectedOptions && this.selectedOptions.length > 0) {
+      this.currentMultiFilterOptions = this.multiFilterOptions.filter(
+        (option) => this.selectedOptions.includes(option.value)
+      );
+    }
+
     this.selectedSortOption =
       this.sortOptions.find(
         (option) =>
@@ -174,10 +209,10 @@ export class RequestsComponent implements OnInit {
 
     this.filter(this.activeTab);
 
-    this.selectedFilterOption =
-      this.filterOptions.find(
-        (option) => option.value === this.currentFilter
-      ) || null;
+    // this.selectedFilterOption =
+    //   this.filterOptions.find(
+    //     (option) => option.value === this.currentFilter
+    //   ) || null;
     this.selectedSortOption =
       this.sortOptions.find(
         (option) =>
@@ -250,8 +285,8 @@ export class RequestsComponent implements OnInit {
         this.currentSortCategory,
         this.currentSort,
         this.searchQuery,
-        this.budgetRange[0],
-        this.budgetRange[1],
+        this.budgetRange[0] === 0 ? null : this.budgetRange[0],
+        this.budgetRange[1] === 10000 ? null : this.budgetRange[1],
         startDate,
         endDate,
         type
@@ -356,18 +391,39 @@ export class RequestsComponent implements OnInit {
     this.refreshData();
   }
 
-  onBudgtChange(event: SliderSlideEndEvent): void {
-    if (event.values !== undefined) {
-      this.budgetRange = event.values;
+  onManualBudgetChange(): void {
+    this.budgetRange[0] = Math.max(0, Math.min(this.budgetRange[0], 10000));
+    this.budgetRange[1] = Math.max(0, Math.min(this.budgetRange[1], 10000));
 
-      this.router.navigate([], {
-        queryParams: {
-          minBudget: this.budgetRange[0],
-          maxBudget: this.budgetRange[1],
-        },
-        queryParamsHandling: 'merge',
-      });
+    if (this.budgetRange[0] > this.budgetRange[1]) {
+      this.budgetRange[0] = this.budgetRange[1];
     }
+
+    this.router.navigate([], {
+      queryParams: {
+        minBudget: this.budgetRange[0] === 0 ? null : this.budgetRange[0],
+        maxBudget: this.budgetRange[1] === 10000 ? null : this.budgetRange[1],
+      },
+      queryParamsHandling: 'merge',
+    });
+
+    this.refreshData();
+  }
+
+  onMultiFilterChange(event: any): void {
+    this.selectedOptions = event.value
+      ? event.value.map((item: SelectItem) => item.value)
+      : [];
+
+    this.router.navigate([], {
+      queryParams: {
+        selectedOptions:
+          this.selectedOptions.length > 0
+            ? this.selectedOptions.join(',')
+            : null,
+      },
+      queryParamsHandling: 'merge',
+    });
 
     this.refreshData();
   }
@@ -423,51 +479,8 @@ export class RequestsComponent implements OnInit {
     this.currentSort = '';
     this.currentSortCategory = '';
 
-    this.selectedFilterOption = null;
+    this.currentMultiFilterOptions = [];
     this.selectedSortOption = null;
-
-    this.refreshData();
-  }
-
-  applyAdvancedFilters(): void {
-    const queryParams: any = {
-      minBudget: this.budgetRange[0],
-      maxBudget: this.budgetRange[1],
-    };
-
-    if (this.dateRange && this.dateRange.length >= 1 && this.dateRange[0]) {
-      queryParams.startDate = this.dateRange[0].toISOString().split('T')[0];
-
-      if (this.dateRange.length === 2 && this.dateRange[1]) {
-        queryParams.endDate = this.dateRange[1].toISOString().split('T')[0];
-      } else {
-        queryParams.endDate = null;
-      }
-    } else {
-      queryParams.startDate = null;
-      queryParams.endDate = null;
-    }
-
-    if (this.searchQuery) {
-      queryParams.search = this.searchQuery;
-    }
-
-    if (this.currentFilter) {
-      queryParams.filter = this.currentFilter;
-    }
-
-    if (this.currentSort) {
-      queryParams.sort = this.currentSort;
-    }
-
-    if (this.currentSortCategory) {
-      queryParams.sortCategory = this.currentSortCategory;
-    }
-
-    this.router.navigate([], {
-      queryParams: queryParams,
-      queryParamsHandling: 'merge',
-    });
 
     this.refreshData();
   }

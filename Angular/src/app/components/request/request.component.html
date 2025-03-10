@@ -56,17 +56,33 @@
             <div class="filter-row">
               <div class="filter-item budget-range">
                 <label>{{ "request.budget_range" | translate }}</label>
-                <div class="slider-wrapper">
-                  <p-slider
-                    [(ngModel)]="budgetRange"
-                    [range]="true"
-                    [min]="0"
-                    [max]="10000"
-                    (onSlideEnd)="onBudgtChange($event)"
-                  ></p-slider>
-                  <div class="range-values">
-                    <span>${{ budgetRange[0] }}</span>
-                    <span>${{ budgetRange[1] }}</span>
+                <div class="budget-manual-inputs">
+                  <div class="budget-input-group">
+                    <span class="p-input-icon-left">
+                      <i class="pi pi-dollar"></i>
+                      <input
+                        pInputText
+                        type="number"
+                        min="0"
+                        max="10000"
+                        [(ngModel)]="budgetRange[0]"
+                        (blur)="onManualBudgetChange()"
+                        placeholder="Min"
+                      />
+                    </span>
+                    <span class="budget-separator"> -</span>
+                    <span class="p-input-icon-left">
+                      <i class="pi pi-dollar"></i>
+                      <input
+                        pInputText
+                        type="number"
+                        min="0"
+                        max="10000"
+                        [(ngModel)]="budgetRange[1]"
+                        (blur)="onManualBudgetChange()"
+                        placeholder="Max"
+                      />
+                    </span>
                   </div>
                 </div>
               </div>
@@ -100,20 +116,21 @@
               </div>
 
               <div class="filter-item">
-                <div>
-                  <p-float-label variant="in">
-                    <p-select
-                      [options]="filterOptions"
-                      [(ngModel)]="selectedFilterOption"
-                      variant="filled"
-                      [showClear]="true"
-                      optionLabel="label"
-                      appendTo="body"
-                      (onChange)="onFilterChange($event)"
-                    ></p-select>
-                    <label>{{ "request.filter_by" | translate }}</label>
-                  </p-float-label>
-                </div>
+                <p-float-label variant="in">
+                  <p-multiSelect
+                    [options]="multiFilterOptions"
+                    [(ngModel)]="currentMultiFilterOptions"
+                    optionLabel="label"
+                    [filter]="true"
+                    appendTo="body"
+                    [showClear]="true"
+                    [showToggleAll]="true"
+                    [showHeader]="true"
+                    [style]="{ width: '100%' }"
+                    (onChange)="onMultiFilterChange($event)"
+                  ></p-multiSelect>
+                  <label>{{ "request.filter_by" | translate }}</label>
+                </p-float-label>
               </div>
 
               <div class="filter-item">
@@ -157,13 +174,6 @@
                 pTooltip="{{ 'request.clear_filters' | translate }}"
                 tooltipPosition="left"
               ></p-button>
-
-              <!-- <p-button 
-        icon="pi pi-filter"
-        styleClass="p-button-sm"
-        (onClick)="applyAdvancedFilters()"
-        title="{{ 'request.apply_filters' | translate }}"
-      ></p-button> -->
             </div>
           </div>
         </div>
