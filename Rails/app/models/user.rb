@@ -57,8 +57,25 @@ class User < ApplicationRecord
       .distinct
   end
 
+  def submissions_participation_rate
+    subquery = submissions
+      .joins("LEFT JOIN contests ON contests.id = submissions.contest_id")
+      .select("contests.id, contests.submission_limit, COUNT(submissions.id) AS submission_count, (COUNT(submissions.id) / contests.submission_limit) AS submission_ratio")
+      .group("contests.id, contests.submission_limit")
+      .having("COUNT(submissions.id) <= contests.submission_limit")
+    
+      average_rate = Submission.from(subquery, :submissions_data).average("submission_ratio")
+      average_rate.to_f
+  end
+
   def wins_count
     won_contests.length
+  end
+
+  def winrate
+    return 0 if contests.length.zero?
+
+    (wins_count.to_f / contests.length).round(2)
   end
 
   def accessible_contests
@@ -76,6 +93,14 @@ class User < ApplicationRecord
                             .as_json(include: :likes, methods: %i[image_url stl_url liked_by_current_user])
       }
     end
+  end
+
+  def contests_count
+    contests.count
+  end
+
+  def likes_received_count
+    likes_received.count
   end
 
   def email_required?

@@ -12,6 +12,7 @@ import { OffersComponent } from './components/offer/offer.component';
 import { OrderComponent } from './components/order/order.component';
 import { OrdersComponent } from './components/orders/orders.component';
 import { SubmissionsComponent } from './components/submissions/submissions.component';
+import { LeaderboardComponent } from './components/leaderboard/leaderboard.component';
 
 import { AuthenticationGuard } from './guards/authentication.guard';
 import { ContestGuard } from './guards/contest.guard';
@@ -80,6 +81,11 @@ export const routes: Routes = [
         title: 'New Contest',
       },
       {
+        path: 'contest/leaderboard',
+        component: LeaderboardComponent,
+        title: 'Leaderboard',
+      },
+      {
         path: 'contest/:id',
         component: ContestFormComponent,
         title: 'Edit Contest',
@@ -88,7 +94,7 @@ export const routes: Routes = [
         path: 'contest/:id/submissions',
         component: SubmissionsComponent,
         title: 'Submissions',
-      }
+      },
     ]
   },
   {
