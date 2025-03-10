@@ -38,7 +38,8 @@ export class RequestService {
     maxBudget: number | null,
     startDate: Date,
     endDate: Date,
-    type: string
+    type: string,
+    selectedOptions: string[] = []
   ): Observable<[RequestModel[], boolean] | ApiResponseModel> {
     const params: any = {};
 
@@ -53,6 +54,11 @@ export class RequestService {
     if (startDate) params.startDate = startDate.toISOString().split('T')[0];
     if (endDate) params.endDate = endDate.toISOString().split('T')[0];
     if (type) params.type = type;
+
+    // Add selected multifilter options to params
+    if (selectedOptions && selectedOptions.length > 0) {
+      params.selectedOptions = selectedOptions.join(',');
+    }
 
     return this.fetchRequests(params);
   }

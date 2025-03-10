@@ -116,21 +116,23 @@
               </div>
 
               <div class="filter-item">
-                <p-float-label variant="in">
-                  <p-multiSelect
-                    [options]="multiFilterOptions"
-                    [(ngModel)]="currentMultiFilterOptions"
-                    optionLabel="label"
-                    [filter]="true"
-                    appendTo="body"
-                    [showClear]="true"
-                    [showToggleAll]="true"
-                    [showHeader]="true"
-                    [style]="{ width: '100%' }"
-                    (onChange)="onMultiFilterChange($event)"
-                  ></p-multiSelect>
-                  <label>{{ "request.filter_by" | translate }}</label>
-                </p-float-label>
+                <div>
+                  <p-float-label variant="in">
+                    <p-multiSelect
+                      [options]="multiFilterOptions"
+                      [(ngModel)]="currentMultiFilterOptions"
+                      optionLabel="label"
+                      [filter]="true"
+                      appendTo="body"
+                      [showToggleAll]="true"
+                      [showHeader]="true"
+                      [style]="{ width: '100%' }"
+                      (onChange)="onMultiFilterChange($event)"
+                      (onClear)="onMultiFilterChange($event)"
+                    ></p-multiSelect>
+                    <label>{{ "request.filter_by" | translate }}</label>
+                  </p-float-label>
+                </div>
               </div>
 
               <div class="filter-item">

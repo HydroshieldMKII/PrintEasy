@@ -29,7 +29,6 @@ export class RequestsComponent implements OnInit {
 
   isOwningPrinter: boolean | null = null;
   expandedRows: { [key: number]: boolean } = {};
-  expandedMyRows: { [key: number]: boolean } = {};
   searchQuery: string = '';
   currentFilter: string = '';
   currentSort: string = '';
@@ -61,12 +60,30 @@ export class RequestsComponent implements OnInit {
     private clipboard: Clipboard,
     private translate: TranslateService
   ) {
+    this.initMultiFilterOptions();
     this.initFromQueryParams();
 
     this.translate.onLangChange.subscribe(() => {
       this.translateRefresh();
     });
     this.translateRefresh();
+  }
+
+  initMultiFilterOptions(): void {
+    this.multiFilterOptions = [
+      {
+        label: this.translate.instant('request.filter.owned-printer'),
+        value: 'owned-printer',
+      },
+      {
+        label: this.translate.instant('request.filter.country'),
+        value: 'country',
+      },
+      {
+        label: this.translate.instant('request.filter.in-progress'),
+        value: 'in-progress',
+      },
+    ];
   }
 
   initFromQueryParams(): void {
@@ -80,7 +97,7 @@ export class RequestsComponent implements OnInit {
     if (queryParams['selectedOptions']) {
       this.selectedOptions = queryParams['selectedOptions'].split(',');
 
-      //check the selected options in multiFilterOptions
+      this.currentMultiFilterOptions = [];
       this.selectedOptions.forEach((option) => {
         const selectedOption = this.multiFilterOptions.find(
           (item) => item.value === option
@@ -91,6 +108,7 @@ export class RequestsComponent implements OnInit {
       });
     } else {
       this.selectedOptions = [];
+      this.currentMultiFilterOptions = [];
     }
 
     if (queryParams['minBudget'] && queryParams['maxBudget']) {
@@ -116,20 +134,7 @@ export class RequestsComponent implements OnInit {
   }
 
   translateRefresh() {
-    this.multiFilterOptions = [
-      {
-        label: this.translate.instant('request.filter.owned-printer'),
-        value: 'owned-printer',
-      },
-      {
-        label: this.translate.instant('request.filter.country'),
-        value: 'country',
-      },
-      {
-        label: this.translate.instant('request.filter.in-progress'),
-        value: 'in-progress',
-      },
-    ];
+    this.initMultiFilterOptions();
 
     this.sortOptions = [
       {
@@ -208,16 +213,6 @@ export class RequestsComponent implements OnInit {
     this.initDateRange();
 
     this.filter(this.activeTab);
-
-    // this.selectedFilterOption =
-    //   this.filterOptions.find(
-    //     (option) => option.value === this.currentFilter
-    //   ) || null;
-    this.selectedSortOption =
-      this.sortOptions.find(
-        (option) =>
-          option.value === `${this.currentSortCategory}-${this.currentSort}`
-      ) || null;
   }
 
   initDateRange(): void {
@@ -279,6 +274,7 @@ export class RequestsComponent implements OnInit {
       this.dateRange && this.dateRange.length > 1 && this.dateRange[1]
         ? this.dateRange[1]
         : null;
+
     this.requestService
       .filter(
         this.currentFilter,
@@ -289,7 +285,8 @@ export class RequestsComponent implements OnInit {
         this.budgetRange[1] === 10000 ? null : this.budgetRange[1],
         startDate,
         endDate,
-        type
+        type,
+        this.selectedOptions
       )
       .subscribe((result: [RequestModel[], boolean] | ApiResponseModel) => {
         if (result instanceof ApiResponseModel) {
@@ -411,9 +408,13 @@ export class RequestsComponent implements OnInit {
   }
 
   onMultiFilterChange(event: any): void {
-    this.selectedOptions = event.value
-      ? event.value.map((item: SelectItem) => item.value)
-      : [];
+    if (!event || !event.value) {
+      this.currentMultiFilterOptions = [];
+      this.selectedOptions = [];
+    } else {
+      this.currentMultiFilterOptions = event.value;
+      this.selectedOptions = event.value.map((item: SelectItem) => item.value);
+    }
 
     this.router.navigate([], {
       queryParams: {
@@ -457,6 +458,8 @@ export class RequestsComponent implements OnInit {
     this.budgetRange = [0, 10000];
     this.dateRange = null;
     this.searchQuery = '';
+    this.selectedOptions = [];
+    this.currentMultiFilterOptions = [];
 
     this.router.navigate([], {
       queryParams: {
@@ -468,6 +471,7 @@ export class RequestsComponent implements OnInit {
         filter: null,
         sort: null,
         sortCategory: null,
+        selectedOptions: null,
       },
       queryParamsHandling: 'merge',
     });
@@ -479,7 +483,6 @@ export class RequestsComponent implements OnInit {
     this.currentSort = '';
     this.currentSortCategory = '';
 
-    this.currentMultiFilterOptions = [];
     this.selectedSortOption = null;
 
     this.refreshData();
