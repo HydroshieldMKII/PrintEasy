@@ -3,7 +3,7 @@ export type UserLeaderboardApi = {
     username: string;
     likes_received_count: number;
     contests_count: number;
-    wins_count: number;
+    won_contests: number;
     winrate: number;
     submissions_participation_rate: number;
 }
@@ -28,7 +28,7 @@ export class UserLeaderboardModel {
     static fromApi(userLeaderboardApi: UserLeaderboardApi): UserLeaderboardModel {
         return new UserLeaderboardModel(
             userLeaderboardApi.username, 
-            userLeaderboardApi.wins_count, 
+            userLeaderboardApi.won_contests, 
             userLeaderboardApi.contests_count, 
             userLeaderboardApi.winrate, 
             userLeaderboardApi.likes_received_count, 

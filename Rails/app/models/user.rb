@@ -24,21 +24,6 @@ class User < ApplicationRecord
   validates :password_confirmation, presence: true
   validates :country_id, presence: true
 
- 
-  # def won_contests
-  #   contests.where("contests.end_at <= ?", Time.now) 
-  #          .select { |contest| contest.winner_user&.dig("id") == id }
-  # end
-
-  scope :contests_count, -> { 
-    Contest.joins(
-      "LEFT JOIN submissions ON contests.id = submissions.contest_id"
-      )
-      .where("submissions.user_id = ?", 1)
-      .distinct
-      .count(:id)
-    }
-
   # find how many contests the user has won
   # the not exists subquery is to find submissions who have the same amount of likes but were created before the current submission or more likes than the current
   # not exists if true means that there is no other submissions that have the same amount or like or more
@@ -60,9 +45,9 @@ class User < ApplicationRecord
              OR (COUNT(l2.id) = COUNT(likes.id) AND s2.created_at < submissions.created_at)
         )"
       )
-      .group("contests.id, submissions.id, submissions.user_id, submissions.created_at")
       .having("COUNT(likes.id) > 0")
       .distinct
+      .count(:id)
   end
 
   def submissions_participation_rate
@@ -73,17 +58,13 @@ class User < ApplicationRecord
       .having("COUNT(submissions.id) <= contests.submission_limit")
     
       average_rate = Submission.from(subquery, :submissions_data).average("submission_ratio")
-      average_rate.to_f
-  end
-
-  def wins_count
-    won_contests.length
+      average_rate.to_f * 100
   end
 
   def winrate
-    return 0 if contests.length.zero?
+    return 0.0 if contests.length.zero?
 
-    (wins_count.to_f / contests.length).round(2)
+    (won_contests.to_f / contests.count.to_f).round(2) * 100
   end
 
   def accessible_contests
@@ -104,11 +85,18 @@ class User < ApplicationRecord
   end
 
   def contests_count
-    contests.count
+    Contest.joins(
+      "LEFT JOIN submissions ON contests.id = submissions.contest_id"
+      )
+      .where("submissions.user_id = ?", id)
+      .distinct
+      .count(:id)
   end
 
   def likes_received_count
-    likes_received.count
+    Like.joins(:submission)
+         .where("submissions.user_id = ?", id)
+         .count(:id)
   end
 
   def email_required?
