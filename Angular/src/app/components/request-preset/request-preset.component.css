@@ -1,0 +1,9 @@
+.invalid {
+  background-color: #f8d7da;
+  border-left: 4px solid #f44336;
+}
+
+.disabled-col {
+  opacity: 0.5;
+  pointer-events: none;
+}

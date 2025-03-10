@@ -1,0 +1,134 @@
+<div class="flex justify-between items-center mt-6">
+  <h3 class="text-lg font-semibold self-center mr-2">
+    {{ presets.length }}
+    {{ "requestForm.presets_count" | translate }}
+  </h3>
+  <p-button
+    id="add-preset"
+    *ngIf="(isEditMode || isNewMode) && !hasOffers"
+    label="{{ 'requestForm.add_preset' | translate }}"
+    [link]="true"
+    icon="pi pi-plus"
+    (click)="addPreset()"
+  ></p-button>
+  <p *ngIf="isEditMode && hasOffers" style="color: red">
+    {{ "requestForm.cannot_edit_presets" | translate }}
+  </p>
+</div>
+
+<p-table
+  [value]="presets"
+  dataKey="id"
+  [tableStyle]="{ 'min-width': '50rem' }"
+  *ngIf="presets.length > 0"
+>
+  <ng-template #header>
+    <tr>
+      <th>{{ "requestForm.printer" | translate }}</th>
+      <th>{{ "requestForm.filament_type" | translate }}</th>
+      <th>{{ "requestForm.color" | translate }}</th>
+      <th>{{ "requestForm.print_quality" | translate }}</th>
+      <th>{{ "requestForm.actions" | translate }}</th>
+    </tr>
+  </ng-template>
+  <ng-template #body let-preset let-ri="rowIndex">
+    <tr [ngClass]="{ invalid: !isPresetValid(preset) }">
+      <td [ngClass]="{ 'disabled-col': isAboutToBeDeleted(preset) }">
+        <p-select
+          [(ngModel)]="preset.printerModel"
+          [options]="printers"
+          optionLabel="label"
+          dataKey="id"
+          placeholder="{{ 'requestForm.select_printer' | translate }}"
+          [disabled]="isViewMode || hasOffers"
+          appendTo="body"
+        ></p-select>
+      </td>
+      <td [ngClass]="{ 'disabled-col': isAboutToBeDeleted(preset) }">
+        <p-select
+          [(ngModel)]="preset.filamentType"
+          [options]="filamentTypes"
+          optionLabel="label"
+          dataKey="id"
+          placeholder="{{ 'requestForm.select_filament' | translate }}"
+          [disabled]="isViewMode || hasOffers"
+          appendTo="body"
+        ></p-select>
+      </td>
+      <td [ngClass]="{ 'disabled-col': isAboutToBeDeleted(preset) }">
+        <p-select
+          [(ngModel)]="preset.color"
+          [options]="colors"
+          optionLabel="label"
+          dataKey="id"
+          placeholder="{{ 'requestForm.select_color' | translate }}"
+          [disabled]="isViewMode || hasOffers"
+          appendTo="body"
+        ></p-select>
+      </td>
+      <td [ngClass]="{ 'disabled-col': isAboutToBeDeleted(preset) }">
+        <p-inputnumber
+          [showButtons]="
+            (isEditMode && !hasOffers && !hasOfferAccepted) || isNewMode
+          "
+          buttonLayout="horizontal"
+          spinnerMode="vertical"
+          inputId="vertical"
+          [inputStyle]="{ width: '4rem' }"
+          [(ngModel)]="preset.printQuality"
+          [step]="0.04"
+          [min]="0.01"
+          [max]="2"
+          [disabled]="isViewMode || hasOffers"
+          [minFractionDigits]="2"
+          [maxFractionDigits]="2"
+        ></p-inputnumber>
+      </td>
+      <td *ngIf="(isEditMode || isNewMode) && !isAboutToBeDeleted(preset)">
+        <button
+          pButton
+          pRipple
+          type="button"
+          icon="pi pi-trash"
+          class="p-button-rounded p-button-danger"
+          (click)="removePreset(ri)"
+          pTooltip="{{ 'requestForm.delete_preset' | translate }}"
+          tooltipPosition="top"
+          severity="danger"
+          appendTo="body"
+          [disabled]="hasOffers"
+        ></button>
+      </td>
+      <td *ngIf="(isEditMode || isNewMode) && isAboutToBeDeleted(preset)">
+        <button
+          pButton
+          pRipple
+          type="button"
+          icon="pi pi-undo"
+          class="p-button-rounded p-button-warning"
+          (click)="undoDeletePreset(preset)"
+          pTooltip="{{ 'requestForm.undo_delete' | translate }}"
+          tooltipPosition="top"
+          severity="warn"
+          appendTo="body"
+          [disabled]="hasOffers"
+        ></button>
+      </td>
+      <td *ngIf="isViewMode">
+        <p-button
+          type="button"
+          icon="pi pi-arrow-right"
+          variant="outlined"
+          severity="info"
+          [style]="{ textdecoration: 'none' }"
+          [label]="
+            preset.hasOfferMade
+              ? ('requestForm.offer_preset_alt' | translate)
+              : ('requestForm.offer_preset' | translate)
+          "
+          (click)="showOfferModal(preset)"
+        ></p-button>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

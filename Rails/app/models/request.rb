@@ -54,11 +54,11 @@ class Request < ApplicationRecord
 
   scope :by_date_range, lambda { |start_date, end_date|
     if start_date.present? && end_date.present?
-      where('requests.target_date > ? AND requests.target_date <= ?',
+      where('requests.target_date >= ? AND requests.target_date <= ?',
             start_date.to_date.beginning_of_day,
             end_date.to_date.end_of_day)
     elsif start_date.present?
-      where('requests.target_date >= ?', start_date.to_date.end_of_day)
+      where('requests.target_date >= ?', start_date.to_date.beginning_of_day)
     end
   }
 
@@ -78,7 +78,7 @@ class Request < ApplicationRecord
 
   scope :viewable_by_user, lambda {
     where(user: Current.user).or(
-      Current.user.printers.exists? ? where.not(id: nil) : none
+      Current.user.printers.exists? ? where.not(id: nil) : []
     )
   }
 

@@ -17,7 +17,7 @@ import { ColorModel } from '../../models/color.model';
   selector: 'app-request',
   imports: [ImportsModule, RouterLink, TranslatePipe],
   templateUrl: './request.component.html',
-  styleUrls: ['./request.component.css']
+  styleUrls: ['./request.component.css'],
 })
 export class RequestsComponent implements OnInit {
   activeTab: string = 'mine';
@@ -65,8 +65,11 @@ export class RequestsComponent implements OnInit {
     this.searchQuery = queryParams['search'] || null;
 
     // set tab
-    this.activeTab = queryParams['tab'] || 'mine';
-    this.router.navigate([], { queryParams: { tab: this.activeTab }, queryParamsHandling: 'merge' });
+    this.activeTab = queryParams['tab'] === 'all' ? 'all' : 'mine';
+    this.router.navigate([], {
+      queryParams: { tab: this.activeTab },
+      queryParamsHandling: 'merge',
+    });
 
     this.translate.onLangChange.subscribe(() => {
       this.translateRefresh();
@@ -81,39 +84,83 @@ export class RequestsComponent implements OnInit {
 
   translateRefresh() {
     this.filterOptions = [
-      { label: this.translate.instant('request.filter.owned-printer'), value: 'owned-printer' },
-      { label: this.translate.instant('request.filter.country'), value: 'country' },
-      { label: this.translate.instant('request.filter.in-progress'), value: 'in-progress' }
+      {
+        label: this.translate.instant('request.filter.owned-printer'),
+        value: 'owned-printer',
+      },
+      {
+        label: this.translate.instant('request.filter.country'),
+        value: 'country',
+      },
+      {
+        label: this.translate.instant('request.filter.in-progress'),
+        value: 'in-progress',
+      },
     ];
 
     this.sortOptions = [
-      { label: this.translate.instant('global.sort.name-asc'), value: 'name-asc' },
-      { label: this.translate.instant('global.sort.name-desc'), value: 'name-desc' },
-      { label: this.translate.instant('global.sort.date-asc'), value: 'date-asc' },
-      { label: this.translate.instant('global.sort.date-desc'), value: 'date-desc' },
-      { label: this.translate.instant('global.sort.budget-asc'), value: 'budget-asc' },
-      { label: this.translate.instant('global.sort.budget-desc'), value: 'budget-desc' },
-      { label: this.translate.instant('global.sort.country-asc'), value: 'country-asc' },
-      { label: this.translate.instant('global.sort.country-desc'), value: 'country-desc' }
+      {
+        label: this.translate.instant('global.sort.name-asc'),
+        value: 'name-asc',
+      },
+      {
+        label: this.translate.instant('global.sort.name-desc'),
+        value: 'name-desc',
+      },
+      {
+        label: this.translate.instant('global.sort.date-asc'),
+        value: 'date-asc',
+      },
+      {
+        label: this.translate.instant('global.sort.date-desc'),
+        value: 'date-desc',
+      },
+      {
+        label: this.translate.instant('global.sort.budget-asc'),
+        value: 'budget-asc',
+      },
+      {
+        label: this.translate.instant('global.sort.budget-desc'),
+        value: 'budget-desc',
+      },
+      {
+        label: this.translate.instant('global.sort.country-asc'),
+        value: 'country-asc',
+      },
+      {
+        label: this.translate.instant('global.sort.country-desc'),
+        value: 'country-desc',
+      },
     ];
 
-    this.selectedFilterOption = this.filterOptions.find(option => option.value === this.currentFilter) || null;
-    this.selectedSortOption = this.sortOptions.find(option => option.value === `${this.currentSortCategory}-${this.currentSort}`) || null;
+    this.selectedFilterOption =
+      this.filterOptions.find(
+        (option) => option.value === this.currentFilter
+      ) || null;
+    this.selectedSortOption =
+      this.sortOptions.find(
+        (option) =>
+          option.value === `${this.currentSortCategory}-${this.currentSort}`
+      ) || null;
 
     if (this.requests) {
-      this.requests.forEach(request => {
-        request.presets.forEach(preset => {
+      this.requests.forEach((request) => {
+        request.presets.forEach((preset) => {
           preset.color.name = this.translateColor(preset.color.id);
-          preset.filamentType.name = this.translateFilament(preset.filamentType.id);
+          preset.filamentType.name = this.translateFilament(
+            preset.filamentType.id
+          );
         });
       });
     }
 
     if (this.myRequests) {
-      this.myRequests.forEach(request => {
-        request.presets.forEach(preset => {
+      this.myRequests.forEach((request) => {
+        request.presets.forEach((preset) => {
           preset.color.name = this.translateColor(preset.color.id);
-          preset.filamentType.name = this.translateFilament(preset.filamentType.id);
+          preset.filamentType.name = this.translateFilament(
+            preset.filamentType.id
+          );
         });
       });
     }
@@ -127,8 +174,15 @@ export class RequestsComponent implements OnInit {
 
     this.filter(this.activeTab);
 
-    this.selectedFilterOption = this.filterOptions.find(option => option.value === this.currentFilter) || null;
-    this.selectedSortOption = this.sortOptions.find(option => option.value === `${this.currentSortCategory}-${this.currentSort}`) || null;
+    this.selectedFilterOption =
+      this.filterOptions.find(
+        (option) => option.value === this.currentFilter
+      ) || null;
+    this.selectedSortOption =
+      this.sortOptions.find(
+        (option) =>
+          option.value === `${this.currentSortCategory}-${this.currentSort}`
+      ) || null;
   }
 
   initDateRange(): void {
@@ -137,7 +191,9 @@ export class RequestsComponent implements OnInit {
     const queryParams = this.router.parseUrl(this.router.url).queryParams;
     if (queryParams['startDate']) {
       const startDate = new Date(queryParams['startDate']);
-      const endDate = queryParams['endDate'] ? new Date(queryParams['endDate']) : null;
+      const endDate = queryParams['endDate']
+        ? new Date(queryParams['endDate'])
+        : null;
 
       startDate.setUTCHours(12, 0, 0, 0);
       if (endDate) {
@@ -155,14 +211,17 @@ export class RequestsComponent implements OnInit {
     if (queryParams['minBudget'] && queryParams['maxBudget']) {
       this.budgetRange = [
         parseInt(queryParams['minBudget']),
-        parseInt(queryParams['maxBudget'])
+        parseInt(queryParams['maxBudget']),
       ];
     }
   }
 
   onTabChange(tab: string): void {
     this.activeTab = tab;
-    this.router.navigate([], { queryParams: { tab: this.activeTab }, queryParamsHandling: 'merge' });
+    this.router.navigate([], {
+      queryParams: { tab: this.activeTab },
+      queryParamsHandling: 'merge',
+    });
 
     if (this.activeTab === 'all' && !this.requests) {
       this.filter(this.activeTab);
@@ -173,12 +232,18 @@ export class RequestsComponent implements OnInit {
   }
 
   get currentRequests(): RequestModel[] {
-    return this.activeTab === 'mine' ? this.myRequests || [] : this.requests || [];
+    return this.activeTab === 'mine'
+      ? this.myRequests || []
+      : this.requests || [];
   }
 
   filter(type: string): void {
-    const startDate = this.dateRange && this.dateRange[0] ? this.dateRange[0] : null;
-    const endDate = this.dateRange && this.dateRange.length > 1 && this.dateRange[1] ? this.dateRange[1] : null;
+    const startDate =
+      this.dateRange && this.dateRange[0] ? this.dateRange[0] : null;
+    const endDate =
+      this.dateRange && this.dateRange.length > 1 && this.dateRange[1]
+        ? this.dateRange[1]
+        : null;
     this.requestService
       .filter(
         this.currentFilter,
@@ -210,10 +275,13 @@ export class RequestsComponent implements OnInit {
   }
 
   expandAll(): void {
-    this.expandedRows = this.currentRequests.reduce((acc: { [key: number]: boolean }, request: RequestModel) => {
-      acc[request.id] = true;
-      return acc;
-    }, {});
+    this.expandedRows = this.currentRequests.reduce(
+      (acc: { [key: number]: boolean }, request: RequestModel) => {
+        acc[request.id] = true;
+        return acc;
+      },
+      {}
+    );
   }
 
   collapseAll(): void {
@@ -239,16 +307,25 @@ export class RequestsComponent implements OnInit {
 
   confirmDelete(): void {
     if (this.requestToDelete !== null) {
-      this.requestService.deleteRequest(this.requestToDelete.id).subscribe(() => {
-        this.requests = (this.requests || []).filter(r => r.id !== this.requestToDelete?.id);
-        this.myRequests = (this.myRequests || []).filter(r => r.id !== this.requestToDelete?.id);
-      });
+      this.requestService
+        .deleteRequest(this.requestToDelete.id)
+        .subscribe(() => {
+          this.requests = (this.requests || []).filter(
+            (r) => r.id !== this.requestToDelete?.id
+          );
+          this.myRequests = (this.myRequests || []).filter(
+            (r) => r.id !== this.requestToDelete?.id
+          );
+        });
     }
     this.deleteDialogVisible = false;
   }
 
   onSearch(): void {
-    this.router.navigate([], { queryParams: { search: this.searchQuery || null }, queryParamsHandling: 'merge' });
+    this.router.navigate([], {
+      queryParams: { search: this.searchQuery || null },
+      queryParamsHandling: 'merge',
+    });
     this.refreshData();
   }
 
@@ -257,7 +334,7 @@ export class RequestsComponent implements OnInit {
 
     this.router.navigate([], {
       queryParams: { filter: this.currentFilter },
-      queryParamsHandling: 'merge'
+      queryParamsHandling: 'merge',
     });
 
     this.refreshData();
@@ -271,9 +348,9 @@ export class RequestsComponent implements OnInit {
     this.router.navigate([], {
       queryParams: {
         sort: this.currentSort || null,
-        sortCategory: this.currentSortCategory || null
+        sortCategory: this.currentSortCategory || null,
       },
-      queryParamsHandling: 'merge'
+      queryParamsHandling: 'merge',
     });
 
     this.refreshData();
@@ -286,9 +363,9 @@ export class RequestsComponent implements OnInit {
       this.router.navigate([], {
         queryParams: {
           minBudget: this.budgetRange[0],
-          maxBudget: this.budgetRange[1]
+          maxBudget: this.budgetRange[1],
         },
-        queryParamsHandling: 'merge'
+        queryParamsHandling: 'merge',
       });
     }
 
@@ -300,9 +377,11 @@ export class RequestsComponent implements OnInit {
       this.router.navigate([], {
         queryParams: {
           startDate: this.dateRange[0]?.toISOString().split('T')[0],
-          endDate: this.dateRange[1] ? this.dateRange[1].toISOString().split('T')[0] : null
+          endDate: this.dateRange[1]
+            ? this.dateRange[1].toISOString().split('T')[0]
+            : null,
         },
-        queryParamsHandling: 'merge'
+        queryParamsHandling: 'merge',
       });
 
       this.refreshData();
@@ -314,7 +393,7 @@ export class RequestsComponent implements OnInit {
     this.clipboard.copy(fullUrl);
     this.messageService.add({
       severity: 'success',
-      summary: this.translate.instant('request.copied')
+      summary: this.translate.instant('request.copied'),
     });
   }
 
@@ -332,9 +411,9 @@ export class RequestsComponent implements OnInit {
         endDate: null,
         filter: null,
         sort: null,
-        sortCategory: null
+        sortCategory: null,
       },
-      queryParamsHandling: 'merge'
+      queryParamsHandling: 'merge',
     });
 
     this.budgetRange = [0, 10000];
@@ -344,8 +423,8 @@ export class RequestsComponent implements OnInit {
     this.currentSort = '';
     this.currentSortCategory = '';
 
-    this.selectedFilterOption = null
-    this.selectedSortOption = null
+    this.selectedFilterOption = null;
+    this.selectedSortOption = null;
 
     this.refreshData();
   }
@@ -353,7 +432,7 @@ export class RequestsComponent implements OnInit {
   applyAdvancedFilters(): void {
     const queryParams: any = {
       minBudget: this.budgetRange[0],
-      maxBudget: this.budgetRange[1]
+      maxBudget: this.budgetRange[1],
     };
 
     if (this.dateRange && this.dateRange.length >= 1 && this.dateRange[0]) {
@@ -382,12 +461,12 @@ export class RequestsComponent implements OnInit {
     }
 
     if (this.currentSortCategory) {
-      queryParams.sortCategory = this.currentSortCategory
+      queryParams.sortCategory = this.currentSortCategory;
     }
 
     this.router.navigate([], {
       queryParams: queryParams,
-      queryParamsHandling: 'merge'
+      queryParamsHandling: 'merge',
     });
 
     this.refreshData();
@@ -395,11 +474,15 @@ export class RequestsComponent implements OnInit {
 
   private translateFilament(id: number): string {
     const key = FilamentModel.filamentMap[id];
-    return key ? this.translate.instant(`materials.${key}`) : `Unknown Filament (${id})`;
+    return key
+      ? this.translate.instant(`materials.${key}`)
+      : `Unknown Filament (${id})`;
   }
 
   private translateColor(id: number): string {
     const key = ColorModel.colorMap[id];
-    return key ? this.translate.instant(`colors.${key}`) : `Unknown Color (${id})`;
+    return key
+      ? this.translate.instant(`colors.${key}`)
+      : `Unknown Color (${id})`;
   }
 }

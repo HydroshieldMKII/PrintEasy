@@ -222,7 +222,7 @@
                 {{ request.budget == 0 ? "Free" : (request.budget | currency) }}
               </td>
               <td [ngClass]="{ 'disabled-col': request.acceptedAt }">
-                {{ request.targetDate | date }}
+                {{ request.targetDate.toISOString().substring(0, 10) | date }}
               </td>
               <td [ngClass]="{ 'disabled-col': request.acceptedAt }">
                 {{ request.user.country.name }}
