@@ -129,7 +129,7 @@
                             <ng-template #content>
                                 <div class="status-content-container-container">
                                     <div *ngFor="let status of AcceptedStatus" class="status-content-container">
-                                        <div class="status-content-header" [ngStyle]="{'margin-bottom': consumer || ['Cancelled', 'Arrived', 'Shipped'].includes(currentStatus?.statusName ?? '') ? '0px' : '-20px'}">
+                                        <div class="status-content-header" [ngStyle]="{'margin-bottom': consumer || ['Cancelled', 'Arrived', 'Shipped'].includes(currentStatus?.statusName ?? '') || AcceptedStatus.length == 1 ? '0px' : '-20px'}">
                                             <div class="status-content-date-container">
                                                 <p class="status-content-date">{{status.updatedAt | date:'medium'}}</p>
                                             </div>
