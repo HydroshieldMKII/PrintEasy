@@ -56,17 +56,33 @@
             <div class="filter-row">
               <div class="filter-item budget-range">
                 <label>{{ "request.budget_range" | translate }}</label>
-                <div class="slider-wrapper">
-                  <p-slider
-                    [(ngModel)]="budgetRange"
-                    [range]="true"
-                    [min]="0"
-                    [max]="10000"
-                    (onSlideEnd)="onBudgtChange($event)"
-                  ></p-slider>
-                  <div class="range-values">
-                    <span>${{ budgetRange[0] }}</span>
-                    <span>${{ budgetRange[1] }}</span>
+                <div>
+                  <div>
+                    <p-inputNumber
+                      [(ngModel)]="budgetRange[0]"
+                      [min]="0"
+                      [max]="10000"
+                      (onBlur)="onManualBudgetChange()"
+                      placeholder="Min"
+                      mode="currency"
+                      currency="USD"
+                      [showButtons]="false"
+                      [style]="{ width: '100px' }"
+                    >
+                    </p-inputNumber>
+                    <span> - </span>
+                    <p-inputNumber
+                      [(ngModel)]="budgetRange[1]"
+                      [min]="0"
+                      [max]="10000"
+                      (onBlur)="onManualBudgetChange()"
+                      placeholder="Max"
+                      mode="currency"
+                      currency="USD"
+                      [showButtons]="false"
+                      [style]="{ width: '100px' }"
+                    >
+                    </p-inputNumber>
                   </div>
                 </div>
               </div>
@@ -102,15 +118,19 @@
               <div class="filter-item">
                 <div>
                   <p-float-label variant="in">
-                    <p-select
-                      [options]="filterOptions"
-                      [(ngModel)]="selectedFilterOption"
-                      variant="filled"
-                      [showClear]="true"
+                    <p-multiSelect
+                      [options]="multiFilterOptions"
+                      [(ngModel)]="currentMultiFilterOptions"
                       optionLabel="label"
+                      [filter]="true"
                       appendTo="body"
-                      (onChange)="onFilterChange($event)"
-                    ></p-select>
+                      [showToggleAll]="true"
+                      [showHeader]="true"
+                      [style]="{ width: '100%' }"
+                      [showClear]="true"
+                      (onChange)="onMultiFilterChange($event)"
+                      (onClear)="onMultiFilterChange($event)"
+                    ></p-multiSelect>
                     <label>{{ "request.filter_by" | translate }}</label>
                   </p-float-label>
                 </div>
@@ -157,13 +177,6 @@
                 pTooltip="{{ 'request.clear_filters' | translate }}"
                 tooltipPosition="left"
               ></p-button>
-
-              <!-- <p-button 
-        icon="pi pi-filter"
-        styleClass="p-button-sm"
-        (onClick)="applyAdvancedFilters()"
-        title="{{ 'request.apply_filters' | translate }}"
-      ></p-button> -->
             </div>
           </div>
         </div>
@@ -173,6 +186,8 @@
           [value]="currentRequests"
           dataKey="id"
           [tableStyle]="{ 'min-width': '60rem' }"
+          scrollable="true"
+          scrollDirection="horizontal"
           [expandedRowKeys]="expandedRows"
           (onRowExpand)="onRowExpand($event)"
           (onRowCollapse)="onRowCollapse($event)"
@@ -222,7 +237,7 @@
                 {{ request.budget == 0 ? "Free" : (request.budget | currency) }}
               </td>
               <td [ngClass]="{ 'disabled-col': request.acceptedAt }">
-                {{ request.targetDate | date }}
+                {{ request.targetDate.toISOString().substring(0, 10) | date }}
               </td>
               <td [ngClass]="{ 'disabled-col': request.acceptedAt }">
                 {{ request.user.country.name }}

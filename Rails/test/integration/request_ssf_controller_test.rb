@@ -174,4 +174,15 @@ class RequestsSsfControllerTest < ActionDispatch::IntegrationTest
     assert_equal 1, json_response['request'].length
     assert_equal 'Test Request 3', json_response['request'][0]['name']
   end
+
+  test 'should handle multiple filters' do
+    get api_request_index_url, params: { type: 'mine', filter: 'owned-printer,in-progress' }
+    assert_response :success
+    json_response = assert_nothing_raised do
+      JSON.parse(response.body)
+    end
+
+    assert_equal 1, json_response['request'].length
+    assert_equal 'Test Request', json_response['request'][0]['name']
+  end
 end

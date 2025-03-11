@@ -1,266 +1,417 @@
 <div class="profile-container">
-    <div class="profile-header">
-        <div class="profile-avatar">
-            <p-avatar shape="circle" size="xlarge" image="{{userProfile?.profilePictureUrl}}"></p-avatar>
-            <div class="profile-info">
-                <h2>{{ userProfile?.username }}</h2>
-                <p>{{ userProfile?.country?.name }}</p>
+  <div class="profile-header">
+    <div class="profile-avatar">
+      <p-avatar
+        shape="circle"
+        size="xlarge"
+        image="{{ userProfile?.profilePictureUrl }}"
+      ></p-avatar>
+      <div class="profile-info">
+        <h2>{{ userProfile?.username }}</h2>
+        <p>{{ userProfile?.country?.name }}</p>
+      </div>
+    </div>
+    <div class="profile-rating">
+      <p-rating
+        [readonly]="true"
+        [stars]="5"
+        [(ngModel)]="averageRating"
+        class="big-stars"
+      ></p-rating>
+      <a href="#" class="reviews"
+        >{{ userProfile?.selfReviews?.length }}
+        {{ "user_profile.reviews" | translate }}</a
+      >
+    </div>
+  </div>
+
+  <div class="profile-details">
+    <p>
+      {{ prints }} {{ "user_profile.print_since" | translate }}
+      {{ userProfile?.createdAt | date : "MMM d, y" }}
+    </p>
+  </div>
+
+  <p-tabs [value]="tab">
+    <p-tablist>
+      <p-tab [value]="'contest-submissions'">{{
+        "user_profile.submissions_tab" | translate
+      }}</p-tab>
+      <p-tab [value]="'printers'">{{
+        "user_profile.printers_tab" | translate
+      }}</p-tab>
+      <p-tab [value]="'reviews'">{{
+        "user_profile.reviews_tab" | translate
+      }}</p-tab>
+      <p-tab
+        *ngIf="authService.currentUser?.id === userProfile?.id"
+        [value]="'likes'"
+        >{{ "user_profile.likes_tab" | translate }}</p-tab
+      >
+    </p-tablist>
+    <p-tabpanels>
+      <p-tabpanel [value]="'contest-submissions'">
+        <div *ngFor="let contest of userProfile?.userContestSubmissions">
+          <div class="mt-4">
+            <h2 class="header-contest-title">
+              {{ contest.contest.theme }}
+            </h2>
+          </div>
+          <div class="scroll-container">
+            <div *ngFor="let submission of contest.submissions" class="card">
+              <div class="card-content">
+                <img
+                  [src]="submission.imageUrl"
+                  alt="Submission image"
+                  class="submission-image"
+                  loading="lazy"
+                />
+              </div>
+              <div class="card-body">
+                <div class="contest-title">{{ submission.name }}</div>
+                <p class="contest-description">{{ submission.description }}</p>
+              </div>
+              <div class="flex gap-5 items-center flex-end">
+                <!-- Nombre de likes -->
+                <div class="likes-count">
+                  <span
+                    class="font-semibold text-gray-700 dark:text-gray-300"
+                    >{{ submission.likes.length }}</span
+                  >
+
+                  <!-- Bouton Like -->
+                  <p-button
+                    [icon]="
+                      submission.liked ? 'pi pi-heart-fill' : 'pi pi-heart'
+                    "
+                    [severity]="submission.liked ? 'danger' : 'secondary'"
+                    [outlined]="!submission.liked"
+                    (click)="onLike(submission)"
+                  />
+                </div>
+
+                <!-- (click)="toggleLike(product)" -->
+
+                <!-- <p-button icon="pi pi-heart" severity="secondary" /> -->
+
+                <!-- Bouton Download -->
+                <p-button icon="pi pi-download" severity="primary" />
+              </div>
             </div>
+          </div>
         </div>
-        <div class="profile-rating">
-            <p-rating [readonly]="true" [stars]="5" [(ngModel)]="averageRating" class="big-stars"></p-rating>
-            <a href="#" class="reviews">{{ userProfile?.selfReviews?.length }} {{ 'user_profile.reviews' | translate
-                }}</a>
+      </p-tabpanel>
+
+      <p-tabpanel [value]="'printers'">
+        <div class="printers-container">
+          <div
+            *ngIf="authService?.currentUser?.id === userProfile?.id"
+            class="add-printer-card"
+            (click)="showAddPrinterDialog()"
+          >
+            <div class="add-printer-content">
+              <i class="pi pi-plus-circle"></i>
+              <p>{{ "user_profile.printer.add_printer" | translate }}</p>
+            </div>
+          </div>
+
+          <div
+            *ngFor="let printerUser of userProfile?.printerUsers"
+            class="printer-card"
+          >
+            <div class="card-header">
+              <h3>{{ printerUser.printer.model }}</h3>
+            </div>
+
+            <div class="printer-preview">
+              <div *ngIf="printerUser.lastReviewedImage" class="preview-image">
+                <img
+                  [src]="printerUser.lastReviewedImage"
+                  alt="Last print preview"
+                />
+              </div>
+              <div
+                *ngIf="!printerUser.lastReviewedImage"
+                class="preview-placeholder"
+              >
+                <i class="pi pi-image"></i>
+                <span>{{
+                  "user_profile.printer.no_print_review" | translate
+                }}</span>
+              </div>
+            </div>
+
+            <div class="card-body">
+              <p class="acquisition-date">
+                <i class="pi pi-calendar"></i>
+                {{ "user_profile.printer.acquired_on" | translate }}
+                {{ printerUser.aquiredDate | date : "MMM d, y" }}
+              </p>
+
+              <p class="last-used" *ngIf="printerUser.lastUsed">
+                <i class="pi pi-clock"></i>
+                {{ "user_profile.printer.last_used_on" | translate }}
+                {{ printerUser.lastUsed | date : "MMM d, y" }}
+              </p>
+              <p class="last-used not-used" *ngIf="!printerUser.lastUsed">
+                <i class="pi pi-clock"></i>
+                {{ "user_profile.printer.never_used" | translate }}
+              </p>
+            </div>
+
+            <div
+              *ngIf="authService?.currentUser?.id === userProfile?.id"
+              class="card-actions"
+            >
+              <div class="button-group">
+                <p-button
+                  type="button"
+                  icon="pi pi-pencil"
+                  severity="primary"
+                  (click)="editPrinter(printerUser)"
+                  [disabled]="!printerUser.canDelete"
+                  [pTooltip]="
+                    printerUser.canDelete
+                      ? ('user_profile.printer.edit_printer' | translate)
+                      : ('user_profile.printer.edit_active_offers' | translate)
+                  "
+                  tooltipPosition="top"
+                >
+                </p-button>
+                <p-button
+                  type="button"
+                  icon="pi pi-trash"
+                  severity="danger"
+                  (click)="showDeleteDialog(printerUser)"
+                  [disabled]="!printerUser.canDelete"
+                  pTooltip="{{
+                    printerUser.canDelete
+                      ? ('user_profile.printer.delete_printer' | translate)
+                      : ('user_profile.printer.delete_active_offers'
+                        | translate)
+                  }}"
+                  tooltipPosition="top"
+                >
+                </p-button>
+              </div>
+            </div>
+          </div>
         </div>
-    </div>
+      </p-tabpanel>
 
-    <div class="profile-details">
-        <p>{{ prints }} {{ 'user_profile.print_since' | translate }} {{ userProfile?.createdAt | date:'MMM d, y' }}</p>
-    </div>
+      <!-- Add/Edit Printer Dialog -->
+      <p-dialog
+        header="{{
+          isEditMode
+            ? ('user_profile.printer.edit_printer' | translate)
+            : ('user_profile.printer.add_printer' | translate)
+        }}"
+        [(visible)]="printerDialogVisible"
+        [modal]="true"
+        [style]="{ width: '30rem' }"
+        [draggable]="false"
+        class="printer-dialog"
+        [resizable]="false"
+      >
+        <form [formGroup]="printerForm" (ngSubmit)="onPrinterSubmit()">
+          <div class="field">
+            <p-floatlabel variant="in">
+              <p-select
+                formControlName="printer"
+                [options]="availablePrinters"
+                optionLabel="model"
+                [style]="{ width: '100%' }"
+                appendTo="body"
+              >
+              </p-select>
+              <label for="model">{{
+                "user_profile.printer.printer_model" | translate
+              }}</label>
+            </p-floatlabel>
+            <p-message severity="error" variant="simple" size="small">{{
+              "user_profile.printer.printer_model_required" | translate
+            }}</p-message>
+          </div>
 
+          <div class="field">
+            <p-floatlabel variant="in">
+              <p-datepicker
+                appendTo="body"
+                formControlName="aquiredDate"
+                [showIcon]="true"
+                dateFormat="yy-mm-dd"
+                [style]="{ width: '100%' }"
+                [maxDate]="today"
+              >
+              </p-datepicker>
+              <label for="aquiredDate">{{
+                "user_profile.printer.acquisition_date" | translate
+              }}</label>
+            </p-floatlabel>
+            <p-message severity="error" variant="simple" size="small">{{
+              "user_profile.printer.acquisition_date_required" | translate
+            }}</p-message>
+          </div>
 
-    <p-tabs [value]="tab">
-        <p-tablist>
-            <p-tab [value]="'contest-submissions'">{{ 'user_profile.submissions_tab' | translate }}</p-tab>
-            <p-tab [value]="'printers'">{{ 'user_profile.printers_tab' | translate }}</p-tab>
-            <p-tab [value]="'reviews'">{{ 'user_profile.reviews_tab' | translate }}</p-tab>
-            <p-tab *ngIf="authService.currentUser?.id === userProfile?.id" [value]="'likes'">{{ 'user_profile.likes_tab'
-                | translate }}</p-tab>
-        </p-tablist>
-        <p-tabpanels>
-            <p-tabpanel [value]="'contest-submissions'">
-                <div *ngFor="let contest of userProfile?.userContestSubmissions">
-                    <div class="mt-4">
-                        <h2 class="header-contest-title">
-                            {{ contest.contest.theme}}
-                        </h2>
-                    </div>
-                    <div class="scroll-container">
-                        <div *ngFor="let submission of contest.submissions" class="card">
-                            <div class="card-content">
-                                <img [src]="submission.imageUrl" alt="Submission image" class="submission-image"
-                                    loading="lazy" />
-                            </div>
-                            <div class="card-body">
-                                <div class="contest-title">{{ submission.name }}</div>
-                                <p class="contest-description">{{ submission.description }}</p>
-                            </div>
-                            <div class="flex gap-5 items-center flex-end">
-                                <!-- Nombre de likes -->
-                                <div class="likes-count">
-                                    <span class="font-semibold text-gray-700 dark:text-gray-300">{{
-                                        submission.likes.length
-                                        }}</span>
+          <div class="dialog-footer">
+            <p-button
+              type="button"
+              label="{{ 'global.cancel_button' | translate }}"
+              icon="pi pi-times"
+              (click)="printerDialogVisible = false"
+              severity="secondary"
+            ></p-button>
+            <p-button
+              type="submit"
+              label="{{ 'global.save_button' | translate }}"
+              icon="pi pi-check"
+              severity="success"
+              [disabled]="printerForm.invalid"
+            ></p-button>
+          </div>
+        </form>
+      </p-dialog>
 
-                                    <!-- Bouton Like -->
-                                    <p-button [icon]="submission.liked ? 'pi pi-heart-fill' : 'pi pi-heart'"
-                                        [severity]="submission.liked ? 'danger' : 'secondary'"
-                                        [outlined]="!submission.liked" (click)="onLike(submission)" />
-                                </div>
+      <!-- Delete Confirmation Dialog -->
+      <p-dialog
+        [(visible)]="deleteDialogVisible"
+        [modal]="true"
+        [style]="{ width: '25rem' }"
+        dismissableMask="true"
+        closable="false"
+        blockScroll="true"
+        resizable="false"
+        draggable="false"
+      >
+        <ng-template #header>
+          <div class="inline-flex items-center justify-center gap-2">
+            <i class="pi pi-exclamation-triangle text-red-500 text-2xl"></i>
+            <span class="font-bold">{{
+              "global.confirm_delete" | translate
+            }}</span>
+          </div>
+        </ng-template>
+        <span class="text-surface-500 dark:text-surface-400 block mb-4">
+          {{ "user_profile.printer.confirm_delete_message" | translate }}
+        </span>
+        <ng-template #footer>
+          <p-button
+            label="Cancel"
+            [text]="true"
+            severity="secondary"
+            (click)="deleteDialogVisible = false"
+          />
+          <p-button
+            label="Delete"
+            severity="danger"
+            (click)="confirmDelete()"
+          />
+        </ng-template>
+      </p-dialog>
 
-                                <!-- (click)="toggleLike(product)" -->
-
-                                <!-- <p-button icon="pi pi-heart" severity="secondary" /> -->
-
-                                <!-- Bouton Download -->
-                                <p-button icon="pi pi-download" severity="primary" />
-                            </div>
-                        </div>
-                    </div>
+      <p-tabpanel [value]="'reviews'">
+        <div class="review-list">
+          <div *ngFor="let review of userProfile?.selfReviews">
+            <p-card
+              [style]="{ width: '22rem', overflow: 'hidden', height: '100%' }"
+            >
+              <ng-template #header>
+                <div style="padding: 20px">
+                  <p-galleria
+                    [value]="review.imageUrls"
+                    [numVisible]="5"
+                    [showItemNavigators]="true"
+                    [showThumbnails]="false"
+                    [showIndicatorsOnItem]="true"
+                    [indicatorsPosition]="'bottom'"
+                    [showIndicators]="true"
+                    [containerStyle]="{ 'max-width': '100%', height: '300px' }"
+                  >
+                    <ng-template #item let-image>
+                      <img [src]="image.url" class="carousel-image" />
+                    </ng-template>
+                  </p-galleria>
+                  <div
+                    *ngIf="review.imageUrls.length == 0"
+                    class="empty-carousel"
+                  >
+                    <i class="pi pi-images" style="font-size: 2.5rem"></i>
+                  </div>
                 </div>
-            </p-tabpanel>
+              </ng-template>
+              <ng-template #title> {{ review.title }} </ng-template>
+              <ng-template #subtitle>
+                {{ review.createdAt | date }}
+              </ng-template>
+              <p>
+                {{ review.description }}
+              </p>
+              <p-rating
+                [readonly]="true"
+                [stars]="5"
+                [(ngModel)]="review.rating"
+                class="big-stars"
+              ></p-rating>
+            </p-card>
+          </div>
+        </div>
 
-            <p-tabpanel [value]="'printers'">
-                <div class="printers-container">
-                    <div *ngIf="authService?.currentUser?.id === userProfile?.id" class="add-printer-card"
-                        (click)="showAddPrinterDialog()">
-                        <div class="add-printer-content">
-                            <i class="pi pi-plus-circle"></i>
-                            <p>{{ 'user_profile.printer.add_printer' | translate }}</p>
-                        </div>
-                    </div>
+        <div
+          *ngIf="userProfile?.selfReviews?.length == 0"
+          class="empty-message"
+          style="width: 100%; height: 100%"
+        >
+          <i class="pi pi-inbox text-6xl text-gray-400"></i>
+          <p class="text-xl font-semibold text-gray-500 mt-2">
+            {{ "user_profile.no_reviews" | translate }}
+          </p>
+        </div>
+      </p-tabpanel>
 
-                    <div *ngFor="let printerUser of userProfile?.printerUsers" class="printer-card">
+      <p-tabpanel
+        *ngIf="authService.currentUser?.id === userProfile?.id"
+        [value]="'likes'"
+      >
+        <div class="likes-container">
+          <div *ngFor="let submission of userLikes" class="card">
+            <div class="card-content">
+              <img
+                [src]="submission.imageUrl"
+                alt="Submission image"
+                class="submission-image"
+                loading="lazy"
+              />
+            </div>
+            <div class="card-body">
+              <div class="contest-title">{{ submission.name }}</div>
+              <p class="contest-description">{{ submission.description }}</p>
+            </div>
+            <div class="flex gap-5 items-center flex-end">
+              <!-- Nombre de likes -->
+              <div class="likes-count">
+                <span class="font-semibold text-gray-700 dark:text-gray-300">{{
+                  submission.likes.length
+                }}</span>
 
-                        <div class="card-header">
-                            <h3>{{ printerUser.printer.model }}</h3>
-                        </div>
+                <!-- Bouton Like -->
+                <p-button
+                  [icon]="submission.liked ? 'pi pi-heart-fill' : 'pi pi-heart'"
+                  [severity]="submission.liked ? 'danger' : 'secondary'"
+                  [outlined]="!submission.liked"
+                  (click)="onLike(submission)"
+                />
+              </div>
 
-                        <div class="printer-preview">
-                            <div *ngIf="printerUser.lastReviewedImage" class="preview-image">
-                                <img [src]="printerUser.lastReviewedImage" alt="Last print preview">
-                            </div>
-                            <div *ngIf="!printerUser.lastReviewedImage" class="preview-placeholder">
-                                <i class="pi pi-image"></i>
-                                <span>{{ 'user_profile.printer.no_print_review' | translate }}</span>
-                            </div>
-                        </div>
+              <!-- (click)="toggleLike(product)" -->
 
-                        <div class="card-body">
-                            <p class="acquisition-date">
-                                <i class="pi pi-calendar"></i>
-                                {{ 'user_profile.printer.acquired_on' | translate }} {{ printerUser.aquiredDate |
-                                date:'MMM d, y' }}
-                            </p>
+              <!-- <p-button icon="pi pi-heart" severity="secondary" /> -->
 
-                            <p class="last-used" *ngIf="printerUser.lastUsed">
-                                <i class="pi pi-clock"></i>
-                                {{ 'user_profile.printer.last_used_on' | translate }} {{ printerUser.lastUsed |
-                                date:'MMM d, y' }}
-                            </p>
-                            <p class="last-used not-used" *ngIf="!printerUser.lastUsed">
-                                <i class="pi pi-clock"></i>
-                                {{ 'user_profile.printer.never_used' | translate }}
-                            </p>
-                        </div>
-
-                        <div *ngIf="authService?.currentUser?.id === userProfile?.id" class="card-actions">
-                            <div class="button-group">
-                                <p-button type="button" icon="pi pi-pencil" severity="primary"
-                                    (click)="editPrinter(printerUser)" [disabled]="!printerUser.canDelete"
-                                    [pTooltip]="printerUser.canDelete ? ('user_profile.printer.edit_printer' | translate) : ('user_profile.printer.edit_active_offers' | translate)"
-                                    tooltipPosition="top">
-                                </p-button>
-                                <p-button type="button" icon="pi pi-trash" severity="danger"
-                                    (click)="showDeleteDialog(printerUser)" [disabled]="!printerUser.canDelete"
-                                    pTooltip="{{printerUser.canDelete ? ('user_profile.printer.delete_printer' | translate) : ('user_profile.printer.delete_active_offers' | translate) }}"
-                                    tooltipPosition="top">
-                                </p-button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </p-tabpanel>
-
-            <!-- Add/Edit Printer Dialog -->
-            <p-dialog
-                header="{{isEditMode ? ('user_profile.printer.edit_printer' | translate) : ('user_profile.printer.add_printer' | translate) }}"
-                [(visible)]="printerDialogVisible" [modal]="true" [style]="{'width': '30rem'}" [draggable]="false"
-                class="printer-dialog" [resizable]="false">
-                <form [formGroup]="printerForm" (ngSubmit)="onPrinterSubmit()">
-                    <div class="field">
-                        <p-floatlabel variant="in">
-                            <p-select formControlName="printer" [options]="availablePrinters" optionLabel="model"
-                                [style]="{width: '100%'}" appendTo="body">
-                            </p-select>
-                            <label for="model">{{ 'user_profile.printer.printer_model' | translate }}</label>
-                        </p-floatlabel>
-                        <p-message severity="error" variant="simple" size="small">{{
-                            'user_profile.printer.printer_model_required' | translate }}</p-message>
-                    </div>
-
-                    <div class="field">
-                        <p-floatlabel variant="in">
-                            <p-datepicker appendTo="body" formControlName="aquiredDate" [showIcon]="true"
-                                dateFormat="yy-mm-dd" [style]="{width: '100%'}" [maxDate]="today">
-                            </p-datepicker>
-                            <label for="aquiredDate">{{ 'user_profile.printer.acquisition_date' | translate }}</label>
-                        </p-floatlabel>
-                        <p-message severity="error" variant="simple" size="small">{{
-                            'user_profile.printer.acquisition_date_required' | translate }}</p-message>
-                    </div>
-
-                    <div class="dialog-footer">
-                        <p-button type="button" label="{{ 'global.cancel_button' | translate }}" icon="pi pi-times"
-                            (click)="printerDialogVisible = false" severity="secondary"></p-button>
-                        <p-button type="submit" label="{{ 'global.save_button' | translate }}" icon="pi pi-check"
-                            severity="success" [disabled]="printerForm.invalid"></p-button>
-                    </div>
-                </form>
-            </p-dialog>
-
-            <!-- Delete Confirmation Dialog -->
-            <p-dialog [(visible)]="deleteDialogVisible" [modal]="true" [style]="{ width: '25rem' }"
-                dismissableMask="true" closable="false" blockScroll="true" resizable="false" draggable="false">
-                <ng-template #header>
-                    <div class="inline-flex items-center justify-center gap-2">
-                        <i class="pi pi-exclamation-triangle text-red-500 text-2xl"></i>
-                        <span class="font-bold">{{ 'global.confirm_delete' | translate }}</span>
-                    </div>
-                </ng-template>
-                <span class="text-surface-500 dark:text-surface-400 block mb-4">
-                    {{ 'user_profile.printer.confirm_delete_message' | translate }}
-                </span>
-                <ng-template #footer>
-                    <p-button label="Cancel" [text]="true" severity="secondary" (click)="deleteDialogVisible = false" />
-                    <p-button label="Delete" severity="danger" (click)="confirmDelete()" />
-                </ng-template>
-            </p-dialog>
-
-            <p-tabpanel [value]="'reviews'">
-                <div class="review-list">
-                    <div *ngFor="let review of userProfile?.selfReviews">
-                        <p-card [style]="{ width: '22rem', overflow: 'hidden', height: '100%' }">
-                            <ng-template #header>
-                                <div style="padding: 20px;">
-                                    <p-galleria [value]="review.imageUrls" [numVisible]="5" [showItemNavigators]="true"
-                                        [showThumbnails]="false" [showIndicatorsOnItem]="true"
-                                        [indicatorsPosition]="'bottom'" [showIndicators]="true"
-                                        [containerStyle]="{'max-width': '100%', 'height': '300px'}">
-                                        <ng-template #item let-image>
-                                            <img [src]="image.url" class="carousel-image">
-                                        </ng-template>
-                                    </p-galleria>
-                                    <div *ngIf="review.imageUrls.length == 0" class="empty-carousel">
-                                        <i class="pi pi-images" style="font-size: 2.5rem;"></i>
-                                    </div>
-                                </div>
-
-                            </ng-template>
-                            <ng-template #title> {{review.title}} </ng-template>
-                            <ng-template #subtitle> {{review.createdAt | date}} </ng-template>
-                            <p>
-                                {{review.description}}
-                            </p>
-                            <p-rating [readonly]="true" [stars]="5" [(ngModel)]="review.rating"
-                                class="big-stars"></p-rating>
-                        </p-card>
-                    </div>
-                </div>
-
-                <div *ngIf="userProfile?.selfReviews?.length == 0" class="empty-message"
-                    style="width: 100%; height: 100%;">
-                    <i class="pi pi-inbox text-6xl text-gray-400"></i>
-                    <p class="text-xl font-semibold text-gray-500 mt-2">
-                        {{'user_profile.no_reviews' | translate}}
-                    </p>
-                </div>
-
-            </p-tabpanel>
-
-            <p-tabpanel *ngIf="authService.currentUser?.id === userProfile?.id" [value]="'likes'">
-                <div class="likes-container">
-                    <div *ngFor="let submission of userLikes" class="card">
-                        <div class="card-content">
-                            <img [src]="submission.imageUrl" alt="Submission image" class="submission-image"
-                                loading="lazy" />
-                        </div>
-                        <div class="card-body">
-                            <div class="contest-title">{{ submission.name }}</div>
-                            <p class="contest-description">{{ submission.description }}</p>
-                        </div>
-                        <div class="flex gap-5 items-center flex-end">
-                            <!-- Nombre de likes -->
-                            <div class="likes-count">
-                                <span class="font-semibold text-gray-700 dark:text-gray-300">{{ submission.likes.length
-                                    }}</span>
-
-                                <!-- Bouton Like -->
-                                <p-button [icon]="submission.liked ? 'pi pi-heart-fill' : 'pi pi-heart'"
-                                    [severity]="submission.liked ? 'danger' : 'secondary'"
-                                    [outlined]="!submission.liked" (click)="onLike(submission)" />
-                            </div>
-
-                            <!-- (click)="toggleLike(product)" -->
-
-                            <!-- <p-button icon="pi pi-heart" severity="secondary" /> -->
-
-                            <!-- Bouton Download -->
-                            <p-button icon="pi pi-download" severity="primary" />
-                        </div>
-                    </div>
-                </div>
-            </p-tabpanel>
-        </p-tabpanels>
-    </p-tabs>
+              <!-- Bouton Download -->
+              <p-button icon="pi pi-download" severity="primary" />
+            </div>
+          </div>
+        </div>
+      </p-tabpanel>
+    </p-tabpanels>
+  </p-tabs>
 </div>
