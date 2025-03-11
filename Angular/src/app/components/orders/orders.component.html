@@ -3,6 +3,7 @@
         <p-tablist>
             <p-tab [value]="'commands'" (click)="openCommands()">{{'orders.commands_tab' | translate}}</p-tab>
             <p-tab [value]="'contracts'" (click)="openContracts()">{{'orders.contracts_tab' | translate}}</p-tab>
+            <!-- TODO: disabled if no printers -->
             <p-tab [value]="'report'" (click)="openReport()">{{'orders.report_tab' | translate}}</p-tab>
         </p-tablist>
         <p-tabpanels>
@@ -370,24 +371,24 @@
                                 {{printer.printer_model}}
                             </td>
                             <td>
-                                {{printer.completed_orders}}
+                                {{printer.completed_orders ?? "N/A"}}
                             </td>
                             <td>
-                                {{printer.cancelled_orders}}
+                                {{printer.cancelled_orders ?? "N/A"}}
                             </td>
                             <td>
-                                {{printer.in_progress_orders}}
+                                {{printer.in_progress_orders ?? "N/A"}}
                             </td>
                             <td>
                                 <div class="right-cell">
-                                    {{printer.money_earned | currency}}
+                                    {{printer.money_earned ? (printer.money_earned | currency) : "NA"}}
                                 </div>
                             </td>
                             <td>
                                 {{printer.average_rating ?? "N/A"}}
                             </td>
                             <td>
-                                {{printer.average_time_to_complete}}
+                                {{printer.average_time_to_complete ?? "N/A"}}
                             </td>
                         </tr>
                     </ng-template>
