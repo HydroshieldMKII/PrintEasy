@@ -53,7 +53,6 @@ export class RequestFormComponent implements OnInit {
   presetModalToEdit: any = null;
   requestToDelete: RequestModel | null = null;
   presetToDelete: any[] = [];
-  todayDate = new Date().toISOString().substring(0, 10);
 
   isDragOver: boolean = false;
 
@@ -148,13 +147,11 @@ export class RequestFormComponent implements OnInit {
       return { dateError: true };
     }
 
-    console.log('selected date', selectedDate.toISOString().substring(0, 10));
-    console.log('request date', this.request.targetDate);
     if (
       this.request &&
-      selectedDate.toISOString().substring(0, 10) === this.request.targetDate
+      selectedDate.toISOString().substring(0, 10) ===
+        this.request.targetDate.toISOString().substring(0, 10)
     ) {
-      console.log('same date not edited');
       return null;
     }
 

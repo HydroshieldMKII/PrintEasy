@@ -56,33 +56,33 @@
             <div class="filter-row">
               <div class="filter-item budget-range">
                 <label>{{ "request.budget_range" | translate }}</label>
-                <div class="budget-manual-inputs">
-                  <div class="budget-input-group">
-                    <span class="p-input-icon-left">
-                      <i class="pi pi-dollar"></i>
-                      <input
-                        pInputText
-                        type="number"
-                        min="0"
-                        max="10000"
-                        [(ngModel)]="budgetRange[0]"
-                        (blur)="onManualBudgetChange()"
-                        placeholder="Min"
-                      />
-                    </span>
-                    <span class="budget-separator"> -</span>
-                    <span class="p-input-icon-left">
-                      <i class="pi pi-dollar"></i>
-                      <input
-                        pInputText
-                        type="number"
-                        min="0"
-                        max="10000"
-                        [(ngModel)]="budgetRange[1]"
-                        (blur)="onManualBudgetChange()"
-                        placeholder="Max"
-                      />
-                    </span>
+                <div>
+                  <div>
+                    <p-inputNumber
+                      [(ngModel)]="budgetRange[0]"
+                      [min]="0"
+                      [max]="10000"
+                      (onBlur)="onManualBudgetChange()"
+                      placeholder="Min"
+                      mode="currency"
+                      currency="USD"
+                      [showButtons]="false"
+                      [style]="{ width: '100px' }"
+                    >
+                    </p-inputNumber>
+                    <span> - </span>
+                    <p-inputNumber
+                      [(ngModel)]="budgetRange[1]"
+                      [min]="0"
+                      [max]="10000"
+                      (onBlur)="onManualBudgetChange()"
+                      placeholder="Max"
+                      mode="currency"
+                      currency="USD"
+                      [showButtons]="false"
+                      [style]="{ width: '100px' }"
+                    >
+                    </p-inputNumber>
                   </div>
                 </div>
               </div>
@@ -127,6 +127,7 @@
                       [showToggleAll]="true"
                       [showHeader]="true"
                       [style]="{ width: '100%' }"
+                      [showClear]="true"
                       (onChange)="onMultiFilterChange($event)"
                       (onClear)="onMultiFilterChange($event)"
                     ></p-multiSelect>
@@ -185,6 +186,8 @@
           [value]="currentRequests"
           dataKey="id"
           [tableStyle]="{ 'min-width': '60rem' }"
+          scrollable="true"
+          scrollDirection="horizontal"
           [expandedRowKeys]="expandedRows"
           (onRowExpand)="onRowExpand($event)"
           (onRowCollapse)="onRowCollapse($event)"

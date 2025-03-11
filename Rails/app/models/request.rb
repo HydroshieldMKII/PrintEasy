@@ -49,7 +49,13 @@ class Request < ApplicationRecord
       .distinct
   }
   scope :by_budget_range, lambda { |min_budget, max_budget|
-    where('requests.budget >= ? AND requests.budget <= ?', min_budget, max_budget) if min_budget.present? && max_budget.present?
+    if min_budget.present? && max_budget.present?
+      where('requests.budget >= ? AND requests.budget <= ?', min_budget, max_budget)
+    elsif min_budget.present?
+      where('requests.budget >= ?', min_budget)
+    elsif max_budget.present?
+      where('requests.budget <= ?', max_budget)
+    end
   }
 
   scope :by_date_range, lambda { |start_date, end_date|
@@ -63,14 +69,14 @@ class Request < ApplicationRecord
   }
 
   scope :sorted, lambda { |category, direction|
-    return order('target_date ASC') unless category.present? && direction.present?
+    return order('requests.target_date ASC') unless category.present? && direction.present?
 
     column = {
       'name' => 'requests.name',
-      'date' => 'target_date',
-      'budget' => 'budget',
+      'date' => 'requests.target_date',
+      'budget' => 'requests.budget',
       'country' => 'users.country_id'
-    }.fetch(category, 'target_date')
+    }.fetch(category, 'requests.target_date')
 
     direction = direction == 'asc' ? 'ASC' : 'DESC'
     order("#{column} #{direction}")
@@ -100,17 +106,13 @@ class Request < ApplicationRecord
                else
                   []
                end
+
+    #filter=owned-printer,country,in-progress
+    filters = params[:filter].split(',') rescue []
+    requests = requests.by_printer_owner if filters.include?('owned-printer')
+    requests = requests.by_country if filters.include?('country')
+    requests = requests.in_progress if filters.include?('in-progress')
     
-    requests = case params[:filter]
-               when 'owned-printer'
-                 requests.by_printer_owner
-               when 'country'
-                 requests.by_country
-               when 'in-progress'
-                 requests.in_progress
-               else
-                 requests
-               end
     
     requests = requests.sorted(params[:sortCategory], params[:sort])
                .by_budget_range(params[:minBudget], params[:maxBudget])

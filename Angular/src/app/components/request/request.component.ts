@@ -47,7 +47,7 @@ export class RequestsComponent implements OnInit {
 
   multiFilterOptions: SelectItem[] = [];
   currentMultiFilterOptions: SelectItem[] = [];
-  selectedOptions: string[] = [];
+  selectedFilters: string[] = [];
 
   toggleAdvancedFilters(): void {
     this.showAdvancedFilters = !this.showAdvancedFilters;
@@ -94,11 +94,11 @@ export class RequestsComponent implements OnInit {
     this.currentSortCategory = queryParams['sortCategory'] || null;
     this.searchQuery = queryParams['search'] || null;
 
-    if (queryParams['selectedOptions']) {
-      this.selectedOptions = queryParams['selectedOptions'].split(',');
+    if (queryParams['filter']) {
+      this.selectedFilters = queryParams['filter'].split(',');
 
       this.currentMultiFilterOptions = [];
-      this.selectedOptions.forEach((option) => {
+      this.selectedFilters.forEach((option) => {
         const selectedOption = this.multiFilterOptions.find(
           (item) => item.value === option
         );
@@ -107,7 +107,7 @@ export class RequestsComponent implements OnInit {
         }
       });
     } else {
-      this.selectedOptions = [];
+      this.selectedFilters = [];
       this.currentMultiFilterOptions = [];
     }
 
@@ -171,9 +171,9 @@ export class RequestsComponent implements OnInit {
       },
     ];
 
-    if (this.selectedOptions && this.selectedOptions.length > 0) {
+    if (this.selectedFilters && this.selectedFilters.length > 0) {
       this.currentMultiFilterOptions = this.multiFilterOptions.filter(
-        (option) => this.selectedOptions.includes(option.value)
+        (option) => this.selectedFilters.includes(option.value)
       );
     }
 
@@ -235,14 +235,26 @@ export class RequestsComponent implements OnInit {
   }
 
   initBudgetRange(): void {
-    this.budgetRange = [0, 10000];
-
     const queryParams = this.router.parseUrl(this.router.url).queryParams;
-    if (queryParams['minBudget'] && queryParams['maxBudget']) {
-      this.budgetRange = [
-        parseInt(queryParams['minBudget']),
-        parseInt(queryParams['maxBudget']),
-      ];
+
+    if (queryParams['minBudget']) {
+      this.budgetRange[0] = parseInt(queryParams['minBudget']);
+    }
+
+    if (queryParams['maxBudget']) {
+      this.budgetRange[1] = parseInt(queryParams['maxBudget']);
+    }
+
+    if (this.budgetRange[0] > this.budgetRange[1]) {
+      this.budgetRange[0] = this.budgetRange[1];
+    }
+
+    if (this.budgetRange[0] < 0) {
+      this.budgetRange[0] = 0;
+    }
+
+    if (this.budgetRange[1] > 10000) {
+      this.budgetRange[1] = 10000;
     }
   }
 
@@ -256,6 +268,7 @@ export class RequestsComponent implements OnInit {
     if (this.activeTab === 'all' && !this.requests) {
       this.filter(this.activeTab);
     }
+
     if (this.activeTab === 'mine' && !this.myRequests) {
       this.filter(this.activeTab);
     }
@@ -286,7 +299,7 @@ export class RequestsComponent implements OnInit {
         startDate,
         endDate,
         type,
-        this.selectedOptions
+        this.selectedFilters
       )
       .subscribe((result: [RequestModel[], boolean] | ApiResponseModel) => {
         if (result instanceof ApiResponseModel) {
@@ -410,17 +423,17 @@ export class RequestsComponent implements OnInit {
   onMultiFilterChange(event: any): void {
     if (!event || !event.value) {
       this.currentMultiFilterOptions = [];
-      this.selectedOptions = [];
+      this.selectedFilters = [];
     } else {
       this.currentMultiFilterOptions = event.value;
-      this.selectedOptions = event.value.map((item: SelectItem) => item.value);
+      this.selectedFilters = event.value.map((item: SelectItem) => item.value);
     }
 
     this.router.navigate([], {
       queryParams: {
-        selectedOptions:
-          this.selectedOptions.length > 0
-            ? this.selectedOptions.join(',')
+        filter:
+          this.selectedFilters.length > 0
+            ? this.selectedFilters.join(',')
             : null,
       },
       queryParamsHandling: 'merge',
@@ -458,7 +471,7 @@ export class RequestsComponent implements OnInit {
     this.budgetRange = [0, 10000];
     this.dateRange = null;
     this.searchQuery = '';
-    this.selectedOptions = [];
+    this.selectedFilters = [];
     this.currentMultiFilterOptions = [];
 
     this.router.navigate([], {
@@ -471,7 +484,6 @@ export class RequestsComponent implements OnInit {
         filter: null,
         sort: null,
         sortCategory: null,
-        selectedOptions: null,
       },
       queryParamsHandling: 'merge',
     });

@@ -39,11 +39,10 @@ export class RequestService {
     startDate: Date,
     endDate: Date,
     type: string,
-    selectedOptions: string[] = []
+    filters: string[] = []
   ): Observable<[RequestModel[], boolean] | ApiResponseModel> {
     const params: any = {};
 
-    if (filterParams) params.filter = filterParams;
     if (sortCategory) params.sortCategory = sortCategory;
     if (orderParams) params.sort = orderParams;
     if (searchParams) params.search = searchParams;
@@ -55,9 +54,8 @@ export class RequestService {
     if (endDate) params.endDate = endDate.toISOString().split('T')[0];
     if (type) params.type = type;
 
-    // Add selected multifilter options to params
-    if (selectedOptions && selectedOptions.length > 0) {
-      params.selectedOptions = selectedOptions.join(',');
+    if (filters && filters.length > 0) {
+      params.filter = filters.join(',');
     }
 
     return this.fetchRequests(params);
