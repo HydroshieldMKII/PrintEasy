@@ -158,10 +158,10 @@ class Request < ApplicationRecord
         ps.filament_name,
         ps.total_offers,
         ps.accepted_offers,
-        CASE
+        CAST(CASE
           WHEN ps.total_offers > 0 THEN ROUND((ps.accepted_offers * 100.0 / ps.total_offers), 2)
           ELSE 0
-        END AS acceptance_rate_percent,
+        END AS float) AS acceptance_rate_percent,
         ps.total_accepted_price,
         ROUND(ps.avg_price_diff_from_budget, 2) AS avg_price_diff
       FROM

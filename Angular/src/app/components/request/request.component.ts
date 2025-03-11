@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { SelectItem } from 'primeng/api';
 import { Router, RouterLink } from '@angular/router';
 import { RequestModel } from '../../models/request.model';
+import { RequestStatsModel } from '../../models/request-stats.model';
 import { RequestService } from '../../services/request.service';
 import { ImportsModule } from '../../../imports';
 import { MessageService } from 'primeng/api';
@@ -21,6 +22,7 @@ export class RequestsComponent implements OnInit {
   activeTab: string = 'mine';
   requests: RequestModel[] | null = null;
   myRequests: RequestModel[] | null = null;
+  stats: RequestStatsModel[] | null = null;
 
   deleteDialogVisible: boolean = false;
   requestToDelete: RequestModel | null = null;

@@ -188,4 +188,8 @@ export class RequestService {
       })
     );
   }
+
+  getStats(): Observable<ApiResponseModel> {
+    return this.api.getRequest('api/request', { type: 'stats' });
+  }
 }
