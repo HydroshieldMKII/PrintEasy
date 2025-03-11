@@ -90,24 +90,23 @@ class Request < ApplicationRecord
 
   def self.fetch_for_user(params)
     requests = case params[:type]
-               when 'all'
-                 if Current.user.printers.exists?
-                   with_associations
-                     .where.not(user: Current.user)
-                     .not_accepted
-                     .search_by_name(params[:search])
-                 else
-                   [] #user no printers
-                 end
-               when 'mine'
-                 Current.user.requests
-                        .with_associations
-                        .search_by_name(params[:search])
-               else
-                  []
-               end
+           when 'all'
+            if Current.user.printers.exists?
+              self.with_associations
+              .where.not(user: Current.user)
+              .not_accepted
+            else
+              []
+            end
+           when 'mine'
+              self.with_associations.where(user: Current.user)
+            else
+              []
+           end
+            
+    requests = requests.search_by_name(params[:search]) if params[:search].present?
 
-    #filter=owned-printer,country,in-progress
+    #filters
     filters = params[:filter].split(',') rescue []
     requests = requests.by_printer_owner if filters.include?('owned-printer')
     requests = requests.by_country if filters.include?('country')
