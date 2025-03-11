@@ -1,13 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { RequestModel, RequestApi } from '../models/request.model';
-import {
-  RequestPresetApi,
-  RequestPresetModel,
-} from '../models/request-preset.model';
-import { UserModel } from '../models/user.model';
-import { PrinterModel } from '../models/printer.model';
-import { FilamentModel } from '../models/filament.model';
-import { ColorModel } from '../models/color.model';
+import { RequestPresetApi } from '../models/request-preset.model';
 
 import { ApiRequestService } from './api.service';
 import { ApiResponseModel } from '../models/api-response.model';
@@ -15,6 +8,7 @@ import { ApiResponseModel } from '../models/api-response.model';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { MessageService } from 'primeng/api';
+import { TranslationService } from './translation.service';
 import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({
@@ -26,11 +20,11 @@ export class RequestService {
 
   constructor(
     private api: ApiRequestService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private translationService: TranslationService
   ) {}
 
   filter(
-    filterParams: string,
     sortCategory: string,
     orderParams: string,
     searchParams: string,
@@ -67,8 +61,12 @@ export class RequestService {
         if (response.status === 200) {
           response.data.request.preset_requests.map(
             (preset: RequestPresetApi) => {
-              preset.color.name = this.translateColor(preset.color.id);
-              preset.filament.name = this.translateFilament(preset.filament.id);
+              preset.color.name = this.translationService.translateColor(
+                preset.color.id
+              );
+              preset.filament.name = this.translationService.translateFilament(
+                preset.filament.id
+              );
             }
           );
 
@@ -89,10 +87,11 @@ export class RequestService {
           this.requests = (response.data.request as RequestApi[])?.map(
             (requestData: RequestApi) => {
               requestData.preset_requests.map((preset) => {
-                preset.color.name = this.translateColor(preset.color.id);
-                preset.filament.name = this.translateFilament(
-                  preset.filament.id
+                preset.color.name = this.translationService.translateColor(
+                  preset.color.id
                 );
+                preset.filament.name =
+                  this.translationService.translateFilament(preset.filament.id);
               });
 
               return RequestModel.fromAPI(requestData);
@@ -188,19 +187,5 @@ export class RequestService {
         return response;
       })
     );
-  }
-
-  private translateFilament(id: number): string {
-    const key = FilamentModel.filamentMap[id];
-    return key
-      ? this.translate.instant(`materials.${key}`)
-      : `Unknown Filament (${id})`;
-  }
-
-  private translateColor(id: number): string {
-    const key = ColorModel.colorMap[id];
-    return key
-      ? this.translate.instant(`colors.${key}`)
-      : `Unknown Color (${id})`;
   }
 }

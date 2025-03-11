@@ -290,7 +290,6 @@ export class RequestsComponent implements OnInit {
 
     this.requestService
       .filter(
-        this.currentFilter,
         this.currentSortCategory,
         this.currentSort,
         this.searchQuery,
