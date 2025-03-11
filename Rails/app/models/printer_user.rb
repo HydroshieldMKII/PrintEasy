@@ -13,38 +13,21 @@ class PrinterUser < ApplicationRecord
     Date.current
   }, message: 'cannot be in the future' }, if: -> { acquired_date.present? }
 
-  def last_review_image
-    completed_offer = offers
-                      .joins(order: [:review, :order_status, { review: :images_attachments }])
-                      .where(order_status: { status_name: %w[Printed Shipped Arrived] })
-                      .where('reviews.id IS NOT NULL')
-                      .order('reviews.created_at DESC')
-                      .first
-
-    return nil unless completed_offer && completed_offer.order.review.images.attached?
-
-    review = completed_offer.order.review
-    image = review.images.first
-
-    Rails.application.routes.url_helpers.rails_blob_url(image, only_path: true)
-  end
-
   def last_used
     latest_printed_offer = offers.joins(order: :order_status)
                                  .where(order_status: { status_name: %w[Printing Printed] })
                                  .order('order_status.created_at DESC')
                                  .first
-
-    # debugger
-
-    return nil unless latest_printed_offer
-
-    printed_status = latest_printed_offer.order.order_status
+    
+    printed_status = nil
+    if latest_printed_offer&.order
+      printed_status = latest_printed_offer.order.order_status
                                          .where(status_name: %w[Printing Printed])
                                          .order(created_at: :desc)
                                          .first
+    end
 
-    printed_status.created_at
+    printed_status&.created_at
   end
 
   def can_update

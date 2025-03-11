@@ -123,24 +123,6 @@
               <h3>{{ printerUser.printer.model }}</h3>
             </div>
 
-            <div class="printer-preview">
-              <div *ngIf="printerUser.lastReviewedImage" class="preview-image">
-                <img
-                  [src]="printerUser.lastReviewedImage"
-                  alt="Last print preview"
-                />
-              </div>
-              <div
-                *ngIf="!printerUser.lastReviewedImage"
-                class="preview-placeholder"
-              >
-                <i class="pi pi-image"></i>
-                <span>{{
-                  "user_profile.printer.no_print_review" | translate
-                }}</span>
-              </div>
-            </div>
-
             <div class="card-body">
               <p class="acquisition-date">
                 <i class="pi pi-calendar"></i>

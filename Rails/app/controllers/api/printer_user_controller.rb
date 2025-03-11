@@ -17,7 +17,7 @@ module Api
                                                                  include: { country: {} }
                                                                }
                                                              },
-                                                             methods: %i[last_review_image last_used can_update]
+                                                             methods: %i[last_used can_update]
                                                            }) }, status: :ok
     end
 
@@ -28,8 +28,7 @@ module Api
                                              printer: {
                                                only: %i[id model]
                                              }
-                                           },
-                                           methods: [:last_review_image]
+                                           }
                                          })
     end
 
@@ -47,7 +46,7 @@ module Api
                                                                  include: { country: {} }
                                                                }
                                                              },
-                                                             methods: %i[last_review_image last_used can_update]
+                                                             methods: %i[last_used can_update]
                                                            }) }, status: :created
       else
         render json: { errors: @printer_user.errors.as_json }, status: :unprocessable_entity
@@ -66,7 +65,7 @@ module Api
                                                                  include: { country: {} }
                                                                }
                                                              },
-                                                             methods: %i[last_review_image last_used can_update]
+                                                             methods: %i[last_used can_update]
                                                            }) }, status: :ok
       else
         render json: { errors: @printer_user.errors.as_json }, status: :unprocessable_entity
