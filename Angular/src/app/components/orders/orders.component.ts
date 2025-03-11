@@ -35,8 +35,12 @@ export class OrdersComponent {
   searchQuery: string | null = null;
   selectedFilterOption: SelectItem[] | null = null;
   selectedSortOption: SelectItem | null = null;
+  selectedReportSortOption: SelectItem | null = null;
+  reportStartDate: Date | null = null;
+  reportEndDate: Date | null = null;
   filterOptions: SelectItemGroup[] = []
   sortOptions: SelectItem[] = []
+  reportSortOptions: SelectItem[] = []
   showAdvancedFilters: boolean = false;
 
   constructor() {
@@ -44,20 +48,26 @@ export class OrdersComponent {
       this.translateRefresh();
     });
     this.translateRefresh();
-
-    this.searchQuery = this.router.routerState.snapshot.root.queryParams["search"];
-    const filters = this.router.routerState.snapshot.root.queryParams["filter"]?.split(';') ?? null;
-    if (filters) {
-      this.selectedFilterOption = this.filterOptions
-        .flatMap(group => group.items)
-        .filter(item => filters.includes(item.value));
-    }
-    this.selectedSortOption = this.sortOptions.find(item => item.value == this.router.routerState.snapshot.root.queryParams["sort"]) ?? null;
     this.tab = this.router.routerState.snapshot.root.queryParams["tab"] ?? 'commands';
+    if (this.tab == 'report') {
+      this.selectedReportSortOption = this.reportSortOptions.find(item => item.value == this.router.routerState.snapshot.root.queryParams["sort"]) ?? null;
+      this.reportStartDate = this.router.routerState.snapshot.root.queryParams["startDate"] ? new Date(this.router.routerState.snapshot.root.queryParams["startDate"]) : null;
+      this.reportEndDate = this.router.routerState.snapshot.root.queryParams["endDate"] ? new Date(this.router.routerState.snapshot.root.queryParams["endDate"]) : null;
+    } else {
+      this.searchQuery = this.router.routerState.snapshot.root.queryParams["search"];
+      const filters = this.router.routerState.snapshot.root.queryParams["filter"]?.split(';') ?? null;
+      if (filters) {
+        this.selectedFilterOption = this.filterOptions
+          .flatMap(group => group.items)
+          .filter(item => filters.includes(item.value));
+      }
+      this.selectedSortOption = this.sortOptions.find(item => item.value == this.router.routerState.snapshot.root.queryParams["sort"]) ?? null;
 
-    if (this.selectedFilterOption || this.selectedSortOption) {
-      this.showAdvancedFilters = true;
+      if (this.selectedFilterOption || this.selectedSortOption) {
+        this.showAdvancedFilters = true;
+      }
     }
+    
     this.updateUrl();
   }
 
@@ -94,6 +104,15 @@ export class OrdersComponent {
       { label: this.translate.instant('orders.ssf.date_asc'), value: 'date-asc' },
       { label: this.translate.instant('orders.ssf.date_desc'), value: 'date-desc' }
     ]
+
+    this.reportSortOptions = [
+      { label: this.translate.instant('orders.report.ssf.time_asc'), value: 'time-asc' },
+      { label: this.translate.instant('orders.report.ssf.time_desc'), value: 'time-desc' },
+      { label: this.translate.instant('orders.report.ssf.rating_asc'), value: 'rating-asc' },
+      { label: this.translate.instant('orders.report.ssf.rating_desc'), value: 'rating-desc' },
+      { label: this.translate.instant('orders.report.ssf.earnings_asc'), value: 'earnings-asc' },
+      { label: this.translate.instant('orders.report.ssf.earnings_desc'), value: 'earnings-desc' }
+    ]
   }
 
   getMyOrders(params: { [key: string]: string } = {}) {
@@ -118,7 +137,10 @@ export class OrdersComponent {
 
   getReport(params: { [key: string]: string } = {}) {
     params['type'] = 'report';
-    //TODO: get report data
+    this.orderService.getReport(params).subscribe((response: ApiResponseModel) => {
+      this.reportData = response.data.printers;
+      console.log(this.reportData);
+    });
   }
 
   onSearch() {
@@ -136,22 +158,40 @@ export class OrdersComponent {
   updateUrl() {
     let params: { [key: string]: string } = {};
     params['tab'] = this.tab;
-    if (this.selectedFilterOption) {
-      console.log(this.selectedFilterOption);
-      let filter = "";
-      for (let fil of this.selectedFilterOption) {
-        filter += fil.value + ";";
+    if (this.tab == 'report') {
+      if (this.selectedReportSortOption){
+        params["sort"] = this.selectedReportSortOption.value.toString()
       }
-      if (filter){
-        params['filter'] = filter;
+      if (this.reportStartDate) {
+        const startDate = new Date(this.reportStartDate);
+        params['startDate'] = `${startDate.getFullYear()}-${(startDate.getMonth() + 1).toString().padStart(2, '0')}-${startDate.getDate().toString().padStart(2, '0')}`;
+        console.log(params['startDate']);
+      }
+      if (this.reportEndDate) {
+        const endDate = new Date(this.reportEndDate);
+        params['endDate'] = `${endDate.getFullYear()}-${(endDate.getMonth() + 1).toString().padStart(2, '0')}-${endDate.getDate().toString().padStart(2, '0')}`;
+        console.log(params['endDate']);
+      }
+    } else {
+      if (this.selectedFilterOption) {
+        console.log(this.selectedFilterOption);
+        let filter = "";
+        for (let fil of this.selectedFilterOption) {
+          filter += fil.value + ";";
+        }
+        if (filter){
+          params['filter'] = filter;
+        }
+      }
+      if (this.selectedSortOption) {
+        params['sort'] = this.selectedSortOption.value.toString();
+      }
+      if (this.searchQuery) {
+        params['search'] = this.searchQuery;
       }
     }
-    if (this.selectedSortOption) {
-      params['sort'] = this.selectedSortOption.value.toString();
-    }
-    if (this.searchQuery) {
-      params['search'] = this.searchQuery;
-    }
+    
+
     this.router.navigate(['/orders'], { queryParams: params });
     if (this.tab == 'contracts') {
       this.getMakeOrders(params);

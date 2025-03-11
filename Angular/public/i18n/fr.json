@@ -216,6 +216,7 @@
   "orders": {
     "commands_tab": "Commandes",
     "contracts_tab": "Contrats",
+    "report_tab": "Rapport",
     "name_column": "Nom",
     "price_column": "Prix",
     "status_column": "Statut",
@@ -228,6 +229,7 @@
     "action_button_label": "Voir les détails",
     "no_contract_message": "Vous n'avez aucun contrat en attente !",
     "no_commands_message": "Vous n'avez aucune commande en attente !",
+    "no_report_message": "Vous n'avez aucun rapport !",
     "ssf": {
       "reviewed": "Avisé",
       "not_reviewed": "Non avisé",
@@ -237,6 +239,25 @@
       "price_desc": "Prix (décroissant)",
       "date_asc": "Date (croissant)",
       "date_desc": "Date (décroissant)"
+    },
+    "report": {
+      "printer_model": "Modèle d'imprimante",
+      "completed_orders": "Commandes terminées",
+      "cancelled_orders": "Commandes annulées",
+      "orders_in_progress": "Commandes en cours",
+      "total_earned": "Total des gains",
+      "average_rating": "Note moyenne",
+      "average_time": "Temps moyen",
+      "end_date": "Date de fin",
+      "start_date": "Date de debut",
+      "ssf": {
+        "time_asc": "Temps (croissant)",
+        "time_desc": "Temps (décroissant)",
+        "rating_asc": "Note (croissante)",
+        "rating_desc": "Note (décroissante)",
+        "earnings_asc": "Gains (croissants)",
+        "earnings_desc": "Gains (décroissants)"
+      }
     }
   },
   "order": {
