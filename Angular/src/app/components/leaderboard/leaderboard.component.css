@@ -1,0 +1,52 @@
+.filter-content {
+    transition: max-height 0.3s ease;
+    display: flex;
+    justify-content: flex-end;
+    padding-right: 1rem;
+    padding-top: 1rem;
+    gap: 1rem;
+}
+
+.mb-4 {
+    margin-bottom: 1rem;
+}
+
+.filter-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-end;
+    justify-content: flex-end;
+}
+
+.filter-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    width: 300px;
+}
+
+.filter-item label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #555;
+}
+
+:host ::ng-deep .p-select {
+    width: 100%;
+}
+
+:host ::ng-deep .p-datepicker {
+    width: 100%;
+}
+
+@media screen and (max-width: 768px) {
+    .filter-content {
+        padding-right: 0;
+    }
+}

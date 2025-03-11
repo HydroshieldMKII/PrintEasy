@@ -12,8 +12,8 @@ export class UserLeaderboardService {
 
   constructor(private api: ApiRequestService) { }
 
-  getUserLeaderboard(): Observable<UserLeaderboardModel[]> {
-    return this.api.getRequest('api/leaderboard').pipe(
+  getUserLeaderboard(params: any): Observable<UserLeaderboardModel[]> {
+    return this.api.getRequest('api/leaderboard', params).pipe(
       map(response => {
         if (response.status === 200) {
           return response.data.leaderboard.map((userLeaderboardApi: UserLeaderboardApi) => UserLeaderboardModel.fromApi(userLeaderboardApi));
