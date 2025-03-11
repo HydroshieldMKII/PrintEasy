@@ -447,3 +447,7 @@ h3 {
 :host ::ng-deep .p-inputnumber input {
   width: 100px !important;
 }
+
+.highlight {
+  background-color: #f0f8ff;
+}

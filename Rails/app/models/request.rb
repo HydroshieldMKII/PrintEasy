@@ -137,7 +137,8 @@ class Request < ApplicationRecord
           COUNT(DISTINCT o.id) AS total_offers,
           SUM(CASE WHEN o.id IN (SELECT offer_id FROM orders) THEN 1 ELSE 0 END) AS accepted_offers,
           SUM(CASE WHEN o.id IN (SELECT offer_id FROM orders) THEN o.price ELSE 0 END) AS total_accepted_price,
-          AVG(o.price - r.budget) AS avg_price_diff_from_budget
+          AVG(o.price - r.budget) AS avg_price_diff_from_budget,
+          AVG(TIMESTAMPDIFF(HOUR, r.created_at, o.created_at)) AS avg_hours_to_offer
         FROM
           user_preset_combinations upc
           JOIN colors c ON upc.color_id = c.id
@@ -163,7 +164,8 @@ class Request < ApplicationRecord
           ELSE 0
         END AS float) AS acceptance_rate_percent,
         ps.total_accepted_price,
-        ROUND(ps.avg_price_diff_from_budget, 2) AS avg_price_diff
+        ROUND(ps.avg_price_diff_from_budget, 2) AS avg_price_diff,
+        ROUND(ps.avg_hours_to_offer, 2) AS avg_response_time_hours
       FROM
         preset_stats ps
       ORDER BY

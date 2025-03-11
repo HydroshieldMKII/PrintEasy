@@ -8,6 +8,7 @@ export type RequestStatsApi = {
   acceptance_rate_percent: number;
   total_accepted_price: number;
   avg_price_diff: number;
+  avg_response_time_hours: number;
 };
 
 export class RequestStatsModel {
@@ -20,6 +21,7 @@ export class RequestStatsModel {
   acceptanceRatePercent: number;
   totalAcceptedPrice: number;
   avgPriceDiff: number;
+  avgResponseTimeHours: number;
 
   constructor(
     presetID: number | null,
@@ -30,7 +32,8 @@ export class RequestStatsModel {
     acceptedOffers: number,
     acceptanceRatePercent: number,
     totalAcceptedPrice: number,
-    avgPriceDiff: number
+    avgPriceDiff: number,
+    avgResponseTimeHours: number
   ) {
     this.presetId = presetID;
     this.presetQuality = presetQuality;
@@ -41,6 +44,7 @@ export class RequestStatsModel {
     this.acceptanceRatePercent = acceptanceRatePercent;
     this.totalAcceptedPrice = totalAcceptedPrice;
     this.avgPriceDiff = avgPriceDiff;
+    this.avgResponseTimeHours = avgResponseTimeHours;
   }
 
   static fromAPI(data: RequestStatsApi): RequestStatsModel {
@@ -53,7 +57,8 @@ export class RequestStatsModel {
       data.accepted_offers,
       data.acceptance_rate_percent,
       data.total_accepted_price,
-      data.avg_price_diff
+      data.avg_price_diff,
+      data.avg_response_time_hours
     );
   }
 }

@@ -225,7 +225,21 @@ export class RequestsComponent implements OnInit {
     this.initBudgetRange();
     this.initDateRange();
 
-    this.filter(this.activeTab);
+    if (this.activeTab === 'all' || this.activeTab === 'mine') {
+      this.filter(this.activeTab);
+    } else {
+      this.loadStats();
+    }
+  }
+
+  loadStats(): void {
+    this.requestService.getStats().subscribe((result) => {
+      if (result instanceof ApiResponseModel) {
+        return;
+      }
+      console.log(result);
+      this.stats = result;
+    });
   }
 
   initDateRange(): void {
@@ -284,6 +298,10 @@ export class RequestsComponent implements OnInit {
 
     if (this.activeTab === 'mine' && !this.myRequests) {
       this.filter(this.activeTab);
+    }
+
+    if (this.activeTab === 'stats' && !this.stats) {
+      this.loadStats();
     }
   }
 
