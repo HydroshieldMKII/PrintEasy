@@ -49,28 +49,34 @@ class Request < ApplicationRecord
       .distinct
   }
   scope :by_budget_range, lambda { |min_budget, max_budget|
-    where('requests.budget >= ? AND requests.budget <= ?', min_budget, max_budget) if min_budget.present? && max_budget.present?
+    if min_budget.present? && max_budget.present?
+      where('requests.budget >= ? AND requests.budget <= ?', min_budget, max_budget)
+    elsif min_budget.present?
+      where('requests.budget >= ?', min_budget)
+    elsif max_budget.present?
+      where('requests.budget <= ?', max_budget)
+    end
   }
 
   scope :by_date_range, lambda { |start_date, end_date|
     if start_date.present? && end_date.present?
-      where('requests.target_date > ? AND requests.target_date <= ?',
+      where('requests.target_date >= ? AND requests.target_date <= ?',
             start_date.to_date.beginning_of_day,
             end_date.to_date.end_of_day)
     elsif start_date.present?
-      where('requests.target_date >= ?', start_date.to_date.end_of_day)
+      where('requests.target_date >= ?', start_date.to_date.beginning_of_day)
     end
   }
 
   scope :sorted, lambda { |category, direction|
-    return order('target_date ASC') unless category.present? && direction.present?
+    return order('requests.target_date ASC') unless category.present? && direction.present?
 
     column = {
       'name' => 'requests.name',
-      'date' => 'target_date',
-      'budget' => 'budget',
+      'date' => 'requests.target_date',
+      'budget' => 'requests.budget',
       'country' => 'users.country_id'
-    }.fetch(category, 'target_date')
+    }.fetch(category, 'requests.target_date')
 
     direction = direction == 'asc' ? 'ASC' : 'DESC'
     order("#{column} #{direction}")
@@ -78,112 +84,38 @@ class Request < ApplicationRecord
 
   scope :viewable_by_user, lambda {
     where(user: Current.user).or(
-      Current.user.printers.exists? ? where.not(id: nil) : none
+      Current.user.printers.exists? ? where.not(id: nil) : []
     )
   }
 
   def self.fetch_for_user(params)
     requests = case params[:type]
-               when 'all'
-                 if Current.user.printers.exists?
-                   with_associations
-                     .where.not(user: Current.user)
-                     .not_accepted
-                     .search_by_name(params[:search])
-                 else
-                   [] #user no printers
-                 end
-               when 'mine'
-                 Current.user.requests
-                        .with_associations
-                        .search_by_name(params[:search])
-               else
-                  []
-               end
+           when 'all'
+            if Current.user.printers.exists?
+              self.with_associations
+              .where.not(user: Current.user)
+              .not_accepted
+            else
+              []
+            end
+           when 'mine'
+              self.with_associations.where(user: Current.user)
+            else
+              []
+           end
+            
+    requests = requests.search_by_name(params[:search]) if params[:search].present?
+
+    #filters
+    filters = params[:filter].split(',') rescue []
+    requests = requests.by_printer_owner if filters.include?('owned-printer')
+    requests = requests.by_country if filters.include?('country')
+    requests = requests.in_progress if filters.include?('in-progress')
     
-    requests = case params[:filter]
-               when 'owned-printer'
-                 requests.by_printer_owner
-               when 'country'
-                 requests.by_country
-               when 'in-progress'
-                 requests.in_progress
-               else
-                 requests
-               end
     
     requests = requests.sorted(params[:sortCategory], params[:sort])
                .by_budget_range(params[:minBudget], params[:maxBudget])
                .by_date_range(params[:startDate], params[:endDate])
-  end
-
-  # Serialize a single request
-  def serialize
-    as_json(
-      except: %i[user_id created_at updated_at],
-      include: {
-        preset_requests: {
-          except: %i[request_id color_id filament_id printer_id],
-          include: {
-            color: { only: %i[id name] },
-            filament: { only: %i[id name] },
-            printer: { only: %i[id model] }
-          },
-          methods: [:matching_offer_by_current_user?]
-        },
-        user: {
-          only: %i[id username],
-          include: {
-            country: { only: %i[name] }
-          }
-        }
-      },
-      methods: %i[stl_file_url offer_made? accepted_at]
-    )
-  end
-
-  # Serialize a collection of requests
-  def self.serialize_collection(requests)
-    requests.as_json(
-      except: %i[user_id created_at updated_at],
-      include: {
-        preset_requests: {
-          except: %i[request_id color_id filament_id printer_id],
-          include: {
-            color: { only: %i[id name] },
-            filament: { only: %i[id name] },
-            printer: { only: %i[id model] }
-          },
-          methods: [:matching_offer_by_current_user?]
-        },
-        user: {
-          only: %i[id username],
-          include: {
-            country: { only: %i[name] }
-          }
-        }
-      },
-      methods: %i[stl_file_url offer_made? accepted_at]
-    )
-  end
-
-  def self.format_response(resource, status: :ok)
-    has_printer = Current.user.printers.exists?
-
-    request_data = if resource.is_a?(Request)
-                     resource.serialize
-                   else
-                     serialize_collection(resource)
-                   end
-
-    {
-      json: {
-        request: request_data,
-        has_printer: has_printer,
-        errors: {}
-      },
-      status: status
-    }
   end
 
   def stl_file_url

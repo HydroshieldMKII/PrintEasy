@@ -9,15 +9,13 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { TranslatePipe } from '@ngx-translate/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ApiResponseModel } from '../../models/api-response.model';
-import { SliderSlideEndEvent } from 'primeng/slider';
-import { FilamentModel } from '../../models/filament.model';
-import { ColorModel } from '../../models/color.model';
+import { TranslationService } from '../../services/translation.service';
 
 @Component({
   selector: 'app-request',
   imports: [ImportsModule, RouterLink, TranslatePipe],
   templateUrl: './request.component.html',
-  styleUrls: ['./request.component.css']
+  styleUrls: ['./request.component.css'],
 })
 export class RequestsComponent implements OnInit {
   activeTab: string = 'mine';
@@ -29,14 +27,12 @@ export class RequestsComponent implements OnInit {
 
   isOwningPrinter: boolean | null = null;
   expandedRows: { [key: number]: boolean } = {};
-  expandedMyRows: { [key: number]: boolean } = {};
   searchQuery: string = '';
   currentFilter: string = '';
   currentSort: string = '';
   currentSortCategory: string = '';
 
   selectedSortOption: SelectItem | null = null;
-  selectedFilterOption: SelectItem | null = null;
 
   filterOptions: SelectItem[] = [];
   sortOptions: SelectItem[] = [];
@@ -47,6 +43,10 @@ export class RequestsComponent implements OnInit {
   currentLanguage: string = 'en';
   showAdvancedFilters: boolean = false;
 
+  multiFilterOptions: SelectItem[] = [];
+  currentMultiFilterOptions: SelectItem[] = [];
+  selectedFilters: string[] = [];
+
   toggleAdvancedFilters(): void {
     this.showAdvancedFilters = !this.showAdvancedFilters;
   }
@@ -56,22 +56,81 @@ export class RequestsComponent implements OnInit {
     private router: Router,
     private messageService: MessageService,
     private clipboard: Clipboard,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private translationService: TranslationService
   ) {
-    const queryParams = this.router.parseUrl(this.router.url).queryParams;
-    this.currentFilter = queryParams['filter'] || null;
-    this.currentSort = queryParams['sort'] || null;
-    this.currentSortCategory = queryParams['sortCategory'] || null;
-    this.searchQuery = queryParams['search'] || null;
-
-    // set tab
-    this.activeTab = queryParams['tab'] || 'mine';
-    this.router.navigate([], { queryParams: { tab: this.activeTab }, queryParamsHandling: 'merge' });
+    this.initMultiFilterOptions();
+    this.initFromQueryParams();
 
     this.translate.onLangChange.subscribe(() => {
       this.translateRefresh();
     });
     this.translateRefresh();
+  }
+
+  initMultiFilterOptions(): void {
+    this.multiFilterOptions = [
+      {
+        label: this.translate.instant('request.filter.owned-printer'),
+        value: 'owned-printer',
+      },
+      {
+        label: this.translate.instant('request.filter.country'),
+        value: 'country',
+      },
+      {
+        label: this.translate.instant('request.filter.in-progress'),
+        value: 'in-progress',
+      },
+    ];
+  }
+
+  initFromQueryParams(): void {
+    const queryParams = this.router.parseUrl(this.router.url).queryParams;
+
+    this.currentFilter = queryParams['filter'] || null;
+    this.currentSort = queryParams['sort'] || null;
+    this.currentSortCategory = queryParams['sortCategory'] || null;
+    this.searchQuery = queryParams['search'] || null;
+
+    if (queryParams['filter']) {
+      this.selectedFilters = queryParams['filter'].split(',');
+
+      this.currentMultiFilterOptions = [];
+      this.selectedFilters.forEach((option) => {
+        const selectedOption = this.multiFilterOptions.find(
+          (item) => item.value === option
+        );
+        if (selectedOption) {
+          this.currentMultiFilterOptions.push(selectedOption);
+        }
+      });
+    } else {
+      this.selectedFilters = [];
+      this.currentMultiFilterOptions = [];
+    }
+
+    if (queryParams['minBudget'] && queryParams['maxBudget']) {
+      this.budgetRange = [
+        parseInt(queryParams['minBudget']),
+        parseInt(queryParams['maxBudget']),
+      ];
+    } else {
+      this.budgetRange = [0, 10000];
+    }
+
+    const tabs = ['all', 'mine', 'stats'];
+
+    if (queryParams['tab'] && tabs.includes(queryParams['tab'])) {
+      this.activeTab = queryParams['tab'];
+    } else {
+      this.activeTab = 'mine';
+    }
+
+    this.router.navigate([], {
+      queryParams: { tab: this.activeTab },
+      queryParamsHandling: 'merge',
+    });
   }
 
   refreshData() {
@@ -80,40 +139,77 @@ export class RequestsComponent implements OnInit {
   }
 
   translateRefresh() {
-    this.filterOptions = [
-      { label: this.translate.instant('request.filter.owned-printer'), value: 'owned-printer' },
-      { label: this.translate.instant('request.filter.country'), value: 'country' },
-      { label: this.translate.instant('request.filter.in-progress'), value: 'in-progress' }
-    ];
+    this.initMultiFilterOptions();
 
     this.sortOptions = [
-      { label: this.translate.instant('global.sort.name-asc'), value: 'name-asc' },
-      { label: this.translate.instant('global.sort.name-desc'), value: 'name-desc' },
-      { label: this.translate.instant('global.sort.date-asc'), value: 'date-asc' },
-      { label: this.translate.instant('global.sort.date-desc'), value: 'date-desc' },
-      { label: this.translate.instant('global.sort.budget-asc'), value: 'budget-asc' },
-      { label: this.translate.instant('global.sort.budget-desc'), value: 'budget-desc' },
-      { label: this.translate.instant('global.sort.country-asc'), value: 'country-asc' },
-      { label: this.translate.instant('global.sort.country-desc'), value: 'country-desc' }
+      {
+        label: this.translate.instant('global.sort.name-asc'),
+        value: 'name-asc',
+      },
+      {
+        label: this.translate.instant('global.sort.name-desc'),
+        value: 'name-desc',
+      },
+      {
+        label: this.translate.instant('global.sort.date-asc'),
+        value: 'date-asc',
+      },
+      {
+        label: this.translate.instant('global.sort.date-desc'),
+        value: 'date-desc',
+      },
+      {
+        label: this.translate.instant('global.sort.budget-asc'),
+        value: 'budget-asc',
+      },
+      {
+        label: this.translate.instant('global.sort.budget-desc'),
+        value: 'budget-desc',
+      },
+      {
+        label: this.translate.instant('global.sort.country-asc'),
+        value: 'country-asc',
+      },
+      {
+        label: this.translate.instant('global.sort.country-desc'),
+        value: 'country-desc',
+      },
     ];
 
-    this.selectedFilterOption = this.filterOptions.find(option => option.value === this.currentFilter) || null;
-    this.selectedSortOption = this.sortOptions.find(option => option.value === `${this.currentSortCategory}-${this.currentSort}`) || null;
+    if (this.selectedFilters && this.selectedFilters.length > 0) {
+      this.currentMultiFilterOptions = this.multiFilterOptions.filter(
+        (option) => this.selectedFilters.includes(option.value)
+      );
+    }
+
+    this.selectedSortOption =
+      this.sortOptions.find(
+        (option) =>
+          option.value === `${this.currentSortCategory}-${this.currentSort}`
+      ) || null;
 
     if (this.requests) {
-      this.requests.forEach(request => {
-        request.presets.forEach(preset => {
-          preset.color.name = this.translateColor(preset.color.id);
-          preset.filamentType.name = this.translateFilament(preset.filamentType.id);
+      this.requests.forEach((request) => {
+        request.presets.forEach((preset) => {
+          preset.color.name = this.translationService.translateColor(
+            preset.color.id
+          );
+          preset.filamentType.name = this.translationService.translateFilament(
+            preset.filamentType.id
+          );
         });
       });
     }
 
     if (this.myRequests) {
-      this.myRequests.forEach(request => {
-        request.presets.forEach(preset => {
-          preset.color.name = this.translateColor(preset.color.id);
-          preset.filamentType.name = this.translateFilament(preset.filamentType.id);
+      this.myRequests.forEach((request) => {
+        request.presets.forEach((preset) => {
+          preset.color.name = this.translationService.translateColor(
+            preset.color.id
+          );
+          preset.filamentType.name = this.translationService.translateFilament(
+            preset.filamentType.id
+          );
         });
       });
     }
@@ -126,9 +222,6 @@ export class RequestsComponent implements OnInit {
     this.initDateRange();
 
     this.filter(this.activeTab);
-
-    this.selectedFilterOption = this.filterOptions.find(option => option.value === this.currentFilter) || null;
-    this.selectedSortOption = this.sortOptions.find(option => option.value === `${this.currentSortCategory}-${this.currentSort}`) || null;
   }
 
   initDateRange(): void {
@@ -137,7 +230,9 @@ export class RequestsComponent implements OnInit {
     const queryParams = this.router.parseUrl(this.router.url).queryParams;
     if (queryParams['startDate']) {
       const startDate = new Date(queryParams['startDate']);
-      const endDate = queryParams['endDate'] ? new Date(queryParams['endDate']) : null;
+      const endDate = queryParams['endDate']
+        ? new Date(queryParams['endDate'])
+        : null;
 
       startDate.setUTCHours(12, 0, 0, 0);
       if (endDate) {
@@ -149,47 +244,70 @@ export class RequestsComponent implements OnInit {
   }
 
   initBudgetRange(): void {
-    this.budgetRange = [0, 10000];
-
     const queryParams = this.router.parseUrl(this.router.url).queryParams;
-    if (queryParams['minBudget'] && queryParams['maxBudget']) {
-      this.budgetRange = [
-        parseInt(queryParams['minBudget']),
-        parseInt(queryParams['maxBudget'])
-      ];
+
+    if (queryParams['minBudget']) {
+      this.budgetRange[0] = parseInt(queryParams['minBudget']);
+    }
+
+    if (queryParams['maxBudget']) {
+      this.budgetRange[1] = parseInt(queryParams['maxBudget']);
+    }
+
+    if (this.budgetRange[0] > this.budgetRange[1]) {
+      this.budgetRange[0] = this.budgetRange[1];
+    }
+
+    if (this.budgetRange[0] < 0) {
+      this.budgetRange[0] = 0;
+    }
+
+    if (this.budgetRange[1] > 10000) {
+      this.budgetRange[1] = 10000;
     }
   }
 
   onTabChange(tab: string): void {
     this.activeTab = tab;
-    this.router.navigate([], { queryParams: { tab: this.activeTab }, queryParamsHandling: 'merge' });
+    this.router.navigate([], {
+      queryParams: { tab: this.activeTab },
+      queryParamsHandling: 'merge',
+    });
 
     if (this.activeTab === 'all' && !this.requests) {
       this.filter(this.activeTab);
     }
+
     if (this.activeTab === 'mine' && !this.myRequests) {
       this.filter(this.activeTab);
     }
   }
 
   get currentRequests(): RequestModel[] {
-    return this.activeTab === 'mine' ? this.myRequests || [] : this.requests || [];
+    return this.activeTab === 'mine'
+      ? this.myRequests || []
+      : this.requests || [];
   }
 
   filter(type: string): void {
-    const startDate = this.dateRange && this.dateRange[0] ? this.dateRange[0] : null;
-    const endDate = this.dateRange && this.dateRange.length > 1 && this.dateRange[1] ? this.dateRange[1] : null;
+    const startDate =
+      this.dateRange && this.dateRange[0] ? this.dateRange[0] : null;
+    const endDate =
+      this.dateRange && this.dateRange.length > 1 && this.dateRange[1]
+        ? this.dateRange[1]
+        : null;
+
     this.requestService
       .filter(
-        this.currentFilter,
         this.currentSortCategory,
         this.currentSort,
         this.searchQuery,
-        this.budgetRange[0],
-        this.budgetRange[1],
+        this.budgetRange[0] === 0 ? null : this.budgetRange[0],
+        this.budgetRange[1] === 10000 ? null : this.budgetRange[1],
         startDate,
         endDate,
-        type
+        type,
+        this.selectedFilters
       )
       .subscribe((result: [RequestModel[], boolean] | ApiResponseModel) => {
         if (result instanceof ApiResponseModel) {
@@ -210,10 +328,13 @@ export class RequestsComponent implements OnInit {
   }
 
   expandAll(): void {
-    this.expandedRows = this.currentRequests.reduce((acc: { [key: number]: boolean }, request: RequestModel) => {
-      acc[request.id] = true;
-      return acc;
-    }, {});
+    this.expandedRows = this.currentRequests.reduce(
+      (acc: { [key: number]: boolean }, request: RequestModel) => {
+        acc[request.id] = true;
+        return acc;
+      },
+      {}
+    );
   }
 
   collapseAll(): void {
@@ -239,16 +360,25 @@ export class RequestsComponent implements OnInit {
 
   confirmDelete(): void {
     if (this.requestToDelete !== null) {
-      this.requestService.deleteRequest(this.requestToDelete.id).subscribe(() => {
-        this.requests = (this.requests || []).filter(r => r.id !== this.requestToDelete?.id);
-        this.myRequests = (this.myRequests || []).filter(r => r.id !== this.requestToDelete?.id);
-      });
+      this.requestService
+        .deleteRequest(this.requestToDelete.id)
+        .subscribe(() => {
+          this.requests = (this.requests || []).filter(
+            (r) => r.id !== this.requestToDelete?.id
+          );
+          this.myRequests = (this.myRequests || []).filter(
+            (r) => r.id !== this.requestToDelete?.id
+          );
+        });
     }
     this.deleteDialogVisible = false;
   }
 
   onSearch(): void {
-    this.router.navigate([], { queryParams: { search: this.searchQuery || null }, queryParamsHandling: 'merge' });
+    this.router.navigate([], {
+      queryParams: { search: this.searchQuery || null },
+      queryParamsHandling: 'merge',
+    });
     this.refreshData();
   }
 
@@ -257,7 +387,7 @@ export class RequestsComponent implements OnInit {
 
     this.router.navigate([], {
       queryParams: { filter: this.currentFilter },
-      queryParamsHandling: 'merge'
+      queryParamsHandling: 'merge',
     });
 
     this.refreshData();
@@ -271,26 +401,51 @@ export class RequestsComponent implements OnInit {
     this.router.navigate([], {
       queryParams: {
         sort: this.currentSort || null,
-        sortCategory: this.currentSortCategory || null
+        sortCategory: this.currentSortCategory || null,
       },
-      queryParamsHandling: 'merge'
+      queryParamsHandling: 'merge',
     });
 
     this.refreshData();
   }
 
-  onBudgtChange(event: SliderSlideEndEvent): void {
-    if (event.values !== undefined) {
-      this.budgetRange = event.values;
+  onManualBudgetChange(): void {
+    this.budgetRange[0] = Math.max(0, Math.min(this.budgetRange[0], 10000));
+    this.budgetRange[1] = Math.max(0, Math.min(this.budgetRange[1], 10000));
 
-      this.router.navigate([], {
-        queryParams: {
-          minBudget: this.budgetRange[0],
-          maxBudget: this.budgetRange[1]
-        },
-        queryParamsHandling: 'merge'
-      });
+    if (this.budgetRange[0] > this.budgetRange[1]) {
+      this.budgetRange[0] = this.budgetRange[1];
     }
+
+    this.router.navigate([], {
+      queryParams: {
+        minBudget: this.budgetRange[0] === 0 ? null : this.budgetRange[0],
+        maxBudget: this.budgetRange[1] === 10000 ? null : this.budgetRange[1],
+      },
+      queryParamsHandling: 'merge',
+    });
+
+    this.refreshData();
+  }
+
+  onMultiFilterChange(event: any): void {
+    if (!event || !event.value) {
+      this.currentMultiFilterOptions = [];
+      this.selectedFilters = [];
+    } else {
+      this.currentMultiFilterOptions = event.value;
+      this.selectedFilters = event.value.map((item: SelectItem) => item.value);
+    }
+
+    this.router.navigate([], {
+      queryParams: {
+        filter:
+          this.selectedFilters.length > 0
+            ? this.selectedFilters.join(',')
+            : null,
+      },
+      queryParamsHandling: 'merge',
+    });
 
     this.refreshData();
   }
@@ -300,9 +455,11 @@ export class RequestsComponent implements OnInit {
       this.router.navigate([], {
         queryParams: {
           startDate: this.dateRange[0]?.toISOString().split('T')[0],
-          endDate: this.dateRange[1] ? this.dateRange[1].toISOString().split('T')[0] : null
+          endDate: this.dateRange[1]
+            ? this.dateRange[1].toISOString().split('T')[0]
+            : null,
         },
-        queryParamsHandling: 'merge'
+        queryParamsHandling: 'merge',
       });
 
       this.refreshData();
@@ -314,7 +471,7 @@ export class RequestsComponent implements OnInit {
     this.clipboard.copy(fullUrl);
     this.messageService.add({
       severity: 'success',
-      summary: this.translate.instant('request.copied')
+      summary: this.translate.instant('request.copied'),
     });
   }
 
@@ -322,6 +479,8 @@ export class RequestsComponent implements OnInit {
     this.budgetRange = [0, 10000];
     this.dateRange = null;
     this.searchQuery = '';
+    this.selectedFilters = [];
+    this.currentMultiFilterOptions = [];
 
     this.router.navigate([], {
       queryParams: {
@@ -332,9 +491,9 @@ export class RequestsComponent implements OnInit {
         endDate: null,
         filter: null,
         sort: null,
-        sortCategory: null
+        sortCategory: null,
       },
-      queryParamsHandling: 'merge'
+      queryParamsHandling: 'merge',
     });
 
     this.budgetRange = [0, 10000];
@@ -344,62 +503,8 @@ export class RequestsComponent implements OnInit {
     this.currentSort = '';
     this.currentSortCategory = '';
 
-    this.selectedFilterOption = null
-    this.selectedSortOption = null
+    this.selectedSortOption = null;
 
     this.refreshData();
-  }
-
-  applyAdvancedFilters(): void {
-    const queryParams: any = {
-      minBudget: this.budgetRange[0],
-      maxBudget: this.budgetRange[1]
-    };
-
-    if (this.dateRange && this.dateRange.length >= 1 && this.dateRange[0]) {
-      queryParams.startDate = this.dateRange[0].toISOString().split('T')[0];
-
-      if (this.dateRange.length === 2 && this.dateRange[1]) {
-        queryParams.endDate = this.dateRange[1].toISOString().split('T')[0];
-      } else {
-        queryParams.endDate = null;
-      }
-    } else {
-      queryParams.startDate = null;
-      queryParams.endDate = null;
-    }
-
-    if (this.searchQuery) {
-      queryParams.search = this.searchQuery;
-    }
-
-    if (this.currentFilter) {
-      queryParams.filter = this.currentFilter;
-    }
-
-    if (this.currentSort) {
-      queryParams.sort = this.currentSort;
-    }
-
-    if (this.currentSortCategory) {
-      queryParams.sortCategory = this.currentSortCategory
-    }
-
-    this.router.navigate([], {
-      queryParams: queryParams,
-      queryParamsHandling: 'merge'
-    });
-
-    this.refreshData();
-  }
-
-  private translateFilament(id: number): string {
-    const key = FilamentModel.filamentMap[id];
-    return key ? this.translate.instant(`materials.${key}`) : `Unknown Filament (${id})`;
-  }
-
-  private translateColor(id: number): string {
-    const key = ColorModel.colorMap[id];
-    return key ? this.translate.instant(`colors.${key}`) : `Unknown Color (${id})`;
   }
 }

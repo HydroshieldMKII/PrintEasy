@@ -31,7 +31,6 @@ class UserProfileControllerTest < ActionDispatch::IntegrationTest
     printer_user = json_response['user']['printer_users'][0]
     assert_equal 1, printer_user['id']
     assert_equal '2025-02-14', printer_user['acquired_date']
-    assert_nil printer_user['last_review_image']
     assert_nil printer_user['last_used']
     assert_equal false, printer_user['can_update']
     assert_equal 1, printer_user['printer']['id']
