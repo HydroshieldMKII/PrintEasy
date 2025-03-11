@@ -54,6 +54,22 @@
   "profile":{
     "printer_deleted": "Printer deleted successfully"
   },
+  "leaderboard": {
+    "sort": {
+      "wins-asc": "Wins (Asc)",
+      "wins-desc": "Wins (Desc)",
+      "participations-asc": "Participations (Asc)",
+      "participations-desc": "Participations (Desc)",
+      "winrate-asc": "Winrate (Asc)",
+      "winrate-desc": "Winrate (Desc)",
+      "total-likes-asc": "Total Likes (Asc)",
+      "total-likes-desc": "Total Likes (Desc)",
+      "submission-ratio-asc": "Submission Ratio (Asc)",
+      "submission-ratio-desc": "Submission Ratio (Desc)"
+    },
+    "start_date": "Start Date",
+    "end_date": "End Date"
+  },
   "home": {
     "title": "Welcome to PrintEasy!",
     "request_header": "Latest Requests",

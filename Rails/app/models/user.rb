@@ -28,20 +28,30 @@ class User < ApplicationRecord
   # the not exists subquery is to find submissions who have the same amount of likes but were created before the current submission or more likes than the current
   # not exists if true means that there is no other submissions that have the same amount or like or more
   # not exists if false means that there is another submission that has the same amount of likes or more
-  def self.stats(order_by: 'wins_count', direction: 'DESC', year: Date.current.year)
+  def self.stats(order_by:, direction:, start_date:, end_date:)
     valid_order_columns = ['wins_count', 'submissions_participation_rate', 'contests_count', 'likes_received_count', 'winrate']
    
     order_by = valid_order_columns.include?(order_by) ? order_by : 'wins_count'
    
     direction = ['ASC', 'DESC'].include?(direction) ? direction : 'DESC'
     
-    # Construire la condition de filtre par année
-    year_condition = ""
-    if year.present?
-      year_start = "#{year}-01-01"
-      year_end = "#{year}-12-31"
-      year_condition = "AND contests.start_at BETWEEN '#{year_start}' AND '#{year_end}'"
+    start_date ||= Date.new(2000, 1, 1).strftime('%Y-%m-%d')
+    end_date ||= Date.today.strftime('%Y-%m-%d')
+
+    if start_date > end_date
+      start_date, end_date = end_date, start_date
     end
+
+    if end_date > Date.today.strftime('%Y-%m-%d') || end_date < Date.new(2000, 1, 1).strftime('%Y-%m-%d')
+      end_date = Date.today.strftime('%Y-%m-%d')
+    end
+
+    if start_date < Date.new(2000, 1, 1).strftime('%Y-%m-%d') || start_date > Date.today.strftime('%Y-%m-%d')
+      start_date = Date.new(2000, 1, 1).strftime('%Y-%m-%d')
+    end
+
+    year_condition = ""
+    year_condition = "AND contests.start_at BETWEEN '#{start_date}' AND '#{end_date}'"
     
     sql = <<-SQL
       WITH contests_won AS (
