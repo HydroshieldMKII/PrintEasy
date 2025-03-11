@@ -213,6 +213,7 @@
     "action_button_label": "Voir les détails",
     "no_contract_message": "Vous n'avez aucun contrat en attente !",
     "no_commands_message": "Vous n'avez aucune commande en attente !",
+    "no_report_message": "Vous n'avez aucun rapport !",
     "ssf": {
       "reviewed": "Avisé",
       "not_reviewed": "Non avisé",
@@ -231,6 +232,8 @@
       "total_earned": "Total des gains",
       "average_rating": "Note moyenne",
       "average_time": "Temps moyen",
+      "end_date": "Date de fin",
+      "start_date": "Date de debut",
       "ssf": {
         "time_asc": "Temps (croissant)",
         "time_desc": "Temps (décroissant)",

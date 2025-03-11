@@ -212,6 +212,7 @@
     "action_button_label": "See Details",
     "no_contract_message": "You dont have any contracts pending!",
     "no_commands_message": "You dont have any commands pending!",
+    "no_report_message": "You dont have any report to show !",
     "ssf": {
       "reviewed": "Reviewed",
       "not_reviewed": "Not Reviewed",
@@ -230,6 +231,8 @@
       "total_earned": "Total Earnings",
       "average_rating": "Average Rating",
       "average_time": "Average Time",
+      "end_date": "End Date",
+      "start_date": "Start Date",
       "ssf": {
         "time_asc": "Time (ascending)",
         "time_desc": "Time (descending)",

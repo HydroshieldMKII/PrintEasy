@@ -3,7 +3,6 @@
         <p-tablist>
             <p-tab [value]="'commands'" (click)="openCommands()">{{'orders.commands_tab' | translate}}</p-tab>
             <p-tab [value]="'contracts'" (click)="openContracts()">{{'orders.contracts_tab' | translate}}</p-tab>
-            <!-- TODO: disabled if no printers -->
             <p-tab [value]="'report'" (click)="openReport()">{{'orders.report_tab' | translate}}</p-tab>
         </p-tablist>
         <p-tabpanels>
@@ -409,6 +408,16 @@
                         </tr>
                     </ng-template>
                 </p-table>
+                <div
+                    *ngIf="reportData.length == 0"
+                    class="empty-message"
+                    style="width: 100%; height: 100%;"
+                    >
+                    <i class="pi pi-inbox text-6xl text-gray-400"></i>
+                    <p class="text-xl font-semibold text-gray-500 mt-2">
+                        {{'orders.no_report_message' | translate}}
+                    </p>
+                </div>
             </p-tabpanel>
         </p-tabpanels>
     </p-tabs>

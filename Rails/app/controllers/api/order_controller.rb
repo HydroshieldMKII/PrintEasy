@@ -41,12 +41,9 @@ module Api
       }.fetch(column, 'in_progress_orders')
       direction = direction == 'asc' ? 'ASC' : 'DESC'
 
-      startDateFilter = ''
-      endDateFilter = ''
-      startDateFilter = "AND latest_order_status.latest_status_time >= STR_TO_DATE('#{ssf_params[:startDate]}', '%Y-%m-%d')" if ssf_params[:startDate].present?
-      endDateFilter = "AND latest_order_status.latest_status_time <= STR_TO_DATE('#{ssf_params[:endDate]}', '%Y-%m-%d')" if ssf_params[:endDate].present?
+      startDateFilter = ssf_params[:startDate].present? ? "AND latest_order_status.latest_status_time >= STR_TO_DATE('#{ssf_params[:startDate]}', '%Y-%m-%d')" : ''
+      endDateFilter = ssf_params[:endDate].present? ? "AND latest_order_status.latest_status_time <= STR_TO_DATE('#{ssf_params[:endDate]}', '%Y-%m-%d')" : ''
 
-      # TODO: move to model
       sql = <<-SQL
         WITH latest_order_status AS (
           SELECT
