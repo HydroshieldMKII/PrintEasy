@@ -88,6 +88,92 @@ class Request < ApplicationRecord
     )
   }
 
+  # Entity: Pesets + Preset in offers Filament, Color, Quality
+  # Stats
+  # Offer count with the preset (all)
+  # Offer count with the preset (accepted)
+  # Offer count with the preset (accepted, in percent)
+  # Sum price offered (accepted)
+  # Average diff offer price vs request budget
+  # Average time to offer a preset on requests (since request published)
+
+  def self.fetch_stats_for_user
+    ActiveRecord::Base.connection.select_all(<<-SQL
+      WITH user_preset_combinations AS (
+        -- User preset
+        SELECT
+          p.color_id,
+          p.filament_id,
+          p.print_quality,
+          p.id AS preset_id
+        FROM
+          presets p
+        WHERE
+          p.user_id = #{Current.user.id}
+
+          
+        UNION
+       
+        -- User offer
+        SELECT DISTINCT
+          o.color_id,
+          o.filament_id,
+          o.print_quality,
+          NULL AS preset_id
+        FROM
+          offers o
+        JOIN
+          printer_users pu ON o.printer_user_id = pu.id
+        WHERE
+          pu.user_id = #{Current.user.id}
+      ),
+      preset_stats AS (
+        SELECT
+          upc.color_id,
+          upc.filament_id,
+          upc.print_quality,
+          upc.preset_id,
+          c.name AS color_name,
+          f.name AS filament_name,
+          COUNT(DISTINCT o.id) AS total_offers,
+          SUM(CASE WHEN o.id IN (SELECT offer_id FROM orders) THEN 1 ELSE 0 END) AS accepted_offers,
+          SUM(CASE WHEN o.id IN (SELECT offer_id FROM orders) THEN o.price ELSE 0 END) AS total_accepted_price,
+          AVG(o.price - r.budget) AS avg_price_diff_from_budget
+        FROM
+          user_preset_combinations upc
+          JOIN colors c ON upc.color_id = c.id
+          JOIN filaments f ON upc.filament_id = f.id
+          LEFT JOIN offers o ON
+            o.color_id = upc.color_id AND
+            o.filament_id = upc.filament_id AND
+            o.print_quality = upc.print_quality AND
+            o.printer_user_id IN (SELECT id FROM printer_users WHERE user_id = #{Current.user.id})
+          LEFT JOIN requests r ON o.request_id = r.id
+        GROUP BY
+          upc.color_id, upc.filament_id, upc.print_quality, upc.preset_id, c.name, f.name
+      )
+      SELECT
+        ps.preset_id,
+        ps.print_quality AS preset_quality,
+        ps.color_name,
+        ps.filament_name,
+        ps.total_offers,
+        ps.accepted_offers,
+        CASE
+          WHEN ps.total_offers > 0 THEN ROUND((ps.accepted_offers * 100.0 / ps.total_offers), 2)
+          ELSE 0
+        END AS acceptance_rate_percent,
+        ps.total_accepted_price,
+        ROUND(ps.avg_price_diff_from_budget, 2) AS avg_price_diff
+      FROM
+        preset_stats ps
+      ORDER BY
+        ps.accepted_offers DESC,
+        ps.total_offers DESC
+    SQL
+    ).to_a
+  end
+
   def self.fetch_for_user(params)
     requests = case params[:type]
            when 'all'
@@ -104,18 +190,20 @@ class Request < ApplicationRecord
               []
            end
             
-    requests = requests.search_by_name(params[:search]) if params[:search].present?
+    requests = requests.search_by_name(params[:search]) if params[:search].present?    
+    unless requests.empty?
+      #filters
+      filters = params[:filter].split(',') rescue []
+      requests = requests.by_printer_owner if filters.include?('owned-printer')
+      requests = requests.by_country if filters.include?('country')
+      requests = requests.in_progress if filters.include?('in-progress')
 
-    #filters
-    filters = params[:filter].split(',') rescue []
-    requests = requests.by_printer_owner if filters.include?('owned-printer')
-    requests = requests.by_country if filters.include?('country')
-    requests = requests.in_progress if filters.include?('in-progress')
-    
-    
-    requests = requests.sorted(params[:sortCategory], params[:sort])
-               .by_budget_range(params[:minBudget], params[:maxBudget])
-               .by_date_range(params[:startDate], params[:endDate])
+      requests = requests.sorted(params[:sortCategory], params[:sort])
+                .by_budget_range(params[:minBudget], params[:maxBudget])
+                .by_date_range(params[:startDate], params[:endDate])
+    else
+      requests
+    end
   end
 
   def stl_file_url

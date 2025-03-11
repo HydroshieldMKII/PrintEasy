@@ -32,6 +32,9 @@ export class RequestsComponent implements OnInit {
   currentSort: string = '';
   currentSortCategory: string = '';
 
+  selectedReportSortOption: SelectItem | null = null;
+  reportSortOptions: SelectItem[] = [];
+
   selectedSortOption: SelectItem | null = null;
 
   filterOptions: SelectItem[] = [];
@@ -120,7 +123,6 @@ export class RequestsComponent implements OnInit {
     }
 
     const tabs = ['all', 'mine', 'stats'];
-
     if (queryParams['tab'] && tabs.includes(queryParams['tab'])) {
       this.activeTab = queryParams['tab'];
     } else {

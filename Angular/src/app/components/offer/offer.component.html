@@ -82,14 +82,12 @@
               >
                 <td *ngIf="activeTab === 'all'">
                   <div>
-                    <a
+                    <p-button
+                      [link]="true"
                       [routerLink]="['/profile', offer.printerUser.user.id]"
-                      class="cursor-pointer"
-                      [style.color]="'#0080FF'"
-                      [style]="{ textDecoration: 'none' }"
                     >
                       {{ offer.printerUser.user.username }}
-                    </a>
+                    </p-button>
                     <div class="text-sm" [style.color]="'#6B7280'">
                       {{ offer.printerUser.user.country.name }}
                     </div>
