@@ -9,6 +9,11 @@
     padding: 0rem !important;
 }
 
+:host ::ng-deep p-datepicker .p-inputwrapper {
+    height: 57px !important;
+    width: 100% !important;
+}
+
 .status-tag {
     color: rgb(34, 34, 34);
     border-radius: 10px;
@@ -157,8 +162,20 @@ i {
     gap: 0.5rem;
 }
 
+.report-ssf-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
 @media (max-width: 768px) {
     .ssf-container {
+        flex-direction: column;
+    }
+
+    .report-ssf-container {
         flex-direction: column;
     }
 

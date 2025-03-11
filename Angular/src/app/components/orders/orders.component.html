@@ -322,7 +322,23 @@
             <p-tabpanel [value]="'report'">
                 <p-table [value]="reportData">
                     <ng-template #caption>
-                        <div style="width: 100%; display: flex; flex-direction: row; gap: 10px;">
+                        <div class="report-ssf-container">
+                            <p-datepicker 
+                                [showIcon]="true"
+                                [showButtonBar]="true"
+                                [placeholder]="'orders.report.start_date' | translate"
+                                [ngStyle]="{'height': '57px', 'flex-grow': '1'}"
+                                [(ngModel)]="reportStartDate"
+                                (onClose)="onFilterChange($event)"
+                            />
+                            <p-datepicker 
+                                [showIcon]="true"
+                                [showButtonBar]="true"
+                                [placeholder]="'orders.report.end_date' | translate"
+                                [ngStyle]="{'height': '57px', 'flex-grow': '1'}"
+                                [(ngModel)]="reportEndDate"
+                                (onClose)="onFilterChange($event)"
+                            />
                             <p-floatlabel variant="in" style="flex-grow: 1;">
                                 <p-select
                                     [options]="reportSortOptions"
@@ -381,7 +397,7 @@
                             </td>
                             <td>
                                 <div class="right-cell">
-                                    {{printer.money_earned ? (printer.money_earned | currency) : "NA"}}
+                                    {{printer.money_earned ? (printer.money_earned | currency) : "N/A"}}
                                 </div>
                             </td>
                             <td>

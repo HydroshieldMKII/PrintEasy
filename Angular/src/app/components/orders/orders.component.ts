@@ -36,6 +36,8 @@ export class OrdersComponent {
   selectedFilterOption: SelectItem[] | null = null;
   selectedSortOption: SelectItem | null = null;
   selectedReportSortOption: SelectItem | null = null;
+  reportStartDate: Date | null = null;
+  reportEndDate: Date | null = null;
   filterOptions: SelectItemGroup[] = []
   sortOptions: SelectItem[] = []
   reportSortOptions: SelectItem[] = []
@@ -49,6 +51,8 @@ export class OrdersComponent {
     this.tab = this.router.routerState.snapshot.root.queryParams["tab"] ?? 'commands';
     if (this.tab == 'report') {
       this.selectedReportSortOption = this.reportSortOptions.find(item => item.value == this.router.routerState.snapshot.root.queryParams["sort"]) ?? null;
+      this.reportStartDate = this.router.routerState.snapshot.root.queryParams["startDate"] ? new Date(this.router.routerState.snapshot.root.queryParams["startDate"]) : null;
+      this.reportEndDate = this.router.routerState.snapshot.root.queryParams["endDate"] ? new Date(this.router.routerState.snapshot.root.queryParams["endDate"]) : null;
     } else {
       this.searchQuery = this.router.routerState.snapshot.root.queryParams["search"];
       const filters = this.router.routerState.snapshot.root.queryParams["filter"]?.split(';') ?? null;
@@ -157,6 +161,16 @@ export class OrdersComponent {
     if (this.tab == 'report') {
       if (this.selectedReportSortOption){
         params["sort"] = this.selectedReportSortOption.value.toString()
+      }
+      if (this.reportStartDate) {
+        const startDate = new Date(this.reportStartDate);
+        params['startDate'] = `${startDate.getFullYear()}-${(startDate.getMonth() + 1).toString().padStart(2, '0')}-${startDate.getDate().toString().padStart(2, '0')}`;
+        console.log(params['startDate']);
+      }
+      if (this.reportEndDate) {
+        const endDate = new Date(this.reportEndDate);
+        params['endDate'] = `${endDate.getFullYear()}-${(endDate.getMonth() + 1).toString().padStart(2, '0')}-${endDate.getDate().toString().padStart(2, '0')}`;
+        console.log(params['endDate']);
       }
     } else {
       if (this.selectedFilterOption) {
