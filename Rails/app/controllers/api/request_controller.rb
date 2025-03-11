@@ -4,14 +4,15 @@ module Api
     before_action :set_request, only: %i[update destroy]
    
     def index
-      if params[:type] == 'all' || params[:type] == 'mine'
+      case params[:type]
+      when 'all', 'mine'
         @requests = Request.fetch_for_user(params)
         render format_response(@requests)
-      elsif params[:type] == 'stats'
+      when 'stats'
         stats = Request.fetch_stats_for_user
         render json: { stats: stats }
       else
-        render json: { request: {}, errors: {} }, status: :unprocessable_entity
+        render json: { request: {}, errors: { type: ["Unknown type: #{params[:type]}"] } }, status: :unprocessable_entity
       end
     end
    

@@ -88,17 +88,17 @@ class Request < ApplicationRecord
     )
   }
 
-  # Entity: Pesets + Preset in offers Filament, Color, Quality
+  # Entity: Pesets + Preset in offers (Filament, Color, Quality combination)
   # Stats
   # Offer count with the preset (all)
   # Offer count with the preset (accepted)
   # Offer count with the preset (accepted, in percent)
-  # Sum price offered (accepted)
-  # Average diff offer price vs request budget
-  # Average time to offer a preset on requests (since request published)
+  # Sum price of offers (accepted)
+  # Average diff offer price vs request budget (all)
+  # Average time to offer a preset on requests (since request published) (all)
 
   def self.fetch_stats_for_user
-    ActiveRecord::Base.connection.select_all(<<-SQL
+    sql = <<-SQL
       WITH user_preset_combinations AS (
         -- User preset
         SELECT
@@ -109,9 +109,8 @@ class Request < ApplicationRecord
         FROM
           presets p
         WHERE
-          p.user_id = #{Current.user.id}
-
-          
+          p.user_id = :user_id
+         
         UNION
        
         -- User offer
@@ -125,7 +124,7 @@ class Request < ApplicationRecord
         JOIN
           printer_users pu ON o.printer_user_id = pu.id
         WHERE
-          pu.user_id = #{Current.user.id}
+          pu.user_id = :user_id
       ),
       preset_stats AS (
         SELECT
@@ -147,7 +146,7 @@ class Request < ApplicationRecord
             o.color_id = upc.color_id AND
             o.filament_id = upc.filament_id AND
             o.print_quality = upc.print_quality AND
-            o.printer_user_id IN (SELECT id FROM printer_users WHERE user_id = #{Current.user.id})
+            o.printer_user_id IN (SELECT id FROM printer_users WHERE user_id = :user_id)
           LEFT JOIN requests r ON o.request_id = r.id
         GROUP BY
           upc.color_id, upc.filament_id, upc.print_quality, upc.preset_id, c.name, f.name
@@ -171,7 +170,9 @@ class Request < ApplicationRecord
         ps.accepted_offers DESC,
         ps.total_offers DESC
     SQL
-    ).to_a
+  
+    sanitized_sql = ApplicationRecord.sanitize_sql_array([sql, user_id: Current.user.id])
+    ActiveRecord::Base.connection.select_all(sanitized_sql).to_a
   end
 
   def self.fetch_for_user(params)
