@@ -18,6 +18,9 @@
       <p-tab value="mine" (click)="onTabChange('mine')">{{
         "request.tab_mine" | translate
       }}</p-tab>
+      <p-tab value="stats" (click)="onTabChange('stats')">{{
+        "request.tab_stats" | translate
+      }}</p-tab>
     </p-tablist>
 
     <p-tabpanels>
@@ -399,6 +402,8 @@
           </p>
         </div>
       </p-tabpanel>
+
+      <div *ngIf="activeTab == 'stats'">stats</div>
     </p-tabpanels>
   </p-tabs>
 </div>

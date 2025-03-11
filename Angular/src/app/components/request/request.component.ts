@@ -9,8 +9,6 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { TranslatePipe } from '@ngx-translate/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ApiResponseModel } from '../../models/api-response.model';
-import { FilamentModel } from '../../models/filament.model';
-import { ColorModel } from '../../models/color.model';
 import { TranslationService } from '../../services/translation.service';
 
 @Component({
@@ -121,7 +119,13 @@ export class RequestsComponent implements OnInit {
       this.budgetRange = [0, 10000];
     }
 
-    this.activeTab = queryParams['tab'] === 'all' ? 'all' : 'mine';
+    const tabs = ['all', 'mine', 'stats'];
+
+    if (queryParams['tab'] && tabs.includes(queryParams['tab'])) {
+      this.activeTab = queryParams['tab'];
+    } else {
+      this.activeTab = 'mine';
+    }
 
     this.router.navigate([], {
       queryParams: { tab: this.activeTab },

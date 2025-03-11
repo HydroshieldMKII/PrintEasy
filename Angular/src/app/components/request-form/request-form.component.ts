@@ -523,10 +523,23 @@ export class RequestFormComponent implements OnInit {
     );
 
     if (isMarkedForDeletion) {
-      return true;
+      const duplicateDeleteCount = this.presetToDelete.filter((p: any) => {
+        return (
+          p.printerModel.id === preset.printerModel.id &&
+          p.filamentType.id === preset.filamentType.id &&
+          p.color.id === preset.color.id &&
+          parseFloat(p.printQuality) === preset.printQuality
+        );
+      }).length;
+
+      return duplicateDeleteCount <= 1;
     }
 
-    const duplicateCount = this.request.presets.filter((p: any) => {
+    const activePresets = this.request.presets.filter((p: any) => {
+      return !this.presetToDelete.some((dp: any) => dp.id && dp.id === p.id);
+    });
+
+    const duplicateCount = activePresets.filter((p: any) => {
       const pQuality = parseFloat(p.printQuality);
       const currentQuality = preset.printQuality;
 

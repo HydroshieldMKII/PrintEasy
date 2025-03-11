@@ -51,7 +51,7 @@
       "logout": "Déconnexion"
     }
   },
-  "profile":{
+  "profile": {
     "printer_deleted": "Imprimante supprimée avec succès"
   },
   "home": {
@@ -267,6 +267,7 @@
     "create_button": "Créer une demande",
     "tab_all": "Toutes les demandes",
     "tab_mine": "Mes demandes",
+    "tab_stats": "Rapport",
     "expand_all": "Tout développer",
     "collapse_all": "Tout réduire",
     "filter_by": "Filtrer par",

@@ -10,16 +10,21 @@ import { PresetModel } from '../../models/preset.model';
 @Component({
   selector: 'app-request-presets',
   standalone: true,
-  imports: [ImportsModule, FormsModule, StlModelViewerModule, TranslatePipe, CommonModule],
+  imports: [
+    ImportsModule,
+    FormsModule,
+    StlModelViewerModule,
+    TranslatePipe,
+    CommonModule,
+  ],
   templateUrl: './request-preset.component.html',
-  styleUrl: './request-preset.component.css'
+  styleUrl: './request-preset.component.css',
 })
-
 export class RequestPresetComponent implements OnInit {
   @Input() presets: RequestPresetModel[] = [];
-  @Input() printers: { label: string, value: string, id: number }[] = [];
-  @Input() filamentTypes: { label: string, value: string, id: number }[] = [];
-  @Input() colors: { label: string, value: string, id: number }[] = [];
+  @Input() printers: { label: string; value: string; id: number }[] = [];
+  @Input() filamentTypes: { label: string; value: string; id: number }[] = [];
+  @Input() colors: { label: string; value: string; id: number }[] = [];
   @Input() isViewMode: boolean = false;
   @Input() isEditMode: boolean = false;
   @Input() isNewMode: boolean = false;
@@ -32,10 +37,9 @@ export class RequestPresetComponent implements OnInit {
   @Output() showOfferModalEvent = new EventEmitter<any>();
   @Output() addPresetEvent = new EventEmitter<void>();
 
-  constructor() { }
+  constructor() {}
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   removePreset(index: number): void {
     this.removePresetEvent.emit(index);
@@ -55,30 +59,31 @@ export class RequestPresetComponent implements OnInit {
 
   isPresetValid(preset: any): boolean {
     const printerValid = preset.printerModel && preset.printerModel.id !== null;
-    const filamentValid = preset.filamentType && preset.filamentType.id !== null;
+    const filamentValid =
+      preset.filamentType && preset.filamentType.id !== null;
     const colorValid = preset.color && preset.color.id !== null;
 
     preset.printQuality = parseFloat(preset.printQuality);
-
-    const isMarkedForDeletion = this.presetToDelete.some((p: any) =>
-      preset.id && p.id === preset.id
-    );
-
-    if (isMarkedForDeletion) {
-      return true;
-    }
 
     const duplicateCount = this.presets.filter((p: any) => {
       const pQuality = parseFloat(p.printQuality);
       const currentQuality = preset.printQuality;
 
-      return p.printerModel.id === preset.printerModel.id &&
+      return (
+        p.printerModel.id === preset.printerModel.id &&
         p.filamentType.id === preset.filamentType.id &&
         p.color.id === preset.color.id &&
-        pQuality === currentQuality;
+        pQuality === currentQuality
+      );
     }).length;
 
-    return printerValid && filamentValid && colorValid && !isNaN(preset.printQuality) && duplicateCount <= 1;
+    return (
+      printerValid &&
+      filamentValid &&
+      colorValid &&
+      !isNaN(preset.printQuality) &&
+      duplicateCount <= 1
+    );
   }
 
   isAboutToBeDeleted(preset: PresetModel): boolean {

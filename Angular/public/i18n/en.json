@@ -51,7 +51,7 @@
       "logout": "Logout"
     }
   },
-  "profile":{
+  "profile": {
     "printer_deleted": "Printer deleted successfully"
   },
   "home": {
@@ -266,6 +266,7 @@
     "create_button": "Create a request",
     "tab_all": "All Requests",
     "tab_mine": "My Requests",
+    "tab_stats": "Report",
     "expand_all": "Expand All",
     "collapse_all": "Collapse All",
     "filter_by": "Filter by",
