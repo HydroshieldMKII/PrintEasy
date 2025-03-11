@@ -14,6 +14,7 @@ import { ApiResponseModel } from '../../models/api-response.model';
 import { RequestOfferModel } from '../../models/request-offer.model';
 import { FilamentModel } from '../../models/filament.model';
 import { ColorModel } from '../../models/color.model';
+import { TranslationService } from '../../services/translation.service';
 
 @Component({
   selector: 'app-offer',
@@ -49,7 +50,8 @@ export class OffersComponent {
     private messageService: MessageService,
     private clipboard: Clipboard,
     private orderService: OrderService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private translationService: TranslationService
   ) {
     const queryParams = this.router.parseUrl(this.router.url).queryParams;
     this.activeTab = queryParams['tab'] === 'all' ? 'all' : 'mine';
@@ -88,8 +90,12 @@ export class OffersComponent {
     if (this.offers) {
       this.offers.forEach((request: RequestOfferModel) => {
         request.offers.forEach((offer: OfferModel) => {
-          offer.color.name = this.translateColor(offer.color.id);
-          offer.filament.name = this.translateFilament(offer.filament.id);
+          offer.color.name = this.translationService.translateColor(
+            offer.color.id
+          );
+          offer.filament.name = this.translationService.translateFilament(
+            offer.filament.id
+          );
         });
       });
     }
@@ -97,8 +103,12 @@ export class OffersComponent {
     if (this.myOffers) {
       this.myOffers.forEach((request: RequestOfferModel) => {
         request.offers.forEach((offer: OfferModel) => {
-          offer.color.name = this.translateColor(offer.color.id);
-          offer.filament.name = this.translateFilament(offer.filament.id);
+          offer.color.name = this.translationService.translateColor(
+            offer.color.id
+          );
+          offer.filament.name = this.translationService.translateFilament(
+            offer.filament.id
+          );
         });
       });
     }
@@ -280,19 +290,5 @@ export class OffersComponent {
             });
         }
       });
-  }
-
-  private translateFilament(id: number): string {
-    const key = FilamentModel.filamentMap[id];
-    return key
-      ? this.translate.instant(`materials.${key}`)
-      : `Unknown Filament (${id})`;
-  }
-
-  private translateColor(id: number): string {
-    const key = ColorModel.colorMap[id];
-    return key
-      ? this.translate.instant(`colors.${key}`)
-      : `Unknown Color (${id})`;
   }
 }

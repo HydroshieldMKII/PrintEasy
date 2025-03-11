@@ -25,6 +25,7 @@ import { PrinterUserModel } from '../../models/printer-user.model';
 import { MessageService } from 'primeng/api';
 import { TranslatePipe } from '@ngx-translate/core';
 import { TranslateService } from '@ngx-translate/core';
+import { TranslationService } from '../../services/translation.service';
 
 @Component({
   selector: 'app-offer-modal',
@@ -63,7 +64,8 @@ export class OfferModalComponent implements OnChanges {
     private presetService: PresetService,
     private offerService: OfferService,
     private printerUserService: PrinterUserService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private translationService: TranslationService
   ) {
     this.dateValidator = this.dateValidator.bind(this);
 
@@ -151,7 +153,7 @@ export class OfferModalComponent implements OnChanges {
   translateRefresh() {
     this.colors = this.colors.map((color) => {
       return {
-        label: this.translateColor(color.id),
+        label: this.translationService.translateColor(color.id),
         value: color.value,
         id: color.id,
       };
@@ -159,7 +161,7 @@ export class OfferModalComponent implements OnChanges {
 
     this.filaments = this.filaments.map((filament) => {
       return {
-        label: this.translateFilament(filament.id),
+        label: this.translationService.translateFilament(filament.id),
         value: filament.value,
         id: filament.id,
       };
@@ -281,7 +283,7 @@ export class OfferModalComponent implements OnChanges {
       filaments: this.presetService.getAllFilaments(),
     }).subscribe(({ colors, printers, filaments }) => {
       this.colors = colors.map((color) => ({
-        label: this.translateColor(color.id),
+        label: this.translationService.translateColor(color.id),
         value: color.name,
         id: color.id,
       }));
@@ -294,7 +296,7 @@ export class OfferModalComponent implements OnChanges {
         };
       });
       this.filaments = filaments.map((filament) => ({
-        label: this.translateFilament(filament.id),
+        label: this.translationService.translateFilament(filament.id),
         value: filament.name,
         id: filament.id,
       }));
@@ -357,19 +359,5 @@ export class OfferModalComponent implements OnChanges {
     if (!this.presetToEdit) {
       this.offerForm.reset();
     }
-  }
-
-  private translateFilament(id: number): string {
-    const key = FilamentModel.filamentMap[id];
-    return key
-      ? this.translate.instant(`materials.${key}`)
-      : `Unknown Filament (${id})`;
-  }
-
-  private translateColor(id: number): string {
-    const key = ColorModel.colorMap[id];
-    return key
-      ? this.translate.instant(`colors.${key}`)
-      : `Unknown Color (${id})`;
   }
 }

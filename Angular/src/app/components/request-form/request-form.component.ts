@@ -26,6 +26,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ApiResponseModel } from '../../models/api-response.model';
 import { PresetModel } from '../../models/preset.model';
 import { RequestPresetComponent } from '../request-preset/request-preset.component';
+import { TranslationService } from '../../services/translation.service';
 
 @Component({
   selector: 'app-request-form',
@@ -87,7 +88,8 @@ export class RequestFormComponent implements OnInit {
     private fb: FormBuilder,
     private messageService: MessageService,
     private authService: AuthService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private translationService: TranslationService
   ) {
     this.dateValidator = this.dateValidator.bind(this);
 
@@ -103,13 +105,13 @@ export class RequestFormComponent implements OnInit {
 
   translateRefresh(): void {
     this.colors = this.colors.map((color: any) => {
-      color.label = this.translateColor(color.id);
+      color.label = this.translationService.translateColor(color.id);
       color.value = color.label;
       return color;
     });
 
     this.filamentTypes = this.filamentTypes.map((filament: any) => {
-      filament.label = this.translateFilament(filament.id);
+      filament.label = this.translationService.translateFilament(filament.id);
       filament.value = filament.label;
       return filament;
     });
@@ -611,19 +613,5 @@ export class RequestFormComponent implements OnInit {
         this.request = response;
       }
     });
-  }
-
-  private translateFilament(id: number): string {
-    const key = FilamentModel.filamentMap[id];
-    return key
-      ? this.translate.instant(`materials.${key}`)
-      : `Unknown Filament (${id})`;
-  }
-
-  private translateColor(id: number): string {
-    const key = ColorModel.colorMap[id];
-    return key
-      ? this.translate.instant(`colors.${key}`)
-      : `Unknown Color (${id})`;
   }
 }

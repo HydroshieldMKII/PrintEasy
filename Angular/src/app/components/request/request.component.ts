@@ -9,9 +9,9 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { TranslatePipe } from '@ngx-translate/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ApiResponseModel } from '../../models/api-response.model';
-import { SliderSlideEndEvent } from 'primeng/slider';
 import { FilamentModel } from '../../models/filament.model';
 import { ColorModel } from '../../models/color.model';
+import { TranslationService } from '../../services/translation.service';
 
 @Component({
   selector: 'app-request',
@@ -58,7 +58,8 @@ export class RequestsComponent implements OnInit {
     private router: Router,
     private messageService: MessageService,
     private clipboard: Clipboard,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private translationService: TranslationService
   ) {
     this.initMultiFilterOptions();
     this.initFromQueryParams();
@@ -186,8 +187,10 @@ export class RequestsComponent implements OnInit {
     if (this.requests) {
       this.requests.forEach((request) => {
         request.presets.forEach((preset) => {
-          preset.color.name = this.translateColor(preset.color.id);
-          preset.filamentType.name = this.translateFilament(
+          preset.color.name = this.translationService.translateColor(
+            preset.color.id
+          );
+          preset.filamentType.name = this.translationService.translateFilament(
             preset.filamentType.id
           );
         });
@@ -197,8 +200,10 @@ export class RequestsComponent implements OnInit {
     if (this.myRequests) {
       this.myRequests.forEach((request) => {
         request.presets.forEach((preset) => {
-          preset.color.name = this.translateColor(preset.color.id);
-          preset.filamentType.name = this.translateFilament(
+          preset.color.name = this.translationService.translateColor(
+            preset.color.id
+          );
+          preset.filamentType.name = this.translationService.translateFilament(
             preset.filamentType.id
           );
         });
@@ -497,19 +502,5 @@ export class RequestsComponent implements OnInit {
     this.selectedSortOption = null;
 
     this.refreshData();
-  }
-
-  private translateFilament(id: number): string {
-    const key = FilamentModel.filamentMap[id];
-    return key
-      ? this.translate.instant(`materials.${key}`)
-      : `Unknown Filament (${id})`;
-  }
-
-  private translateColor(id: number): string {
-    const key = ColorModel.colorMap[id];
-    return key
-      ? this.translate.instant(`colors.${key}`)
-      : `Unknown Color (${id})`;
   }
 }
