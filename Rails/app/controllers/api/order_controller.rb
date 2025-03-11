@@ -33,6 +33,14 @@ module Api
     end
 
     def report
+      column, direction = ssf_params[:sort].split('-') if ssf_params[:sort].present?
+      column = {
+        'time': 'average_time_to_complete',
+        'rating': 'average_rating',
+        'earnings': 'money_earned'
+      }.fetch(column, 'money_earned')
+      direction = direction == 'asc' ? 'ASC' : 'DESC'
+
       sql = <<-SQL
         WITH latest_order_status AS (
           SELECT
@@ -84,6 +92,7 @@ module Api
         JOIN printers ON basic_order_info.printer_id = printers.id
         JOIN latest_order_status ON basic_order_info.order_id = latest_order_status.order_id
         GROUP BY printers.model
+        ORDER BY #{column} #{direction}
       SQL
       results = ActiveRecord::Base.connection.select_all(sql).to_a
 

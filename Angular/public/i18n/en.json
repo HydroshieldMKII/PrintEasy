@@ -199,6 +199,7 @@
   "orders": {
     "commands_tab": "Commands",
     "contracts_tab": "Contracts",
+    "report_tab": "Report",
     "name_column": "Name",
     "price_column": "Price",
     "status_column": "Status",
@@ -220,6 +221,23 @@
       "price_desc": "Price (descending)",
       "date_asc": "Date (ascending)",
       "date_desc": "Date (descending)"
+    },
+    "report": {
+      "printer_model": "Printer Model",
+      "completed_orders": "Completed Orders",
+      "cancelled_orders": "Cancelled Orders",
+      "orders_in_progress": "Orders in Progress",
+      "total_earned": "Total Earnings",
+      "average_rating": "Average Rating",
+      "average_time": "Average Time",
+      "ssf": {
+        "time_asc": "Time (ascending)",
+        "time_desc": "Time (descending)",
+        "rating_asc": "Rating (ascending)",
+        "rating_desc": "Rating (descending)",
+        "earnings_asc": "Earnings (ascending)",
+        "earnings_desc": "Earnings (descending)"
+      }
     }
   },
   "order": {
