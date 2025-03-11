@@ -28,13 +28,13 @@ class User < ApplicationRecord
   # the not exists subquery is to find submissions who have the same amount of likes but were created before the current submission or more likes than the current
   # not exists if true means that there is no other submissions that have the same amount or like or more
   # not exists if false means that there is another submission that has the same amount of likes or more
-  def self.stats(order_by:, direction:, start_date:, end_date:)
-    valid_order_columns = ['wins_count', 'submissions_participation_rate', 'contests_count', 'likes_received_count', 'winrate']
-   
-    order_by = valid_order_columns.include?(order_by) ? order_by : 'wins_count'
-   
-    direction = ['ASC', 'DESC'].include?(direction) ? direction : 'DESC'
-    
+  def self.stats(category:, direction:, start_date:, end_date:)
+    valid_order_columns = ['wins_count', 'submission_rate', 'participations', 'total_likes', 'winrate']
+
+    category = valid_order_columns.include?(category) ? category : 'wins_count'
+  
+    direction = ['asc', 'desc'].include?(direction) ? direction : 'DESC'
+
     start_date ||= Date.new(2000, 1, 1).strftime('%Y-%m-%d')
     end_date ||= Date.today.strftime('%Y-%m-%d')
 
@@ -74,7 +74,7 @@ class User < ApplicationRecord
         GROUP BY submissions.user_id
       ),
       submission_ratio AS (
-        SELECT AVG(submission_ratio) AS submissions_participation_rate, ratios.user_id
+        SELECT AVG(submission_ratio) AS submission_rate, ratios.user_id
         FROM (
           SELECT contests.id, contests.submission_limit,  
                  (COUNT(submissions.id) / contests.submission_limit) AS submission_ratio,
@@ -88,16 +88,16 @@ class User < ApplicationRecord
         ) AS ratios
         GROUP BY ratios.user_id
       ),
-      contests_count AS (
-        SELECT COUNT(DISTINCT contests.id) AS contests_count, submissions.user_id
+      participations AS (
+        SELECT COUNT(DISTINCT contests.id) AS participations, submissions.user_id
         FROM contests
         LEFT JOIN submissions ON contests.id = submissions.contest_id
         WHERE contests.deleted_at IS NULL
         #{year_condition}
         GROUP BY submissions.user_id
       ),
-      likes_received_count AS (
-        SELECT COUNT(*) AS likes_received_count, submissions.user_id
+      total_likes AS (
+        SELECT COUNT(*) AS total_likes, submissions.user_id
         FROM likes
         LEFT JOIN submissions ON likes.submission_id = submissions.id
         INNER JOIN contests ON contests.id = submissions.contest_id
@@ -109,31 +109,30 @@ class User < ApplicationRecord
         SELECT
           contests_won.user_id,
           CASE
-            WHEN contests_count.contests_count = 0 THEN 0
-            ELSE ROUND((contests_won.wins_count * 1.0 / contests_count.contests_count) * 100, 2)
+            WHEN participations.participations = 0 THEN 0
+            ELSE ROUND((contests_won.wins_count * 1.0 / participations.participations) * 100, 2)
           END AS winrate
         FROM contests_won
-        LEFT JOIN contests_count ON contests_won.user_id = contests_count.user_id
+        LEFT JOIN participations ON contests_won.user_id = participations.user_id
       )
       SELECT
         users.username AS username,
         COALESCE(contests_won.wins_count, 0) AS wins_count,
-        COALESCE(submission_ratio.submissions_participation_rate * 100, 0) AS submissions_participation_rate,
-        COALESCE(contests_count.contests_count, 0) AS contests_count,
-        COALESCE(likes_received_count.likes_received_count, 0) AS likes_received_count,
+        COALESCE(submission_ratio.submission_rate * 100, 0) AS submission_rate,
+        COALESCE(participations.participations, 0) AS participations,
+        COALESCE(total_likes.total_likes, 0) AS total_likes,
         COALESCE(winrate.winrate, 0) AS winrate
       FROM users
       LEFT JOIN contests_won ON users.id = contests_won.user_id
       LEFT JOIN submission_ratio ON users.id = submission_ratio.user_id
-      LEFT JOIN contests_count ON users.id = contests_count.user_id
-      LEFT JOIN likes_received_count ON users.id = likes_received_count.user_id
+      LEFT JOIN participations ON users.id = participations.user_id
+      LEFT JOIN total_likes ON users.id = total_likes.user_id
       LEFT JOIN winrate ON users.id = winrate.user_id
-      ORDER BY #{order_by} #{direction};
+      ORDER BY #{category} #{direction};
     SQL
     
     results = ActiveRecord::Base.connection.execute(sql)
     
-    # Convertir les résultats en un tableau de hachages pour chaque utilisateur
     result_hashes = results.map do |result|
       {
         username: result[0],
@@ -144,7 +143,7 @@ class User < ApplicationRecord
         winrate: result[5].to_f.round(2)
       }
     end
-    
+
     result_hashes
   end
 
