@@ -403,7 +403,167 @@
         </div>
       </p-tabpanel>
 
-      <div *ngIf="activeTab == 'stats'">stats</div>
+      <!-- TODO -->
+
+      <div *ngIf="activeTab == 'stats'">
+        <div class="report-filter-item mb-4">
+          <div class="filter-content">
+            <div class="filter-row">
+              <div class="filter-item date-filter">
+                <p-floatlabel variant="in">
+                  <p-datepicker
+                    [(ngModel)]="dateRange"
+                    selectionMode="range"
+                    [showIcon]="true"
+                    dateFormat="yy-mm-dd"
+                    appendTo="body"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2060"
+                    (onSelect)="onDateChange($event)"
+                  ></p-datepicker>
+                  <label
+                    *ngIf="
+                      !dateRange || (dateRange && dateRange[0] && dateRange[1])
+                    "
+                    >{{ "request.date_range" | translate }}</label
+                  >
+                  <label *ngIf="dateRange && dateRange[0] && !dateRange[1]">{{
+                    "request.date_from" | translate
+                  }}</label>
+                </p-floatlabel>
+              </div>
+
+              <div class="filter-item">
+                <div>
+                  <p-float-label variant="in">
+                    <p-multiSelect
+                      [options]="multiFilterOptions"
+                      [(ngModel)]="currentMultiFilterOptions"
+                      optionLabel="label"
+                      [filter]="true"
+                      appendTo="body"
+                      [showToggleAll]="true"
+                      [showHeader]="true"
+                      [style]="{ width: '100%' }"
+                      [showClear]="true"
+                      (onChange)="onMultiFilterChange($event)"
+                      (onClear)="onMultiFilterChange($event)"
+                    ></p-multiSelect>
+                    <label>{{ "request.filter_by" | translate }}</label>
+                  </p-float-label>
+                </div>
+              </div>
+
+              <div class="filter-item">
+                <p-float-label variant="in">
+                  <p-select
+                    [options]="sortOptions"
+                    [(ngModel)]="selectedSortOption"
+                    variant="filled"
+                    [showClear]="true"
+                    optionLabel="label"
+                    appendTo="body"
+                    (onChange)="onSortChange($event)"
+                  ></p-select>
+                  <label>{{ "request.sort_by" | translate }}</label>
+                </p-float-label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p-table
+          [value]="stats ?? []"
+          [tableStyle]="{ 'min-width': '1000px' }"
+          [scrollable]="true"
+          scrollDirection="horizontal"
+        >
+          <ng-template pTemplate="header">
+            <tr>
+              <th class="font-bold text-lg">
+                {{ "request.color" | translate }}
+              </th>
+              <th class="font-bold text-lg">
+                {{ "request.filament_type" | translate }}
+              </th>
+              <th class="font-bold text-lg">
+                {{ "request.print_quality" | translate }}
+              </th>
+              <th class="font-bold text-lg">
+                {{ "request.total_offers" | translate }}
+              </th>
+              <th class="font-bold text-lg">
+                {{ "request.accepted_offers" | translate }}
+              </th>
+              <th class="font-bold text-lg">
+                {{ "request.acceptance_rate" | translate }}
+              </th>
+              <th class="font-bold text-lg">
+                {{ "request.total_price" | translate }}
+              </th>
+              <th class="font-bold text-lg">
+                {{ "request.avg_price_diff" | translate }}
+              </th>
+              <th class="font-bold text-lg">
+                {{ "request.avg_response_time" | translate }}
+              </th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-preset>
+            <tr>
+              <td [ngClass]="{ highlight: preset.presetId }">
+                {{ preset.colorName }}
+              </td>
+              <td [ngClass]="{ highlight: preset.presetId }">
+                {{ preset.filamentName }}
+              </td>
+              <td [ngClass]="{ highlight: preset.presetId }">
+                {{ preset.presetQuality }}mm
+              </td>
+              <td [ngClass]="{ highlight: preset.presetId }">
+                {{ preset.totalOffers }}
+              </td>
+              <td [ngClass]="{ highlight: preset.presetId }">
+                {{ preset.acceptedOffers }}
+              </td>
+              <td [ngClass]="{ highlight: preset.presetId }">
+                {{
+                  preset.totalOffers > 0
+                    ? preset.acceptanceRatePercent + "%"
+                    : "N/A"
+                }}
+              </td>
+              <td [ngClass]="{ highlight: preset.presetId }">
+                {{ preset.totalAcceptedPrice | currency }}
+              </td>
+              <td [ngClass]="{ highlight: preset.presetId }">
+                {{
+                  preset.avgPriceDiff !== null
+                    ? (preset.avgPriceDiff | currency)
+                    : "N/A"
+                }}
+              </td>
+              <td [ngClass]="{ highlight: preset.presetId }">
+                {{ preset.avgResponseTimeHours || "N/A"
+                }}<span *ngIf="preset.avgResponseTimeHours"> H</span>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="10">
+                <div class="empty-message">
+                  <i class="pi pi-inbox text-4xl text-gray-400"></i>
+                  <p class="text-lg font-semibold text-gray-500">
+                    {{ "request.no_preset_stats" | translate }}
+                  </p>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
     </p-tabpanels>
   </p-tabs>
 </div>

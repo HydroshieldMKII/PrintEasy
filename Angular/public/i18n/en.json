@@ -327,7 +327,13 @@
       "owned-printer": "Owned printer",
       "country": "Same country",
       "in-progress": "Accepted"
-    }
+    },
+    "total_offers": "Total offers",
+    "accepted_offers": "Accepted offers",
+    "acceptance_rate": "Acceptance rate",
+    "total_price": "Total price",
+    "avg_price_diff": "Average price difference",
+    "avg_response_time": "Average response time"
   },
   "requestForm": {
     "edit_request": "Edit Request",

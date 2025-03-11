@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { SelectItem } from 'primeng/api';
 import { Router, RouterLink } from '@angular/router';
 import { RequestModel } from '../../models/request.model';
+import { RequestStatsModel } from '../../models/request-stats.model';
 import { RequestService } from '../../services/request.service';
 import { ImportsModule } from '../../../imports';
 import { MessageService } from 'primeng/api';
@@ -21,6 +22,7 @@ export class RequestsComponent implements OnInit {
   activeTab: string = 'mine';
   requests: RequestModel[] | null = null;
   myRequests: RequestModel[] | null = null;
+  stats: RequestStatsModel[] | null = null;
 
   deleteDialogVisible: boolean = false;
   requestToDelete: RequestModel | null = null;
@@ -31,6 +33,9 @@ export class RequestsComponent implements OnInit {
   currentFilter: string = '';
   currentSort: string = '';
   currentSortCategory: string = '';
+
+  selectedReportSortOption: SelectItem | null = null;
+  reportSortOptions: SelectItem[] = [];
 
   selectedSortOption: SelectItem | null = null;
 
@@ -120,7 +125,6 @@ export class RequestsComponent implements OnInit {
     }
 
     const tabs = ['all', 'mine', 'stats'];
-
     if (queryParams['tab'] && tabs.includes(queryParams['tab'])) {
       this.activeTab = queryParams['tab'];
     } else {
@@ -221,7 +225,21 @@ export class RequestsComponent implements OnInit {
     this.initBudgetRange();
     this.initDateRange();
 
-    this.filter(this.activeTab);
+    if (this.activeTab === 'all' || this.activeTab === 'mine') {
+      this.filter(this.activeTab);
+    } else {
+      this.loadStats();
+    }
+  }
+
+  loadStats(): void {
+    this.requestService.getStats().subscribe((result) => {
+      if (result instanceof ApiResponseModel) {
+        return;
+      }
+      console.log(result);
+      this.stats = result;
+    });
   }
 
   initDateRange(): void {
@@ -280,6 +298,10 @@ export class RequestsComponent implements OnInit {
 
     if (this.activeTab === 'mine' && !this.myRequests) {
       this.filter(this.activeTab);
+    }
+
+    if (this.activeTab === 'stats' && !this.stats) {
+      this.loadStats();
     }
   }
 

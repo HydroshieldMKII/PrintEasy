@@ -328,7 +328,13 @@
       "owned-printer": "Imprimante possédée",
       "country": "Même pays",
       "in-progress": "Acceptées"
-    }
+    },
+    "total_offers": "Total des offres",
+    "accepted_offers": "Offres acceptées",
+    "acceptance_rate": "Taux d'acceptation",
+    "total_price": "Prix total",
+    "avg_price_diff": "Différence de prix moyenne",
+    "avg_response_time": "Temps de réponse moyen"
   },
   "requestForm": {
     "edit_request": "Modifier la demande",

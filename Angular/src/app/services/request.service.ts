@@ -10,6 +10,10 @@ import { Observable } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { TranslationService } from './translation.service';
 import { TranslateService } from '@ngx-translate/core';
+import {
+  RequestStatsApi,
+  RequestStatsModel,
+} from '../models/request-stats.model';
 
 @Injectable({
   providedIn: 'root',
@@ -183,6 +187,21 @@ export class RequestService {
             summary: this.translate.instant('global.error'),
             detail: this.translate.instant('requestForm.update_error'),
           });
+        }
+        return response;
+      })
+    );
+  }
+
+  getStats(): Observable<RequestStatsModel[] | ApiResponseModel> {
+    return this.api.getRequest('api/request', { type: 'stats' }).pipe(
+      map((response: ApiResponseModel) => {
+        if (response.status === 200) {
+          return (response.data.stats as RequestStatsApi[])?.map(
+            (statsData: RequestStatsApi) => {
+              return RequestStatsModel.fromAPI(statsData);
+            }
+          );
         }
         return response;
       })
