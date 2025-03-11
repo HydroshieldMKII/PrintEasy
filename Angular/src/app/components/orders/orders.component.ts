@@ -21,6 +21,7 @@ export class OrdersComponent {
 
   myOrders: OrderModel[] = [];
   makeOrders: OrderModel[] = [];
+  reportData: Array<{}> = [];
   statusColorRef: { [key: string]: string } = {
     'Accepted': '#c5c5c5',
     'Printing': '#fa6bff',
@@ -115,6 +116,11 @@ export class OrdersComponent {
     });
   }
 
+  getReport(params: { [key: string]: string } = {}) {
+    params['type'] = 'report';
+    //TODO: get report data
+  }
+
   onSearch() {
     this.updateUrl();
   }
@@ -150,6 +156,9 @@ export class OrdersComponent {
     if (this.tab == 'contracts') {
       this.getMakeOrders(params);
     }
+    else if (this.tab == 'report') {
+      this.getReport(params);
+    }
     else {
       this.getMyOrders(params);
     }
@@ -169,6 +178,11 @@ export class OrdersComponent {
 
   openCommands() {
     this.tab = 'commands';
+    this.updateUrl();
+  }
+
+  openReport() {
+    this.tab = 'report';
     this.updateUrl();
   }
 

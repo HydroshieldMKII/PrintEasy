@@ -40,17 +40,13 @@ class Order < ApplicationRecord
     case params[:type]
     when 'printer'
       joins(offer: { printer_user: :user })
-        .where(users: { id: Current.user.id })
-        .search_by_name(params[:search])
-        .apply_filters(params[:filter])
-        .apply_sort(params[:sort])
     else
       joins(offer: { request: :user })
-        .where(users: { id: Current.user.id })
-        .search_by_name(params[:search])
-        .apply_filters(params[:filter])
-        .apply_sort(params[:sort])
     end
+    .where(users: { id: Current.user.id })
+    .search_by_name(params[:search])
+    .apply_filters(params[:filter])
+    .apply_sort(params[:sort])
   end
 
   def self.apply_filters(filter)

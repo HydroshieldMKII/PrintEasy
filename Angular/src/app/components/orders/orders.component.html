@@ -3,6 +3,7 @@
         <p-tablist>
             <p-tab [value]="'commands'" (click)="openCommands()">{{'orders.commands_tab' | translate}}</p-tab>
             <p-tab [value]="'contracts'" (click)="openContracts()">{{'orders.contracts_tab' | translate}}</p-tab>
+            <p-tab [value]="'report'" (click)="openReport()">{{'orders.report_tab' | translate}}</p-tab>
         </p-tablist>
         <p-tabpanels>
             <p-tabpanel [value]="'commands'">
@@ -316,6 +317,9 @@
                         {{'orders.no_contract_message' | translate}}
                     </p>
                 </div>
+            </p-tabpanel>
+            <p-tabpanel [value]="'report'">
+                <p>allo</p>
             </p-tabpanel>
         </p-tabpanels>
     </p-tabs>
