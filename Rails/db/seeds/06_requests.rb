@@ -3,7 +3,7 @@ admin = User.find_by(username: 'aaadmin')
 user1 = User.find_by(username: 'aaa')
 user2 = User.find_by(username: 'bbb')
 
-stl_file_path = Rails.root.join('db/seeds/files/RUBY13.stl')
+stl_file_path = File.open(Rails.root.join('db/seeds/files/RUBY13.stl'))
 
 admin_historical_requests = [
   { 
@@ -55,12 +55,14 @@ admin_historical_requests.each do |req_data|
   )
   
   req.stl_file.attach(
-    io: File.open(stl_file_path),
+    io: stl_file_path,
     filename: 'RUBY13.stl',
     content_type: 'application/sla'
   )
   
   req.save(validate: false)
+
+  stl_file_path.rewind
 end
 
 user1_historical_requests = [
@@ -127,12 +129,14 @@ user1_historical_requests.each do |req_data|
   )
   
   req.stl_file.attach(
-    io: File.open(stl_file_path),
+    io: stl_file_path,
     filename: 'RUBY13.stl',
     content_type: 'application/sla'
   )
   
   req.save(validate: false) 
+
+  stl_file_path.rewind
 end
 
 3.times do |i|
@@ -145,11 +149,13 @@ end
   )
 
   req.stl_file.attach(
-    io: File.open(stl_file_path),
+    io: stl_file_path,
     filename: 'RUBY13.stl',
     content_type: 'application/sla'
   )
   req.save
+
+  stl_file_path.rewind
 end
 
 3.times do |i|
@@ -162,11 +168,12 @@ end
   )
 
   req.stl_file.attach(
-    io: File.open(stl_file_path),
+    io: stl_file_path,
     filename: 'RUBY13.stl',
     content_type: 'application/sla'
   )
   req.save
+  stl_file_path.rewind
 end
 
 requests = Request.all
