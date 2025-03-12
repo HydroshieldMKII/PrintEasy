@@ -7,7 +7,7 @@ contest3 = Contest.find_by(theme: 'Best 3D Printed Jewelry')
 contest5 = Contest.find_by(theme: 'Best 3D Printed Fashion')
 contest7 = Contest.find_by(theme: 'Best 3D Printed Tools')
 contest8 = Contest.find_by(theme: 'Best 3D Printed Medical')
-contest10 = Contest.find_by(theme: 'Best 3D Printed Food')
+contest10 = Contest.find_by(theme: 'Best 3D Printed Electronics')
 
 ruby_stl = File.open(Rails.root.join('db/seeds/files/RUBY13.stl'))
 
@@ -255,7 +255,7 @@ end
     filename: 'red_skeleton.jpg',
     content_type: 'image/jpg'
   )
-
+  debugger
   submission.save(validate: false)
 
   Like.create!(user: user1, submission: submission)
