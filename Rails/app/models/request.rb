@@ -182,6 +182,8 @@ class Request < ApplicationRecord
       ps.accepted_offers DESC,
       ps.total_offers DESC
     SQL
+
+    # ApplicationRecord.sanitize_sql_for_conditions(["1 IN (?)", [1,2,3]])
   
     sanitized_sql = ApplicationRecord.sanitize_sql_array([sql, user_id: Current.user.id])
     ActiveRecord::Base.connection.select_all(sanitized_sql).to_a
