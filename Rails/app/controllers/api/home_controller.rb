@@ -39,7 +39,8 @@ module Api
           include: :submissions,
           methods: %i[image_url finished? started? winner_user]
         )
-      }, status: :ok
+        },
+        status: :ok
     end
 
     private
