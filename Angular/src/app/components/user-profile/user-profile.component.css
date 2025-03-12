@@ -74,8 +74,8 @@
 }
 
 .reviews {
-    font-size: 1.1rem;
-    margin-top: 5px;
+  font-size: 1.1rem;
+  margin-top: 5px;
 }
 
 .profile-details {
@@ -445,6 +445,7 @@ h2 {
   align-items: center;
   cursor: pointer;
   transition: all 0.3s ease;
+  min-height: 150px;
 }
 
 .add-printer-content {
@@ -488,27 +489,27 @@ h2 {
     width: 100%;
   }
 
-    .card {
-        flex: 1 1 auto;
-        width: 100%;
-        min-width: 100%;
-    }
+  .card {
+    flex: 1 1 auto;
+    width: 100%;
+    min-width: 100%;
+  }
 
-    .profile-rating {
-        margin-left: 0;
-        align-items: initial;
-        text-align: initial;
-        width: 100%;
-    }
+  .profile-rating {
+    margin-left: 0;
+    align-items: initial;
+    text-align: initial;
+    width: 100%;
+  }
 
-    .profile-header {
-        flex-direction: column;
-        gap: 20px;
-    }
+  .profile-header {
+    flex-direction: column;
+    gap: 20px;
+  }
 
-    .profile-avatar {
-        width: 100%;
-    }
+  .profile-avatar {
+    width: 100%;
+  }
 }
 
 .empty-message {

@@ -68,3 +68,13 @@ user2.profile_picture.attach(
 )
 
 user2.save
+
+user3 = User.create!(
+  username: 'ccc',
+  password: 'cccccc',
+  password_confirmation: 'cccccc',
+  country_id: 3,
+  is_admin: false
+)
+
+user3.save

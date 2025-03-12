@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { SelectItem } from 'primeng/api';
 import { Router, RouterLink } from '@angular/router';
 import { RequestModel } from '../../models/request.model';
@@ -15,6 +15,7 @@ import { MultiSelectChangeEvent } from 'primeng/multiselect';
 import { ColorModel } from '../../models/color.model';
 import { FilamentModel } from '../../models/filament.model';
 import { PresetService } from '../../services/preset.service';
+import { AuthService } from '../../services/authentication.service';
 
 @Component({
   selector: 'app-request',
@@ -23,6 +24,8 @@ import { PresetService } from '../../services/preset.service';
   styleUrls: ['./request.component.css'],
 })
 export class RequestsComponent implements OnInit {
+  readonly authService = inject(AuthService);
+
   activeTab: string = 'mine';
 
   // Stats

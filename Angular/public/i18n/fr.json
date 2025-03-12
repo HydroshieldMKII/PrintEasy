@@ -379,7 +379,8 @@
         "avg-response-time-asc": "Temps de réponse moyen (Asc)",
         "avg-response-time-desc": "Temps de réponse moyen (Desc)"
       }
-    }
+    },
+    "no_preset_stats": "Aucune statistique disponible"
   },
   "requestForm": {
     "edit_request": "Modifier la demande",
