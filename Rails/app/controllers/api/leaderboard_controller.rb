@@ -1,5 +1,5 @@
 module Api
-    class LeaderboardController < ApplicationController
+    class LeaderboardController < AuthenticatedController
         def index
             @leaderboard = User.stats(category: params[:category], direction: params[:direction], start_date: params[:start_date], end_date: params[:end_date])
             

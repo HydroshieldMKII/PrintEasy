@@ -66,11 +66,17 @@
       "winrate-desc": "Taux de victoire (Desc)",
       "total-likes-asc": "Total de j'aime (Asc)",
       "total-likes-desc": "Total de j'aime (Desc)",
-      "submission-ratio-asc": "Ratio de soumission (Asc)",
-      "submission-ratio-desc": "Ratio de soumission (Desc)"
+      "submission-ratio-asc": "Moyenne de soumission (Asc)",
+      "submission-ratio-desc": "Moyenne de soumission (Desc)"
     },
     "start_date": "Date de début",
-    "end_date": "Date de fin"
+    "end_date": "Date de fin",
+    "username": "Noms d'utilisateur",
+    "wins": "Victoires",
+    "participations": "Participations",
+    "winrate": "Taux de victoire",
+    "total_likes": "Total de j'aime",
+    "submission_ratio": "Moyenne de soumission"
   },
   "home": {
     "title": "Bienvenue chez PrintEasy!",
@@ -311,7 +317,7 @@
     "collapse_all": "Tout réduire",
     "filter_by": "Filtrer par",
     "sort_by": "Trier par",
-    "search_placeholder": "Rechercher",
+    "search_placeholder": "Rechercher une demande",
     "search_button": "Rechercher",
     "name": "Nom",
     "budget": "Budget",

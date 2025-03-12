@@ -33,10 +33,10 @@ class User < ApplicationRecord
 
     category = valid_order_columns.include?(category) ? category : 'wins_count'
   
-    direction = ['asc', 'desc'].include?(direction) ? direction : 'DESC'
+    direction = ['asc', 'desc'].include?(direction) ? direction : 'desc'
 
-    start_date ||= Date.new(2000, 1, 1).strftime('%Y-%m-%d')
-    end_date ||= Date.today.strftime('%Y-%m-%d')
+    start_date = Date.new(2000, 1, 1).strftime('%Y-%m-%d') if start_date.nil?
+    end_date = Date.today.strftime('%Y-%m-%d') if end_date.nil?
 
     if start_date > end_date
       start_date, end_date = end_date, start_date
@@ -52,7 +52,9 @@ class User < ApplicationRecord
 
     year_condition = ""
     year_condition = "AND contests.start_at BETWEEN '#{start_date}' AND '#{end_date}'"
-    
+
+    sanitizedCondition = ActiveRecord::Base.sanitize_sql_for_conditions([year_condition])
+
     sql = <<-SQL
       WITH contests_won AS (
         SELECT COUNT(DISTINCT contests.id) AS wins_count, submissions.user_id
@@ -61,7 +63,7 @@ class User < ApplicationRecord
         LEFT JOIN likes ON likes.submission_id = submissions.id
         WHERE contests.deleted_at IS NULL
           AND contests.end_at <= NOW()
-          #{year_condition}
+          #{sanitizedCondition}
           AND NOT EXISTS (
             SELECT 1
             FROM submissions s2
@@ -82,7 +84,7 @@ class User < ApplicationRecord
           FROM submissions
           LEFT JOIN contests ON contests.id = submissions.contest_id
           WHERE contests.deleted_at IS NULL
-          #{year_condition}
+          #{sanitizedCondition}
           GROUP BY contests.id, submissions.user_id
           HAVING COUNT(submissions.id) <= contests.submission_limit
         ) AS ratios
@@ -93,7 +95,7 @@ class User < ApplicationRecord
         FROM contests
         LEFT JOIN submissions ON contests.id = submissions.contest_id
         WHERE contests.deleted_at IS NULL
-        #{year_condition}
+        #{sanitizedCondition}
         GROUP BY submissions.user_id
       ),
       total_likes AS (
@@ -102,7 +104,7 @@ class User < ApplicationRecord
         LEFT JOIN submissions ON likes.submission_id = submissions.id
         INNER JOIN contests ON contests.id = submissions.contest_id
         WHERE submissions.user_id IS NOT NULL
-        #{year_condition}
+        #{sanitizedCondition}
         GROUP BY submissions.user_id
       ),
       winrate AS (
@@ -118,7 +120,7 @@ class User < ApplicationRecord
       SELECT
         users.username AS username,
         COALESCE(contests_won.wins_count, 0) AS wins_count,
-        COALESCE(submission_ratio.submission_rate * 100, 0) AS submission_rate,
+        ROUND(COALESCE(submission_ratio.submission_rate, 0) * 100, 2) AS submission_rate,
         COALESCE(participations.participations, 0) AS participations,
         COALESCE(total_likes.total_likes, 0) AS total_likes,
         COALESCE(winrate.winrate, 0) AS winrate
@@ -131,20 +133,9 @@ class User < ApplicationRecord
       ORDER BY #{category} #{direction};
     SQL
     
-    results = ActiveRecord::Base.connection.execute(sql)
-    
-    result_hashes = results.map do |result|
-      {
-        username: result[0],
-        wins_count: result[1],
-        submissions_participation_rate: result[2].to_f.round(2),
-        contests_count: result[3],
-        likes_received_count: result[4],
-        winrate: result[5].to_f.round(2)
-      }
-    end
+    results = ActiveRecord::Base.connection.select_all(ActiveRecord::Base.sanitize_sql_array([sql])).to_a
 
-    result_hashes
+    results
   end
 
   def accessible_contests

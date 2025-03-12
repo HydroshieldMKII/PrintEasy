@@ -30,49 +30,15 @@
         </div>
     </div>
 
-    <p-table>
-        <thead>
-            <th>
-                <tr>Username</tr>
-            </th>
-
-            <th>
-                <tr>Wins</tr>
-            </th>
-
-            <th>
-                <tr>Participations</tr>
-            </th>
-
-            <th>
-                <tr>Win rate</tr>
-            </th>
-
-            <th>
-                <tr>Total likes</tr>
-            </th>
-        </thead>
-        <!-- <tbody>
-            <tr *ngFor="let user of leaderboardData; let i = index">
-                <td>{{ i + 1 }}</td>
-                <td>{{ user.username }}</td>
-                <td>{{ user.score }}</td>
-                <td>{{ user.submissions }}</td>
-                <td>{{ user.last_submission | date: 'short' }}</td>
-            </tr>
-        </tbody> -->
-    </p-table>
-
-
     <p-table [value]="usersLeaderboard" [tableStyle]="{ 'min-width': '50rem' }">
         <ng-template #header>
             <tr>
-                <th>Username</th>
-                <th>Wins</th>
-                <th>Participations</th>
-                <th>Win rate</th>
-                <th>Total likes</th>
-                <th>Submission ratio</th>
+                <th>{{ 'leaderboard.username' | translate }}</th>
+                <th>{{ 'leaderboard.wins' | translate }}</th>
+                <th>{{ 'leaderboard.participations' | translate }}</th>
+                <th>{{ 'leaderboard.winrate' | translate }}</th>
+                <th>{{ 'leaderboard.total_likes' | translate }}</th>
+                <th>{{ 'leaderboard.submission_ratio' | translate }}</th>
             </tr>
         </ng-template>
         <ng-template #body let-rowData>

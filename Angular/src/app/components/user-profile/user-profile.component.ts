@@ -20,7 +20,6 @@ import { UserModel } from '../../models/user.model';
 import { Renderer2 } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { NotfoundComponent } from '../notfound/notfound.component';
 import { UserProfileModel } from '../../models/user-profile.model';
 import { TranslateService } from '@ngx-translate/core';
 
