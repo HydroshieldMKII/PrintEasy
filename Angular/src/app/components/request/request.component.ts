@@ -20,9 +20,16 @@ import { TranslationService } from '../../services/translation.service';
 })
 export class RequestsComponent implements OnInit {
   activeTab: string = 'mine';
+
+  // Stats
+  stats: RequestStatsModel[] | null = null;
+  selectedReportSortOption: SelectItem | null = null;
+  reportSortOptions: SelectItem[] = [];
+  reportDateRange: any[] | null = null; //date nullable
+
+  // Requests
   requests: RequestModel[] | null = null;
   myRequests: RequestModel[] | null = null;
-  stats: RequestStatsModel[] | null = null;
 
   deleteDialogVisible: boolean = false;
   requestToDelete: RequestModel | null = null;
@@ -34,23 +41,19 @@ export class RequestsComponent implements OnInit {
   currentSort: string = '';
   currentSortCategory: string = '';
 
-  selectedReportSortOption: SelectItem | null = null;
-  reportSortOptions: SelectItem[] = [];
-
-  selectedSortOption: SelectItem | null = null;
-
   filterOptions: SelectItem[] = [];
   sortOptions: SelectItem[] = [];
+  selectedSortOption: SelectItem | null = null;
 
   budgetRange: number[] = [0, 10000];
-  dateRange: any[] | null = null;
-
-  currentLanguage: string = 'en';
-  showAdvancedFilters: boolean = false;
+  dateRange: any[] | null = null; //date nullable
 
   multiFilterOptions: SelectItem[] = [];
   currentMultiFilterOptions: SelectItem[] = [];
   selectedFilters: string[] = [];
+
+  currentLanguage: string = 'en';
+  showAdvancedFilters: boolean = false;
 
   toggleAdvancedFilters(): void {
     this.showAdvancedFilters = !this.showAdvancedFilters;

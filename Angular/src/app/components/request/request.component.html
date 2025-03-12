@@ -27,18 +27,25 @@
       <p-tabpanel *ngFor="let tab of ['all', 'mine']" [value]="tab">
         <div class="advanced-filters mb-4">
           <div class="filter-header">
-            <div class="search-container">
-              <span class="p-input-icon-right">
-                <i class="pi pi-search" (click)="onSearch()"></i>
-                <input
-                  pInputText
-                  type="text"
-                  placeholder="{{ 'request.search_placeholder' | translate }}"
-                  [(ngModel)]="searchQuery"
-                  (keyup.enter)="onSearch()"
-                  id="searchInput"
-                />
-              </span>
+            <div class="search-mobile search-field">
+              <div class="p-input-icon-right">
+                <i class="pi pi-search"></i>
+                <form (submit)="onSearch()">
+                  <p-float-label variant="in">
+                    <input
+                      class="search-bar"
+                      type="text"
+                      pInputText
+                      [(ngModel)]="searchQuery"
+                      name="searchTerm"
+                      id="searchInput"
+                    />
+                    <label for="searchTerm">{{
+                      "request.search_placeholder" | translate
+                    }}</label>
+                  </p-float-label>
+                </form>
+              </div>
             </div>
 
             <div class="advanced-toggle" (click)="toggleAdvancedFilters()">
@@ -458,8 +465,8 @@
               <div class="filter-item">
                 <p-float-label variant="in">
                   <p-select
-                    [options]="sortOptions"
-                    [(ngModel)]="selectedSortOption"
+                    [options]="reportSortOptions"
+                    [(ngModel)]="selectedReportSortOption"
                     variant="filled"
                     [showClear]="true"
                     optionLabel="label"
