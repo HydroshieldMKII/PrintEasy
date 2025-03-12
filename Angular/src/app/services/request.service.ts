@@ -199,6 +199,15 @@ export class RequestService {
         if (response.status === 200) {
           return (response.data.stats as RequestStatsApi[])?.map(
             (statsData: RequestStatsApi) => {
+              statsData.color_name = this.translationService.translateColor(
+                statsData.color_id
+              );
+
+              statsData.filament_name =
+                this.translationService.translateFilament(
+                  statsData.filament_id
+                );
+
               return RequestStatsModel.fromAPI(statsData);
             }
           );

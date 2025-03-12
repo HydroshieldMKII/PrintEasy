@@ -217,6 +217,15 @@ export class RequestsComponent implements OnInit {
         });
       });
     }
+
+    if (this.stats) {
+      this.stats.forEach((stat) => {
+        stat.colorName = this.translationService.translateColor(stat.colorId);
+        stat.filamentName = this.translationService.translateFilament(
+          stat.filamentId
+        );
+      });
+    }
   }
 
   ngOnInit(): void {
