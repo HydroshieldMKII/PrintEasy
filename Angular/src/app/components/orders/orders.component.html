@@ -14,14 +14,17 @@
                                 <div class="search-container">
                                     <span class="p-input-icon-right">
                                         <i class="pi pi-search"></i>
-                                        <input 
-                                            pInputText
-                                            type="text"
-                                            placeholder="{{ 'request.search_placeholder' | translate }}"
-                                            [(ngModel)]="searchQuery"
-                                            [ngStyle]="{'height': '57px', 'width': '100%'}"
-                                            (keyup.enter)="onSearch()"
-                                        >
+                                        <p-float-label variant="in">
+                                            <input 
+                                                pInputText
+                                                type="text"
+                                                name="search"
+                                                [(ngModel)]="searchQuery"
+                                                [ngStyle]="{'height': '57px', 'width': '100%'}"
+                                                (keyup.enter)="onSearch()"
+                                            >
+                                            <label for="search">{{ 'request.search_placeholder' | translate }}</label>
+                                        </p-float-label>
                                     </span>
                                 </div>
 
@@ -176,14 +179,17 @@
                                 <div class="search-container">
                                     <span class="p-input-icon-right">
                                         <i class="pi pi-search"></i>
-                                        <input 
-                                            pInputText
-                                            type="text"
-                                            placeholder="{{ 'request.search_placeholder' | translate }}"
-                                            [(ngModel)]="searchQuery"
-                                            [ngStyle]="{'height': '57px', 'width': '100%'}"
-                                            (keyup.enter)="onSearch()"
-                                        >
+                                        <p-float-label variant="in">
+                                            <input 
+                                                pInputText
+                                                type="text"
+                                                name="search"
+                                                [(ngModel)]="searchQuery"
+                                                [ngStyle]="{'height': '57px', 'width': '100%'}"
+                                                (keyup.enter)="onSearch()"
+                                            >
+                                            <label for="search">{{ 'request.search_placeholder' | translate }}</label>
+                                        </p-float-label>
                                     </span>
                                 </div>
 
