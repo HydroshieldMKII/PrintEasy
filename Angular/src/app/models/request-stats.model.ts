@@ -2,7 +2,9 @@ export type RequestStatsApi = {
   preset_id: number | null;
   preset_quality: number | null;
   color_name: string;
+  color_id: number;
   filament_name: string;
+  filament_id: number;
   total_offers: number;
   accepted_offers: number;
   acceptance_rate_percent: number;
@@ -15,7 +17,9 @@ export class RequestStatsModel {
   presetId: number | null;
   presetQuality: number | null;
   colorName: string;
+  colorId: number;
   filamentName: string;
+  filamentId: number;
   totalOffers: number;
   acceptedOffers: number;
   acceptanceRatePercent: number;
@@ -27,7 +31,9 @@ export class RequestStatsModel {
     presetID: number | null,
     presetQuality: number | null,
     colorName: string,
+    colorId: number,
     filamentName: string,
+    filamentId: number,
     totalOffers: number,
     acceptedOffers: number,
     acceptanceRatePercent: number,
@@ -38,7 +44,9 @@ export class RequestStatsModel {
     this.presetId = presetID;
     this.presetQuality = presetQuality;
     this.colorName = colorName;
+    this.colorId = colorId;
     this.filamentName = filamentName;
+    this.filamentId = filamentId;
     this.totalOffers = totalOffers;
     this.acceptedOffers = acceptedOffers;
     this.acceptanceRatePercent = acceptanceRatePercent;
@@ -52,7 +60,9 @@ export class RequestStatsModel {
       data.preset_id,
       data.preset_quality,
       data.color_name,
+      data.color_id,
       data.filament_name,
+      data.filament_id,
       data.total_offers,
       data.accepted_offers,
       data.acceptance_rate_percent,

@@ -155,8 +155,8 @@ class Request < ApplicationRecord
       SELECT
         ps.preset_id,
         ps.print_quality AS preset_quality,
-        ps.color_name,
-        ps.filament_name,
+        ps.color_id,
+        ps.filament_id,
         ps.total_offers,
         ps.accepted_offers,
         CAST(CASE
