@@ -1,11 +1,11 @@
 
 export type UserLeaderboardApi = {
     username: string;
-    likes_received_count: number;
-    contests_count: number;
+    total_likes: number;
+    participations: number;
     wins_count: number;
     winrate: number;
-    submissions_participation_rate: number;
+    submission_rate: number;
 }
     
 export class UserLeaderboardModel {
@@ -29,10 +29,10 @@ export class UserLeaderboardModel {
         return new UserLeaderboardModel(
             userLeaderboardApi.username, 
             userLeaderboardApi.wins_count, 
-            userLeaderboardApi.contests_count, 
+            userLeaderboardApi.participations, 
             userLeaderboardApi.winrate, 
-            userLeaderboardApi.likes_received_count, 
-            userLeaderboardApi.submissions_participation_rate
+            userLeaderboardApi.total_likes, 
+            userLeaderboardApi.submission_rate
         );
     }
 }

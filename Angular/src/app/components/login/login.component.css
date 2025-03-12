@@ -17,6 +17,12 @@
     --p-card-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
 }
 
+:host ::ng-deep .p-message-info {
+    background-color: rgba(255, 0, 0, 0.1);
+    outline-color: var(--p-button-danger-border-color);
+    color: var(--p-toast-error-color);
+}
+
 :host ::ng-deep .p-card-title {
     --p-card-title-font-size: 2rem;
     --p-card-title-font-weight: bold;

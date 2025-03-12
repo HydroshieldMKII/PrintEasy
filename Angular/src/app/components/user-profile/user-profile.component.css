@@ -75,9 +75,6 @@
 
 .reviews {
     font-size: 1.1rem;
-    color: blue;
-    text-decoration: underline;
-    cursor: pointer;
     margin-top: 5px;
 }
 
@@ -508,6 +505,22 @@
         flex: 1 1 auto;
         width: 100%;
         min-width: 100%;
+    }
+
+    .profile-rating {
+        margin-left: 0;
+        align-items: initial;
+        text-align: initial;
+        width: 100%;
+    }
+
+    .profile-header {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .profile-avatar {
+        width: 100%;
     }
 }
 

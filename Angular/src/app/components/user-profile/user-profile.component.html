@@ -9,8 +9,8 @@
         </div>
         <div class="profile-rating">
             <p-rating [readonly]="true" [stars]="5" [(ngModel)]="averageRating" class="big-stars"></p-rating>
-            <a href="#" class="reviews">{{ userProfile?.selfReviews?.length }} {{ 'user_profile.reviews' | translate
-                }}</a>
+            <p class="reviews">{{ userProfile?.selfReviews?.length }} {{ 'user_profile.reviews' | translate
+                }}</p>
         </div>
     </div>
 
@@ -19,7 +19,7 @@
     </div>
 
 
-    <p-tabs [value]="tab">
+    <p-tabs [value]="tab" scrollable>
         <p-tablist>
             <p-tab [value]="'contest-submissions'">{{ 'user_profile.submissions_tab' | translate }}</p-tab>
             <p-tab [value]="'printers'">{{ 'user_profile.printers_tab' | translate }}</p-tab>

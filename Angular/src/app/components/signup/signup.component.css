@@ -12,6 +12,12 @@ body {
     background-color: #f4f4f4;
 }
 
+:host ::ng-deep .p-message-info {
+    background-color: rgba(255, 0, 0, 0.1);
+    outline-color: var(--p-button-danger-border-color);
+    color: var(--p-toast-error-color);
+}
+
 .signup-card {
     width: 400px;
     text-align: center;

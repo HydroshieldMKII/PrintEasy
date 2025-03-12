@@ -64,11 +64,17 @@
       "winrate-desc": "Winrate (Desc)",
       "total-likes-asc": "Total Likes (Asc)",
       "total-likes-desc": "Total Likes (Desc)",
-      "submission-ratio-asc": "Submission Ratio (Asc)",
-      "submission-ratio-desc": "Submission Ratio (Desc)"
+      "submission-ratio-asc": "Submission Average (Asc)",
+      "submission-ratio-desc": "Submission Average (Desc)"
     },
     "start_date": "Start Date",
-    "end_date": "End Date"
+    "end_date": "End Date",
+    "username": "Username",
+    "wins": "Wins",
+    "participations": "Participations",
+    "winrate": "Win Rate",
+    "total_likes": "Total Likes",
+    "submission_ratio": "Submission Average"
   },
   "home": {
     "title": "Welcome to PrintEasy!",
