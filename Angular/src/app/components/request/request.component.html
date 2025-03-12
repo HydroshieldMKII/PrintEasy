@@ -2,9 +2,15 @@
   <div class="flex justify-between items-center">
     <h1 class="text-4xl font-bold">{{ "request.title" | translate }}</h1>
     <p-button
-      label="{{ 'request.create_button' | translate }}"
       icon="pi pi-plus"
       routerLink="/requests/new"
+      severity="success"
+      [rounded]="true"
+      [text]="false"
+      [raised]="true"
+      [style]="{ marginBottom: '10px' }"
+      pTooltip="{{ 'request.create_button' | translate }}"
+      tooltipPosition="left"
     />
   </div>
 
@@ -410,43 +416,37 @@
         </div>
       </p-tabpanel>
 
-      <!-- TODO -->
-
-      <div *ngIf="activeTab == 'stats'">
+      <p-tabpanel [value]="'stats'">
         <div class="report-filter-item mb-4">
           <div class="filter-content">
             <div class="filter-row">
+              <!-- Date Range Filter -->
               <div class="filter-item date-filter">
-                <p-floatlabel variant="in">
-                  <p-datepicker
-                    [(ngModel)]="dateRange"
-                    selectionMode="range"
-                    [showIcon]="true"
-                    dateFormat="yy-mm-dd"
-                    appendTo="body"
-                    [monthNavigator]="true"
-                    [yearNavigator]="true"
-                    yearRange="2000:2060"
-                    (onSelect)="onDateChange($event)"
-                  ></p-datepicker>
-                  <label
-                    *ngIf="
-                      !dateRange || (dateRange && dateRange[0] && dateRange[1])
-                    "
-                    >{{ "request.date_range" | translate }}</label
-                  >
-                  <label *ngIf="dateRange && dateRange[0] && !dateRange[1]">{{
-                    "request.date_from" | translate
-                  }}</label>
-                </p-floatlabel>
+                <div>
+                  <p-floatlabel variant="in">
+                    <p-datepicker
+                      [(ngModel)]="reportDateRange"
+                      selectionMode="range"
+                      [showIcon]="true"
+                      dateFormat="yy-mm-dd"
+                      appendTo="body"
+                      [monthNavigator]="true"
+                      [yearNavigator]="true"
+                      yearRange="2000:2060"
+                      (onSelect)="onReportDateChange($event)"
+                    ></p-datepicker>
+                    <label>{{ "request.date_range" | translate }}</label>
+                  </p-floatlabel>
+                </div>
               </div>
 
+              <!-- Color Filter -->
               <div class="filter-item">
                 <div>
                   <p-float-label variant="in">
                     <p-multiSelect
-                      [options]="multiFilterOptions"
-                      [(ngModel)]="currentMultiFilterOptions"
+                      [options]="colors"
+                      [(ngModel)]="selectedColors"
                       optionLabel="label"
                       [filter]="true"
                       appendTo="body"
@@ -457,11 +457,34 @@
                       (onChange)="onReportMultiFilterChange($event)"
                       (onClear)="onReportMultiFilterChange($event)"
                     ></p-multiSelect>
-                    <label>{{ "request.filter_by" | translate }}</label>
+                    <label>{{ "request.color" | translate }}</label>
                   </p-float-label>
                 </div>
               </div>
 
+              <!-- Filament Type Filter -->
+              <div class="filter-item">
+                <div>
+                  <p-float-label variant="in">
+                    <p-multiSelect
+                      [options]="filamentTypes"
+                      [(ngModel)]="selectedFilaments"
+                      optionLabel="label"
+                      [filter]="true"
+                      appendTo="body"
+                      [showToggleAll]="true"
+                      [showHeader]="true"
+                      [style]="{ width: '100%' }"
+                      [showClear]="true"
+                      (onChange)="onReportMultiFilterChange($event)"
+                      (onClear)="onReportMultiFilterChange($event)"
+                    ></p-multiSelect>
+                    <label>{{ "request.filament_type" | translate }}</label>
+                  </p-float-label>
+                </div>
+              </div>
+
+              <!-- Sorting Options -->
               <div class="filter-item">
                 <p-float-label variant="in">
                   <p-select
@@ -476,6 +499,19 @@
                   <label>{{ "request.sort_by" | translate }}</label>
                 </p-float-label>
               </div>
+            </div>
+          </div>
+
+          <!-- Clear Filters Button -->
+          <div class="filter-actions-bar">
+            <div class="filter-buttons">
+              <p-button
+                icon="pi pi-filter-slash"
+                styleClass="p-button-sm p-button-outlined"
+                (onClick)="clearAdvancedFilters()"
+                pTooltip="{{ 'request.clear_filters' | translate }}"
+                tooltipPosition="left"
+              ></p-button>
             </div>
           </div>
         </div>
@@ -570,7 +606,7 @@
             </tr>
           </ng-template>
         </p-table>
-      </div>
+      </p-tabpanel>
     </p-tabpanels>
   </p-tabs>
 </div>

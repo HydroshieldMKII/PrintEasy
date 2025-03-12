@@ -9,7 +9,7 @@ module Api
         @requests = Request.fetch_for_user(params)
         render format_response(@requests)
       when 'stats'
-        stats = Request.fetch_stats_for_user
+        stats = Request.fetch_stats_for_user(params)
         render json: { stats: stats }
       else
         render json: { request: {}, errors: { type: ["Unknown type: #{params[:type]}"] } }, status: :unprocessable_entity
