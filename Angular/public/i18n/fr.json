@@ -26,7 +26,9 @@
       "get_error": "Échec de la récupération",
       "gets_error": "Échec de la récupération de la liste",
       "summary_error": "Erreur",
-      "summary_success": "Succès"
+      "summary_success": "Succès",
+      "server_error": "Erreur du serveur",
+      "server_error_message": "Quelque chose s'est mal passé. Veuillez demander à Copilot de /fix."
     },
     "sort": {
       "none": "Aucun",

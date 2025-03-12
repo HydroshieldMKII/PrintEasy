@@ -26,7 +26,9 @@
       "get_error": "Failed to get",
       "gets_error": "Failed to get all",
       "summary_error": "Error",
-      "summary_success": "Success"
+      "summary_success": "Success",
+      "server_error": "Server error",
+      "server_error_message": "Something went wrong. Please tell Copilot to /fix it."
     },
     "sort": {
       "none": "None",
