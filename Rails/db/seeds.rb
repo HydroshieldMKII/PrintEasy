@@ -17,7 +17,7 @@ Dir[Rails.root.join('db/seeds/*.rb')].sort.each do |file|
   load file
 end
 
-puts '🌱 Seeding done!'
+puts '🌳 Seeding done!'
 
 # ON BOUGE TOUT CE QUI A EN DESSOUS GO GO GO 
 
