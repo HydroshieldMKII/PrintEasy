@@ -39,17 +39,21 @@
     padding: 1.5rem;
     min-width: 300px;
     width: 600px;
-    height: auto;
     display: flex;
     flex-direction: column;
     transition: all 0.3s ease;
     border: 1px solid rgba(0, 0, 0, 0.05);
+    align-self: stretch;
 }
 
-h2 {
+a {
     font-size: 2rem;
     font-weight: bold;
     margin-bottom: 15px;
+}
+
+:host ::ng-deep .p-button-link {
+    padding: 0rem !important;
 }
 
 .contest-details p {

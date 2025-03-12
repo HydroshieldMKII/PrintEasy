@@ -36,7 +36,7 @@
     @if (submissions.length > 0) {
     <div *ngFor="let participant of submissions">
         <div class="mt-4">
-            <h2>
+            <h2 [routerLink]="['/profile', participant.user.id]">
                 {{ participant.user.username }}
             </h2>
         </div>

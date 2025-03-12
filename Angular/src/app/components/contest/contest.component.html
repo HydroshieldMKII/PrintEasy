@@ -118,6 +118,7 @@
       *ngFor="let contest of contests"
       [contest]="contest"
       (deleteContestEvent)="onContestDeleted($event)"
+      [ngStyle]="{'display': 'flex'}"
     >
     </app-contest-card>
   </div>

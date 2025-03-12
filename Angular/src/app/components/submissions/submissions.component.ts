@@ -1,6 +1,7 @@
 import { Component, inject, ViewEncapsulation, Renderer2 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateParser, TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { RouterLink } from '@angular/router';
 
 import { ImportsModule } from '../../../imports';
 import { MessageService } from 'primeng/api';
@@ -19,7 +20,7 @@ import { LikeModel } from '../../models/like.model';
 
 @Component({
   selector: 'app-submissions',
-  imports: [ImportsModule, ReactiveFormsModule, StlModelViewerModule, TranslatePipe],
+  imports: [ImportsModule, ReactiveFormsModule, StlModelViewerModule, TranslatePipe, RouterLink],
   templateUrl: './submissions.component.html',
   styleUrl: './submissions.component.css'
 })
