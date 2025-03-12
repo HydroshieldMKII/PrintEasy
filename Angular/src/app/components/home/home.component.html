@@ -17,21 +17,21 @@
                             </div>
                         </div>
                     </ng-template>
-                    <ng-template #title>{{request.name}}</ng-template>
-                    <ng-template #subtitle>
-                        <div class="h-row">
-                            <p class="card-content-label">{{'home.by_label' | translate}}</p>
-                            <p>{{request.user?.username}}</p>
-                        </div>
+                    <ng-template #title>
+                        <p style="margin-bottom: 10px; margin-top: 0px;" class="black-text">{{request.name}}</p>
                     </ng-template>
                     <ng-template #content>
                         <div class="h-row">
+                            <p class="card-content-label">{{'home.by_label' | translate}}</p>
+                            <p class="black-text">{{request.user?.username}}</p>
+                        </div>
+                        <div class="h-row">
                             <p class="card-content-label">{{'home.budget_label' | translate}}</p>
-                            <p>{{request.budget | currency}}</p>
+                            <p class="black-text">{{request.budget | currency}}</p>
                         </div>
                         <div class="h-row">
                             <p class="card-content-label">{{'home.target_date_label' | translate}}</p>
-                            <p>{{request.targetDate | date}}</p>
+                            <p class="black-text">{{request.targetDate | date}}</p>
                         </div>
                     </ng-template>
                 </p-card>
@@ -53,18 +53,18 @@
                         </div>
                     </ng-template>
 
-                    <ng-template #title>{{contest.theme}}</ng-template>
-                    <ng-template #subtitle>
-                        <div class="h-row">
-                            <p class="card-content-label" *ngIf="contest.endAt">{{'home.end_date_label' | translate}}</p>
-                            <p *ngIf="contest.endAt">{{contest.endAt | date}}</p>
-                            <p class="card-content-label" *ngIf="!contest.endAt">{{'home.no_end_date_label' | translate}}</p>
-                        </div>
+                    <ng-template #title>
+                        <p style="margin-bottom: 10px; margin-top: 0px;" class="black-text">{{contest.theme}}</p>
                     </ng-template>
                     <ng-template #content>
                         <div class="h-row">
+                            <p class="card-content-label" *ngIf="contest.endAt">{{'home.end_date_label' | translate}}</p>
+                            <p *ngIf="contest.endAt" class="black-text">{{contest.endAt | date}}</p>
+                            <p class="card-content-label black-text" *ngIf="!contest.endAt">{{'home.no_end_date_label' | translate}}</p>
+                        </div>
+                        <div class="h-row">
                             <p class="card-content-label">{{'home.number_submissions' | translate}}</p>
-                            <p>{{contest.submissionLimit}}</p>
+                            <p class="black-text">{{contest.submissionLimit}}</p>
                         </div>
                     </ng-template>
                 </p-card>
@@ -86,17 +86,17 @@
                         </div>
                     </ng-template>
 
-                    <ng-template #title>{{submission.name}}</ng-template>
-                    <ng-template #subtitle>
-                        <div class="h-row">
-                            <p class="card-content-label">{{'home.by_label' | translate}}</p>
-                            <p>{{submission.user?.username}}</p>
-                        </div>
+                    <ng-template #title>
+                        <p style="margin-bottom: 10px; margin-top: 0px;" class="black-text">{{submission.name}}</p>
                     </ng-template>
                     <ng-template #content>
                         <div class="h-row">
+                            <p class="card-content-label">{{'home.by_label' | translate}}</p>
+                            <p class="black-text">{{submission.user?.username}}</p>
+                        </div>
+                        <div class="h-row">
                             <p class="card-content-label">{{'home.created_at_label' | translate}}</p>
-                            <p>{{submission.created_at | date}}</p>
+                            <p class="black-text">{{submission.created_at | date}}</p>
                         </div>
                     </ng-template>
                     <ng-template #footer>

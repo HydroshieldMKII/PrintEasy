@@ -13,6 +13,10 @@
     height: 300px;
 }
 
+.black-text {
+    color: black;
+}
+
 h1 {
     font-size: 3rem;
     margin: 0;
