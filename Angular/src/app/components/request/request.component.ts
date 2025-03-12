@@ -12,6 +12,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { ApiResponseModel } from '../../models/api-response.model';
 import { TranslationService } from '../../services/translation.service';
 import { MultiSelectChangeEvent } from 'primeng/multiselect';
+import { ColorModel } from '../../models/color.model';
+import { FilamentModel } from '../../models/filament.model';
+import { PresetService } from '../../services/preset.service';
 
 @Component({
   selector: 'app-request',
@@ -26,9 +29,16 @@ export class RequestsComponent implements OnInit {
   stats: RequestStatsModel[] | null = null;
   selectedReportSortOption: SelectItem | null = null;
   reportSortOptions: SelectItem[] = [];
-
   selectedReportRange: SelectItem | null = null;
-  reportDateRange: any[] | null = null; //date nullable
+  reportDateRange: any[] | null = null; // date nullable
+
+  // For stats filters
+  filamentTypes: { label: string; value: number; id: number }[] = [];
+  colors: { label: string; value: number; id: number }[] = [];
+  selectedFilaments: { label: string; value: number; id: number }[] = [];
+  selectedColors: { label: string; value: number; id: number }[] = [];
+  reportDateStart: Date | null = null;
+  reportDateEnd: Date | null = null;
 
   // Requests
   requests: RequestModel[] | null = null;
@@ -64,6 +74,7 @@ export class RequestsComponent implements OnInit {
 
   constructor(
     private requestService: RequestService,
+    private presetService: PresetService,
     private router: Router,
     private messageService: MessageService,
     private clipboard: Clipboard,
@@ -130,6 +141,33 @@ export class RequestsComponent implements OnInit {
       this.budgetRange = [0, 10000];
     }
 
+    // Init stats filters from query params
+    if (queryParams['filamentIds']) {
+      const filamentIds = queryParams['filamentIds'].split(',').map(Number);
+      this.selectedFilaments = filamentIds.map((id: number) => ({
+        label: this.translationService.translateFilament(id),
+        value: id,
+        id: id,
+      }));
+    }
+
+    if (queryParams['colorIds']) {
+      const colorIds = queryParams['colorIds'].split(',').map(Number);
+      this.selectedColors = colorIds.map((id: number) => ({
+        label: this.translationService.translateColor(id),
+        value: id,
+        id: id,
+      }));
+    }
+
+    if (queryParams['reportStartDate']) {
+      this.reportDateStart = new Date(queryParams['reportStartDate']);
+    }
+
+    if (queryParams['reportEndDate']) {
+      this.reportDateEnd = new Date(queryParams['reportEndDate']);
+    }
+
     const tabs = ['all', 'mine', 'stats'];
     if (queryParams['tab'] && tabs.includes(queryParams['tab'])) {
       this.activeTab = queryParams['tab'];
@@ -146,6 +184,9 @@ export class RequestsComponent implements OnInit {
   refreshData() {
     this.filter('all');
     this.filter('mine');
+    if (this.activeTab === 'stats') {
+      this.loadStats();
+    }
   }
 
   translateRefresh() {
@@ -183,6 +224,55 @@ export class RequestsComponent implements OnInit {
       {
         label: this.translate.instant('global.sort.country-desc'),
         value: 'country-desc',
+      },
+    ];
+
+    this.reportSortOptions = [
+      {
+        label: this.translate.instant('request.stats.sort.total-offers-asc'),
+        value: 'total_offers-asc',
+      },
+      {
+        label: this.translate.instant('request.stats.sort.total-offers-desc'),
+        value: 'total_offers-desc',
+      },
+      {
+        label: this.translate.instant('request.stats.sort.acceptance-rate-asc'),
+        value: 'acceptance_rate-asc',
+      },
+      {
+        label: this.translate.instant(
+          'request.stats.sort.acceptance-rate-desc'
+        ),
+        value: 'acceptance_rate-desc',
+      },
+      {
+        label: this.translate.instant('request.stats.sort.total-price-asc'),
+        value: 'total_price-asc',
+      },
+      {
+        label: this.translate.instant('request.stats.sort.total-price-desc'),
+        value: 'total_price-desc',
+      },
+      {
+        label: this.translate.instant('request.stats.sort.avg-price-diff-asc'),
+        value: 'avg_price_diff-asc',
+      },
+      {
+        label: this.translate.instant('request.stats.sort.avg-price-diff-desc'),
+        value: 'avg_price_diff-desc',
+      },
+      {
+        label: this.translate.instant(
+          'request.stats.sort.avg-response-time-asc'
+        ),
+        value: 'avg_response_time-asc',
+      },
+      {
+        label: this.translate.instant(
+          'request.stats.sort.avg-response-time-desc'
+        ),
+        value: 'avg_response_time-desc',
       },
     ];
 
@@ -239,20 +329,66 @@ export class RequestsComponent implements OnInit {
 
     this.initBudgetRange();
     this.initDateRange();
+    this.loadReferenceData();
 
     if (this.activeTab === 'all' || this.activeTab === 'mine') {
       this.filter(this.activeTab);
-    } else {
+    } else if (this.activeTab === 'stats') {
       this.loadStats();
     }
   }
 
+  loadReferenceData(): void {
+    // Load colors and filaments for the filter options
+    this.presetService.getAllColors().subscribe((colors: ColorModel[]) => {
+      this.colors = colors.map((color) => ({
+        label: this.translationService.translateColor(color.id),
+        value: color.id,
+        id: color.id,
+      }));
+    });
+
+    this.presetService
+      .getAllFilaments()
+      .subscribe((filaments: FilamentModel[]) => {
+        this.filamentTypes = filaments.map((filament) => ({
+          label: this.translationService.translateFilament(filament.id),
+          value: filament.id,
+          id: filament.id,
+        }));
+      });
+  }
+
   loadStats(): void {
-    this.requestService.getStats().subscribe((result) => {
+    const params: any = {};
+
+    // Add filters for stats if any exists
+    if (this.selectedReportSortOption) {
+      const [category, order] = this.selectedReportSortOption.value.split('-');
+      params.sortCategory = category;
+      params.sort = order;
+    }
+
+    if (this.selectedColors && this.selectedColors.length > 0) {
+      params.colorIds = this.selectedColors.map((c) => c.id).join(',');
+    }
+
+    if (this.selectedFilaments && this.selectedFilaments.length > 0) {
+      params.filamentIds = this.selectedFilaments.map((f) => f.id).join(',');
+    }
+
+    if (this.reportDateStart) {
+      params.startDate = this.reportDateStart.toISOString().split('T')[0];
+    }
+
+    if (this.reportDateEnd) {
+      params.endDate = this.reportDateEnd.toISOString().split('T')[0];
+    }
+
+    this.requestService.getStats(params).subscribe((result) => {
       if (result instanceof ApiResponseModel) {
         return;
       }
-      console.log(result);
       this.stats = result;
     });
   }
@@ -430,18 +566,32 @@ export class RequestsComponent implements OnInit {
     this.refreshData();
   }
 
-  onSortChange(event: { value: SelectItem }): void {
-    const [category, order] = event?.value?.value.split('-') || [];
-    this.currentSort = order;
-    this.currentSortCategory = category;
+  onSortChange(event: { value: SelectItem } | null): void {
+    if (!event || !event.value) {
+      this.currentSort = '';
+      this.currentSortCategory = '';
+      this.selectedReportSortOption = null;
 
-    this.router.navigate([], {
-      queryParams: {
-        sort: this.currentSort || null,
-        sortCategory: this.currentSortCategory || null,
-      },
-      queryParamsHandling: 'merge',
-    });
+      this.router.navigate([], {
+        queryParams: {
+          sort: null,
+          sortCategory: null,
+        },
+        queryParamsHandling: 'merge',
+      });
+    } else {
+      const [category, order] = event.value.value.split('-');
+      this.currentSort = order;
+      this.currentSortCategory = category;
+
+      this.router.navigate([], {
+        queryParams: {
+          sort: this.currentSort,
+          sortCategory: this.currentSortCategory,
+        },
+        queryParamsHandling: 'merge',
+      });
+    }
 
     this.refreshData();
   }
@@ -465,7 +615,41 @@ export class RequestsComponent implements OnInit {
     this.refreshData();
   }
 
-  onReportMultiFilterChange(event: MultiSelectChangeEvent | void): void {}
+  onReportMultiFilterChange(event: any): void {
+    // Will be called when color or filament selections change
+    this.router.navigate([], {
+      queryParams: {
+        colorIds:
+          this.selectedColors && this.selectedColors.length > 0
+            ? this.selectedColors.map((c) => c.id).join(',')
+            : null,
+        filamentIds:
+          this.selectedFilaments && this.selectedFilaments.length > 0
+            ? this.selectedFilaments.map((f) => f.id).join(',')
+            : null,
+      },
+      queryParamsHandling: 'merge',
+    });
+
+    this.loadStats();
+  }
+
+  onReportDateChange(event: any): void {
+    // Handle report date change
+    this.router.navigate([], {
+      queryParams: {
+        reportStartDate: this.reportDateStart
+          ? this.reportDateStart.toISOString().split('T')[0]
+          : null,
+        reportEndDate: this.reportDateEnd
+          ? this.reportDateEnd.toISOString().split('T')[0]
+          : null,
+      },
+      queryParamsHandling: 'merge',
+    });
+
+    this.loadStats();
+  }
 
   onMultiFilterChange(event: MultiSelectChangeEvent | void): void {
     if (!event || !event.value) {
@@ -515,34 +699,56 @@ export class RequestsComponent implements OnInit {
   }
 
   clearAdvancedFilters(): void {
-    this.budgetRange = [0, 10000];
-    this.dateRange = null;
-    this.searchQuery = '';
-    this.selectedFilters = [];
-    this.currentMultiFilterOptions = [];
+    if (this.activeTab === 'stats') {
+      // Clear stats filters
+      this.selectedColors = [];
+      this.selectedFilaments = [];
+      this.reportDateStart = null;
+      this.reportDateEnd = null;
+      this.selectedReportSortOption = null;
 
-    this.router.navigate([], {
-      queryParams: {
-        search: null,
-        minBudget: null,
-        maxBudget: null,
-        startDate: null,
-        endDate: null,
-        filter: null,
-        sort: null,
-        sortCategory: null,
-      },
-      queryParamsHandling: 'merge',
-    });
+      this.router.navigate([], {
+        queryParams: {
+          colorIds: null,
+          filamentIds: null,
+          reportStartDate: null,
+          reportEndDate: null,
+          sort: null,
+          sortCategory: null,
+        },
+        queryParamsHandling: 'merge',
+      });
+    } else {
+      // Clear request filters
+      this.budgetRange = [0, 10000];
+      this.dateRange = null;
+      this.searchQuery = '';
+      this.selectedFilters = [];
+      this.currentMultiFilterOptions = [];
 
-    this.budgetRange = [0, 10000];
-    this.dateRange = null;
-    this.searchQuery = '';
-    this.currentFilter = '';
-    this.currentSort = '';
-    this.currentSortCategory = '';
+      this.router.navigate([], {
+        queryParams: {
+          search: null,
+          minBudget: null,
+          maxBudget: null,
+          startDate: null,
+          endDate: null,
+          filter: null,
+          sort: null,
+          sortCategory: null,
+        },
+        queryParamsHandling: 'merge',
+      });
 
-    this.selectedSortOption = null;
+      this.budgetRange = [0, 10000];
+      this.dateRange = null;
+      this.searchQuery = '';
+      this.currentFilter = '';
+      this.currentSort = '';
+      this.currentSortCategory = '';
+
+      this.selectedSortOption = null;
+    }
 
     this.refreshData();
   }
