@@ -33,25 +33,25 @@ class User < ApplicationRecord
 
     category = valid_order_columns.include?(category) ? category : 'wins_count'
   
-    direction = ['asc', 'desc'].include?(direction) ? direction : 'DESC'
+    direction = ['asc', 'desc'].include?(direction) ? direction : 'desc'
+    
+    sanitized_start_date = start_date.present? ? ActiveRecord::Base.connection.quote(start_date) : Date.new(2000, 1, 1).strftime('%Y-%m-%d')
+    sanitized_end_date = end_date.present? ? ActiveRecord::Base.connection.quote(end_date) : Date.today.strftime('%Y-%m-%d')
 
-    start_date ||= Date.new(2000, 1, 1).strftime('%Y-%m-%d')
-    end_date ||= Date.today.strftime('%Y-%m-%d')
-
-    if start_date > end_date
-      start_date, end_date = end_date, start_date
+    if sanitized_start_date > sanitized_end_date
+      sanitized_start_date, sanitized_end_date = sanitized_end_date, sanitized_start_date
     end
 
-    if end_date > Date.today.strftime('%Y-%m-%d') || end_date < Date.new(2000, 1, 1).strftime('%Y-%m-%d')
-      end_date = Date.today.strftime('%Y-%m-%d')
+    if sanitized_end_date > Date.today.strftime('%Y-%m-%d') || sanitized_end_date < Date.new(2000, 1, 1).strftime('%Y-%m-%d')
+      sanitized_end_date = Date.today.strftime('%Y-%m-%d')
     end
 
-    if start_date < Date.new(2000, 1, 1).strftime('%Y-%m-%d') || start_date > Date.today.strftime('%Y-%m-%d')
-      start_date = Date.new(2000, 1, 1).strftime('%Y-%m-%d')
+    if sanitized_start_date < Date.new(2000, 1, 1).strftime('%Y-%m-%d') || sanitized_start_date > Date.today.strftime('%Y-%m-%d')
+      sanitized_start_date = Date.new(2000, 1, 1).strftime('%Y-%m-%d')
     end
 
     year_condition = ""
-    year_condition = "AND contests.start_at BETWEEN '#{start_date}' AND '#{end_date}'"
+    year_condition = "AND contests.start_at BETWEEN '#{sanitized_start_date}' AND '#{sanitized_end_date}'"
     
     sql = <<-SQL
       WITH contests_won AS (
@@ -131,20 +131,9 @@ class User < ApplicationRecord
       ORDER BY #{category} #{direction};
     SQL
     
-    results = ActiveRecord::Base.connection.execute(sql)
-    
-    result_hashes = results.map do |result|
-      {
-        username: result[0],
-        wins_count: result[1],
-        submissions_participation_rate: result[2].to_f.round(2),
-        contests_count: result[3],
-        likes_received_count: result[4],
-        winrate: result[5].to_f.round(2)
-      }
-    end
+    results = ActiveRecord::Base.connection.select_all(ActiveRecord::Base.sanitize_sql_array([sql])).to_a
 
-    result_hashes
+    results
   end
 
   def accessible_contests

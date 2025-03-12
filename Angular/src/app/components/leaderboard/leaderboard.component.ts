@@ -53,6 +53,7 @@ export class LeaderboardComponent {
       this.currentSort = params['sort'] || '';
     });
 
+    //TOCHECK setHours(0, 0, 0, 0)
     if (this.currentEndDate) {
       this.endDate = new Date(new Date(this.currentEndDate).setUTCHours(12, 0, 0, 0));
     }

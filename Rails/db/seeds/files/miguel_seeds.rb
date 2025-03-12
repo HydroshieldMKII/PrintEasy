@@ -1,5 +1,5 @@
 CONFIG = {
-  start_date: Date.new(2020, 1, 1),
+  start_date: Date.new(2023, 1, 1),
   end_date: Date.today,
   contests_per_month: 1,
   min_submissions_per_contest: 2,
