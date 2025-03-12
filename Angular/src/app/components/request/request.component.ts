@@ -11,6 +11,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ApiResponseModel } from '../../models/api-response.model';
 import { TranslationService } from '../../services/translation.service';
+import { MultiSelectChangeEvent } from 'primeng/multiselect';
 
 @Component({
   selector: 'app-request',
@@ -25,6 +26,8 @@ export class RequestsComponent implements OnInit {
   stats: RequestStatsModel[] | null = null;
   selectedReportSortOption: SelectItem | null = null;
   reportSortOptions: SelectItem[] = [];
+
+  selectedReportRange: SelectItem | null = null;
   reportDateRange: any[] | null = null; //date nullable
 
   // Requests
@@ -462,7 +465,9 @@ export class RequestsComponent implements OnInit {
     this.refreshData();
   }
 
-  onMultiFilterChange(event: any): void {
+  onReportMultiFilterChange(event: MultiSelectChangeEvent | void): void {}
+
+  onMultiFilterChange(event: MultiSelectChangeEvent | void): void {
     if (!event || !event.value) {
       this.currentMultiFilterOptions = [];
       this.selectedFilters = [];
