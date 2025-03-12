@@ -3,15 +3,20 @@ import { inject, Injectable, Injector } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { map, catchError, tap } from 'rxjs/operators';
 import { ApiResponseModel } from '../models/api-response.model';
-import { AuthService } from './authentication.service';
 import { Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { MessageService } from 'primeng/api';
+import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({
     providedIn: 'root'
 })
 
 export class ApiRequestService {
-    constructor(private http: HttpClient, private router: Router, private injector: Injector) { }
+    private resetUserSubject = new Subject<void>();
+    resetUser = this.resetUserSubject.asObservable();
+
+    constructor(private http: HttpClient, private router: Router, private messageService: MessageService, private translate: TranslateService) { }
 
     getRequest(query: string, params?: { [key: string]: string }): Observable<ApiResponseModel> {
         return this.http.get<ApiResponseModel>(query, { params, observe: 'response' }).pipe(
@@ -84,7 +89,12 @@ export class ApiRequestService {
         );
     }
 
+    triggerResetUser() {
+        this.resetUserSubject.next();
+    }
+
     handleHttpError(error: HttpErrorResponse): Observable<ApiResponseModel> {
+        console.log(error);
         let formattedErrors: { [key: string]: string } = {};
 
         if (error.error?.errors) {
@@ -100,9 +110,16 @@ export class ApiRequestService {
         }
 
         if (error.status === 401) {
-            // const authService = this.injector.get(AuthService);
-            // authService.logOut();
+            console.log("Unauthorized");
+            this.triggerResetUser();
             this.router.navigate(['/login']);
+        }
+        if (error.status === 500) {
+            this.messageService.add({
+                severity: 'error',
+                summary: this.translate.instant('global.errors.server_error'),
+                detail: this.translate.instant('global.errors.server_error_message')
+            })
         }
 
         return of(new ApiResponseModel(

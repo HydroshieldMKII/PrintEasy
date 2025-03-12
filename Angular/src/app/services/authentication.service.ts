@@ -27,6 +27,10 @@ export class AuthService {
     constructor(private api: ApiRequestService) {
         const storedCurrentUser = JSON.parse(localStorage.getItem(this.CURRENT_USER_KEY) ?? 'null');
 
+        api.resetUser.subscribe(() => {
+            this.setCurrentUser(null);
+        });
+
         if (storedCurrentUser) {
             this._currentUser = new UserModel(storedCurrentUser.id, storedCurrentUser.username, storedCurrentUser.country, storedCurrentUser.profilePictureUrl, storedCurrentUser.createdAt, storedCurrentUser.isAdmin);
         }
@@ -95,7 +99,6 @@ export class AuthService {
     logOut() {
         return this.api.deleteRequest('users/sign_out', {}).pipe(
             map(response => {
-                // console.log('Logout response:', response);
                 this.setCurrentUser(null);
                 this.messageService.add({ severity: 'success', summary: 'Logout', detail: 'You logged out successfully!' });
                 return response;
