@@ -19,6 +19,8 @@ end
 
 puts '🌱 Seeding done!'
 
+# ON BOUGE TOUT CE QUI A EN DESSOUS GO GO GO 
+
 # Create Orders
 Current.user = user1
 # debugger
