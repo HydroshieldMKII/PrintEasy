@@ -49,28 +49,34 @@ class Request < ApplicationRecord
       .distinct
   }
   scope :by_budget_range, lambda { |min_budget, max_budget|
-    where('requests.budget >= ? AND requests.budget <= ?', min_budget, max_budget) if min_budget.present? && max_budget.present?
+    if min_budget.present? && max_budget.present?
+      where('requests.budget >= ? AND requests.budget <= ?', min_budget, max_budget)
+    elsif min_budget.present?
+      where('requests.budget >= ?', min_budget)
+    elsif max_budget.present?
+      where('requests.budget <= ?', max_budget)
+    end
   }
 
   scope :by_date_range, lambda { |start_date, end_date|
     if start_date.present? && end_date.present?
-      where('requests.target_date > ? AND requests.target_date <= ?',
+      where('requests.target_date >= ? AND requests.target_date <= ?',
             start_date.to_date.beginning_of_day,
             end_date.to_date.end_of_day)
     elsif start_date.present?
-      where('requests.target_date >= ?', start_date.to_date.end_of_day)
+      where('requests.target_date >= ?', start_date.to_date.beginning_of_day)
     end
   }
 
   scope :sorted, lambda { |category, direction|
-    return order('target_date ASC') unless category.present? && direction.present?
+    return order('requests.target_date ASC') unless category.present? && direction.present?
 
     column = {
       'name' => 'requests.name',
-      'date' => 'target_date',
-      'budget' => 'budget',
+      'date' => 'requests.target_date',
+      'budget' => 'requests.budget',
       'country' => 'users.country_id'
-    }.fetch(category, 'target_date')
+    }.fetch(category, 'requests.target_date')
 
     direction = direction == 'asc' ? 'ASC' : 'DESC'
     order("#{column} #{direction}")
@@ -78,117 +84,139 @@ class Request < ApplicationRecord
 
   scope :viewable_by_user, lambda {
     where(user: Current.user).or(
-      Current.user.printers.exists? ? where.not(id: nil) : none
+      Current.user.printers.exists? ? where.not(id: nil) : []
     )
   }
 
+  # Entity: Pesets + Preset in offers (Filament, Color, Quality combination)
+  # Stats
+  # Offer count with the preset (all)
+  # Offer count with the preset (accepted)
+  # Offer count with the preset (accepted, in percent)
+  # Sum price of offers (accepted)
+  # Average diff offer price vs request budget (all)
+  # Average time to offer a preset on requests (since request published) (all)
+
+  def self.fetch_stats_for_user
+    sql = <<-SQL
+        WITH user_preset_combinations AS (
+      SELECT DISTINCT
+        color_id,
+        filament_id,
+        print_quality
+      FROM (
+        -- User preset
+        SELECT
+          p.color_id,
+          p.filament_id,
+          p.print_quality
+        FROM
+          presets p
+        WHERE
+          p.user_id = :user_id
+        
+        UNION ALL
+        
+        -- User offer
+        SELECT
+          o.color_id,
+          o.filament_id,
+          o.print_quality
+        FROM
+          offers o
+        JOIN
+          printer_users pu ON o.printer_user_id = pu.id
+        WHERE
+          pu.user_id = :user_id
+      ) combined_data
+    ),
+    preset_stats AS (
+      SELECT
+        upc.color_id,
+        upc.filament_id,
+        upc.print_quality,
+        (SELECT MIN(p.id) FROM presets p 
+        WHERE p.user_id = :user_id 
+        AND p.color_id = upc.color_id 
+        AND p.filament_id = upc.filament_id 
+        AND p.print_quality = upc.print_quality) AS preset_id,
+        c.name AS color_name,
+        f.name AS filament_name,
+        COUNT(DISTINCT o.id) AS total_offers,
+        SUM(CASE WHEN o.id IN (SELECT offer_id FROM orders) THEN 1 ELSE 0 END) AS accepted_offers,
+        SUM(CASE WHEN o.id IN (SELECT offer_id FROM orders) THEN o.price ELSE 0 END) AS total_accepted_price,
+        AVG(o.price - r.budget) AS avg_price_diff_from_budget,
+        AVG(TIMESTAMPDIFF(HOUR, r.created_at, o.created_at)) AS avg_hours_to_offer
+      FROM
+        user_preset_combinations upc
+        JOIN colors c ON upc.color_id = c.id
+        JOIN filaments f ON upc.filament_id = f.id
+        LEFT JOIN offers o ON
+          o.color_id = upc.color_id AND
+          o.filament_id = upc.filament_id AND
+          o.print_quality = upc.print_quality AND
+          o.printer_user_id IN (SELECT id FROM printer_users WHERE user_id = :user_id)
+        LEFT JOIN requests r ON o.request_id = r.id
+      GROUP BY
+        upc.color_id, upc.filament_id, upc.print_quality, c.name, f.name
+    )
+    SELECT
+      ps.preset_id,
+      ps.print_quality AS preset_quality,
+      ps.color_id,
+      ps.filament_id,
+      ps.color_name,
+      ps.filament_name,
+      ps.total_offers,
+      ps.accepted_offers,
+      CAST(CASE
+        WHEN ps.total_offers > 0 THEN ROUND((ps.accepted_offers * 100.0 / ps.total_offers), 2)
+        ELSE 0
+      END AS float) AS acceptance_rate_percent,
+      ps.total_accepted_price,
+      ROUND(ps.avg_price_diff_from_budget, 2) AS avg_price_diff,
+      ROUND(ps.avg_hours_to_offer, 2) AS avg_response_time_hours
+    FROM
+      preset_stats ps
+    ORDER BY
+      ps.accepted_offers DESC,
+      ps.total_offers DESC
+    SQL
+  
+    sanitized_sql = ApplicationRecord.sanitize_sql_array([sql, user_id: Current.user.id])
+    ActiveRecord::Base.connection.select_all(sanitized_sql).to_a
+  end
+
   def self.fetch_for_user(params)
     requests = case params[:type]
-               when 'all'
-                 if Current.user.printers.exists?
-                   with_associations
-                     .where.not(user: Current.user)
-                     .not_accepted
-                     .search_by_name(params[:search])
-                     .apply_filter(params[:filter])
-                     .sorted(params[:sortCategory], params[:sort])
-                 else
-                   none
-                 end
-               when 'mine'
-                 Current.user.requests
-                        .with_associations
-                        .search_by_name(params[:search])
-                        .apply_filter(params[:filter])
-                        .sorted(params[:sortCategory], params[:sort])
-               else
-                 none
-               end
+           when 'all'
+            if Current.user.printers.exists?
+              self.with_associations
+              .where.not(user: Current.user)
+              .not_accepted
+            else
+              []
+            end
+           when 'mine'
+              self.with_associations.where(user: Current.user)
+            else
+              []
+           end
+            
+    requests = requests.search_by_name(params[:search]) if params[:search].present?    
+    unless requests.empty?
+      #filters
+      filters = params[:filter].split(',') rescue []
+      requests = requests.by_printer_owner if filters.include?('owned-printer')
+      requests = requests.by_country if filters.include?('country')
+      requests = requests.in_progress if filters.include?('in-progress')
 
-    requests = requests.by_budget_range(params[:minBudget], params[:maxBudget])
-    requests.by_date_range(params[:startDate], params[:endDate])
-  end
-
-  def self.apply_filter(filter)
-    case filter
-    when 'owned-printer'
-      by_printer_owner
-    when 'country'
-      by_country
-    when 'in-progress'
-      in_progress
+      requests = requests.sorted(params[:sortCategory], params[:sort])
+                .by_budget_range(params[:minBudget], params[:maxBudget])
+                .by_date_range(params[:startDate], params[:endDate])
     else
-      all
+      requests
     end
-  end
-
-  # Serialize a single request
-  def serialize
-    as_json(
-      except: %i[user_id created_at updated_at],
-      include: {
-        preset_requests: {
-          except: %i[request_id color_id filament_id printer_id],
-          include: {
-            color: { only: %i[id name] },
-            filament: { only: %i[id name] },
-            printer: { only: %i[id model] }
-          },
-          methods: [:matching_offer_by_current_user?]
-        },
-        user: {
-          only: %i[id username],
-          include: {
-            country: { only: %i[name] }
-          }
-        }
-      },
-      methods: %i[stl_file_url offer_made? accepted_at]
-    )
-  end
-
-  # Serialize a collection of requests
-  def self.serialize_collection(requests)
-    requests.as_json(
-      except: %i[user_id created_at updated_at],
-      include: {
-        preset_requests: {
-          except: %i[request_id color_id filament_id printer_id],
-          include: {
-            color: { only: %i[id name] },
-            filament: { only: %i[id name] },
-            printer: { only: %i[id model] }
-          },
-          methods: [:matching_offer_by_current_user?]
-        },
-        user: {
-          only: %i[id username],
-          include: {
-            country: { only: %i[name] }
-          }
-        }
-      },
-      methods: %i[stl_file_url offer_made? accepted_at]
-    )
-  end
-
-  def self.format_response(resource, status: :ok)
-    has_printer = Current.user.printers.exists?
-
-    request_data = if resource.is_a?(Request)
-                     resource.serialize
-                   else
-                     serialize_collection(resource)
-                   end
-
-    {
-      json: {
-        request: request_data,
-        has_printer: has_printer,
-        errors: {}
-      },
-      status: status
-    }
   end
 
   def stl_file_url

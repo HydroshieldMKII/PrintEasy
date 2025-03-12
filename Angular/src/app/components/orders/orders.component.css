@@ -9,6 +9,11 @@
     padding: 0rem !important;
 }
 
+:host ::ng-deep p-datepicker .p-inputwrapper {
+    height: 57px !important;
+    width: 100% !important;
+}
+
 .status-tag {
     color: rgb(34, 34, 34);
     border-radius: 10px;
@@ -68,6 +73,15 @@ i {
     transform: translateY(-50%);
 }
 
+.p-input-icon-right .pi-search {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    pointer-events: none;
+}
+
 .search-field {
     width: 100%;
 }
@@ -105,7 +119,8 @@ i {
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
-    min-width: 160px;
+    min-width: 250px;
+    flex-grow: 1;
 }
 
 .filter-header {
@@ -131,19 +146,46 @@ i {
 }
 
 .filter-header .search-container {
-    flex: 1;
     min-width: 200px;
 }
 
 .filter-header .advanced-toggle {
     display: flex;
     align-items: center;
+    justify-content: flex-end;
+    flex-grow: 1;
     gap: 0.5rem;
     white-space: nowrap;
 }
 
+.filter-actions-bar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-top: 1px solid #e0e0e0;
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.report-ssf-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
 @media (max-width: 768px) {
     .ssf-container {
+        flex-direction: column;
+    }
+
+    .report-ssf-container {
         flex-direction: column;
     }
 
@@ -154,5 +196,10 @@ i {
     :host ::ng-deep .filter-item {
         flex: 1 !important;
         max-width: 100% !important;
+    }
+
+    .search-container {
+        width: 100%;
+        max-width: 100%;
     }
 }

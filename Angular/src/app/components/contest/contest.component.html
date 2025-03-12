@@ -1,7 +1,11 @@
 <div class="contest-container">
   @if (authService.currentUser?.isAdmin) {
-  <p-speeddial direction="left" [style]="{ position: 'absolute', top: 1, right: 'calc(1%)' }"
-    [buttonProps]="{ severity: 'success', rounded: true }" (onClick)="newContest()" />
+  <p-speeddial
+    direction="left"
+    [style]="{ position: 'absolute', top: 1, right: 'calc(1%)' }"
+    [buttonProps]="{ severity: 'success', rounded: true }"
+    (onClick)="newContest()"
+  />
   }
 
   <div class="contest-header">
@@ -20,27 +24,45 @@
           <i class="pi pi-search"></i>
           <form (submit)="onSearch()">
             <p-float-label variant="in">
-              <input class="search-bar" type="text" pInputText [(ngModel)]="currentQuery" name="searchTerm" />
-              <label for="searchTerm">{{ 'contest.search_text' | translate }}</label>
+              <input
+                class="search-bar"
+                type="text"
+                pInputText
+                [(ngModel)]="currentQuery"
+                name="searchTerm"
+              />
+              <label for="searchTerm">{{
+                "contest.search_text" | translate
+              }}</label>
             </p-float-label>
           </form>
         </div>
       </div>
 
       <div class="advanced-toggle" (click)="toggleAdvancedFilters()">
-        <span class="filter-title">{{ 'global.advanced' | translate }}</span>
-        <i class="pi"
-          [ngClass]="{'pi-chevron-down': showAdvancedFilters, 'pi-chevron-right': !showAdvancedFilters}"></i>
+        <span class="filter-title">{{ "global.advanced" | translate }}</span>
+        <i
+          class="pi"
+          [ngClass]="{
+            'pi-chevron-down': showAdvancedFilters,
+            'pi-chevron-right': !showAdvancedFilters
+          }"
+        ></i>
       </div>
     </div>
 
     <div class="filter-content" *ngIf="showAdvancedFilters">
       <div class="filter-row">
         <div class="filter-item participants-range">
-          <label>{{ 'contest.participants_range' | translate }}</label>
+          <label>{{ "contest.participants_range" | translate }}</label>
           <div class="slider-wrapper">
-            <p-slider [range]="true" [(ngModel)]="currentValues" (onSlideEnd)="onSlideEnd($event)" [min]="0"
-              [max]="30" />
+            <p-slider
+              [range]="true"
+              [(ngModel)]="currentValues"
+              (onSlideEnd)="onSlideEnd($event)"
+              [min]="0"
+              [max]="30"
+            />
             <div class="range-values">
               <span>{{ currentValues[0] }}</span>
               <span>{{ currentValues[1] }}</span>
@@ -51,10 +73,20 @@
         <div class="filter-item">
           <div>
             <p-floatlabel variant="in">
-              <p-select inputId="in_label" [options]="filterOptions" [(ngModel)]="selectedFilterOption"
-                name="selectedFilterOption" optionLabel="label" styleClass="w-full" variant="filled"
-                (onChange)="onFilterChange($event)" appendTo="body" (onClear)="onClearFilter" [showClear]="true" />
-              <label for="in_label">{{ 'global.filter' | translate }}</label>
+              <p-select
+                inputId="in_label"
+                [options]="filterOptions"
+                [(ngModel)]="selectedFilterOption"
+                name="selectedFilterOption"
+                optionLabel="label"
+                styleClass="w-full"
+                variant="filled"
+                (onChange)="onFilterChange($event)"
+                appendTo="body"
+                (onClear)="(onClearFilter)"
+                [showClear]="true"
+              />
+              <label for="in_label">{{ "global.filter" | translate }}</label>
             </p-floatlabel>
           </div>
         </div>
@@ -62,10 +94,20 @@
         <div class="filter-item">
           <div>
             <p-floatlabel variant="in">
-              <p-select inputId="in_label" [options]="sortOptions" [(ngModel)]="selectedSortOption"
-                name="selectedSortOption" optionLabel="label" styleClass="w-full" variant="filled"
-                (onChange)="onSortChange($event)" appendTo="body" (onClear)="onClearSort" [showClear]="true" />
-              <label for="in_label">{{ 'global.sort_by' | translate }}</label>
+              <p-select
+                inputId="in_label"
+                [options]="sortOptions"
+                [(ngModel)]="selectedSortOption"
+                name="selectedSortOption"
+                optionLabel="label"
+                styleClass="w-full"
+                variant="filled"
+                (onChange)="onSortChange($event)"
+                appendTo="body"
+                (onClear)="(onClearSort)"
+                [showClear]="true"
+              />
+              <label for="in_label">{{ "global.sort_by" | translate }}</label>
             </p-floatlabel>
           </div>
         </div>
@@ -74,7 +116,11 @@
   </div>
 
   <div class="contest-list">
-    <app-contest-card *ngFor="let contest of contests" [contest]="contest" (deleteContestEvent)="onContestDeleted($event)">
+    <app-contest-card
+      *ngFor="let contest of contests"
+      [contest]="contest"
+      (deleteContestEvent)="onContestDeleted($event)"
+    >
     </app-contest-card>
   </div>
 </div>

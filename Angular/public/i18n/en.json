@@ -51,7 +51,7 @@
       "logout": "Logout"
     }
   },
-  "profile":{
+  "profile": {
     "printer_deleted": "Printer deleted successfully"
   },
   "leaderboard": {
@@ -221,6 +221,7 @@
   "orders": {
     "commands_tab": "Commands",
     "contracts_tab": "Contracts",
+    "report_tab": "Report",
     "name_column": "Name",
     "price_column": "Price",
     "status_column": "Status",
@@ -233,6 +234,7 @@
     "action_button_label": "See Details",
     "no_contract_message": "You dont have any contracts pending!",
     "no_commands_message": "You dont have any commands pending!",
+    "no_report_message": "You dont have any report to show !",
     "ssf": {
       "reviewed": "Reviewed",
       "not_reviewed": "Not Reviewed",
@@ -242,6 +244,25 @@
       "price_desc": "Price (descending)",
       "date_asc": "Date (ascending)",
       "date_desc": "Date (descending)"
+    },
+    "report": {
+      "printer_model": "Printer Model",
+      "completed_orders": "Completed Orders",
+      "cancelled_orders": "Cancelled Orders",
+      "orders_in_progress": "Orders in Progress",
+      "total_earned": "Total Earnings",
+      "average_rating": "Average Rating",
+      "average_time": "Average Time",
+      "end_date": "End Date",
+      "start_date": "Start Date",
+      "ssf": {
+        "time_asc": "Time (ascending)",
+        "time_desc": "Time (descending)",
+        "rating_asc": "Rating (ascending)",
+        "rating_desc": "Rating (descending)",
+        "earnings_asc": "Earnings (ascending)",
+        "earnings_desc": "Earnings (descending)"
+      }
     }
   },
   "order": {
@@ -288,6 +309,7 @@
     "create_button": "Create a request",
     "tab_all": "All Requests",
     "tab_mine": "My Requests",
+    "tab_stats": "Report",
     "expand_all": "Expand All",
     "collapse_all": "Collapse All",
     "filter_by": "Filter by",
@@ -332,7 +354,13 @@
       "owned-printer": "Owned printer",
       "country": "Same country",
       "in-progress": "Accepted"
-    }
+    },
+    "total_offers": "Total offers",
+    "accepted_offers": "Accepted offers",
+    "acceptance_rate": "Acceptance rate",
+    "total_price": "Total price",
+    "avg_price_diff": "Average price difference",
+    "avg_response_time": "Average response time"
   },
   "requestForm": {
     "edit_request": "Edit Request",

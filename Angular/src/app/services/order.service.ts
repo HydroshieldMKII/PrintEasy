@@ -47,4 +47,8 @@ export class OrderService {
             })
         );
     }
+
+    getReport(params : {[key: string]: string}): Observable<ApiResponseModel> {
+        return this.api.getRequest('api/order/report', params);
+    }
 }

@@ -17,7 +17,11 @@ Rails.application.routes.draw do
       end
     end
     resources :order_status
-    resources :order
+    resources :order do
+      collection do
+        get 'report'
+      end
+    end
     resources :review
     resources :status
     resources :contest, except: %i[new edit] do

@@ -156,11 +156,18 @@ class User < ApplicationRecord
   end
 
   def contests_count
-    contests.count
+    Contest.joins(
+      "LEFT JOIN submissions ON contests.id = submissions.contest_id"
+      )
+      .where("submissions.user_id = ?", id)
+      .distinct
+      .count(:id)
   end
 
   def likes_received_count
-    likes_received.count
+    Like.joins(:submission)
+         .where("submissions.user_id = ?", id)
+         .count(:id)
   end
 
   def email_required?

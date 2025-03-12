@@ -51,7 +51,7 @@
       "logout": "Déconnexion"
     }
   },
-  "profile":{
+  "profile": {
     "printer_deleted": "Imprimante supprimée avec succès"
   },
   "leaderboard": {
@@ -222,6 +222,7 @@
   "orders": {
     "commands_tab": "Commandes",
     "contracts_tab": "Contrats",
+    "report_tab": "Rapport",
     "name_column": "Nom",
     "price_column": "Prix",
     "status_column": "Statut",
@@ -234,15 +235,35 @@
     "action_button_label": "Voir les détails",
     "no_contract_message": "Vous n'avez aucun contrat en attente !",
     "no_commands_message": "Vous n'avez aucune commande en attente !",
+    "no_report_message": "Vous n'avez aucun rapport !",
     "ssf": {
-      "reviewed": "Avisé",
-      "not_reviewed": "Non avisé",
+      "reviewed": "Avec avis",
+      "not_reviewed": "Sans avis",
       "name_asc": "Nom (croissant)",
       "name_desc": "Nom (décroissant)",
       "price_asc": "Prix (croissant)",
       "price_desc": "Prix (décroissant)",
       "date_asc": "Date (croissant)",
       "date_desc": "Date (décroissant)"
+    },
+    "report": {
+      "printer_model": "Modèle d'imprimante",
+      "completed_orders": "Commandes terminées",
+      "cancelled_orders": "Commandes annulées",
+      "orders_in_progress": "Commandes en cours",
+      "total_earned": "Total des gains",
+      "average_rating": "Note moyenne",
+      "average_time": "Temps moyen",
+      "end_date": "Date de fin",
+      "start_date": "Date de debut",
+      "ssf": {
+        "time_asc": "Temps (croissant)",
+        "time_desc": "Temps (décroissant)",
+        "rating_asc": "Note (croissante)",
+        "rating_desc": "Note (décroissante)",
+        "earnings_asc": "Gains (croissants)",
+        "earnings_desc": "Gains (décroissants)"
+      }
     }
   },
   "order": {
@@ -289,11 +310,12 @@
     "create_button": "Créer une demande",
     "tab_all": "Toutes les demandes",
     "tab_mine": "Mes demandes",
+    "tab_stats": "Rapport",
     "expand_all": "Tout développer",
     "collapse_all": "Tout réduire",
     "filter_by": "Filtrer par",
     "sort_by": "Trier par",
-    "search_placeholder": "Rechercher",
+    "search_placeholder": "Rechercher une demande",
     "search_button": "Rechercher",
     "name": "Nom",
     "budget": "Budget",
@@ -333,7 +355,13 @@
       "owned-printer": "Imprimante possédée",
       "country": "Même pays",
       "in-progress": "Acceptées"
-    }
+    },
+    "total_offers": "Total des offres",
+    "accepted_offers": "Offres acceptées",
+    "acceptance_rate": "Taux d'acceptation",
+    "total_price": "Prix total",
+    "avg_price_diff": "Différence de prix moyenne",
+    "avg_response_time": "Temps de réponse moyen"
   },
   "requestForm": {
     "edit_request": "Modifier la demande",

@@ -10,7 +10,7 @@
 
   <p-toast />
 
-  <p-tabs [(value)]="activeTab">
+  <p-tabs [(value)]="activeTab" scrollable>
     <p-tablist>
       <p-tab value="all" (click)="onTabChange('all')">{{
         "request.tab_all" | translate
@@ -18,24 +18,34 @@
       <p-tab value="mine" (click)="onTabChange('mine')">{{
         "request.tab_mine" | translate
       }}</p-tab>
+      <p-tab value="stats" (click)="onTabChange('stats')">{{
+        "request.tab_stats" | translate
+      }}</p-tab>
     </p-tablist>
 
     <p-tabpanels>
       <p-tabpanel *ngFor="let tab of ['all', 'mine']" [value]="tab">
         <div class="advanced-filters mb-4">
           <div class="filter-header">
-            <div class="search-container">
-              <span class="p-input-icon-right">
-                <i class="pi pi-search" (click)="onSearch()"></i>
-                <input
-                  pInputText
-                  type="text"
-                  placeholder="{{ 'request.search_placeholder' | translate }}"
-                  [(ngModel)]="searchQuery"
-                  (keyup.enter)="onSearch()"
-                  id="searchInput"
-                />
-              </span>
+            <div class="search-mobile search-field">
+              <div class="p-input-icon-right">
+                <i class="pi pi-search"></i>
+                <form (submit)="onSearch()">
+                  <p-float-label variant="in">
+                    <input
+                      class="search-bar"
+                      type="text"
+                      pInputText
+                      [(ngModel)]="searchQuery"
+                      name="searchTerm"
+                      id="searchInput"
+                    />
+                    <label for="searchTerm">{{
+                      "request.search_placeholder" | translate
+                    }}</label>
+                  </p-float-label>
+                </form>
+              </div>
             </div>
 
             <div class="advanced-toggle" (click)="toggleAdvancedFilters()">
@@ -56,17 +66,33 @@
             <div class="filter-row">
               <div class="filter-item budget-range">
                 <label>{{ "request.budget_range" | translate }}</label>
-                <div class="slider-wrapper">
-                  <p-slider
-                    [(ngModel)]="budgetRange"
-                    [range]="true"
-                    [min]="0"
-                    [max]="10000"
-                    (onSlideEnd)="onBudgtChange($event)"
-                  ></p-slider>
-                  <div class="range-values">
-                    <span>${{ budgetRange[0] }}</span>
-                    <span>${{ budgetRange[1] }}</span>
+                <div>
+                  <div>
+                    <p-inputNumber
+                      [(ngModel)]="budgetRange[0]"
+                      [min]="0"
+                      [max]="10000"
+                      (onBlur)="onManualBudgetChange()"
+                      placeholder="Min"
+                      mode="currency"
+                      currency="USD"
+                      [showButtons]="false"
+                      [style]="{ width: '100px' }"
+                    >
+                    </p-inputNumber>
+                    <span> - </span>
+                    <p-inputNumber
+                      [(ngModel)]="budgetRange[1]"
+                      [min]="0"
+                      [max]="10000"
+                      (onBlur)="onManualBudgetChange()"
+                      placeholder="Max"
+                      mode="currency"
+                      currency="USD"
+                      [showButtons]="false"
+                      [style]="{ width: '100px' }"
+                    >
+                    </p-inputNumber>
                   </div>
                 </div>
               </div>
@@ -102,15 +128,19 @@
               <div class="filter-item">
                 <div>
                   <p-float-label variant="in">
-                    <p-select
-                      [options]="filterOptions"
-                      [(ngModel)]="selectedFilterOption"
-                      variant="filled"
-                      [showClear]="true"
+                    <p-multiSelect
+                      [options]="multiFilterOptions"
+                      [(ngModel)]="currentMultiFilterOptions"
                       optionLabel="label"
+                      [filter]="true"
                       appendTo="body"
-                      (onChange)="onFilterChange($event)"
-                    ></p-select>
+                      [showToggleAll]="true"
+                      [showHeader]="true"
+                      [style]="{ width: '100%' }"
+                      [showClear]="true"
+                      (onChange)="onMultiFilterChange($event)"
+                      (onClear)="onMultiFilterChange($event)"
+                    ></p-multiSelect>
                     <label>{{ "request.filter_by" | translate }}</label>
                   </p-float-label>
                 </div>
@@ -157,13 +187,6 @@
                 pTooltip="{{ 'request.clear_filters' | translate }}"
                 tooltipPosition="left"
               ></p-button>
-
-              <!-- <p-button 
-        icon="pi pi-filter"
-        styleClass="p-button-sm"
-        (onClick)="applyAdvancedFilters()"
-        title="{{ 'request.apply_filters' | translate }}"
-      ></p-button> -->
             </div>
           </div>
         </div>
@@ -173,6 +196,8 @@
           [value]="currentRequests"
           dataKey="id"
           [tableStyle]="{ 'min-width': '60rem' }"
+          scrollable="true"
+          scrollDirection="horizontal"
           [expandedRowKeys]="expandedRows"
           (onRowExpand)="onRowExpand($event)"
           (onRowCollapse)="onRowCollapse($event)"
@@ -222,7 +247,7 @@
                 {{ request.budget == 0 ? "Free" : (request.budget | currency) }}
               </td>
               <td [ngClass]="{ 'disabled-col': request.acceptedAt }">
-                {{ request.targetDate | date }}
+                {{ request.targetDate.toISOString().substring(0, 10) | date }}
               </td>
               <td [ngClass]="{ 'disabled-col': request.acceptedAt }">
                 {{ request.user.country.name }}
@@ -384,6 +409,168 @@
           </p>
         </div>
       </p-tabpanel>
+
+      <!-- TODO -->
+
+      <div *ngIf="activeTab == 'stats'">
+        <div class="report-filter-item mb-4">
+          <div class="filter-content">
+            <div class="filter-row">
+              <div class="filter-item date-filter">
+                <p-floatlabel variant="in">
+                  <p-datepicker
+                    [(ngModel)]="dateRange"
+                    selectionMode="range"
+                    [showIcon]="true"
+                    dateFormat="yy-mm-dd"
+                    appendTo="body"
+                    [monthNavigator]="true"
+                    [yearNavigator]="true"
+                    yearRange="2000:2060"
+                    (onSelect)="onDateChange($event)"
+                  ></p-datepicker>
+                  <label
+                    *ngIf="
+                      !dateRange || (dateRange && dateRange[0] && dateRange[1])
+                    "
+                    >{{ "request.date_range" | translate }}</label
+                  >
+                  <label *ngIf="dateRange && dateRange[0] && !dateRange[1]">{{
+                    "request.date_from" | translate
+                  }}</label>
+                </p-floatlabel>
+              </div>
+
+              <div class="filter-item">
+                <div>
+                  <p-float-label variant="in">
+                    <p-multiSelect
+                      [options]="multiFilterOptions"
+                      [(ngModel)]="currentMultiFilterOptions"
+                      optionLabel="label"
+                      [filter]="true"
+                      appendTo="body"
+                      [showToggleAll]="true"
+                      [showHeader]="true"
+                      [style]="{ width: '100%' }"
+                      [showClear]="true"
+                      (onChange)="onReportMultiFilterChange($event)"
+                      (onClear)="onReportMultiFilterChange($event)"
+                    ></p-multiSelect>
+                    <label>{{ "request.filter_by" | translate }}</label>
+                  </p-float-label>
+                </div>
+              </div>
+
+              <div class="filter-item">
+                <p-float-label variant="in">
+                  <p-select
+                    [options]="reportSortOptions"
+                    [(ngModel)]="selectedReportSortOption"
+                    variant="filled"
+                    [showClear]="true"
+                    optionLabel="label"
+                    appendTo="body"
+                    (onChange)="onSortChange($event)"
+                  ></p-select>
+                  <label>{{ "request.sort_by" | translate }}</label>
+                </p-float-label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p-table
+          [value]="stats ?? []"
+          [tableStyle]="{ 'min-width': '1000px' }"
+          [scrollable]="true"
+          scrollDirection="horizontal"
+        >
+          <ng-template pTemplate="header">
+            <tr>
+              <th class="font-bold text-lg">
+                {{ "request.color" | translate }}
+              </th>
+              <th class="font-bold text-lg">
+                {{ "request.filament_type" | translate }}
+              </th>
+              <th class="font-bold text-lg">
+                {{ "request.print_quality" | translate }}
+              </th>
+              <th class="font-bold text-lg">
+                {{ "request.total_offers" | translate }}
+              </th>
+              <th class="font-bold text-lg">
+                {{ "request.accepted_offers" | translate }}
+              </th>
+              <th class="font-bold text-lg">
+                {{ "request.acceptance_rate" | translate }}
+              </th>
+              <th class="font-bold text-lg">
+                {{ "request.total_price" | translate }}
+              </th>
+              <th class="font-bold text-lg">
+                {{ "request.avg_price_diff" | translate }}
+              </th>
+              <th class="font-bold text-lg">
+                {{ "request.avg_response_time" | translate }}
+              </th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-preset>
+            <tr>
+              <td [ngClass]="{ highlight: preset.presetId }">
+                {{ preset.colorName }}
+              </td>
+              <td [ngClass]="{ highlight: preset.presetId }">
+                {{ preset.filamentName }}
+              </td>
+              <td [ngClass]="{ highlight: preset.presetId }">
+                {{ preset.presetQuality }}mm
+              </td>
+              <td [ngClass]="{ highlight: preset.presetId }">
+                {{ preset.totalOffers }}
+              </td>
+              <td [ngClass]="{ highlight: preset.presetId }">
+                {{ preset.acceptedOffers }}
+              </td>
+              <td [ngClass]="{ highlight: preset.presetId }">
+                {{
+                  preset.totalOffers > 0
+                    ? preset.acceptanceRatePercent + "%"
+                    : "N/A"
+                }}
+              </td>
+              <td [ngClass]="{ highlight: preset.presetId }">
+                {{ preset.totalAcceptedPrice | currency }}
+              </td>
+              <td [ngClass]="{ highlight: preset.presetId }">
+                {{
+                  preset.avgPriceDiff !== null
+                    ? (preset.avgPriceDiff | currency)
+                    : "N/A"
+                }}
+              </td>
+              <td [ngClass]="{ highlight: preset.presetId }">
+                {{ preset.avgResponseTimeHours || "N/A"
+                }}<span *ngIf="preset.avgResponseTimeHours"> H</span>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="10">
+                <div class="empty-message">
+                  <i class="pi pi-inbox text-4xl text-gray-400"></i>
+                  <p class="text-lg font-semibold text-gray-500">
+                    {{ "request.no_preset_stats" | translate }}
+                  </p>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
     </p-tabpanels>
   </p-tabs>
 </div>
