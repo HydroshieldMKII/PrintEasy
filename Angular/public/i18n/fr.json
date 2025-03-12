@@ -54,7 +54,9 @@
     }
   },
   "profile": {
-    "printer_deleted": "Imprimante supprimée avec succès"
+    "printer_deleted": "Imprimante supprimée avec succès",
+    "printer_added":"Imprimante ajoutée avec succès",
+    "printer_updated":"Imprimante mise à jour avec succès"
   },
   "leaderboard": {
     "sort": {
@@ -168,9 +170,9 @@
   },
   "submissions": {
     "title_page": "Thème du concours:",
-    "submissions": "Soumissions",
+    "submissions": "Participations",
     "submissions_per_user": "Soumissions par utilisateur",
-    "ends": "Se termine dans",
+    "ends": "Termine dans",
     "button_participate": "Je veux participer",
     "days": "jours",
     "contest_not_started": "Le concours n'a pas encore commencé",

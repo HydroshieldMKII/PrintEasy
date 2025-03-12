@@ -75,6 +75,25 @@ h2 {
     font-size: 25px;
     margin-left: 15px;
     font-style: italic;
+    display: inline-block;
+}
+
+h2:hover {
+    text-decoration: underline;
+}
+
+h1 {
+    font-size: 1.75rem; /* Taille plus grande */
+    font-weight: bold;
+    color: #111; /* Noir en mode clair */
+}
+
+h3 {
+    font-size: 1.25rem;
+}
+
+.space-between {
+    justify-content: space-between;
 }
 
 :host ::ng-deep .p-fileupload-basic {
@@ -99,6 +118,7 @@ h2 {
     max-width: 200px;
     max-height: 200px;
     object-fit: cover;
+    border-radius: 10px;
 }
 
 .container-column {

@@ -54,7 +54,9 @@
     }
   },
   "profile": {
-    "printer_deleted": "Printer deleted successfully"
+    "printer_deleted": "Printer deleted successfully",
+    "printer_added": "Printer added successfully",
+    "printer_updated": "Printer updated successfully"
   },
   "leaderboard": {
     "sort": {
@@ -168,7 +170,7 @@
   },
   "submissions": {
     "title_page": "Contest theme:",
-    "submissions": "Submissions",
+    "submissions": "Participations",
     "submissions_per_user": "Submissions per user",
     "ends": "Ends in",
     "button_participate": "I want to participate",

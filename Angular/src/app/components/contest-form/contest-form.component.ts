@@ -99,7 +99,6 @@ export class ContestFormComponent {
     }
 
     if (startDateTime < new Date().getTime()) {
-      debugger;
       this.startDatePicker = "ng-invalid ng-dirty";
       return { dateError: this.translate.instant('contest_form.error_date_after_today') };
     }

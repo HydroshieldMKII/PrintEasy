@@ -47,14 +47,8 @@ export class ContestComponent {
   showAdvancedFilters: boolean = false;
 
   filterOptions: SelectItem[] = [
-    { label: this.translateService.instant('contest.ssf.filter.active'), value: 'active' },
-    { label: this.translateService.instant('contest.ssf.filter.inactive'), value: 'finished' }
   ];
   sortOptions: SelectItem[] = [
-    { label: this.translateService.instant('contest.ssf.sort.participants_asc'), value: 'submissions-asc' },
-    { label: this.translateService.instant('contest.ssf.sort.participants_desc'), value: 'submissions-desc' },
-    { label: this.translateService.instant('contest.ssf.sort.start_asc'), value: 'start_at-asc' },
-    { label: this.translateService.instant('contest.ssf.sort.start_desc'), value: 'start_at-desc' },
   ];
 
   selectedSortOption: SelectItem | null = null;
@@ -84,9 +78,29 @@ export class ContestComponent {
 
       this.selectedFilterOption = this.filterOptions.find(option => option.value === this.currentFilter) || null;
       this.selectedSortOption = this.sortOptions.find(option => option.value === `${this.currentSortCategory}-${this.currentSort}`) || null;
+
+      this.translateService.onLangChange.subscribe(() => {
+        this.translateRefresh();
+      }
+      );
+      this.translateRefresh();
     });
 
     this.fetchContests();
+  }
+
+  translateRefresh() {
+    this.filterOptions = [
+      { label: this.translateService.instant('contest.ssf.filter.active'), value: 'active' },
+      { label: this.translateService.instant('contest.ssf.filter.inactive'), value: 'finished' }
+    ];
+
+    this.sortOptions = [
+      { label: this.translateService.instant('contest.ssf.sort.participants_asc'), value: 'submissions-asc' },
+      { label: this.translateService.instant('contest.ssf.sort.participants_desc'), value: 'submissions-desc' },
+      { label: this.translateService.instant('contest.ssf.sort.start_asc'), value: 'start_at-asc' },
+      { label: this.translateService.instant('contest.ssf.sort.start_desc'), value: 'start_at-desc' },
+    ];
   }
 
   ssf() {

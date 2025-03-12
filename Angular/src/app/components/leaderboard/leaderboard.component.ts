@@ -24,8 +24,8 @@ export class LeaderboardComponent {
 
   usersLeaderboard: UserLeaderboardModel[] = [];
   currentFilter: string = '';
-  currentEndDate: Date = new Date();
-  currentStartDate: Date = new Date();
+  currentEndDate: Date | null = new Date() || null;
+  currentStartDate: Date | null = new Date() || null;
   currentSort: string = '';
   currentSortCategory: string = '';
   minDate: Date = new Date(2000, 0, 1);
@@ -94,6 +94,7 @@ export class LeaderboardComponent {
   }
 
   onEndChange(event: Date) {
+    console.log(event);
     this.currentEndDate = event;
     
     this.route.navigate([], {
@@ -102,6 +103,24 @@ export class LeaderboardComponent {
     });
 
     this.fetchLeaderboard();
+  }
+
+  onClearStartDate() {
+    this.currentStartDate = null;
+
+    this.route.navigate([], {
+      queryParams: { startDate: null },
+      queryParamsHandling: 'merge'
+    });
+  }
+
+  onClearEndDate() {
+    this.currentEndDate = null;
+
+    this.route.navigate([], {
+      queryParams: { endDate: null },
+      queryParamsHandling: 'merge'
+    });
   }
 
   onSortChange(event: any) {

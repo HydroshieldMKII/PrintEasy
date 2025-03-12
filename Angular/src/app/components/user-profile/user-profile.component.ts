@@ -211,9 +211,7 @@ export class UserProfileComponent implements OnInit {
           this.messageService.add({
             severity: 'success',
             summary: 'Success',
-            detail: `Printer ${
-              this.isEditMode ? 'updated' : 'added'
-            } successfully`,
+            detail: this.isEditMode ? this.translate.instant('profile.printer_updated') : this.translate.instant('profile.printer_added'),
           });
           if (this.isEditMode && this.printerUserEdit) {
             const index = this.userProfile?.printerUsers.findIndex(

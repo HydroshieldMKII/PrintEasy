@@ -43,14 +43,21 @@
         <div class="scroll-container">
             <div *ngFor="let submission of participant.submissions" class="card">
                 <div class="card-content">
-                    <img [src]="submission.imageUrl" alt="Submission image" class="submission-image"
-                        loading="lazy" />
+                    <img [src]="submission.imageUrl" alt="Submission image" class="submission-image" loading="lazy" />
                 </div>
                 <div class="card-body">
                     <div class="contest-title">{{ submission.name }}</div>
                     <p class="contest-description">{{ submission.description }}</p>
                 </div>
-                <div class="flex gap-5 items-center flex-end">
+                <div class="flex gap-5 items-center space-between">
+                    <div class="flex gap-5">
+                        @if (authService.currentUser?.id === submission.user_id && !contest?.finished) {
+                        <p-button (click)="showDialog(submission)" type="button" icon="pi pi-pencil"
+                            severity="primary"></p-button>
+                        <p-button (click)="onDelete(submission.id)" type="button" icon="pi pi-trash"
+                            severity="danger"></p-button>
+                        }
+                    </div>
                     <!-- Nombre de likes -->
                     <div class="likes-count">
                         <span class="font-semibold text-gray-700 dark:text-gray-300">{{ submission.likes.length
@@ -58,8 +65,10 @@
 
                         <!-- Bouton Like -->
                         <p-button [icon]="submission.liked ? 'pi pi-heart-fill' : 'pi pi-heart'"
-                            [severity]="submission.liked ? 'danger' : 'secondary'"
-                            [outlined]="!submission.liked" (click)="onLike(submission)" />
+                            [severity]="submission.liked ? 'danger' : 'secondary'" [outlined]="!submission.liked"
+                            (click)="onLike(submission)" />
+
+                        <p-button icon="pi pi-download" severity="primary" />
                     </div>
 
                     <!-- (click)="toggleLike(product)" -->
@@ -67,7 +76,6 @@
                     <!-- <p-button icon="pi pi-heart" severity="secondary" /> -->
 
                     <!-- Bouton Download -->
-                    <p-button icon="pi pi-download" severity="primary" />
                 </div>
             </div>
         </div>
