@@ -14,6 +14,7 @@ import {
   RequestStatsApi,
   RequestStatsModel,
 } from '../models/request-stats.model';
+import { PresetService } from './preset.service';
 
 @Injectable({
   providedIn: 'root',
@@ -25,8 +26,14 @@ export class RequestService {
   constructor(
     private api: ApiRequestService,
     private translate: TranslateService,
-    private translationService: TranslationService
+    private translationService: TranslationService,
+    private presetService: PresetService
   ) {}
+
+  // Helper method to access PresetService
+  getPresetService(): PresetService {
+    return this.presetService;
+  }
 
   filter(
     sortCategory: string,
@@ -193,8 +200,12 @@ export class RequestService {
     );
   }
 
-  getStats(): Observable<RequestStatsModel[] | ApiResponseModel> {
-    return this.api.getRequest('api/request', { type: 'stats' }).pipe(
+  getStats(
+    params: { [key: string]: any } = {}
+  ): Observable<RequestStatsModel[] | ApiResponseModel> {
+    params['type'] = 'stats';
+
+    return this.api.getRequest('api/request', params).pipe(
       map((response: ApiResponseModel) => {
         if (response.status === 200) {
           return (response.data.stats as RequestStatsApi[])?.map(

@@ -365,7 +365,21 @@
     "acceptance_rate": "Taux d'acceptation",
     "total_price": "Prix total",
     "avg_price_diff": "Différence de prix moyenne",
-    "avg_response_time": "Temps de réponse moyen"
+    "avg_response_time": "Temps de réponse moyen",
+    "stats": {
+      "sort": {
+        "total-offers-asc": "Total des offres (Asc)",
+        "total-offers-desc": "Total des offres (Desc)",
+        "acceptance-rate-asc": "Taux d'acceptation (Asc)",
+        "acceptance-rate-desc": "Taux d'acceptation (Desc)",
+        "total-price-asc": "Prix total (Asc)",
+        "total-price-desc": "Prix total (Desc)",
+        "avg-price-diff-asc": "Différence de prix moyenne (Asc)",
+        "avg-price-diff-desc": "Différence de prix moyenne (Desc)",
+        "avg-response-time-asc": "Temps de réponse moyen (Asc)",
+        "avg-response-time-desc": "Temps de réponse moyen (Desc)"
+      }
+    }
   },
   "requestForm": {
     "edit_request": "Modifier la demande",

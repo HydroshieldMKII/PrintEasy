@@ -109,6 +109,27 @@ export class UserProfileComponent implements OnInit {
         numScroll: 1,
       },
     ];
+
+    const tabParams = this.router.snapshot.queryParams['tab'];
+    const tabs = ['contest-submissions', 'printers', 'likes', 'reviews'];
+    if (tabs.includes(tabParams)) {
+      this.tab = tabParams;
+    } else {
+      this.tab = 'contest-submissions';
+    }
+
+    this.route.navigate([], {
+      queryParams: { tab: this.tab },
+      queryParamsHandling: 'merge',
+    });
+  }
+
+  onTabChange(tab: string) {
+    console.log(tab);
+    this.route.navigate([], {
+      queryParams: { tab: tab },
+      queryParamsHandling: 'merge',
+    });
   }
 
   ngOnInit() {

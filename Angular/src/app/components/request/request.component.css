@@ -460,3 +460,162 @@ h3 {
   z-index: 10;
   pointer-events: none;
 }
+
+@media print {
+  body {
+    background: white;
+    font-size: 12pt;
+    color: black;
+  }
+
+  .card {
+    box-shadow: none;
+    border: 1px solid #ddd;
+    break-inside: avoid;
+    margin: 0;
+    padding: 0.5cm;
+  }
+
+  .p-button,
+  .pi-plus,
+  .pi-filter-slash,
+  .pi-search,
+  .p-toast,
+  .advanced-toggle,
+  .filter-actions-bar,
+  .filter-header,
+  .advanced-filters,
+  .p-dialog,
+  .pi-arrow-right,
+  .pi-pencil,
+  .pi-trash,
+  .pi-download,
+  .pi-share-alt,
+  p-button[icon="pi pi-chevron-down"],
+  p-button[icon="pi pi-chevron-right"],
+  .empty-message p,
+  .empty-message i {
+    display: none !important;
+  }
+
+  tr[ng-reflect-expanded="false"] {
+    display: table-row !important;
+  }
+
+  .p-table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    table-layout: auto !important;
+  }
+
+  .p-table th,
+  .p-table td {
+    border: 1px solid #ddd !important;
+    padding: 4px !important;
+    text-align: left !important;
+    max-width: none !important;
+    overflow: visible !important;
+  }
+
+  .p-table th:nth-child(1),
+  .p-table td:nth-child(1) {
+    width: 30px !important;
+  }
+
+  .p-table th:last-child,
+  .p-table td:last-child {
+    width: 40px !important;
+  }
+
+  .p-table th,
+  .p-table td {
+    display: table-cell !important;
+  }
+
+  .p-table-expanded-row {
+    display: table-row !important;
+  }
+
+  .p-tablist {
+    display: none !important;
+  }
+
+  .p-tabpanel {
+    display: block !important;
+  }
+
+  h1,
+  h2,
+  h3 {
+    page-break-after: avoid;
+    page-break-inside: avoid;
+  }
+
+  table,
+  figure {
+    page-break-inside: avoid;
+  }
+
+  @page {
+    margin: 0.5cm;
+  }
+
+  @page {
+    size: landscape;
+  }
+
+  input,
+  select,
+  textarea,
+  .p-inputtext,
+  .p-multiselect,
+  .p-dropdown {
+    border: 1px solid #ddd !important;
+    background: white !important;
+  }
+
+  .disabled-col {
+    opacity: 1 !important;
+    font-style: italic;
+  }
+
+  .text-lg {
+    font-size: 10pt !important;
+  }
+
+  .text-4xl {
+    font-size: 14pt !important;
+  }
+
+  .p-table th {
+    font-size: 9pt !important;
+    padding: 4px !important;
+    white-space: nowrap !important;
+  }
+
+  .p-table td {
+    font-size: 9pt !important;
+    padding: 4px !important;
+  }
+
+  .p-table[scrollable="true"] {
+    overflow: visible !important;
+  }
+
+  .report-filter-item {
+    display: none;
+  }
+
+  .empty-message {
+    display: none;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  .p-table[tableStyle*="min-width"] {
+    min-width: auto !important;
+    width: 100% !important;
+  }
+}

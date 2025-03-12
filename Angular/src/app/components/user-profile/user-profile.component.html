@@ -1,18 +1,29 @@
 <div class="profile-container">
-    <div class="profile-header">
-        <div class="profile-avatar">
-            <p-avatar shape="circle" size="xlarge" image="{{userProfile?.profilePictureUrl}}"></p-avatar>
-            <div class="profile-info">
-                <h2>{{ userProfile?.username }}</h2>
-                <p>{{ userProfile?.country?.name }}</p>
-            </div>
-        </div>
-        <div class="profile-rating">
-            <p-rating [readonly]="true" [stars]="5" [(ngModel)]="averageRating" class="big-stars"></p-rating>
-            <p class="reviews">{{ userProfile?.selfReviews?.length }} {{ 'user_profile.reviews' | translate
-                }}</p>
-        </div>
+  <div class="profile-header">
+    <div class="profile-avatar">
+      <p-avatar
+        shape="circle"
+        size="xlarge"
+        image="{{ userProfile?.profilePictureUrl }}"
+      ></p-avatar>
+      <div class="profile-info">
+        <h2>{{ userProfile?.username }}</h2>
+        <p>{{ userProfile?.country?.name }}</p>
+      </div>
     </div>
+    <div class="profile-rating">
+      <p-rating
+        [readonly]="true"
+        [stars]="5"
+        [(ngModel)]="averageRating"
+        class="big-stars"
+      ></p-rating>
+      <p class="reviews">
+        {{ userProfile?.selfReviews?.length }}
+        {{ "user_profile.reviews" | translate }}
+      </p>
+    </div>
+  </div>
 
   <div class="profile-details">
     <p>
@@ -21,38 +32,55 @@
     </p>
   </div>
 
-    <p-tabs [value]="tab" scrollable>
-        <p-tablist>
-            <p-tab [value]="'contest-submissions'">{{ 'user_profile.submissions_tab' | translate }}</p-tab>
-            <p-tab [value]="'printers'">{{ 'user_profile.printers_tab' | translate }}</p-tab>
-            <p-tab [value]="'reviews'">{{ 'user_profile.reviews_tab' | translate }}</p-tab>
-            <p-tab *ngIf="authService.currentUser?.id === userProfile?.id" [value]="'likes'">{{ 'user_profile.likes_tab'
-                | translate }}</p-tab>
-        </p-tablist>
-        <p-tabpanels>
-            <p-tabpanel [value]="'contest-submissions'">
-                <div *ngFor="let contest of userProfile?.userContestSubmissions">
-                    <div class="mt-4">
-                        <h2 class="header-contest-title">
-                            {{ contest.contest.theme}}
-                        </h2>
-                    </div>
-                    <div class="scroll-container">
-                        <div *ngFor="let submission of contest.submissions" class="card">
-                            <div class="card-content">
-                                <img [src]="submission.imageUrl" alt="Submission image" class="submission-image"
-                                    loading="lazy" />
-                            </div>
-                            <div class="card-body">
-                                <div class="contest-title">{{ submission.name }}</div>
-                                <p class="contest-description">{{ submission.description }}</p>
-                            </div>
-                            <div class="flex gap-5 items-center flex-end">
-                                <!-- Nombre de likes -->
-                                <div class="likes-count">
-                                    <span class="font-semibold text-gray-700 dark:text-gray-300">{{
-                                        submission.likes.length
-                                        }}</span>
+  <p-tabs [value]="tab" scrollable>
+    <p-tablist>
+      <p-tab
+        [value]="'contest-submissions'"
+        (click)="onTabChange('contest-submissions')"
+        >{{ "user_profile.submissions_tab" | translate }}</p-tab
+      >
+      <p-tab [value]="'printers'" (click)="onTabChange('printers')">{{
+        "user_profile.printers_tab" | translate
+      }}</p-tab>
+      <p-tab [value]="'reviews'" (click)="onTabChange('reviews')">
+        {{ "user_profile.reviews_tab" | translate }}</p-tab
+      >
+      <p-tab
+        *ngIf="authService.currentUser?.id === userProfile?.id"
+        (click)="onTabChange('likes')"
+        [value]="'likes'"
+        >{{ "user_profile.likes_tab" | translate }}</p-tab
+      >
+    </p-tablist>
+    <p-tabpanels>
+      <p-tabpanel [value]="'contest-submissions'">
+        <div *ngFor="let contest of userProfile?.userContestSubmissions">
+          <div class="mt-4">
+            <h2 class="header-contest-title">
+              {{ contest.contest.theme }}
+            </h2>
+          </div>
+          <div class="scroll-container">
+            <div *ngFor="let submission of contest.submissions" class="card">
+              <div class="card-content">
+                <img
+                  [src]="submission.imageUrl"
+                  alt="Submission image"
+                  class="submission-image"
+                  loading="lazy"
+                />
+              </div>
+              <div class="card-body">
+                <div class="contest-title">{{ submission.name }}</div>
+                <p class="contest-description">{{ submission.description }}</p>
+              </div>
+              <div class="flex gap-5 items-center flex-end">
+                <!-- Nombre de likes -->
+                <div class="likes-count">
+                  <span
+                    class="font-semibold text-gray-700 dark:text-gray-300"
+                    >{{ submission.likes.length }}</span
+                  >
 
                   <!-- Bouton Like -->
                   <p-button

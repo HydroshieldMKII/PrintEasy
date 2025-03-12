@@ -97,93 +97,147 @@ class Request < ApplicationRecord
   # Average diff offer price vs request budget (all)
   # Average time to offer a preset on requests (since request published) (all)
 
-  def self.fetch_stats_for_user
+  def self.fetch_stats_for_user(params = {})
+    color_ids = params[:colorIds].to_s.split(',').map(&:to_i).select(&:positive?) if params[:colorIds].present?
+    filament_ids = params[:filamentIds].to_s.split(',').map(&:to_i).select(&:positive?) if params[:filamentIds].present?
+    
+    begin
+      start_date = params[:startDate].present? ? Date.parse(params[:startDate]) : nil
+      end_date = params[:endDate].present? ? Date.parse(params[:endDate]) : nil
+    rescue Date::Error
+      start_date = nil
+      end_date = nil
+    end
+    
+    sort_category = params[:sortCategory].to_s
+    sort_direction = params[:sort].to_s.downcase == 'asc' ? 'ASC' : 'DESC'
+    
+    color_filter_preset = color_ids.present? ? "AND p.color_id IN (:color_ids)" : ""
+    color_filter_offer = color_ids.present? ? "AND o.color_id IN (:color_ids)" : ""
+    
+    filament_filter_preset = filament_ids.present? ? "AND p.filament_id IN (:filament_ids)" : ""
+    filament_filter_offer = filament_ids.present? ? "AND o.filament_id IN (:filament_ids)" : ""
+    
+    date_filter = ""
+    if start_date.present? && end_date.present?
+      date_filter = "AND o.created_at BETWEEN :start_date AND :end_date"
+    elsif start_date.present?
+      date_filter = "AND o.created_at >= :start_date"
+    elsif end_date.present?
+      date_filter = "AND o.created_at <= :end_date"
+    end
+    
+    order_by = case sort_category
+              when "total_offers"
+                "total_offers #{sort_direction}"
+              when "acceptance_rate"
+                "acceptance_rate_percent #{sort_direction}"
+              when "total_price"
+                "total_accepted_price #{sort_direction}"
+              when "avg_price_diff"
+                "avg_price_diff #{sort_direction}"
+              when "avg_response_time"
+                "avg_response_time_hours #{sort_direction}"
+              else
+                "accepted_offers DESC, total_offers DESC" # Default
+              end
+    
+    query_params = { user_id: Current.user.id }
+    query_params[:color_ids] = color_ids if color_ids.present?
+    query_params[:filament_ids] = filament_ids if filament_ids.present?
+    query_params[:start_date] = start_date.beginning_of_day if start_date.present?
+    query_params[:end_date] = end_date.end_of_day if end_date.present?
+
     sql = <<-SQL
-        WITH user_preset_combinations AS (
-      SELECT DISTINCT
-        color_id,
-        filament_id,
-        print_quality
-      FROM (
-        -- User preset
+      WITH user_preset_combinations AS (
+        SELECT DISTINCT
+          color_id,
+          filament_id,
+          print_quality
+        FROM (
+          -- User preset
+          SELECT
+            p.color_id,
+            p.filament_id,
+            p.print_quality
+          FROM
+            presets p
+          WHERE
+            p.user_id = :user_id
+            #{color_filter_preset}
+            #{filament_filter_preset}
+          
+          UNION ALL
+          
+          -- User offer
+          SELECT
+            o.color_id,
+            o.filament_id,
+            o.print_quality
+          FROM
+            offers o
+          JOIN
+            printer_users pu ON o.printer_user_id = pu.id
+          WHERE
+            pu.user_id = :user_id
+            #{color_filter_offer}
+            #{filament_filter_offer}
+        ) combined_data
+      ),
+      preset_stats AS (
         SELECT
-          p.color_id,
-          p.filament_id,
-          p.print_quality
+          upc.color_id,
+          upc.filament_id,
+          upc.print_quality,
+          (SELECT MIN(p.id) FROM presets p 
+          WHERE p.user_id = :user_id 
+          AND p.color_id = upc.color_id 
+          AND p.filament_id = upc.filament_id 
+          AND p.print_quality = upc.print_quality) AS preset_id,
+          c.name AS color_name,
+          f.name AS filament_name,
+          COUNT(DISTINCT o.id) AS total_offers,
+          SUM(CASE WHEN o.id IN (SELECT offer_id FROM orders) THEN 1 ELSE 0 END) AS accepted_offers,
+          SUM(CASE WHEN o.id IN (SELECT offer_id FROM orders) THEN o.price ELSE 0 END) AS total_accepted_price,
+          AVG(o.price - r.budget) AS avg_price_diff_from_budget,
+          AVG(TIMESTAMPDIFF(HOUR, r.created_at, o.created_at)) AS avg_hours_to_offer
         FROM
-          presets p
-        WHERE
-          p.user_id = :user_id
-        
-        UNION ALL
-        
-        -- User offer
-        SELECT
-          o.color_id,
-          o.filament_id,
-          o.print_quality
-        FROM
-          offers o
-        JOIN
-          printer_users pu ON o.printer_user_id = pu.id
-        WHERE
-          pu.user_id = :user_id
-      ) combined_data
-    ),
-    preset_stats AS (
+          user_preset_combinations upc
+          JOIN colors c ON upc.color_id = c.id
+          JOIN filaments f ON upc.filament_id = f.id
+          LEFT JOIN offers o ON
+            o.color_id = upc.color_id AND
+            o.filament_id = upc.filament_id AND
+            o.print_quality = upc.print_quality AND
+            o.printer_user_id IN (SELECT id FROM printer_users WHERE user_id = :user_id)
+            #{date_filter}
+          LEFT JOIN requests r ON o.request_id = r.id
+        GROUP BY
+          upc.color_id, upc.filament_id, upc.print_quality, c.name, f.name
+      )
       SELECT
-        upc.color_id,
-        upc.filament_id,
-        upc.print_quality,
-        (SELECT MIN(p.id) FROM presets p 
-        WHERE p.user_id = :user_id 
-        AND p.color_id = upc.color_id 
-        AND p.filament_id = upc.filament_id 
-        AND p.print_quality = upc.print_quality) AS preset_id,
-        c.name AS color_name,
-        f.name AS filament_name,
-        COUNT(DISTINCT o.id) AS total_offers,
-        SUM(CASE WHEN o.id IN (SELECT offer_id FROM orders) THEN 1 ELSE 0 END) AS accepted_offers,
-        SUM(CASE WHEN o.id IN (SELECT offer_id FROM orders) THEN o.price ELSE 0 END) AS total_accepted_price,
-        AVG(o.price - r.budget) AS avg_price_diff_from_budget,
-        AVG(TIMESTAMPDIFF(HOUR, r.created_at, o.created_at)) AS avg_hours_to_offer
+        ps.preset_id,
+        ps.print_quality AS preset_quality,
+        ps.color_id,
+        ps.filament_id,
+        ps.color_name,
+        ps.filament_name,
+        ps.total_offers,
+        ps.accepted_offers,
+        CAST(CASE
+          WHEN ps.total_offers > 0 THEN ROUND((ps.accepted_offers * 100.0 / ps.total_offers), 2)
+          ELSE 0
+        END AS float) AS acceptance_rate_percent,
+        ps.total_accepted_price,
+        ROUND(ps.avg_price_diff_from_budget, 2) AS avg_price_diff,
+        ROUND(ps.avg_hours_to_offer, 2) AS avg_response_time_hours
       FROM
-        user_preset_combinations upc
-        JOIN colors c ON upc.color_id = c.id
-        JOIN filaments f ON upc.filament_id = f.id
-        LEFT JOIN offers o ON
-          o.color_id = upc.color_id AND
-          o.filament_id = upc.filament_id AND
-          o.print_quality = upc.print_quality AND
-          o.printer_user_id IN (SELECT id FROM printer_users WHERE user_id = :user_id)
-        LEFT JOIN requests r ON o.request_id = r.id
-      GROUP BY
-        upc.color_id, upc.filament_id, upc.print_quality, c.name, f.name
-    )
-    SELECT
-      ps.preset_id,
-      ps.print_quality AS preset_quality,
-      ps.color_id,
-      ps.filament_id,
-      ps.color_name,
-      ps.filament_name,
-      ps.total_offers,
-      ps.accepted_offers,
-      CAST(CASE
-        WHEN ps.total_offers > 0 THEN ROUND((ps.accepted_offers * 100.0 / ps.total_offers), 2)
-        ELSE 0
-      END AS float) AS acceptance_rate_percent,
-      ps.total_accepted_price,
-      ROUND(ps.avg_price_diff_from_budget, 2) AS avg_price_diff,
-      ROUND(ps.avg_hours_to_offer, 2) AS avg_response_time_hours
-    FROM
-      preset_stats ps
-    ORDER BY
-      ps.accepted_offers DESC,
-      ps.total_offers DESC
+        preset_stats ps
+      ORDER BY
+        #{order_by}
     SQL
-  
-    sanitized_sql = ApplicationRecord.sanitize_sql_array([sql, user_id: Current.user.id])
+    
+    sanitized_sql = ApplicationRecord.sanitize_sql_array([sql, query_params])
     ActiveRecord::Base.connection.select_all(sanitized_sql).to_a
   end
 
