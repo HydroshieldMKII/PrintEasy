@@ -1,0 +1,51 @@
+ruby_image = File.open(Rails.root.join('db/seeds/files/ruby.jpg'))
+darius_image = File.open(Rails.root.join('db/seeds/files/DariusSlayJunior.jpg'))
+admin = User.find_by(username: 'aaadmin')
+user1 = User.find_by(username: 'aaa')
+
+statusesRef = ["Accepted", "Printing", "Printed", "Shipped", "Arrived", "Cancelled"]
+statuses = Status.all
+
+Current.user = admin
+admin.offers.each_with_index do |offer, i|
+  linked_order = offer.order
+  if linked_order
+    rand(1..4).times do |j|
+      o = OrderStatus.create!(
+        order: linked_order,
+        status: statuses.find_by(name: statusesRef[j])
+      )
+      if rand(1..3) == 1
+        o.image.attach(
+          io: ruby_image,
+          filename: 'ruby.jpg',
+          content_type: 'image/jpg'
+        )
+        o.save
+        ruby_image.rewind
+      end
+    end
+  end
+end
+
+Current.user = user1
+user1.offers.each_with_index do |offer, i|
+  linked_order = offer.order
+  if linked_order
+    rand(1..3).times do |j|
+      o = OrderStatus.create!(
+        order: linked_order,
+        status: statuses.find_by(name: statusesRef[j])
+      )
+      if rand(1..3) == 1
+        o.image.attach(
+          io: darius_image,
+          filename: 'ruby.jpg',
+          content_type: 'image/jpg'
+        )
+        o.save
+        darius_image.rewind
+      end
+    end
+  end
+end

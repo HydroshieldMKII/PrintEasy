@@ -255,7 +255,6 @@ end
     filename: 'red_skeleton.jpg',
     content_type: 'image/jpg'
   )
-
   submission.save(validate: false)
 
   Like.create!(user: user1, submission: submission)

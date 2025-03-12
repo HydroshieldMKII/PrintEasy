@@ -231,8 +231,8 @@
     "no_commands_message": "Vous n'avez aucune commande en attente !",
     "no_report_message": "Vous n'avez aucun rapport !",
     "ssf": {
-      "reviewed": "Avisé",
-      "not_reviewed": "Non avisé",
+      "reviewed": "Avec avis",
+      "not_reviewed": "Sans avis",
       "name_asc": "Nom (croissant)",
       "name_desc": "Nom (décroissant)",
       "price_asc": "Prix (croissant)",
