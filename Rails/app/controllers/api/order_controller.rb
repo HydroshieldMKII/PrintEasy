@@ -101,7 +101,7 @@ module Api
     end
 
     def ssf_params
-      params.permit(:sort, :search, :filter, :type, :startDate, :endDate)
+      params.permit(:sort, :search, :filter, :type, :start_date, :end_date)
     end
   end
 end

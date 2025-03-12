@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Create Colors
 colors = %w[Red Blue Green Yellow Black White Orange Purple Pink Brown Gray]
 colors.each do |color|
@@ -32,7 +34,7 @@ end
 end
 
 # Create Users
-admin = User.create!(
+User.create!(
   username: 'aaadmin',
   password: 'aaaaaa',
   password_confirmation: 'aaaaaa',

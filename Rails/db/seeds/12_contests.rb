@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 ruby_image = File.open(Rails.root.join('db/seeds/files/ruby.jpg'))
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 admin = User.find_by(username: 'aaadmin')
 user1 = User.find_by(username: 'aaa')
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Status.create!(name: 'Accepted')
 Status.create!(name: 'Printing')
 Status.create!(name: 'Printed')

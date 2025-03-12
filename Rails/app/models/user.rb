@@ -25,22 +25,21 @@ class User < ApplicationRecord
   validates :country_id, presence: true
 
   # find how many contests the user has won
-  # the not exists subquery is to find submissions who have the same amount of likes but were created before the current submission or more likes than the current
+  # the not exists subquery is to find submissions who have the same amount of likes
+  # but were created before the current submission or more likes than the current
   # not exists if true means that there is no other submissions that have the same amount or like or more
   # not exists if false means that there is another submission that has the same amount of likes or more
   def self.stats(category:, direction:, start_date:, end_date:)
-    valid_order_columns = ['wins_count', 'submission_rate', 'participations', 'total_likes', 'winrate']
+    valid_order_columns = %w[wins_count submission_rate participations total_likes winrate]
 
     category = valid_order_columns.include?(category) ? category : 'wins_count'
-  
-    direction = ['asc', 'desc'].include?(direction) ? direction : 'desc'
+
+    direction = %w[asc desc].include?(direction) ? direction : 'desc'
 
     start_date = Date.new(2000, 1, 1).strftime('%Y-%m-%d') if start_date.nil?
     end_date = Date.today.strftime('%Y-%m-%d') if end_date.nil?
 
-    if start_date > end_date
-      start_date, end_date = end_date, start_date
-    end
+    start_date, end_date = end_date, start_date if start_date > end_date
 
     if end_date > Date.today.strftime('%Y-%m-%d') || end_date < Date.new(2000, 1, 1).strftime('%Y-%m-%d')
       end_date = Date.today.strftime('%Y-%m-%d')
@@ -49,11 +48,9 @@ class User < ApplicationRecord
     if start_date < Date.new(2000, 1, 1).strftime('%Y-%m-%d') || start_date > Date.today.strftime('%Y-%m-%d')
       start_date = Date.new(2000, 1, 1).strftime('%Y-%m-%d')
     end
-
-    year_condition = ""
     year_condition = "AND contests.start_at BETWEEN '#{start_date}' AND '#{end_date}'"
 
-    sanitizedCondition = ActiveRecord::Base.sanitize_sql_for_conditions([year_condition])
+    sanitized_condition = ActiveRecord::Base.sanitize_sql_for_conditions([year_condition])
 
     sql = <<-SQL
       WITH contests_won AS (
@@ -63,7 +60,7 @@ class User < ApplicationRecord
         LEFT JOIN likes ON likes.submission_id = submissions.id
         WHERE contests.deleted_at IS NULL
           AND contests.end_at <= NOW()
-          #{sanitizedCondition}
+          #{sanitized_condition}
           AND NOT EXISTS (
             SELECT 1
             FROM submissions s2
@@ -78,13 +75,13 @@ class User < ApplicationRecord
       submission_ratio AS (
         SELECT AVG(submission_ratio) AS submission_rate, ratios.user_id
         FROM (
-          SELECT contests.id, contests.submission_limit,  
+          SELECT contests.id, contests.submission_limit,#{'  '}
                  (COUNT(submissions.id) / contests.submission_limit) AS submission_ratio,
                  submissions.user_id
           FROM submissions
           LEFT JOIN contests ON contests.id = submissions.contest_id
           WHERE contests.deleted_at IS NULL
-          #{sanitizedCondition}
+          #{sanitized_condition}
           GROUP BY contests.id, submissions.user_id
           HAVING COUNT(submissions.id) <= contests.submission_limit
         ) AS ratios
@@ -95,7 +92,7 @@ class User < ApplicationRecord
         FROM contests
         LEFT JOIN submissions ON contests.id = submissions.contest_id
         WHERE contests.deleted_at IS NULL
-        #{sanitizedCondition}
+        #{sanitized_condition}
         GROUP BY submissions.user_id
       ),
       total_likes AS (
@@ -104,7 +101,7 @@ class User < ApplicationRecord
         LEFT JOIN submissions ON likes.submission_id = submissions.id
         INNER JOIN contests ON contests.id = submissions.contest_id
         WHERE submissions.user_id IS NOT NULL
-        #{sanitizedCondition}
+        #{sanitized_condition}
         GROUP BY submissions.user_id
       ),
       winrate AS (
@@ -132,10 +129,8 @@ class User < ApplicationRecord
       LEFT JOIN winrate ON users.id = winrate.user_id
       ORDER BY #{category} #{direction};
     SQL
-    
-    results = ActiveRecord::Base.connection.select_all(ActiveRecord::Base.sanitize_sql_array([sql])).to_a
 
-    results
+    ActiveRecord::Base.connection.select_all(ActiveRecord::Base.sanitize_sql_array([sql])).to_a
   end
 
   def accessible_contests
@@ -157,17 +152,17 @@ class User < ApplicationRecord
 
   def contests_count
     Contest.joins(
-      "LEFT JOIN submissions ON contests.id = submissions.contest_id"
-      )
-      .where("submissions.user_id = ?", id)
-      .distinct
-      .count(:id)
+      'LEFT JOIN submissions ON contests.id = submissions.contest_id'
+    )
+           .where('submissions.user_id = ?', id)
+           .distinct
+           .count(:id)
   end
 
   def likes_received_count
     Like.joins(:submission)
-         .where("submissions.user_id = ?", id)
-         .count(:id)
+        .where('submissions.user_id = ?', id)
+        .count(:id)
   end
 
   def email_required?

@@ -1,4 +1,3 @@
-
 # frozen_string_literal: true
 
 # printers = %w[Bambulab Anycubic Artillery Creality Elegoo Flashforge Flashforge\ V Prusa Qidi

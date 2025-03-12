@@ -1,8 +1,9 @@
 # frozen_string_literal: true
+
 module Api
   class RequestController < AuthenticatedController
     before_action :set_request, only: %i[update destroy]
-   
+
     def index
       case params[:type]
       when 'all', 'mine'
@@ -15,7 +16,7 @@ module Api
         render json: { request: {}, errors: { type: ["Unknown type: #{params[:type]}"] } }, status: :unprocessable_entity
       end
     end
-   
+
     def show
       @request = Request.viewable_by_user.find(params[:id])
       if @request
@@ -24,7 +25,7 @@ module Api
         render json: { request: {}, errors: @request.errors }, status: :unprocessable_entity
       end
     end
-   
+
     def create
       request = current_user.requests.new(request_params)
       if request.save
@@ -33,7 +34,7 @@ module Api
         render json: { request: {}, errors: request.errors }, status: :unprocessable_entity
       end
     end
-   
+
     def update
       if @request.update(request_params)
         render format_response(@request)
@@ -41,7 +42,7 @@ module Api
         render json: { request: {}, errors: @request.errors }, status: :unprocessable_entity
       end
     end
-   
+
     def destroy
       if @request.destroy
         render json: { request: @request, errors: {} }
@@ -49,18 +50,18 @@ module Api
         render json: { request: {}, errors: @request.errors }, status: :unprocessable_entity
       end
     end
-   
+
     private
-   
+
     def set_request
       @request = current_user.requests.find(params[:id])
     end
-   
+
     def request_params
       params.require(:request).permit(:name, :comment, :target_date, :budget, :stl_file,
                                       preset_requests_attributes: %i[id color_id filament_id printer_id print_quality _destroy])
     end
-   
+
     def ordered_preset_requests(request)
       request.preset_requests
              .joins(:printer)
@@ -68,10 +69,10 @@ module Api
              .joins(:color)
              .order('printers.model ASC, filaments.name ASC, colors.name ASC, preset_requests.print_quality ASC')
     end
-   
+
     def serialize_request(request)
       sorted_preset_requests = ordered_preset_requests(request)
-      
+
       request_json = request.as_json(
         except: %i[user_id created_at updated_at],
         include: {
@@ -84,23 +85,23 @@ module Api
         },
         methods: %i[stl_file_url offer_made? accepted_at]
       )
-      
+
       request_json['preset_requests'] = sorted_preset_requests.map do |pr|
         pr_json = pr.as_json(
           except: %i[request_id color_id filament_id printer_id],
           methods: [:matching_offer_by_current_user?]
         )
-        
+
         pr_json['color'] = pr.color.as_json(only: %i[id name]) if pr.color
         pr_json['filament'] = pr.filament.as_json(only: %i[id name]) if pr.filament
         pr_json['printer'] = pr.printer.as_json(only: %i[id model]) if pr.printer
-        
+
         pr_json
       end
-      
+
       request_json
     end
-   
+
     def serialize_collection(requests)
       requests.as_json(
         except: %i[user_id created_at updated_at],
@@ -124,10 +125,10 @@ module Api
         methods: %i[stl_file_url offer_made? accepted_at]
       )
     end
-   
+
     def format_response(resource, status: :ok)
       has_printer = Current.user.printers.exists?
-     
+
       if resource.is_a?(Request)
         request_data = resource.as_json(
           except: %i[user_id created_at updated_at],
@@ -145,7 +146,7 @@ module Api
       else
         request_data = serialize_collection(resource)
       end
-     
+
       {
         json: {
           request: request_data,

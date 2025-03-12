@@ -100,7 +100,7 @@ class Request < ApplicationRecord
   def self.fetch_stats_for_user(params = {})
     color_ids = params[:colorIds].to_s.split(',').map(&:to_i).select(&:positive?) if params[:colorIds].present?
     filament_ids = params[:filamentIds].to_s.split(',').map(&:to_i).select(&:positive?) if params[:filamentIds].present?
-    
+
     begin
       start_date = params[:startDate].present? ? Date.parse(params[:startDate]) : nil
       end_date = params[:endDate].present? ? Date.parse(params[:endDate]) : nil
@@ -108,40 +108,40 @@ class Request < ApplicationRecord
       start_date = nil
       end_date = nil
     end
-    
+
     sort_category = params[:sortCategory].to_s
     sort_direction = params[:sort].to_s.downcase == 'asc' ? 'ASC' : 'DESC'
-    
-    color_filter_preset = color_ids.present? ? "AND p.color_id IN (:color_ids)" : ""
-    color_filter_offer = color_ids.present? ? "AND o.color_id IN (:color_ids)" : ""
-    
-    filament_filter_preset = filament_ids.present? ? "AND p.filament_id IN (:filament_ids)" : ""
-    filament_filter_offer = filament_ids.present? ? "AND o.filament_id IN (:filament_ids)" : ""
-    
-    date_filter = ""
+
+    color_filter_preset = color_ids.present? ? 'AND p.color_id IN (:color_ids)' : ''
+    color_filter_offer = color_ids.present? ? 'AND o.color_id IN (:color_ids)' : ''
+
+    filament_filter_preset = filament_ids.present? ? 'AND p.filament_id IN (:filament_ids)' : ''
+    filament_filter_offer = filament_ids.present? ? 'AND o.filament_id IN (:filament_ids)' : ''
+
+    date_filter = ''
     if start_date.present? && end_date.present?
-      date_filter = "AND o.created_at BETWEEN :start_date AND :end_date"
+      date_filter = 'AND o.created_at BETWEEN :start_date AND :end_date'
     elsif start_date.present?
-      date_filter = "AND o.created_at >= :start_date"
+      date_filter = 'AND o.created_at >= :start_date'
     elsif end_date.present?
-      date_filter = "AND o.created_at <= :end_date"
+      date_filter = 'AND o.created_at <= :end_date'
     end
-    
+
     order_by = case sort_category
-              when "total_offers"
-                "total_offers #{sort_direction}"
-              when "acceptance_rate"
-                "acceptance_rate_percent #{sort_direction}"
-              when "total_price"
-                "total_accepted_price #{sort_direction}"
-              when "avg_price_diff"
-                "avg_price_diff #{sort_direction}"
-              when "avg_response_time"
-                "avg_response_time_hours #{sort_direction}"
-              else
-                "accepted_offers DESC, total_offers DESC" # Default
-              end
-    
+               when 'total_offers'
+                 "total_offers #{sort_direction}"
+               when 'acceptance_rate'
+                 "acceptance_rate_percent #{sort_direction}"
+               when 'total_price'
+                 "total_accepted_price #{sort_direction}"
+               when 'avg_price_diff'
+                 "avg_price_diff #{sort_direction}"
+               when 'avg_response_time'
+                 "avg_response_time_hours #{sort_direction}"
+               else
+                 'accepted_offers DESC, total_offers DESC' # Default
+               end
+
     query_params = { user_id: Current.user.id }
     query_params[:color_ids] = color_ids if color_ids.present?
     query_params[:filament_ids] = filament_ids if filament_ids.present?
@@ -166,9 +166,7 @@ class Request < ApplicationRecord
             p.user_id = :user_id
             #{color_filter_preset}
             #{filament_filter_preset}
-          
           UNION ALL
-          
           -- User offer
           SELECT
             o.color_id,
@@ -189,10 +187,10 @@ class Request < ApplicationRecord
           upc.color_id,
           upc.filament_id,
           upc.print_quality,
-          (SELECT MIN(p.id) FROM presets p 
-          WHERE p.user_id = :user_id 
-          AND p.color_id = upc.color_id 
-          AND p.filament_id = upc.filament_id 
+          (SELECT MIN(p.id) FROM presets p#{' '}
+          WHERE p.user_id = :user_id#{' '}
+          AND p.color_id = upc.color_id#{' '}
+          AND p.filament_id = upc.filament_id#{' '}
           AND p.print_quality = upc.print_quality) AS preset_id,
           c.name AS color_name,
           f.name AS filament_name,
@@ -236,40 +234,44 @@ class Request < ApplicationRecord
       ORDER BY
         #{order_by}
     SQL
-    
+
     sanitized_sql = ApplicationRecord.sanitize_sql_array([sql, query_params])
     ActiveRecord::Base.connection.select_all(sanitized_sql).to_a
   end
 
   def self.fetch_for_user(params)
     requests = case params[:type]
-           when 'all'
-            if Current.user.printers.exists?
-              self.with_associations
-              .where.not(user: Current.user)
-              .not_accepted
-            else
-              []
-            end
-           when 'mine'
-              self.with_associations.where(user: Current.user)
-            else
-              []
-           end
-            
-    requests = requests.search_by_name(params[:search]) if params[:search].present?    
-    unless requests.empty?
-      #filters
-      filters = params[:filter].split(',') rescue []
+               when 'all'
+                 if Current.user.printers.exists?
+                   with_associations
+                     .where.not(user: Current.user)
+                     .not_accepted
+                 else
+                   []
+                 end
+               when 'mine'
+                 with_associations.where(user: Current.user)
+               else
+                 []
+               end
+
+    requests = requests.search_by_name(params[:search]) if params[:search].present?
+    if requests.empty?
+      requests
+    else
+      # filters
+      filters = begin
+        params[:filter].split(',')
+      rescue StandardError
+        []
+      end
       requests = requests.by_printer_owner if filters.include?('owned-printer')
       requests = requests.by_country if filters.include?('country')
       requests = requests.in_progress if filters.include?('in-progress')
 
-      requests = requests.sorted(params[:sortCategory], params[:sort])
-                .by_budget_range(params[:minBudget], params[:maxBudget])
-                .by_date_range(params[:startDate], params[:endDate])
-    else
-      requests
+      requests.sorted(params[:sortCategory], params[:sort])
+              .by_budget_range(params[:minBudget], params[:maxBudget])
+              .by_date_range(params[:startDate], params[:endDate])
     end
   end
 

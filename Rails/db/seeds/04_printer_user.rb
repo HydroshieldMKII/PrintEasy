@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 # First create printers
-printers = %w[Bambulab Anycubic Artillery Creality Elegoo Flashforge Flashforge\ V Prusa Qidi
-        Sindoh Ultimaker XYZprinting Zortrax Zortrax\ Inkspire Zortrax\ M Zortrax\ M200]
+printers = ['Bambulab', 'Anycubic', 'Artillery', 'Creality', 'Elegoo', 'Flashforge', 'Flashforge V', 'Prusa', 'Qidi', 'Sindoh',
+            'Ultimaker', 'XYZprinting', 'Zortrax', 'Zortrax Inkspire', 'Zortrax M', 'Zortrax M200']
 printers.each do |printer|
   Printer.create!(model: printer)
 end
@@ -18,7 +18,6 @@ PrinterUser.create!(user: admin, printer: Printer.find_by(model: 'Creality'), ac
 PrinterUser.create!(user: admin, printer: Printer.find_by(model: 'Elegoo'), acquired_date: Time.new(2024, 3, 20))
 PrinterUser.create!(user: admin, printer: Printer.find_by(model: 'Flashforge'), acquired_date: Time.new(2024, 9, 12))
 PrinterUser.create!(user: admin, printer: Printer.find_by(model: 'Flashforge V'), acquired_date: Time.new(2024, 12, 12))
-
 
 PrinterUser.create!(user: user1, printer: Printer.find_by(model: 'Anycubic'), acquired_date: Time.new(2022, 5, 22))
 PrinterUser.create!(user: user1, printer: Printer.find_by(model: 'Prusa'), acquired_date: Time.new(2022, 3, 10))

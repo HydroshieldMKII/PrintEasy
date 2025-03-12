@@ -52,7 +52,7 @@ admin_historical_offers = [
     price: 85.00,
     print_quality: 0.16,
     target_date: Time.new(2024, 3, 24).strftime('%Y-%m-%d'),
-    created_at: Time.new(2024, 3, 10), 
+    created_at: Time.new(2024, 3, 10),
     updated_at: Time.new(2024, 3, 10)
   },
   {
@@ -63,7 +63,7 @@ admin_historical_offers = [
     price: 100.50,
     print_quality: 0.08,
     target_date: Time.new(2024, 7, 19).strftime('%Y-%m-%d'),
-    created_at: Time.new(2024, 7, 7), 
+    created_at: Time.new(2024, 7, 7),
     updated_at: Time.new(2024, 7, 7)
   }
 ]
@@ -77,7 +77,7 @@ user1_historical_offers = [
     price: 48.50,
     print_quality: 0.12,
     target_date: Time.new(2023, 1, 29).strftime('%Y-%m-%d'),
-    created_at: Time.new(2023, 1, 17), 
+    created_at: Time.new(2023, 1, 17),
     updated_at: Time.new(2023, 1, 17)
   },
   {
@@ -88,7 +88,7 @@ user1_historical_offers = [
     price: 62.25,
     print_quality: 0.2,
     target_date: Time.new(2023, 6, 24).strftime('%Y-%m-%d'),
-    created_at: Time.new(2023, 6, 12), 
+    created_at: Time.new(2023, 6, 12),
     updated_at: Time.new(2023, 6, 12)
   },
   {
@@ -99,7 +99,7 @@ user1_historical_offers = [
     price: 78.50,
     print_quality: 0.2,
     target_date: Time.new(2023, 11, 19).strftime('%Y-%m-%d'),
-    created_at: Time.new(2023, 11, 7), 
+    created_at: Time.new(2023, 11, 7),
     updated_at: Time.new(2023, 11, 7)
   },
   {
@@ -110,7 +110,7 @@ user1_historical_offers = [
     price: 92.75,
     print_quality: 0.12,
     target_date: Time.new(2024, 2, 27).strftime('%Y-%m-%d'),
-    created_at: Time.new(2024, 2, 14), 
+    created_at: Time.new(2024, 2, 14),
     updated_at: Time.new(2024, 2, 14)
   },
   {
@@ -121,12 +121,12 @@ user1_historical_offers = [
     price: 108.50,
     print_quality: 0.12,
     target_date: Time.new(2024, 6, 14).strftime('%Y-%m-%d'),
-    created_at: Time.new(2024, 6, 3), 
+    created_at: Time.new(2024, 6, 3),
     updated_at: Time.new(2024, 6, 3)
   }
 ]
 
-Current.user = admin 
+Current.user = admin
 admin_historical_offers.each do |offer_data|
   offer = Offer.new(offer_data)
   offer.save(validate: false)
@@ -139,19 +139,19 @@ user1_historical_offers.each do |offer_data|
 end
 
 admin_recent_requests = Request.where(user: admin)
-                               .where("created_at > ?", Date.today - 1.month)
+                               .where('created_at > ?', Date.today - 1.month)
                                .limit(3)
                                .to_a
 
 user1_recent_requests = Request.where(user: user1)
-                               .where("created_at > ?", Date.today - 1.month)
+                               .where('created_at > ?', Date.today - 1.month)
                                .limit(3)
                                .to_a
 
 Current.user = admin
 admin_current_offers = [
   {
-    request_id: user1_recent_requests[0].id, 
+    request_id: user1_recent_requests[0].id,
     printer_user_id: admin_printer_users[0].id,
     color_id: 1,
     filament_id: 1,

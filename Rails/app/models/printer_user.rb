@@ -18,13 +18,13 @@ class PrinterUser < ApplicationRecord
                                  .where(order_status: { status_name: %w[Printing Printed] })
                                  .order('order_status.created_at DESC')
                                  .first
-    
+
     printed_status = nil
     if latest_printed_offer&.order
       printed_status = latest_printed_offer.order.order_status
-                                         .where(status_name: %w[Printing Printed])
-                                         .order(created_at: :desc)
-                                         .first
+                                           .where(status_name: %w[Printing Printed])
+                                           .order(created_at: :desc)
+                                           .first
     end
 
     printed_status&.created_at

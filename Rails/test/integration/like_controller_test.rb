@@ -171,7 +171,7 @@ class LikeControllerTest < ActionDispatch::IntegrationTest
     assert_equal ['must exist'], @parsed_response['errors']['submission']
   end
 
-  test "should get index" do
+  test 'should get index' do
     assert_no_difference('Like.count') do
       get api_like_index_url
     end
@@ -183,12 +183,12 @@ class LikeControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_equal 1, @parsed_response['likes'][0]['likes'].count
-    assert_equal 1, @parsed_response['likes'][0]['likes'][0]["id"]
-    assert_equal 1, @parsed_response['likes'][0]['likes'][0]["user_id"]
-    assert_equal 1, @parsed_response['likes'][0]['likes'][0]["submission_id"]
+    assert_equal 1, @parsed_response['likes'][0]['likes'][0]['id']
+    assert_equal 1, @parsed_response['likes'][0]['likes'][0]['user_id']
+    assert_equal 1, @parsed_response['likes'][0]['likes'][0]['submission_id']
   end
 
-  test "should not get index if not authenticated" do
+  test 'should not get index if not authenticated' do
     sign_out @user
 
     assert_no_difference('Like.count') do
@@ -197,7 +197,7 @@ class LikeControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :unauthorized
 
-    assert_nothing_raised do 
+    assert_nothing_raised do
       @parsed_response = JSON.parse(response.body)
     end
 
