@@ -11,3 +11,15 @@ two: {
   user_id: 2,
   submission_id: 2
 }
+
+three: {
+  id: 3,
+  user_id: 1,
+  submission_id: 3
+}
+
+four: {
+  id: 4,
+  user_id: 1,
+  submission_id: 4
+}
