@@ -99,78 +99,88 @@ class Request < ApplicationRecord
 
   def self.fetch_stats_for_user
     sql = <<-SQL
-      WITH user_preset_combinations AS (
+        WITH user_preset_combinations AS (
+      SELECT DISTINCT
+        color_id,
+        filament_id,
+        print_quality
+      FROM (
         -- User preset
         SELECT
           p.color_id,
           p.filament_id,
-          p.print_quality,
-          p.id AS preset_id
+          p.print_quality
         FROM
           presets p
         WHERE
           p.user_id = :user_id
-         
-        UNION
-       
+        
+        UNION ALL
+        
         -- User offer
-        SELECT DISTINCT
+        SELECT
           o.color_id,
           o.filament_id,
-          o.print_quality,
-          NULL AS preset_id
+          o.print_quality
         FROM
           offers o
         JOIN
           printer_users pu ON o.printer_user_id = pu.id
         WHERE
           pu.user_id = :user_id
-      ),
-      preset_stats AS (
-        SELECT
-          upc.color_id,
-          upc.filament_id,
-          upc.print_quality,
-          upc.preset_id,
-          c.name AS color_name,
-          f.name AS filament_name,
-          COUNT(DISTINCT o.id) AS total_offers,
-          SUM(CASE WHEN o.id IN (SELECT offer_id FROM orders) THEN 1 ELSE 0 END) AS accepted_offers,
-          SUM(CASE WHEN o.id IN (SELECT offer_id FROM orders) THEN o.price ELSE 0 END) AS total_accepted_price,
-          AVG(o.price - r.budget) AS avg_price_diff_from_budget,
-          AVG(TIMESTAMPDIFF(HOUR, r.created_at, o.created_at)) AS avg_hours_to_offer
-        FROM
-          user_preset_combinations upc
-          JOIN colors c ON upc.color_id = c.id
-          JOIN filaments f ON upc.filament_id = f.id
-          LEFT JOIN offers o ON
-            o.color_id = upc.color_id AND
-            o.filament_id = upc.filament_id AND
-            o.print_quality = upc.print_quality AND
-            o.printer_user_id IN (SELECT id FROM printer_users WHERE user_id = :user_id)
-          LEFT JOIN requests r ON o.request_id = r.id
-        GROUP BY
-          upc.color_id, upc.filament_id, upc.print_quality, upc.preset_id, c.name, f.name
-      )
+      ) combined_data
+    ),
+    preset_stats AS (
       SELECT
-        ps.preset_id,
-        ps.print_quality AS preset_quality,
-        ps.color_id,
-        ps.filament_id,
-        ps.total_offers,
-        ps.accepted_offers,
-        CAST(CASE
-          WHEN ps.total_offers > 0 THEN ROUND((ps.accepted_offers * 100.0 / ps.total_offers), 2)
-          ELSE 0
-        END AS float) AS acceptance_rate_percent,
-        ps.total_accepted_price,
-        ROUND(ps.avg_price_diff_from_budget, 2) AS avg_price_diff,
-        ROUND(ps.avg_hours_to_offer, 2) AS avg_response_time_hours
+        upc.color_id,
+        upc.filament_id,
+        upc.print_quality,
+        (SELECT MIN(p.id) FROM presets p 
+        WHERE p.user_id = :user_id 
+        AND p.color_id = upc.color_id 
+        AND p.filament_id = upc.filament_id 
+        AND p.print_quality = upc.print_quality) AS preset_id,
+        c.name AS color_name,
+        f.name AS filament_name,
+        COUNT(DISTINCT o.id) AS total_offers,
+        SUM(CASE WHEN o.id IN (SELECT offer_id FROM orders) THEN 1 ELSE 0 END) AS accepted_offers,
+        SUM(CASE WHEN o.id IN (SELECT offer_id FROM orders) THEN o.price ELSE 0 END) AS total_accepted_price,
+        AVG(o.price - r.budget) AS avg_price_diff_from_budget,
+        AVG(TIMESTAMPDIFF(HOUR, r.created_at, o.created_at)) AS avg_hours_to_offer
       FROM
-        preset_stats ps
-      ORDER BY
-        ps.accepted_offers DESC,
-        ps.total_offers DESC
+        user_preset_combinations upc
+        JOIN colors c ON upc.color_id = c.id
+        JOIN filaments f ON upc.filament_id = f.id
+        LEFT JOIN offers o ON
+          o.color_id = upc.color_id AND
+          o.filament_id = upc.filament_id AND
+          o.print_quality = upc.print_quality AND
+          o.printer_user_id IN (SELECT id FROM printer_users WHERE user_id = :user_id)
+        LEFT JOIN requests r ON o.request_id = r.id
+      GROUP BY
+        upc.color_id, upc.filament_id, upc.print_quality, c.name, f.name
+    )
+    SELECT
+      ps.preset_id,
+      ps.print_quality AS preset_quality,
+      ps.color_id,
+      ps.filament_id,
+      ps.color_name,
+      ps.filament_name,
+      ps.total_offers,
+      ps.accepted_offers,
+      CAST(CASE
+        WHEN ps.total_offers > 0 THEN ROUND((ps.accepted_offers * 100.0 / ps.total_offers), 2)
+        ELSE 0
+      END AS float) AS acceptance_rate_percent,
+      ps.total_accepted_price,
+      ROUND(ps.avg_price_diff_from_budget, 2) AS avg_price_diff,
+      ROUND(ps.avg_hours_to_offer, 2) AS avg_response_time_hours
+    FROM
+      preset_stats ps
+    ORDER BY
+      ps.accepted_offers DESC,
+      ps.total_offers DESC
     SQL
   
     sanitized_sql = ApplicationRecord.sanitize_sql_array([sql, user_id: Current.user.id])

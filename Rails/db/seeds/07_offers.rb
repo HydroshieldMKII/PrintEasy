@@ -122,18 +122,21 @@ user1_historical_offers = [
   }
 ]
 
-Current.user = admin
+# First set the admin as current user and create their offers
+Current.user = admin 
 admin_historical_offers.each do |offer_data|
   offer = Offer.new(offer_data)
   offer.save(validate: false)
 end
 
+# Then set user1 as current user and create their offers
 Current.user = user1
 user1_historical_offers.each do |offer_data|
   offer = Offer.new(offer_data)
   offer.save(validate: false)
 end
 
+# Create current offers with admin
 Current.user = admin
 admin_current_offers = [
   {
@@ -170,6 +173,7 @@ admin_current_offers.each do |offer_data|
   offer.save(validate: false)
 end
 
+# Create current offers with user1
 Current.user = user1
 user1_current_offers = [
   {
@@ -202,5 +206,6 @@ user1_current_offers = [
 ]
 
 user1_current_offers.each do |offer_data|
-  Offer.create!(offer_data)
+  offer = Offer.new(offer_data)
+  offer.save(validate: false)
 end
