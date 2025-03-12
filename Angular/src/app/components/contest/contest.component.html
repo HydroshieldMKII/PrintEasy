@@ -83,7 +83,6 @@
                 variant="filled"
                 (onChange)="onFilterChange($event)"
                 appendTo="body"
-                (onClear)="(onClearFilter)"
                 [showClear]="true"
               />
               <label for="in_label">{{ "global.filter" | translate }}</label>
@@ -104,7 +103,6 @@
                 variant="filled"
                 (onChange)="onSortChange($event)"
                 appendTo="body"
-                (onClear)="(onClearSort)"
                 [showClear]="true"
               />
               <label for="in_label">{{ "global.sort_by" | translate }}</label>
