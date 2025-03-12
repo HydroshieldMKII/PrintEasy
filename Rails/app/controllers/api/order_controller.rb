@@ -40,10 +40,12 @@ module Api
         'earnings' => 'money_earned'
       }.fetch(column, 'in_progress_orders')
       direction = direction == 'asc' ? 'ASC' : 'DESC'
+      sanitizedStartDateFilter = ssf_params[:startDate].present? ? 
+        ActiveRecord::Base.sanitize_sql_for_conditions(["AND latest_order_status.latest_status_time >= STR_TO_DATE( ? , '%Y-%m-%d')", ssf_params[:startDate]]) : ''
 
-      startDateFilter = ssf_params[:startDate].present? ? "AND latest_order_status.latest_status_time >= STR_TO_DATE('#{ssf_params[:startDate]}', '%Y-%m-%d')" : ''
-      endDateFilter = ssf_params[:endDate].present? ? "AND latest_order_status.latest_status_time <= STR_TO_DATE('#{ssf_params[:endDate]}', '%Y-%m-%d')" : ''
-      # TODO: injection possible here
+      sanitizedEndDateFilter = ssf_params[:endDate].present? ? 
+        ActiveRecord::Base.sanitize_sql_for_conditions(["AND latest_order_status.latest_status_time >= STR_TO_DATE( ? , '%Y-%m-%d')", ssf_params[:endDate]]) : ''
+      
       sql = <<-SQL
         WITH latest_order_status AS (
           SELECT
@@ -97,11 +99,11 @@ module Api
         JOIN printers ON printer_users.printer_id = printers.id
         LEFT JOIN basic_order_info ON printer_users.id = basic_order_info.printer_user_id
         LEFT JOIN latest_order_status ON basic_order_info.order_id = latest_order_status.order_id
-        WHERE printer_users.user_id = ? #{startDateFilter} #{endDateFilter}
+        WHERE printer_users.user_id = ? #{sanitizedStartDateFilter} #{sanitizedEndDateFilter}
         GROUP BY printers.model
         ORDER BY #{column} #{direction}
       SQL
-      results = ActiveRecord::Base.connection.select_all(ActiveRecord::Base.send(:sanitize_sql_array, [sql, current_user.id, current_user.id])).to_a
+      results = ActiveRecord::Base.connection.select_all(ActiveRecord::Base.sanitize_sql_array([sql, current_user.id, current_user.id])).to_a
 
       render json: { printers: results, errors: {} }, status: :ok
 
