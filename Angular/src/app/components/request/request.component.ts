@@ -30,15 +30,14 @@ export class RequestsComponent implements OnInit {
   selectedReportSortOption: SelectItem | null = null;
   reportSortOptions: SelectItem[] = [];
   selectedReportRange: SelectItem | null = null;
-  reportDateRange: any[] | null = null; // date nullable
+  reportDateRange: any[] | null = null; // date range for reports
 
   // For stats filters
   filamentTypes: { label: string; value: number; id: number }[] = [];
   colors: { label: string; value: number; id: number }[] = [];
   selectedFilaments: { label: string; value: number; id: number }[] = [];
   selectedColors: { label: string; value: number; id: number }[] = [];
-  reportDateStart: Date | null = null;
-  reportDateEnd: Date | null = null;
+  // removed reportDateStart and reportDateEnd since we now use reportDateRange
 
   // Requests
   requests: RequestModel[] | null = null;
@@ -160,12 +159,15 @@ export class RequestsComponent implements OnInit {
       }));
     }
 
-    if (queryParams['reportStartDate']) {
-      this.reportDateStart = new Date(queryParams['reportStartDate']);
-    }
-
-    if (queryParams['reportEndDate']) {
-      this.reportDateEnd = new Date(queryParams['reportEndDate']);
+    // Initialize report date range from URL params
+    if (queryParams['reportStartDate'] || queryParams['reportEndDate']) {
+      this.reportDateRange = [];
+      if (queryParams['reportStartDate']) {
+        this.reportDateRange[0] = new Date(queryParams['reportStartDate']);
+      }
+      if (queryParams['reportEndDate']) {
+        this.reportDateRange[1] = new Date(queryParams['reportEndDate']);
+      }
     }
 
     const tabs = ['all', 'mine', 'stats'];
@@ -362,7 +364,6 @@ export class RequestsComponent implements OnInit {
   loadStats(): void {
     const params: any = {};
 
-    // Add filters for stats if any exists
     if (this.selectedReportSortOption) {
       const [category, order] = this.selectedReportSortOption.value.split('-');
       params.sortCategory = category;
@@ -377,18 +378,19 @@ export class RequestsComponent implements OnInit {
       params.filamentIds = this.selectedFilaments.map((f) => f.id).join(',');
     }
 
-    if (this.reportDateStart) {
-      params.startDate = this.reportDateStart.toISOString().split('T')[0];
+    if (this.reportDateRange && this.reportDateRange[0]) {
+      params.startDate = this.reportDateRange[0].toISOString().split('T')[0];
     }
 
-    if (this.reportDateEnd) {
-      params.endDate = this.reportDateEnd.toISOString().split('T')[0];
+    if (this.reportDateRange && this.reportDateRange[1]) {
+      params.endDate = this.reportDateRange[1].toISOString().split('T')[0];
     }
 
     this.requestService.getStats(params).subscribe((result) => {
       if (result instanceof ApiResponseModel) {
         return;
       }
+      console.log('Updating statswith', result);
       this.stats = result;
     });
   }
@@ -635,15 +637,16 @@ export class RequestsComponent implements OnInit {
   }
 
   onReportDateChange(event: any): void {
-    // Handle report date change
     this.router.navigate([], {
       queryParams: {
-        reportStartDate: this.reportDateStart
-          ? this.reportDateStart.toISOString().split('T')[0]
-          : null,
-        reportEndDate: this.reportDateEnd
-          ? this.reportDateEnd.toISOString().split('T')[0]
-          : null,
+        reportStartDate:
+          this.reportDateRange && this.reportDateRange[0]
+            ? this.reportDateRange[0].toISOString().split('T')[0]
+            : null,
+        reportEndDate:
+          this.reportDateRange && this.reportDateRange[1]
+            ? this.reportDateRange[1].toISOString().split('T')[0]
+            : null,
       },
       queryParamsHandling: 'merge',
     });
@@ -700,11 +703,9 @@ export class RequestsComponent implements OnInit {
 
   clearAdvancedFilters(): void {
     if (this.activeTab === 'stats') {
-      // Clear stats filters
       this.selectedColors = [];
       this.selectedFilaments = [];
-      this.reportDateStart = null;
-      this.reportDateEnd = null;
+      this.reportDateRange = null;
       this.selectedReportSortOption = null;
 
       this.router.navigate([], {
@@ -719,7 +720,6 @@ export class RequestsComponent implements OnInit {
         queryParamsHandling: 'merge',
       });
     } else {
-      // Clear request filters
       this.budgetRange = [0, 10000];
       this.dateRange = null;
       this.searchQuery = '';

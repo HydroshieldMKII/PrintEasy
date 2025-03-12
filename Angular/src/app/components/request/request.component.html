@@ -2,9 +2,15 @@
   <div class="flex justify-between items-center">
     <h1 class="text-4xl font-bold">{{ "request.title" | translate }}</h1>
     <p-button
-      label="{{ 'request.create_button' | translate }}"
       icon="pi pi-plus"
       routerLink="/requests/new"
+      severity="success"
+      [rounded]="true"
+      [text]="false"
+      [raised]="true"
+      [style]="{ marginBottom: '10px' }"
+      pTooltip="{{ 'request.create_button' | translate }}"
+      tooltipPosition="left"
     />
   </div>
 
@@ -419,7 +425,8 @@
                 <div>
                   <p-floatlabel variant="in">
                     <p-datepicker
-                      [(ngModel)]="reportDateStart"
+                      [(ngModel)]="reportDateRange"
+                      selectionMode="range"
                       [showIcon]="true"
                       dateFormat="yy-mm-dd"
                       appendTo="body"
@@ -428,26 +435,7 @@
                       yearRange="2000:2060"
                       (onSelect)="onReportDateChange($event)"
                     ></p-datepicker>
-                    <label>{{ "request.stats.start_date" | translate }}</label>
-                  </p-floatlabel>
-                </div>
-              </div>
-
-              <div class="filter-item date-filter">
-                <div>
-                  <p-floatlabel variant="in">
-                    <p-datepicker
-                      [(ngModel)]="reportDateEnd"
-                      [showIcon]="true"
-                      dateFormat="yy-mm-dd"
-                      appendTo="body"
-                      [monthNavigator]="true"
-                      [yearNavigator]="true"
-                      yearRange="2000:2060"
-                      (onSelect)="onReportDateChange($event)"
-                      placeholder="{{ 'request.stats.end_date' | translate }}"
-                    ></p-datepicker>
-                    <label>{{ "request.stats.end_date" | translate }}</label>
+                    <label>{{ "request.stats.date_range" | translate }}</label>
                   </p-floatlabel>
                 </div>
               </div>
