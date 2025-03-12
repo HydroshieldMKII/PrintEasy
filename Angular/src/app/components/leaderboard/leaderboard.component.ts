@@ -55,7 +55,6 @@ export class LeaderboardComponent {
 
     if (this.currentEndDate) {
       this.endDate = new Date(new Date(this.currentEndDate).setUTCHours(12, 0, 0, 0));
-      console.log(this.currentEndDate);
     }
 
     if (this.currentStartDate) {

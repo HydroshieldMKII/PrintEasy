@@ -6,7 +6,10 @@
 
   <div class="contest-header">
     <h2>{{ 'contest.title_page' | translate }}</h2>
-    <a [routerLink]="'/contest/leaderboard'">Leaderboard</a>
+    <button pButton class="p-button-outlined" [routerLink]="'/contest/leaderboard'">
+      <i class="pi pi-chart-bar mr-2"></i>
+      Leaderboard
+    </button>
     <p [innerHTML]="'contest.description_page' | translate"></p>
   </div>
 
