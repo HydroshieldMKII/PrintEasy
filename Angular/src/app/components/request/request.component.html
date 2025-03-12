@@ -10,7 +10,7 @@
 
   <p-toast />
 
-  <p-tabs [(value)]="activeTab">
+  <p-tabs [(value)]="activeTab" scrollable>
     <p-tablist>
       <p-tab value="all" (click)="onTabChange('all')">{{
         "request.tab_all" | translate
