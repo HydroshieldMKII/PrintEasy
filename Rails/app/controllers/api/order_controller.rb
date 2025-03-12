@@ -43,7 +43,7 @@ module Api
 
       startDateFilter = ssf_params[:startDate].present? ? "AND latest_order_status.latest_status_time >= STR_TO_DATE('#{ssf_params[:startDate]}', '%Y-%m-%d')" : ''
       endDateFilter = ssf_params[:endDate].present? ? "AND latest_order_status.latest_status_time <= STR_TO_DATE('#{ssf_params[:endDate]}', '%Y-%m-%d')" : ''
-
+      # TODO: injection possible here
       sql = <<-SQL
         WITH latest_order_status AS (
           SELECT

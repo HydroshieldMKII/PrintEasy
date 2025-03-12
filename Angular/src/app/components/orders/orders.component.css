@@ -168,6 +168,7 @@ i {
     width: 100%;
     gap: 1rem;
     flex-wrap: wrap;
+    justify-content: flex-end;
 }
 
 @media (max-width: 768px) {
