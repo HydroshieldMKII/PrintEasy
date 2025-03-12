@@ -149,8 +149,6 @@ user1_recent_requests = Request.where(user: user1)
                                .limit(3)
                                .to_a
 
-debugger
-
 Current.user = admin
 admin_current_offers = [
   {
