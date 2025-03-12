@@ -40,18 +40,22 @@ module Api
         'earnings' => 'money_earned'
       }.fetch(column, 'in_progress_orders')
       direction = direction == 'asc' ? 'ASC' : 'DESC'
-      sanitizedStartDateFilter = ssf_params[:startDate].present? ? 
-        ActiveRecord::Base.sanitize_sql_for_conditions(["AND latest_order_status.latest_status_time >= STR_TO_DATE( ? , '%Y-%m-%d')", ssf_params[:startDate]]) : ''
-
-      sanitizedEndDateFilter = ssf_params[:endDate].present? ? 
-        ActiveRecord::Base.sanitize_sql_for_conditions(["AND latest_order_status.latest_status_time >= STR_TO_DATE( ? , '%Y-%m-%d')", ssf_params[:endDate]]) : ''
       
+      sanitizedDateFilter = ''
+      if ssf_params[:startDate].present? && !ssf_params[:endDate].present?
+        sanitizedDateFilter = ActiveRecord::Base.sanitize_sql_for_conditions(["WHERE created_at >= STR_TO_DATE( ? , '%Y-%m-%d')", ssf_params[:startDate]])
+      elsif !ssf_params[:startDate].present? && ssf_params[:endDate].present?
+        sanitizedDateFilter = ActiveRecord::Base.sanitize_sql_for_conditions(["WHERE created_at <= STR_TO_DATE( ? , '%Y-%m-%d')", ssf_params[:endDate]])
+      elsif ssf_params[:startDate].present? && ssf_params[:endDate].present?
+        sanitizedDateFilter = ActiveRecord::Base.sanitize_sql_for_conditions(["WHERE created_at >= STR_TO_DATE( ? , '%Y-%m-%d') AND created_at <= STR_TO_DATE( ? , '%Y-%m-%d')", ssf_params[:startDate], ssf_params[:endDate]])
+      end
+
       sql = <<-SQL
         WITH latest_order_status AS (
           SELECT
             order_id,
             MAX(created_at) AS latest_status_time
-          FROM order_status
+          FROM order_status #{sanitizedDateFilter} 
           GROUP BY order_id
         ),
         basic_order_info AS (
@@ -77,7 +81,7 @@ module Api
           SUM(basic_order_info.status_name = 'Arrived') AS completed_orders,
           SUM(basic_order_info.status_name = 'Cancelled') AS cancelled_orders,
           SUM(basic_order_info.status_name = 'Printing' OR basic_order_info.status_name = 'Printed' OR basic_order_info.status_name = 'Shipped' OR basic_order_info.status_name = 'Accepted') AS in_progress_orders,
-          AVG(basic_order_info.rating) AS average_rating,
+          AVG(CASE WHEN (basic_order_info.status_name = 'Arrived') THEN basic_order_info.rating ELSE null END) AS average_rating,
           (CASE WHEN basic_order_info.status_name = 'Arrived' OR basic_order_info.status_name = 'Cancelled' THEN 
             CAST(
               TRUNCATE(
@@ -99,7 +103,7 @@ module Api
         JOIN printers ON printer_users.printer_id = printers.id
         LEFT JOIN basic_order_info ON printer_users.id = basic_order_info.printer_user_id
         LEFT JOIN latest_order_status ON basic_order_info.order_id = latest_order_status.order_id
-        WHERE printer_users.user_id = ? #{sanitizedStartDateFilter} #{sanitizedEndDateFilter}
+        WHERE printer_users.user_id = ? 
         GROUP BY printers.model
         ORDER BY #{column} #{direction}
       SQL
