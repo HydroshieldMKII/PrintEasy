@@ -21,7 +21,7 @@ export class OrdersComponent {
 
   myOrders: OrderModel[] = [];
   makeOrders: OrderModel[] = [];
-  reportData: Array<{}> = [];
+  reportData: [] = [];
   statusColorRef: { [key: string]: string } = {
     'Accepted': '#c5c5c5',
     'Printing': '#fa6bff',
@@ -138,6 +138,9 @@ export class OrdersComponent {
   getReport(params: { [key: string]: string } = {}) {
     params['type'] = 'report';
     this.orderService.getReport(params).subscribe((response: ApiResponseModel) => {
+      if (!response.data.printers) {
+        return;
+      }
       this.reportData = response.data.printers;
       console.log(this.reportData);
     });

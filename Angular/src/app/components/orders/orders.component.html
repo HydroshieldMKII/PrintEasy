@@ -326,7 +326,7 @@
                                 [showIcon]="true"
                                 [showButtonBar]="true"
                                 [placeholder]="'orders.report.start_date' | translate"
-                                [ngStyle]="{'height': '57px', 'flex-grow': '1'}"
+                                [ngStyle]="{'height': '57px', 'width': '300px'}"
                                 [(ngModel)]="reportStartDate"
                                 (onClose)="onFilterChange($event)"
                             />
@@ -334,11 +334,11 @@
                                 [showIcon]="true"
                                 [showButtonBar]="true"
                                 [placeholder]="'orders.report.end_date' | translate"
-                                [ngStyle]="{'height': '57px', 'flex-grow': '1'}"
+                                [ngStyle]="{'height': '57px', 'width': '300px'}"
                                 [(ngModel)]="reportEndDate"
                                 (onClose)="onFilterChange($event)"
                             />
-                            <p-floatlabel variant="in" style="flex-grow: 1;">
+                            <p-floatlabel variant="in" style="width: 300px">
                                 <p-select
                                     [options]="reportSortOptions"
                                     [(ngModel)]="selectedReportSortOption"
