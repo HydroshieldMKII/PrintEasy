@@ -117,7 +117,7 @@ export class ApiRequestService {
         if (error.status === 500) {
             this.messageService.add({
                 severity: 'error',
-                summary: this.translate.instant('global.errors.erver_error'),
+                summary: this.translate.instant('global.errors.server_error'),
                 detail: this.translate.instant('global.errors.server_error_message')
             })
         }
