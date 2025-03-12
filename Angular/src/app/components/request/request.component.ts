@@ -324,6 +324,31 @@ export class RequestsComponent implements OnInit {
         );
       });
     }
+
+    this.colors = this.colors.map((color) => ({
+      label: this.translationService.translateColor(color.id),
+      value: color.id,
+      id: color.id,
+    }));
+
+    this.filamentTypes = this.filamentTypes.map((filament) => ({
+      label: this.translationService.translateFilament(filament.id),
+      value: filament.id,
+      id: filament.id,
+    }));
+
+    //refresh selected colors and filaments
+    this.selectedColors = this.selectedColors.map((color) => ({
+      label: this.translationService.translateColor(color.id),
+      value: color.id,
+      id: color.id,
+    }));
+
+    this.selectedFilaments = this.selectedFilaments.map((filament) => ({
+      label: this.translationService.translateFilament(filament.id),
+      value: filament.id,
+      id: filament.id,
+    }));
   }
 
   ngOnInit(): void {
@@ -341,7 +366,6 @@ export class RequestsComponent implements OnInit {
   }
 
   loadReferenceData(): void {
-    // Load colors and filaments for the filter options
     this.presetService.getAllColors().subscribe((colors: ColorModel[]) => {
       this.colors = colors.map((color) => ({
         label: this.translationService.translateColor(color.id),
