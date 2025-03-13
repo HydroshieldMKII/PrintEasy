@@ -102,17 +102,49 @@ module Api
     end
    
     def serialize_collection(requests)
-      requests.map { |request| serialize_request(request) }
+      requests.as_json(
+        except: %i[user_id created_at updated_at],
+        include: {
+          preset_requests: {
+            except: %i[request_id color_id filament_id printer_id],
+            include: {
+              color: { only: %i[id name] },
+              filament: { only: %i[id name] },
+              printer: { only: %i[id model] }
+            },
+            methods: [:matching_offer_by_current_user?]
+          },
+          user: {
+            only: %i[id username],
+            include: {
+              country: { only: %i[name] }
+            }
+          }
+        },
+        methods: %i[stl_file_url offer_made? accepted_at]
+      )
     end
    
     def format_response(resource, status: :ok)
       has_printer = Current.user.printers.exists?
      
-      request_data = if resource.is_a?(Request)
-                       serialize_request(resource)
-                     else
-                       serialize_collection(resource)
-                     end
+      if resource.is_a?(Request)
+        request_data = resource.as_json(
+          except: %i[user_id created_at updated_at],
+          include: {
+            user: {
+              only: %i[id username],
+              include: {
+                country: { only: %i[name] }
+              }
+            }
+          },
+          methods: %i[stl_file_url offer_made? accepted_at]
+        )
+        request_data['preset_requests'] = resource.ordered_preset_requests_json
+      else
+        request_data = serialize_collection(resource)
+      end
      
       {
         json: {

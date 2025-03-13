@@ -84,7 +84,7 @@ class Request < ApplicationRecord
 
   scope :viewable_by_user, lambda {
     where(user: Current.user).or(
-      Current.user.printers.exists? ? where.not(id: nil) : []
+      Current.user.printers.exists? ? where.not(id: nil) : none
     )
   }
 
@@ -287,6 +287,21 @@ class Request < ApplicationRecord
 
   def accepted_at
     offers.joins(:order).first&.created_at
+  end
+
+  def ordered_preset_requests_json
+    preset_requests
+      .joins(:printer, :filament, :color)
+      .order('printers.model ASC, filaments.name ASC, colors.name ASC, preset_requests.print_quality ASC')
+      .as_json(
+        except: %i[request_id color_id filament_id printer_id],
+        methods: [:matching_offer_by_current_user?],
+        include: {
+          color: { only: %i[id name] },
+          filament: { only: %i[id name] },
+          printer: { only: %i[id model] }
+        }
+      )
   end
 
   private

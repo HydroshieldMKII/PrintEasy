@@ -100,7 +100,7 @@ export class RequestFormComponent implements OnInit {
   }
 
   get hasOfferAccepted(): boolean {
-    return this.request && this.request.acceptedAt !== null;
+    return this.request && this.request.acceptedAt;
   }
 
   translateRefresh(): void {
@@ -150,7 +150,7 @@ export class RequestFormComponent implements OnInit {
     }
 
     if (
-      this.request &&
+      this.request?.targetDate &&
       selectedDate.toISOString().substring(0, 10) ===
         this.request.targetDate.toISOString().substring(0, 10)
     ) {
