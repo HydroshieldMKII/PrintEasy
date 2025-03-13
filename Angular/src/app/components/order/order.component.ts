@@ -160,8 +160,8 @@ export class OrderComponent {
   translateRefresh() {
     this.errors_type = this.translate.instant(['global.errors'])['global.errors'];
 
-    this.editMenuItems[0].label = this.translate.instant('global.edit_button')['global.edit_button'];
-    this.editMenuItems[1].label = this.translate.instant('global.delete_button')['global.delete_button'];
+    this.editMenuItems[0].label = this.translate.instant('global.edit_button');
+    this.editMenuItems[1].label = this.translate.instant('global.delete_button');
 
     const message = this.translate.instant(['order.order_status.empty_comments.Accepted', 'order.order_status.empty_comments.Printing', 'order.order_status.empty_comments.Printed', 'order.order_status.empty_comments.Shipped', 'order.order_status.empty_comments.Arrived', 'order.order_status.empty_comments.Cancelled'])
     this.statusDefaultCommentRef['Accepted'] = message['order.order_status.empty_comments.Accepted'];
