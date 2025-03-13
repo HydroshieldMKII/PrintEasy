@@ -79,6 +79,9 @@ export class UserProfileComponent implements OnInit {
                 this.route.navigate(['/']);
               }
             }
+            this.averageRating = this.userProfile?.selfReviews?.length
+              ? this.userProfile.selfReviews.reduce((acc, review) => acc + review.rating, 0) / this.userProfile.selfReviews.length
+              : 0;
           });
       }
     });
