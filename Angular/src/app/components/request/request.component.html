@@ -428,14 +428,15 @@
                   <p-floatlabel variant="in">
                     <p-datepicker
                       [(ngModel)]="reportDateRange"
+                      [showButtonBar]="true"
                       selectionMode="range"
-                      [showIcon]="true"
                       dateFormat="yy-mm-dd"
                       appendTo="body"
                       [monthNavigator]="true"
                       [yearNavigator]="true"
                       yearRange="2000:2060"
-                      (onSelect)="onReportDateChange($event)"
+                      (onSelect)="onReportDateChange()"
+                      (onClose)="onReportDateChange()"
                     ></p-datepicker>
                     <label>{{ "request.date_range" | translate }}</label>
                   </p-floatlabel>
@@ -456,8 +457,8 @@
                       [showHeader]="true"
                       [style]="{ width: '100%' }"
                       [showClear]="true"
-                      (onChange)="onReportMultiFilterChange($event)"
-                      (onClear)="onReportMultiFilterChange($event)"
+                      (onChange)="onReportMultiFilterChange()"
+                      (onClear)="onReportMultiFilterChange()"
                     ></p-multiSelect>
                     <label>{{ "request.color" | translate }}</label>
                   </p-float-label>
@@ -478,8 +479,8 @@
                       [showHeader]="true"
                       [style]="{ width: '100%' }"
                       [showClear]="true"
-                      (onChange)="onReportMultiFilterChange($event)"
-                      (onClear)="onReportMultiFilterChange($event)"
+                      (onChange)="onReportMultiFilterChange()"
+                      (onClear)="onReportMultiFilterChange()"
                     ></p-multiSelect>
                     <label>{{ "request.filament_type" | translate }}</label>
                   </p-float-label>

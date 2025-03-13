@@ -1,4 +1,4 @@
-import { Component, OnInit, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -9,11 +9,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ImportsModule } from '../../../imports';
 import { DropdownModule } from 'primeng/dropdown';
 import { RequestService } from '../../services/request.service';
-import { ColorModel } from '../../models/color.model';
-import { PrinterModel } from '../../models/printer.model';
 import { PresetService } from '../../services/preset.service';
 import { StlModelViewerModule } from 'angular-stl-model-viewer';
-import { FilamentModel } from '../../models/filament.model';
 import { FormGroup } from '@angular/forms';
 import { FileSelectEvent } from 'primeng/fileupload';
 import { RequestModel } from '../../models/request.model';
@@ -47,11 +44,11 @@ export class RequestFormComponent implements OnInit {
   isViewMode = false;
   id: number | null = null;
   isMine: boolean = false;
-  uploadedFile: any = null;
+  uploadedFile: Blob | null = null;
   uploadedFileBlob: any = null;
   deleteDialogVisible: boolean = false;
   offerModalVisible: boolean = false;
-  presetModalToEdit: any = null;
+  presetModalToEdit: PresetModel | null = null;
   requestToDelete: RequestModel | null = null;
   presetToDelete: any[] = [];
 
