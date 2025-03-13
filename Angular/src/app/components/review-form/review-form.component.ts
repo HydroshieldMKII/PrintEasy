@@ -25,7 +25,7 @@ export class ReviewFormComponent {
   messageService: MessageService = inject(MessageService);
   reviewService: ReviewService = inject(ReviewService);
   translate: TranslateService = inject(TranslateService);
-  auth: any = inject(AuthService);
+  auth: AuthService = inject(AuthService);
 
   deleteReviewDialogVisible: boolean = false;
   isEditReview: boolean = false;
