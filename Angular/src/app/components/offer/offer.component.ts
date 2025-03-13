@@ -186,12 +186,12 @@ export class OffersComponent {
     });
   }
 
-  editOffer(offer: any): void {
+  editOffer(offer: OfferModel): void {
     this.offerIdToEdit = offer.id;
     this.offerModalVisible = true;
   }
 
-  cancelOffer(offer: OfferModel, request: any): void {
+  cancelOffer(offer: OfferModel, request: RequestOfferModel): void {
     this.offerToDelete = offer;
     this.requestToDelete = request;
     this.deleteDialogVisible = true;
