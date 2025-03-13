@@ -220,7 +220,7 @@ user2_requests = [
     budget: 75.00,
     comment: 'User2 request 2',
     target_date: Time.now + 15.days
-}
+  }
 ]
 
 user2_requests.each do |req_data|
