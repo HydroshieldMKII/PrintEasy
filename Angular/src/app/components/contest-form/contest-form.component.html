@@ -31,7 +31,7 @@
               <!-- Description -->
               <div class="mt-12">
                 <p-floatlabel variant="in">
-                  <textarea class="description-textarea" id="description" pTextarea formControlName="description"
+                  <textarea [maxlength]="200" class="description-textarea" id="description" pTextarea formControlName="description"
                     rows="4"></textarea>
                   <label for="description" class="p-text-bold">{{ 'contest_form.description' | translate }}</label>
                 </p-floatlabel>

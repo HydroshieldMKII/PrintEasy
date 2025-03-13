@@ -114,7 +114,7 @@
                     <div class="mt-25">
                         <p-floatlabel variant="in">
                             <textarea class="description-textarea w-full" id="description" pTextarea
-                                formControlName="description" rows="4"></textarea>
+                                formControlName="description" rows="4" [maxlength]="200"></textarea>
                             <label for="description">{{ 'submission_form.description' | translate }}</label>
                         </p-floatlabel>
 
