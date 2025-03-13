@@ -205,3 +205,39 @@ specific_preset_requests.each do |pr_data|
     print_quality: pr_data[:print_quality]
   )
 end
+
+user2 = User.find_by(username: 'ccc')
+
+user2_requests = [
+  {
+    name: 'User2 Request',
+    budget: 50.00,
+    comment: 'User2 request 1',
+    target_date: Time.now + 10.days
+  },
+  {
+    name: 'User2 Request',
+    budget: 75.00,
+    comment: 'User2 request 2',
+    target_date: Time.now + 15.days
+}
+]
+
+user2_requests.each do |req_data|
+  req = Request.new(
+    user: user2,
+    name: req_data[:name],
+    budget: req_data[:budget],
+    comment: req_data[:comment],
+    target_date: req_data[:target_date]
+  )
+
+  req.stl_file.attach(
+    io: stl_file_path,
+    filename: 'RUBY13.stl',
+    content_type: 'application/sla'
+  )
+  req.save
+
+  stl_file_path.rewind
+end
