@@ -1,11 +1,5 @@
 <div class="contest-container">
   @if (authService.currentUser?.isAdmin) {
-  <!-- <p-speeddial
-    direction="left"
-    [style]="{ position: 'absolute', top: 1, right: 'calc(1%)' }"
-    [buttonProps]="{ severity: 'success', rounded: true }"
-    (onClick)="newContest()"
-  /> -->
     <div class="add-contest">
       <p-button icon="pi pi-plus" severity="success" [rounded]="true" [text]="false"
       [raised]="true" [style]="{ marginBottom: '10px' }" pTooltip="{{ 'request.create_button' | translate }}"
@@ -19,7 +13,7 @@
       <div>
         <button pButton class="p-button-outlined" [routerLink]="'/contest/leaderboard'">
           <i class="pi pi-chart-bar mr-2"></i>
-          Leaderboard
+          {{ 'contest.leaderboard' | translate }}
         </button>
       </div>
     </div>
