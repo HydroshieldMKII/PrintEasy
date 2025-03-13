@@ -22,7 +22,6 @@ import { PresetModel } from '../../models/preset.model';
 import { ColorModel } from '../../models/color.model';
 import { FilamentModel } from '../../models/filament.model';
 import { PrinterUserModel } from '../../models/printer-user.model';
-import { MessageService } from 'primeng/api';
 import { TranslatePipe } from '@ngx-translate/core';
 import { TranslateService } from '@ngx-translate/core';
 import { TranslationService } from '../../services/translation.service';
@@ -207,17 +206,6 @@ export class OfferModalComponent implements OnChanges {
         color: matchingColor,
         filament: matchingFilament,
       });
-    }
-  }
-
-  openOfferModal(editMode = false, offerData: any = null) {
-    this.isEditMode = editMode;
-    this.offerModalVisible = true;
-
-    if (editMode && offerData) {
-      this.offerForm.patchValue(offerData);
-    } else {
-      this.offerForm.reset();
     }
   }
 

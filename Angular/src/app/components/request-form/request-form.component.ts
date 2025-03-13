@@ -24,6 +24,7 @@ import { ApiResponseModel } from '../../models/api-response.model';
 import { PresetModel } from '../../models/preset.model';
 import { RequestPresetComponent } from '../request-preset/request-preset.component';
 import { TranslationService } from '../../services/translation.service';
+import { DropdownOption } from '../../interfaces/interfaces';
 
 @Component({
   selector: 'app-request-form',
@@ -45,7 +46,7 @@ export class RequestFormComponent implements OnInit {
   id: number | null = null;
   isMine: boolean = false;
   uploadedFile: Blob | null = null;
-  uploadedFileBlob: any = null; //conflict string | ArrayBuffer
+  uploadedFileBlob: any = null;
   deleteDialogVisible: boolean = false;
   offerModalVisible: boolean = false;
   presetModalToEdit: PresetModel | null = null;
@@ -119,13 +120,13 @@ export class RequestFormComponent implements OnInit {
 
     this.request.presets = this.request.presets.map((preset: any) => {
       const matchingColor = this.colors.find(
-        (c: any) => c.id === preset.color.id
+        (c: DropdownOption) => c.id === preset.color.id
       );
       const matchingFilament = this.filamentTypes.find(
-        (f: any) => f.id === preset.filamentType.id
+        (f: DropdownOption) => f.id === preset.filamentType.id
       );
       const matchingPrinter = this.printers.find(
-        (p: any) => p.id === preset.printerModel.id
+        (p: DropdownOption) => p.id === preset.printerModel.id
       );
 
       if (matchingColor) {
@@ -209,13 +210,14 @@ export class RequestFormComponent implements OnInit {
     });
   }
 
-  private mapEntityToDropdownOptions(
-    entities: any[],
-    labelProperty: string
-  ): any[] {
+  // T parce que utilisé pour les types PrinterModel, FilamentType et Color
+  private mapEntityToDropdownOptions<T extends { id: number }>(
+    entities: T[],
+    labelProperty: keyof T
+  ): DropdownOption[] {
     return entities.map((entity) => ({
-      label: entity[labelProperty],
-      value: entity[labelProperty],
+      label: String(entity[labelProperty]),
+      value: String(entity[labelProperty]),
       id: entity.id,
     }));
   }
@@ -523,7 +525,7 @@ export class RequestFormComponent implements OnInit {
         : preset.printQuality;
 
     const isMarkedForDeletion = this.presetToDelete.some(
-      (p: any) => preset.id && p.id === preset.id
+      (p: PresetModel) => preset.id && p.id === preset.id
     );
 
     if (isMarkedForDeletion) {
