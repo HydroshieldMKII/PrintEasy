@@ -96,3 +96,11 @@ stl-model-viewer {
 .card-content-label {
     color: #003064;
 }
+
+:host ::ng-deep .p-button-link {
+    padding: 0rem !important;
+}
+
+:host ::ng-deep .p-button-link span {
+    font-weight: bold !important;
+}

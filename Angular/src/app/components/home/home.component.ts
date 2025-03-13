@@ -16,7 +16,7 @@ import { LikeService } from '../../services/like.service';
 import { LikeModel } from '../../models/like.model';
 @Component({
   selector: 'app-home',
-  imports: [ImportsModule, TranslatePipe, StlModelViewerModule],
+  imports: [ImportsModule, TranslatePipe, StlModelViewerModule, RouterLink],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
