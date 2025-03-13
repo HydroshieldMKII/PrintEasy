@@ -126,8 +126,9 @@ export class UserProfileComponent implements OnInit {
     });
   }
 
-  onInputDate(event: any) {
-    console.log(event);
+  downloadStl(downloadUrl: string): void {
+    console.log(downloadUrl);
+    window.open(downloadUrl, '_blank');
   }
 
   onTabChange(tab: string) {

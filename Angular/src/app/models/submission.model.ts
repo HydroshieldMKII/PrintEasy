@@ -10,7 +10,7 @@ export type SubmissionAPI = {
     created_at: Date;
     updated_at: Date;
     image_url: string | null;
-    stl_url: string | null;
+    stl_url: string;
     likes: LikeAPI[];
     liked_by_current_user: boolean;
     user: UserApi | null
@@ -25,7 +25,7 @@ export class SubmissionModel {
     created_at: Date;
     updated_at: Date;
     imageUrl: string | null;
-    stlUrl: string | null;
+    stlUrl: string;
     likes: LikeModel[];
     liked: boolean = false;
     user: UserModel | null;
@@ -39,7 +39,7 @@ export class SubmissionModel {
         createdAt: Date, 
         updatedAt: Date, 
         imageUrl: string | null, 
-        stlUrl: string | null, 
+        stlUrl: string, 
         likes: LikeModel[], 
         user: UserModel | null,
         liked: boolean = false

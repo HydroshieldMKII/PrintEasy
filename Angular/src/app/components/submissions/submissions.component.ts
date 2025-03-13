@@ -35,7 +35,6 @@ export class SubmissionsComponent {
   submissionForm: FormGroup;
   contest: ContestModel | null = null;
   submissions: UserSubmission[] = [];
-  responsiveOptions: any[] | undefined;
   contestDurationInDays: string = '';
   paramsId: number = 0;
   display: boolean = false;
@@ -76,29 +75,6 @@ export class SubmissionsComponent {
     this.submissionService.getSubmissions(this.paramsId).subscribe((data) => {
       this.submissions = data;
     });
-
-    this.responsiveOptions = [
-      {
-        breakpoint: '1400px',
-        numVisible: 2,
-        numScroll: 1,
-      },
-      {
-        breakpoint: '1199px',
-        numVisible: 3,
-        numScroll: 1,
-      },
-      {
-        breakpoint: '767px',
-        numVisible: 2,
-        numScroll: 1,
-      },
-      {
-        breakpoint: '575px',
-        numVisible: 1,
-        numScroll: 1,
-      },
-    ];
   }
 
   ngOnInit() {
@@ -106,6 +82,10 @@ export class SubmissionsComponent {
     if (bootstrapLink) {
       this.renderer.removeChild(document.head, bootstrapLink);
     }
+  }
+
+  downloadStl(downloadUrl: string): void {
+    window.open(downloadUrl, '_blank');
   }
 
   onSubmit() {

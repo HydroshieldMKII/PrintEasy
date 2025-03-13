@@ -98,7 +98,7 @@
                 <!-- <p-button icon="pi pi-heart" severity="secondary" /> -->
 
                 <!-- Bouton Download -->
-                <p-button icon="pi pi-download" severity="primary" />
+                <p-button icon="pi pi-download" severity="primary" (click)="downloadStl(submission.stlUrl)" />
               </div>
             </div>
           </div>
@@ -227,7 +227,6 @@
                 dateFormat="yy-mm-dd"
                 [style]="{ width: '100%' }"
                 [maxDate]="today"
-                (onInput)="onInputDate($event)"
               >
               </p-datepicker>
               <label for="aquiredDate">{{
@@ -393,7 +392,8 @@
               <!-- <p-button icon="pi pi-heart" severity="secondary" /> -->
 
               <!-- Bouton Download -->
-              <p-button icon="pi pi-download" severity="primary" />
+               
+              <p-button icon="pi pi-download" severity="primary" (click)="downloadStl(submission.stlUrl)" />
             </div>
           </div>
         </div>

@@ -68,7 +68,7 @@
                             [severity]="submission.liked ? 'danger' : 'secondary'" [outlined]="!submission.liked"
                             (click)="onLike(submission)" />
 
-                        <p-button icon="pi pi-download" severity="primary" />
+                        <p-button icon="pi pi-download" severity="primary" (click)="downloadStl(submission.stlUrl)" />
                     </div>
 
                     <!-- (click)="toggleLike(product)" -->
