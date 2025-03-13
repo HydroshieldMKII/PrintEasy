@@ -33,7 +33,7 @@ export class RequestsComponent implements OnInit {
   selectedReportSortOption: SelectItem | null = null;
   reportSortOptions: SelectItem[] = [];
   selectedReportRange: SelectItem | null = null;
-  reportDateRange: any[] | null = null; // date range for reports
+  reportDateRange: any[] | null = null; // date range for reports, nullable
 
   private tempSortCategory: string | null = null;
   private tempSort: string | null = null;
@@ -656,8 +656,7 @@ export class RequestsComponent implements OnInit {
     this.refreshData();
   }
 
-  onReportMultiFilterChange(event: any): void {
-    // Will be called when color or filament selections change
+  onReportMultiFilterChange(): void {
     this.router.navigate([], {
       queryParams: {
         colorIds:
@@ -675,7 +674,7 @@ export class RequestsComponent implements OnInit {
     this.loadStats();
   }
 
-  onReportDateChange(event: any): void {
+  onReportDateChange(): void {
     this.router.navigate([], {
       queryParams: {
         reportStartDate:

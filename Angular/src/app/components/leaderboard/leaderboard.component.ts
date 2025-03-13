@@ -94,7 +94,6 @@ export class LeaderboardComponent {
   }
 
   onEndChange(event: Date) {
-    console.log(event);
     this.currentEndDate = event;
     
     this.route.navigate([], {
@@ -162,7 +161,6 @@ export class LeaderboardComponent {
     if (this.currentSort) {
       sf_params = { ...sf_params, direction: this.currentSort };	
     }
-    console.log(sf_params);
     return sf_params;
   }
 

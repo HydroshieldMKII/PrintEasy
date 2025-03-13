@@ -315,6 +315,7 @@ export class OfferModalComponent implements OnChanges {
               (f) => f.id === offer.filament.id
             );
 
+            //timezone adjustment
             const dateFromBackend = new Date(offer.targetDate);
             dateFromBackend.setMinutes(
               dateFromBackend.getMinutes() + dateFromBackend.getTimezoneOffset()

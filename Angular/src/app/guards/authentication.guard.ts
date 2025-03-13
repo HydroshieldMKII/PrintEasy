@@ -11,9 +11,6 @@ export class AuthenticationGuard implements CanActivate {
         const url: string = state.url;
         const isLoggedIn = localStorage.getItem('printeasy.currentUser') !== null;
 
-        // console.log('URL:', url);
-        // console.log('Is logged in:', isLoggedIn);
-
         if ((url === '/login' || url === '/signup') && isLoggedIn) {
             this.router.navigate(['/']);
             return false;

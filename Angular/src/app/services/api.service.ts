@@ -138,7 +138,6 @@ export class ApiRequestService {
   }
 
   handleHttpError(error: HttpErrorResponse): Observable<ApiResponseModel> {
-    // console.log(error);
     let formattedErrors: { [key: string]: string } = {};
 
     if (error.error?.errors) {
@@ -156,7 +155,6 @@ export class ApiRequestService {
     }
 
     if (error.status === 401) {
-      // console.log("Unauthorized");
       this.triggerResetUser();
       this.router.navigate(['/login']);
     }

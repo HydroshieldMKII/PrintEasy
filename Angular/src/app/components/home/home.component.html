@@ -23,7 +23,7 @@
                     <ng-template #content>
                         <div class="h-row">
                             <p class="card-content-label">{{'home.by_label' | translate}}</p>
-                            <p class="black-text">{{request.user?.username}}</p>
+                            <p-button [label]="request.user?.username" [link]="true" routerLink="/profile/{{request.user?.id}}"/>
                         </div>
                         <div class="h-row">
                             <p class="card-content-label">{{'home.budget_label' | translate}}</p>
@@ -39,7 +39,7 @@
         </div>
     </div>
 
-    <div class="section" *ngIf="requests.length > 0">
+    <div class="section" *ngIf="contests.length > 0">
         <h2>{{'home.contest_header' | translate}}</h2>
         <hr>
         <div class="list">
@@ -72,7 +72,7 @@
         </div>
     </div>
 
-    <div class="section" *ngIf="requests.length > 0">
+    <div class="section" *ngIf="submissions.length > 0">
         <h2>{{'home.submissions_header' | translate}}</h2>
         <hr>
         <div class="list">
@@ -92,7 +92,7 @@
                     <ng-template #content>
                         <div class="h-row">
                             <p class="card-content-label">{{'home.by_label' | translate}}</p>
-                            <p class="black-text">{{submission.user?.username}}</p>
+                            <p-button [label]="submission.user?.username" [link]="true" routerLink="/profile/{{submission.user?.id}}"/>
                         </div>
                         <div class="h-row">
                             <p class="card-content-label">{{'home.created_at_label' | translate}}</p>

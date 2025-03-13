@@ -49,7 +49,6 @@ export class ReviewFormComponent {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['review'] && this.review) {
-      console.log('Review:', this.review);
       this.isEditReview = true;
       this.reviewForm.patchValue({
         title: this.review.title,
@@ -81,12 +80,10 @@ export class ReviewFormComponent {
       }
       reader.readAsDataURL(file);
     }
-    console.log('Review images:', this.reviewImageUrls);
   }
 
   onReviewSubmit() : void {
     if (this.reviewForm.valid) {
-      console.log('Review data form:', this.reviewForm.value);
 
       const reviewData = new FormData();
       reviewData.append('review[title]', this.reviewForm.value.title);
@@ -100,10 +97,8 @@ export class ReviewFormComponent {
           reviewData.append('review[images][]', image.signedId ?? image.file);
         });
       }
-      console.log('Review data:', reviewData);
       if (this.isEditReview) {
         this.reviewService.updateReview(this.review?.id || -1, reviewData).subscribe((response : ApiResponseModel | ReviewModel) => {
-          console.log('Review updated:', response);
           if (response instanceof ReviewModel) {
             this.refreshReview(response);
             this.deleteReviewDialogVisible = false;
@@ -122,7 +117,6 @@ export class ReviewFormComponent {
         });
       }else{
         this.reviewService.createReview(reviewData).subscribe((response : ApiResponseModel | ReviewModel) => {
-          console.log('Review created:', response);
           if (response instanceof ReviewModel) {
             this.refreshReview(response);
             this.deleteReviewDialogVisible = false;
@@ -153,7 +147,6 @@ export class ReviewFormComponent {
     this.reviewService.deleteReview(this.review?.id || -1).subscribe((response : ApiResponseModel | ReviewModel) => {
       
       if (response instanceof ReviewModel) {
-        console.log('Review deleted:', response);
         this.deleteReviewDialogVisible = false;
         this.isEditReview = false;
         this.clearReviewForm();

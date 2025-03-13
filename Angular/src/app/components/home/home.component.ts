@@ -16,7 +16,7 @@ import { LikeService } from '../../services/like.service';
 import { LikeModel } from '../../models/like.model';
 @Component({
   selector: 'app-home',
-  imports: [ImportsModule, TranslatePipe, StlModelViewerModule],
+  imports: [ImportsModule, TranslatePipe, StlModelViewerModule, RouterLink],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
@@ -31,7 +31,6 @@ export class HomeComponent {
 
   constructor() {
     this.homeService.getData().subscribe((response : HomeModel | ApiResponseModel) => {
-      console.log("Home data: ", response);
       if (response instanceof HomeModel) {
         this.contests = response.contests;
         this.requests = response.requests;

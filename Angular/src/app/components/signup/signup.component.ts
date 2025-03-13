@@ -77,11 +77,9 @@ export class SignupComponent {
 
   onSubmit() {
     if (this.signupForm.valid) {
-      // console.log('Signing up with:', this.signupForm.value);
       this.credentials = new UserCredentialsModel(this.signupForm.value.username, this.signupForm.value.password, this.signupForm.value.confirmPassword, this.signupForm.value.country.countryId);
 
       this.auth.signUp(this.credentials).subscribe((response) => {
-        // console.log('Signup response:', response);
         if (response.status === 200) {
           this.router.navigate(['/']);
         } else {

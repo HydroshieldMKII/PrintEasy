@@ -13,10 +13,6 @@ export class ContestGuard implements CanActivateChild {
     canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
         const url: string = state.url;
     
-        console.log('URL:', url);
-        console.log('Route:', route);
-        console.log("authService.currentUser", this.authService.currentUser);
-    
         const contestEditPattern = /^\/contest\/\d+$/;
     
         if ((url === '/contest/new' || contestEditPattern.test(url)) && !this.authService.currentUser?.isAdmin) {

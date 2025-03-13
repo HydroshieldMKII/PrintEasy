@@ -195,7 +195,7 @@
     "error_stl_required": "STL file is required"
   },
   "user_profile": {
-    "print_since": "prints since",
+    "print_since": "Since",
     "reviews": "reviews",
     "reviews_tab": "Reviews",
     "printers_tab": "Printers",
