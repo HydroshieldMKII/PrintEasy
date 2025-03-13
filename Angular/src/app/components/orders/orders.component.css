@@ -120,7 +120,8 @@ i {
     flex-direction: column;
     gap: 0.25rem;
     min-width: 250px;
-    flex-grow: 1;
+    /* flex-grow: 1; */
+    width: 350px;
 }
 
 .filter-header {

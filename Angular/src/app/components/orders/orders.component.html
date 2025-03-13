@@ -243,6 +243,18 @@
                                     </div>
                                 </div>
                             </div>
+                            
+                            <div class="filter-actions-bar">
+                                <div class="filter-buttons">
+                                    <p-button
+                                        icon="pi pi-filter-slash"
+                                        styleClass="p-button-sm p-button-outlined"
+                                        (onClick)="clearAdvancedFilters()"
+                                        pTooltip="{{ 'request.clear_filters' | translate }}"
+                                        tooltipPosition="left"
+                                    ></p-button>
+                                </div>
+                            </div>
                         </div>
                     </ng-template>
                     <ng-template #header>
