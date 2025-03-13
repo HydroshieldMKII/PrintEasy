@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { PresetModel } from '../models/preset.model';
 import { ColorModel } from '../models/color.model';
 import { FilamentModel } from '../models/filament.model';
@@ -8,8 +8,6 @@ import { ApiRequestService } from './api.service';
 import { ApiResponseModel } from '../models/api-response.model';
 
 import { map, Observable, of } from 'rxjs';
-import { PrinterUserModel, PrinterUserApi } from '../models/printer-user.model';
-import { TranslateService } from '@ngx-translate/core';
 import { TranslationService } from './translation.service';
 
 @Injectable({
@@ -24,7 +22,6 @@ export class PresetService {
 
   constructor(
     private api: ApiRequestService,
-    private translate: TranslateService,
     private translationService: TranslationService
   ) {}
 

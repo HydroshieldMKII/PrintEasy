@@ -45,12 +45,12 @@ export class RequestFormComponent implements OnInit {
   id: number | null = null;
   isMine: boolean = false;
   uploadedFile: Blob | null = null;
-  uploadedFileBlob: any = null;
+  uploadedFileBlob: any = null; //conflict string | ArrayBuffer
   deleteDialogVisible: boolean = false;
   offerModalVisible: boolean = false;
   presetModalToEdit: PresetModel | null = null;
   requestToDelete: RequestModel | null = null;
-  presetToDelete: any[] = [];
+  presetToDelete: PresetModel[] = [];
 
   isDragOver: boolean = false;
 
@@ -101,17 +101,21 @@ export class RequestFormComponent implements OnInit {
   }
 
   translateRefresh(): void {
-    this.colors = this.colors.map((color: any) => {
-      color.label = this.translationService.translateColor(color.id);
-      color.value = color.label;
-      return color;
-    });
+    this.colors = this.colors.map(
+      (color: { id: number; label: string; value: string }) => {
+        color.label = this.translationService.translateColor(color.id);
+        color.value = color.label;
+        return color;
+      }
+    );
 
-    this.filamentTypes = this.filamentTypes.map((filament: any) => {
-      filament.label = this.translationService.translateFilament(filament.id);
-      filament.value = filament.label;
-      return filament;
-    });
+    this.filamentTypes = this.filamentTypes.map(
+      (filament: { id: number; label: string; value: string }) => {
+        filament.label = this.translationService.translateFilament(filament.id);
+        filament.value = filament.label;
+        return filament;
+      }
+    );
 
     this.request.presets = this.request.presets.map((preset: any) => {
       const matchingColor = this.colors.find(
@@ -395,7 +399,7 @@ export class RequestFormComponent implements OnInit {
       ) {
         this.request.presets = this.request.presets.filter(
           (preset: any) =>
-            !this.presetToDelete.some((p: any) => p.id === preset.id)
+            !this.presetToDelete.some((p: PresetModel) => p.id === preset.id)
         );
         this.presetToDelete = [];
 
@@ -507,13 +511,16 @@ export class RequestFormComponent implements OnInit {
     this.deleteDialogVisible = false;
   }
 
-  isPresetValid(preset: any): boolean {
+  isPresetValid(preset: RequestPresetModel): boolean {
     const printerValid = preset.printerModel && preset.printerModel.id !== null;
     const filamentValid =
       preset.filamentType && preset.filamentType.id !== null;
     const colorValid = preset.color && preset.color.id !== null;
 
-    preset.printQuality = parseFloat(preset.printQuality);
+    preset.printQuality =
+      typeof preset.printQuality === 'string'
+        ? parseFloat(preset.printQuality)
+        : preset.printQuality;
 
     const isMarkedForDeletion = this.presetToDelete.some(
       (p: any) => preset.id && p.id === preset.id
@@ -533,7 +540,9 @@ export class RequestFormComponent implements OnInit {
     }
 
     const activePresets = this.request.presets.filter((p: any) => {
-      return !this.presetToDelete.some((dp: any) => dp.id && dp.id === p.id);
+      return !this.presetToDelete.some(
+        (dp: PresetModel) => dp.id && dp.id === p.id
+      );
     });
 
     const duplicateCount = activePresets.filter((p: any) => {
@@ -557,7 +566,7 @@ export class RequestFormComponent implements OnInit {
     );
   }
 
-  showOfferModal(preset?: any): void {
+  showOfferModal(preset: PresetModel | null): void {
     this.offerModalVisible = true;
     this.presetModalToEdit = preset;
   }
