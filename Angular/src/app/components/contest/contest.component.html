@@ -2,7 +2,7 @@
   @if (authService.currentUser?.isAdmin) {
     <div class="add-contest">
       <p-button icon="pi pi-plus" severity="success" [rounded]="true" [text]="false"
-      [raised]="true" [style]="{ marginBottom: '10px' }" pTooltip="{{ 'request.create_button' | translate }}"
+      [raised]="true" [style]="{ marginBottom: '10px' }" pTooltip="{{ 'contest.create_contest' | translate }}"
       tooltipPosition="left" (onClick)="newContest()" />
     </div>
   }
