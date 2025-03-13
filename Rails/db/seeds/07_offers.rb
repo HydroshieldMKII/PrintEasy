@@ -68,7 +68,6 @@ admin_historical_offers = [
   }
 ]
 
-# User1 making offers on admin's requests
 user1_historical_offers = [
   {
     request_id: admin_requests[0].id,
@@ -218,5 +217,5 @@ user1_current_offers = [
 
 user1_current_offers.each do |offer_data|
   offer = Offer.new(offer_data)
-  offer.save
+  offer.save!
 end

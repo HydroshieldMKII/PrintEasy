@@ -98,18 +98,20 @@ class Offer < ApplicationRecord
   # Group of offers
   def self.group_by_request(offers)
     return [] if offers.empty?
-
+  
     request_ids = offers.pluck(:request_id).uniq
-    requests = Request.where(id: request_ids)
-                      .includes(:user, offers: [
-                                  { printer_user: [] },
-                                  :color,
-                                  :filament
-                                ])
-
-    requests.as_json(
-      include: {
-        offers: {
+    offer_ids = offers.pluck(:id)
+    
+    requests = Request.where(id: request_ids).includes(:user)
+    
+    filtered_offers = Offer.where(id: offer_ids)
+                           .includes(:color, :filament, printer_user: [:user, :printer])
+                           .group_by(&:request_id)
+    
+    requests.map do |request|
+      request_json = request.as_json(include: { user: {} })
+      request_json["offers"] = (filtered_offers[request.id] || []).map do |offer|
+        offer.as_json(
           except: %i[request_id printer_user_id created_at updated_at color_id filament_id],
           include: {
             printer_user: {
@@ -125,9 +127,10 @@ class Offer < ApplicationRecord
             filament: {}
           },
           methods: %i[accepted_at]
-        }
-      }
-    )
+        )
+      end
+      request_json
+    end
   end
 
   def rejected?
