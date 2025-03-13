@@ -132,6 +132,7 @@
     "button_contest_detail": "Contest details",
     "search_text": "Search by theme",
     "participants_range": "Participants range",
+    "leaderboard": "Leaderboard",
     "ssf": {
       "sort": {
         "none": "None",
@@ -207,7 +208,7 @@
       "edit_printer": "Edit Printer",
       "add_printer": "Add Printer",
       "printer_model_required": "Printer Model is required",
-      "acquisition_date_required": "Acquisition Date is required",
+      "acquisition_date_required": "Acquisition Date is invalid",
       "no_print_review": "No print review",
       "acquired_on": "Acquired on",
       "last_used_on": "Last used on",

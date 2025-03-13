@@ -19,11 +19,12 @@ import { FloatLabelModule } from 'primeng/floatlabel';
 import { SliderModule } from 'primeng/slider';
 import { Slider } from 'primeng/slider';
 import { ContestCardComponent } from '../contest-card/contest-card.component';
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-contest',
   standalone: true,
-  imports: [CardModule, ButtonModule, InputTextModule, FormsModule, CommonModule, SpeedDialModule, DialogModule, RouterLink, TranslatePipe, SelectModule, FloatLabelModule, SliderModule, Slider, ContestCardComponent],
+  imports: [CardModule, ButtonModule, InputTextModule, FormsModule, CommonModule, SpeedDialModule, DialogModule, RouterLink, TranslatePipe, SelectModule, FloatLabelModule, SliderModule, Slider, ContestCardComponent, TooltipModule],
   templateUrl: './contest.component.html',
   styleUrls: ['./contest.component.css']
 })
