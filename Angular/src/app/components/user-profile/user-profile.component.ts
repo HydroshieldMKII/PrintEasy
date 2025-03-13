@@ -48,7 +48,6 @@ export class UserProfileComponent implements OnInit {
   userLikes: SubmissionModel[] = [];
   averageRating: number = 0;
   tab: string = 'contest-submissions';
-  prints = 3;
 
   printerUsers: PrinterUserModel[] = [];
   availablePrinters: PrinterModel[] = [];
