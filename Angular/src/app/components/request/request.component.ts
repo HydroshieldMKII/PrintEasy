@@ -35,6 +35,9 @@ export class RequestsComponent implements OnInit {
   selectedReportRange: SelectItem | null = null;
   reportDateRange: any[] | null = null; // date range for reports
 
+  private tempSortCategory: string | null = null;
+  private tempSort: string | null = null;
+
   // For stats filters
   filamentTypes: { label: string; value: number; id: number }[] = [];
   colors: { label: string; value: number; id: number }[] = [];
@@ -143,7 +146,6 @@ export class RequestsComponent implements OnInit {
       this.budgetRange = [0, 10000];
     }
 
-    // Init stats filters from query params
     if (queryParams['filamentIds']) {
       const filamentIds = queryParams['filamentIds'].split(',').map(Number);
       this.selectedFilaments = filamentIds.map((id: number) => ({
@@ -162,7 +164,6 @@ export class RequestsComponent implements OnInit {
       }));
     }
 
-    // Initialize report date range from URL params
     if (queryParams['reportStartDate'] || queryParams['reportEndDate']) {
       this.reportDateRange = [];
       if (queryParams['reportStartDate']) {
@@ -171,6 +172,11 @@ export class RequestsComponent implements OnInit {
       if (queryParams['reportEndDate']) {
         this.reportDateRange[1] = new Date(queryParams['reportEndDate']);
       }
+    }
+
+    if (queryParams['sortCategory'] && queryParams['sort']) {
+      this.tempSortCategory = queryParams['sortCategory'];
+      this.tempSort = queryParams['sort'];
     }
 
     const tabs = ['all', 'mine', 'stats'];
@@ -340,7 +346,6 @@ export class RequestsComponent implements OnInit {
       id: filament.id,
     }));
 
-    //refresh selected colors and filaments
     this.selectedColors = this.selectedColors.map((color) => ({
       label: this.translationService.translateColor(color.id),
       value: color.id,
@@ -352,6 +357,14 @@ export class RequestsComponent implements OnInit {
       value: filament.id,
       id: filament.id,
     }));
+
+    if (this.tempSortCategory && this.tempSort) {
+      const reportSortValue = `${this.tempSortCategory}-${this.tempSort}`;
+      this.selectedReportSortOption =
+        this.reportSortOptions.find(
+          (option) => option.value === reportSortValue
+        ) || null;
+    }
   }
 
   ngOnInit(): void {
