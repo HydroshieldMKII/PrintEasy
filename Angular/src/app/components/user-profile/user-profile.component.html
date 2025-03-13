@@ -227,6 +227,7 @@
                 dateFormat="yy-mm-dd"
                 [style]="{ width: '100%' }"
                 [maxDate]="today"
+                (onInput)="onInputDate($event)"
               >
               </p-datepicker>
               <label for="aquiredDate">{{

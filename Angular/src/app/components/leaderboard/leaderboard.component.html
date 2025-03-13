@@ -3,7 +3,7 @@
         <div class="filter-item">
             <div>
                 <p-floatlabel variant="in">
-                    <p-datepicker [(ngModel)]="startDate" variant="filled" [minDate]="minDate" [maxDate]="maxDate" (onSelect)="onStartChange($event)" [showButtonBar]="true" (onClearClick)="onClearStartDate()" />
+                    <p-datepicker [(ngModel)]="startDate" variant="filled" [minDate]="minDate" [maxDate]="maxDate" (onSelect)="onStartChange($event)" [showButtonBar]="true" (onClearClick)="onClearStartDate()" (onClickOutside)="onClearStartDate()" />
                     <label for="in_label">{{ 'leaderboard.start_date' | translate }}</label>
                 </p-floatlabel>
             </div>
@@ -12,7 +12,7 @@
         <div class="filter-item">
             <div>
                 <p-floatlabel variant="in">
-                    <p-datepicker [(ngModel)]="endDate" variant="filled" [minDate]="minDate" [maxDate]="maxDate" (onSelect)="onEndChange($event)" [showButtonBar]="true" (onClearClick)="onClearEndDate()" />
+                    <p-datepicker [(ngModel)]="endDate" variant="filled" [minDate]="minDate" [maxDate]="maxDate" (onSelect)="onEndChange($event)" [showButtonBar]="true" (onClearClick)="onClearEndDate()" (onClickOutside)="onClearEndDate()" />
                     <label for="in_label">{{ 'leaderboard.end_date' | translate }}</label>
                 </p-floatlabel>
             </div>

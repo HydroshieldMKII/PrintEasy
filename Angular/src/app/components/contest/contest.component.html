@@ -9,11 +9,15 @@
   }
 
   <div class="contest-header">
-    <h2>{{ 'contest.title_page' | translate }}</h2>
-    <button pButton class="p-button-outlined" [routerLink]="'/contest/leaderboard'">
-      <i class="pi pi-chart-bar mr-2"></i>
-      Leaderboard
-    </button>
+    <div>
+      <h2>{{ 'contest.title_page' | translate }}</h2>
+      <div>
+        <button pButton class="p-button-outlined" [routerLink]="'/contest/leaderboard'">
+          <i class="pi pi-chart-bar mr-2"></i>
+          Leaderboard
+        </button>
+      </div>
+    </div>
     <p [innerHTML]="'contest.description_page' | translate"></p>
   </div>
 
