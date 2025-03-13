@@ -55,8 +55,8 @@
   },
   "profile": {
     "printer_deleted": "Imprimante supprimée avec succès",
-    "printer_added":"Imprimante ajoutée avec succès",
-    "printer_updated":"Imprimante mise à jour avec succès"
+    "printer_added": "Imprimante ajoutée avec succès",
+    "printer_updated": "Imprimante mise à jour avec succès"
   },
   "leaderboard": {
     "sort": {
@@ -383,6 +383,7 @@
     "no_preset_stats": "Aucune statistique disponible"
   },
   "requestForm": {
+    "request_accepted_error": "Cette demande n'accepte plus les offres.",
     "edit_request": "Modifier la demande",
     "request_details": "Détails de la demande",
     "name": "Nom",

@@ -115,6 +115,17 @@ export class OfferService {
             summary: this.translate.instant('global.error'),
             detail: this.translate.instant('offer.error_already_exists'),
           });
+        } else if (
+          response.errors['offer'] ==
+          'Request already accepted an offer. Cannot create'
+        ) {
+          this.messageService.add({
+            severity: 'error',
+            summary: this.translate.instant('requestForm.error'),
+            detail: this.translate.instant(
+              'requestForm.request_accepted_error'
+            ),
+          });
         } else {
           this.messageService.add({
             severity: 'error',

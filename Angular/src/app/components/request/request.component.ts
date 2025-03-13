@@ -417,7 +417,6 @@ export class RequestsComponent implements OnInit {
       if (result instanceof ApiResponseModel) {
         return;
       }
-      console.log('Updating statswith', result);
       this.stats = result;
     });
   }

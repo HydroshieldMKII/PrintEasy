@@ -382,6 +382,7 @@
     "no_preset_stats": "No stats available"
   },
   "requestForm": {
+    "request_accepted_error": "This request doesnt accept any more offers",
     "edit_request": "Edit Request",
     "request_details": "Request Details",
     "name": "Name",

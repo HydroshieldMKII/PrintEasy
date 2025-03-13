@@ -125,7 +125,6 @@ export class UserProfileComponent implements OnInit {
   }
 
   onTabChange(tab: string) {
-    console.log(tab);
     this.route.navigate([], {
       queryParams: { tab: tab },
       queryParamsHandling: 'merge',
@@ -232,7 +231,9 @@ export class UserProfileComponent implements OnInit {
           this.messageService.add({
             severity: 'success',
             summary: 'Success',
-            detail: this.isEditMode ? this.translate.instant('profile.printer_updated') : this.translate.instant('profile.printer_added'),
+            detail: this.isEditMode
+              ? this.translate.instant('profile.printer_updated')
+              : this.translate.instant('profile.printer_added'),
           });
           if (this.isEditMode && this.printerUserEdit) {
             const index = this.userProfile?.printerUsers.findIndex(
