@@ -199,10 +199,8 @@ export class OrderComponent {
     this.orderService.getOrder(orderId).subscribe((response: ApiResponseModel | OrderModel) => {
       if (response instanceof OrderModel) {
         this.order = response;
-        console.log('Order:', this.order);
         if (this.order) {
           this.currentStatus = this.order.orderStatus[this.order.orderStatus.length - 1];
-          console.log('Current status:', this.currentStatus);
           if (this.order.availableStatus.includes('Cancelled')) {
             this.canCancel = true;
           }
@@ -219,7 +217,6 @@ export class OrderComponent {
           this.refreshAvailableStatuses();
         }
       } else {
-        console.log('Error:', response);
         this.router.navigate(['/orders']);
       }
 
@@ -307,7 +304,6 @@ export class OrderComponent {
     const file = event.files[0];
     this.imageUrl = file["objectURL"].changingThisBreaksApplicationSecurity;
     this.orderStatusForm.patchValue({ image: file });
-    console.log('Image:', file);
   }
 
   ShowOrderStatusForm() : void {
@@ -317,7 +313,6 @@ export class OrderComponent {
 
   onStatusSubmit() : void {
     if (this.orderStatusForm.valid){
-      console.log('Order status data:', this.orderStatusForm.value);
 
       const orderStatusData = new FormData();
       orderStatusData.append('order_status[status_name]', this.orderStatusForm.value.statusName);
@@ -330,7 +325,6 @@ export class OrderComponent {
       }
       if (this.isEdit) {
         this.orderStatusService.updateOrderStatus(this.currentlySelectedOrderStatusId, orderStatusData).subscribe((response: ApiResponseModel | OrderStatusModel) => {
-          console.log('Order status updated:', response);
           if (response instanceof OrderStatusModel) {
             this.refreshOrder();
             this.clearStatusForm();
@@ -351,7 +345,6 @@ export class OrderComponent {
         });
       }else{
         this.orderStatusService.createOrderStatus(orderStatusData).subscribe((response : ApiResponseModel | OrderStatusModel) => {
-          console.log('Order status created:', response);
           if (response instanceof OrderStatusModel) {
             this.refreshOrder();
             this.clearStatusForm();
@@ -405,7 +398,6 @@ export class OrderComponent {
 
   setStatusForm() : void {
     this.orderStatusService.getOrderStatus(this.currentlySelectedOrderStatusId).subscribe((response : ApiResponseModel | OrderStatusModel) => {
-      console.log('Order status:', response);
       if (response instanceof OrderStatusModel) {
         const orderStatus = response;
         this.orderStatusForm.patchValue({ statusName: orderStatus.statusName });
@@ -421,7 +413,6 @@ export class OrderComponent {
     this.orderStatusService.deleteOrderStatus(this.currentlySelectedOrderStatusId).subscribe((response: ApiResponseModel | OrderStatusModel) => {
       
       if (response instanceof OrderStatusModel) {
-        console.log('Order status deleted:', response);
         this.refreshOrder();
         this.deleteStatusDialogVisible = false;
         this.messageService.add({

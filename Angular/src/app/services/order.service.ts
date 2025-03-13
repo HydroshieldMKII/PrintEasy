@@ -27,7 +27,6 @@ export class OrderService {
     getOrder(id: number): Observable<OrderModel | ApiResponseModel> {
         return this.api.getRequest(`api/order/${id}`).pipe(
             map((response: ApiResponseModel) => {
-                console.log("Get order response", response);
                 if (response.status === 200) {
                     return OrderModel.fromAPI(response.data.order);
                 }
@@ -39,7 +38,6 @@ export class OrderService {
     createOrder(id: number): Observable<OrderModel | ApiResponseModel> {
         return this.api.postRequest('api/order', {}, { id: id }).pipe(
             map((response: ApiResponseModel) => {
-                console.log("Create order response", response);
                 if (response.status === 201) {
                     return OrderModel.fromAPI(response.data.order);
                 }

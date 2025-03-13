@@ -31,7 +31,6 @@ export class HomeComponent {
 
   constructor() {
     this.homeService.getData().subscribe((response : HomeModel | ApiResponseModel) => {
-      console.log("Home data: ", response);
       if (response instanceof HomeModel) {
         this.contests = response.contests;
         this.requests = response.requests;

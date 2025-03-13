@@ -120,7 +120,6 @@ export class OrdersComponent {
     this.orderService.getOrders(params).subscribe((response: ApiResponseModel | OrderModel[]) => {
       if (Array.isArray(response)) {
         this.myOrders = response;
-        console.log(this.myOrders);
       }
     });
   }
@@ -130,7 +129,6 @@ export class OrdersComponent {
     this.orderService.getOrders(params).subscribe((response: ApiResponseModel | OrderModel[]) => {
       if (Array.isArray(response)) {
         this.makeOrders = response;
-        console.log(this.makeOrders);
       }
     });
   }
@@ -142,7 +140,6 @@ export class OrdersComponent {
         return;
       }
       this.reportData = response.data.printers;
-      console.log(this.reportData);
     });
   }
 
@@ -168,16 +165,13 @@ export class OrdersComponent {
       if (this.reportStartDate) {
         const startDate = new Date(this.reportStartDate);
         params['start_date'] = `${startDate.getFullYear()}-${(startDate.getMonth() + 1).toString().padStart(2, '0')}-${startDate.getDate().toString().padStart(2, '0')}`;
-        console.log(params['start_date']);
       }
       if (this.reportEndDate) {
         const endDate = new Date(this.reportEndDate);
         params['end_date'] = `${endDate.getFullYear()}-${(endDate.getMonth() + 1).toString().padStart(2, '0')}-${endDate.getDate().toString().padStart(2, '0')}`;
-        console.log(params['end_date']);
       }
     } else {
       if (this.selectedFilterOption) {
-        console.log(this.selectedFilterOption);
         let filter = "";
         for (let fil of this.selectedFilterOption) {
           filter += fil.value + ";";

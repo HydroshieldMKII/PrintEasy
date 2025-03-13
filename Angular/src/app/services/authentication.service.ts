@@ -85,7 +85,6 @@ export class AuthService {
         
         return this.api.postRequest('users', {}, credentials).pipe(
             map(response => {
-                // console.log('Sign up response:', response);
                 if (response.status === 200) {
                     this.messageService.add({ severity: 'success', summary: 'Account created', detail: 'You are now ready to use the app!' });
                     const userData = (response.data as any)?.['user'];
