@@ -28,10 +28,10 @@ export class LeaderboardComponent {
   currentStartDate: Date | null = new Date() || null;
   currentSort: string = '';
   currentSortCategory: string = '';
-  minDate: Date = new Date(2000, 0, 1);
+  minDate: Date = new Date(2023, 0, 1);
   maxDate = new Date();
-  startDate = new Date(2000, 0, 1);
-  endDate = new Date();
+  startDate! : Date;
+  endDate! : Date;
 
   filterOptions: SelectItem[] = [];
   sortOptions: SelectItem[] = [];
@@ -112,6 +112,8 @@ export class LeaderboardComponent {
       queryParams: { startDate: null },
       queryParamsHandling: 'merge'
     });
+
+    this.fetchLeaderboard();
   }
 
   onClearEndDate() {
@@ -121,6 +123,8 @@ export class LeaderboardComponent {
       queryParams: { endDate: null },
       queryParamsHandling: 'merge'
     });
+
+    this.fetchLeaderboard();
   }
 
   onSortChange(event: any) {

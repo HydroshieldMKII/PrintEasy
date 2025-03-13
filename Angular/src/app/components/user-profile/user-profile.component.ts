@@ -124,6 +124,10 @@ export class UserProfileComponent implements OnInit {
     });
   }
 
+  onInputDate(event: any) {
+    console.log(event);
+  }
+
   onTabChange(tab: string) {
     this.route.navigate([], {
       queryParams: { tab: tab },
