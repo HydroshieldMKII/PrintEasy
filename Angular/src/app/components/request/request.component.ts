@@ -43,7 +43,6 @@ export class RequestsComponent implements OnInit {
   colors: { label: string; value: number; id: number }[] = [];
   selectedFilaments: { label: string; value: number; id: number }[] = [];
   selectedColors: { label: string; value: number; id: number }[] = [];
-  // removed reportDateStart and reportDateEnd since we now use reportDateRange
 
   // Requests
   requests: RequestModel[] | null = null;

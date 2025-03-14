@@ -18,21 +18,18 @@ body {
 
 .p-tabpanels {
   flex-grow: 1;
-  /* Ensures the tabs stretch */
   display: flex;
   flex-direction: column;
 }
 
 .p-tabpanel {
   flex-grow: 1;
-  /* Allow panel to stretch */
   display: flex;
   flex-direction: column;
 }
 
 .p-table {
   flex-grow: 1;
-  /* Make the table take up available space */
 }
 
 h1 {
@@ -177,7 +174,6 @@ h3 {
     display: block;
   }
 
-  /* each child */
   .ssf > * {
     margin-bottom: 1rem;
   }

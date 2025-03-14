@@ -66,7 +66,6 @@ class Offer < ApplicationRecord
     when 'all' # Offers received on my requests
       not_in_accepted_request.for_user_requests
     when 'mine' # Offers sent to another user's requests
-      # debugger
       from_user_printers
     else
       none
